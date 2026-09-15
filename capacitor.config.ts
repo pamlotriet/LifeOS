@@ -1,10 +1,10 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.pamelalotriet.lifeos',
+  appId: 'com.pamelalotriet.lifeoss',
   appName: 'LifeOS',
-  webDir: 'dist',
-   zoomEnabled: false,
+  webDir: 'dist/lifeos/browser',
+  zoomEnabled: false,
 };
 
 export default config;
