@@ -20,7 +20,7 @@
     "@angular/platform-server": "^22.1.0",
     "@angular/router": "^22.1.0",
     "@angular/ssr": "^22.1.8",
-    "@capacitor/core": "^8.5.2",
+    "@capacitor/core": "8.4.3",
     "@spartan-ng/brain": "^1.4.1",
     "express": "^5.1.0",
     "rxjs": "~7.8.0",
@@ -30,7 +30,7 @@
     "@angular/build": "^22.1.8",
     "@angular/cli": "^22.1.8",
     "@angular/compiler-cli": "^22.1.0",
-    "@capacitor/cli": "^8.5.2",
+    "@capacitor/cli": "8.4.3",
     "@spartan-ng/cli": "^1.4.1",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/express": "^5.0.1",
@@ -48,5 +48,8 @@
     "lmdb@3.5.6": true,
     "msgpackr-extract@3.0.4": true,
     "nx@23.2.1": true
+  },
+  "overrides": {
+    "smol-toml": "1.7.1"
   }
 }
