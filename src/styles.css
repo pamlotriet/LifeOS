@@ -1,17 +1,11 @@
 @layer theme, base, components, utilities;
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/preflight.css' layer(base);
-@import 'tailwindcss/utilities.css';
 
-@layer theme, base, components, utilities;
 @import '@spartan-ng/brain/hlm-tailwind-preset.css';
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css';
-
-@import '@spartan-ng/brain/hlm-tailwind-preset.css';
 @import '@ionic/angular/css/ionic.bundle.css';
-
+@import '@ionic/angular/css/palettes/dark.class.css';
 :root {
   color-scheme: light;
 
@@ -19,81 +13,356 @@
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
     sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 1rem;
+
+  /* LifeOS Brand */
+  --lifeos-cyan: #14ddea;
+  --lifeos-blue: #2497ff;
+  --lifeos-indigo: #4056ff;
+  --lifeos-violet: #7b3cff;
+  --lifeos-magenta: #c23cff;
+
+  /* Charts */
+  --chart-1: #14cfe0;
+  --chart-2: #2497ff;
+  --chart-3: #7b3cff;
+  --chart-4: #22b879;
+  --chart-5: #ffb547;
+
+  /* Main surfaces */
+  --background: #f4f9fd;
+  --foreground: #10233d;
+
+  --card: #ffffff;
+  --card-foreground: #10233d;
+
+  --popover: #ffffff;
+  --popover-foreground: #10233d;
+
+  /* Primary actions */
+  --primary: #19cddd;
+  --primary-foreground: #ffffff;
+
+  --secondary: #eef7ff;
+  --secondary-foreground: #17304f;
+
+  --muted: #edf4f9;
+  --muted-foreground: #64778c;
+
+  --accent: #edf0ff;
+  --accent-foreground: #4056ff;
+
+  --destructive: #ef4f5f;
+
+  --border: #dce8f1;
+  --input: #dce8f1;
+  --ring: #5ce3eb;
+
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #10233d;
+
+  --sidebar-primary: #19cddd;
+  --sidebar-primary-foreground: #ffffff;
+
+  --sidebar-accent: #eef7ff;
+  --sidebar-accent-foreground: #17304f;
+
+  --sidebar-border: #dce8f1;
+  --sidebar-ring: #5ce3eb;
+
+  /* Semantic */
+  --success: #20b875;
+  --warning: #efa62b;
+  --info: #2497ff;
+
+  /* Custom LifeOS surfaces */
+  --surface-secondary: #edf4f9;
+  --surface-elevated: #ffffff;
+
+  --surface-soft-blue: #eef9fc;
+  --surface-soft-purple: #f3efff;
+  --surface-soft-cyan: #ecfbfc;
+
+  --text-secondary: #64778c;
+  --text-muted: #8a9bad;
+
+  /* Dashboard specific */
+  --dashboard-background: #f4f9fd;
+  --dashboard-card: #ffffff;
+  --dashboard-card-hover: #fafdff;
+  --dashboard-border: #e1ebf2;
+
+  /* Navigation */
+  --nav-background: #ffffff;
+  --nav-active: #19cddd;
+  --nav-active-foreground: #ffffff;
+  --nav-inactive: #718399;
+
+  /* Quick action gradient */
+  --action-gradient-start: #17d9e7;
+  --action-gradient-middle: #2497ff;
+  --action-gradient-end: #7b3cff;
+
+  /* Ionic */
+  --ion-background-color: #f4f9fd;
+  --ion-background-color-rgb: 244, 249, 253;
+
+  --ion-text-color: #10233d;
+  --ion-text-color-rgb: 16, 35, 61;
+
+  --ion-card-background: #ffffff;
+
+  --ion-toolbar-background: #f4f9fd;
+  --ion-toolbar-color: #10233d;
+
+  --ion-item-background: #ffffff;
+
+  --ion-color-primary: #19cddd;
+  --ion-color-primary-rgb: 25, 205, 221;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #16b4c2;
+  --ion-color-primary-tint: #30d2e0;
+
+  --ion-color-secondary: #2497ff;
+  --ion-color-secondary-rgb: 36, 151, 255;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #2085e0;
+  --ion-color-secondary-tint: #3aa1ff;
+
+  --ion-color-tertiary: #7b3cff;
+  --ion-color-tertiary-rgb: 123, 60, 255;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #6c35e0;
+  --ion-color-tertiary-tint: #8850ff;
 }
 
 :root.dark {
   color-scheme: dark;
 
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.985 0 0);
-  --sidebar-primary-foreground: oklch(0.205 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Charts */
+  --chart-1: #00d9e8;
+  --chart-2: #1687ff;
+  --chart-3: #8c4bff;
+  --chart-4: #27d17f;
+  --chart-5: #f2b84b;
+
+  /* Main surfaces */
+  --background: #061426;
+  --foreground: #f7fafc;
+
+  --card: #0b1d33;
+  --card-foreground: #f7fafc;
+
+  --popover: #10253d;
+  --popover-foreground: #f7fafc;
+
+  /* Primary actions */
+  --primary: #00d9e8;
+  --primary-foreground: #061426;
+
+  --secondary: #10253d;
+  --secondary-foreground: #f7fafc;
+
+  --muted: #10253d;
+  --muted-foreground: #b7c5d3;
+
+  --accent: #152a44;
+  --accent-foreground: #43e4f0;
+
+  --destructive: #ff5d68;
+
+  --border: #263a52;
+  --input: #263a52;
+  --ring: #43e4f0;
+
+  /* Sidebar */
+  --sidebar: #0b1d33;
+  --sidebar-foreground: #f7fafc;
+
+  --sidebar-primary: #00d9e8;
+  --sidebar-primary-foreground: #061426;
+
+  --sidebar-accent: #152a44;
+  --sidebar-accent-foreground: #f7fafc;
+
+  --sidebar-border: #263a52;
+  --sidebar-ring: #43e4f0;
+
+  /* Semantic */
+  --success: #27d17f;
+  --warning: #f2b84b;
+  --info: #4ca3ff;
+
+  /* LifeOS custom surfaces */
+  --surface-secondary: #10253d;
+  --surface-elevated: #152a44;
+
+  --surface-soft-blue: #0d2440;
+  --surface-soft-purple: #1a1737;
+  --surface-soft-cyan: #092d35;
+
+  --text-secondary: #b7c5d3;
+  --text-muted: #7f92a6;
+
+  /* Dashboard specific */
+  --dashboard-background: #061426;
+  --dashboard-card: #0b1d33;
+  --dashboard-card-hover: #10253d;
+  --dashboard-border: #263a52;
+
+  /* Navigation */
+  --nav-background: #0b1d33;
+  --nav-active: #00d9e8;
+  --nav-active-foreground: #061426;
+  --nav-inactive: #8fa1b5;
+
+  /* Quick action gradient */
+  --action-gradient-start: #00d9e8;
+  --action-gradient-middle: #1687ff;
+  --action-gradient-end: #8c4bff;
+
+  /* Ionic */
+  --ion-background-color: #061426;
+  --ion-background-color-rgb: 6, 20, 38;
+
+  --ion-text-color: #f7fafc;
+  --ion-text-color-rgb: 247, 250, 252;
+
+  --ion-card-background: #0b1d33;
+
+  --ion-toolbar-background: #061426;
+  --ion-toolbar-color: #f7fafc;
+
+  --ion-item-background: #0b1d33;
+
+  --ion-color-primary: #00d9e8;
+  --ion-color-primary-rgb: 0, 217, 232;
+  --ion-color-primary-contrast: #061426;
+  --ion-color-primary-contrast-rgb: 6, 20, 38;
+  --ion-color-primary-shade: #00bfcc;
+  --ion-color-primary-tint: #1addeb;
+
+  --ion-color-secondary: #1687ff;
+  --ion-color-secondary-rgb: 22, 135, 255;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #1377e0;
+  --ion-color-secondary-tint: #2d93ff;
+
+  --ion-color-tertiary: #8c4bff;
+  --ion-color-tertiary-rgb: 140, 75, 255;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #7b42e0;
+  --ion-color-tertiary-tint: #985dff;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    background: var(--background);
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    min-height: 100vh;
   }
+}
+
+/* LifeOS Brand Gradient */
+
+.lifeos-gradient {
+  background: linear-gradient(
+    135deg,
+    #14ddea 0%,
+    #2497ff 30%,
+    #4056ff 55%,
+    #7b3cff 78%,
+    #c23cff 100%
+  );
+}
+
+.lifeos-gradient-text {
+  background: linear-gradient(135deg, #14ddea 0%, #2497ff 35%, #7b3cff 75%, #c23cff 100%);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Floating LifeOS primary action */
+
+.lifeos-action-button {
+  background: linear-gradient(
+    135deg,
+    var(--action-gradient-start),
+    var(--action-gradient-middle),
+    var(--action-gradient-end)
+  );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 8px 24px rgb(36 151 255 / 25%),
+    0 4px 12px rgb(123 60 255 / 18%);
+}
+
+.dark .lifeos-action-button {
+  color: #ffffff;
+
+  box-shadow:
+    0 0 24px rgb(0 217 232 / 18%),
+    0 0 48px rgb(123 44 255 / 12%);
+}
+
+/* General brand glow */
+
+.lifeos-glow {
+  box-shadow:
+    0 8px 28px rgb(36 151 255 / 12%),
+    0 4px 16px rgb(123 60 255 / 8%);
+}
+
+.dark .lifeos-glow {
+  box-shadow:
+    0 0 24px rgb(0 217 232 / 15%),
+    0 0 48px rgb(123 44 255 / 10%);
+}
+
+/* Card treatment matching the light mockups */
+
+.lifeos-card {
+  background: var(--card);
+  border: 1px solid var(--dashboard-border);
+  border-radius: var(--radius);
+
+  box-shadow:
+    0 8px 24px rgb(34 79 121 / 6%),
+    0 2px 8px rgb(34 79 121 / 4%);
+}
+
+.dark .lifeos-card {
+  box-shadow: 0 8px 24px rgb(0 0 0 / 20%);
+}
+
+/* Soft feature-card backgrounds */
+
+.lifeos-card-cyan {
+  background: var(--surface-soft-cyan);
+}
+
+.lifeos-card-blue {
+  background: var(--surface-soft-blue);
+}
+
+.lifeos-card-purple {
+  background: var(--surface-soft-purple);
 }
