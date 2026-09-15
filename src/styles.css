@@ -10,6 +10,7 @@
 @import 'tailwindcss/utilities.css';
 
 @import '@spartan-ng/brain/hlm-tailwind-preset.css';
+@import '@ionic/angular/css/ionic.bundle.css';
 
 :root {
   color-scheme: light;

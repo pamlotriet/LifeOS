@@ -1,12 +1,34 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import {
+  IonRouterOutlet,
+  IonApp,
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel,
+  IonButton,
+} from '@ionic/angular';
 
 @Component({
-  imports: [RouterOutlet],
+  imports: [
+    IonButton,
+    IonApp,
+    IonRouterOutlet,
+    IonTabs,
+    IonTabBar,
+    IonTabButton,
+    IonIcon,
+    IonLabel,
+  ],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly title = signal('lifeos');
+  isLoggedIn = false;
+
+  onClick() {
+    // Handle login button click
+  }
 }
