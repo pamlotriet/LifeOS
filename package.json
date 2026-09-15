@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:lifeos": "node dist/lifeos/server/server.mjs"
+    "serve:ssr:lifeos": "node dist/lifeos/server/server.mjs",
+    "generate:splashIcons": "npx @capacitor/assets generate --platforms=ios,android --background-color=#000000 --foreground-color=#ffffff --icon-path=src/assets/icon.png --splash-path=src/assets/splash.png"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
@@ -30,6 +31,7 @@
     "@angular/build": "^22.1.8",
     "@angular/cli": "^22.1.8",
     "@angular/compiler-cli": "^22.1.0",
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "8.4.3",
     "@spartan-ng/cli": "^1.4.1",
     "@tailwindcss/postcss": "^4.1.12",
@@ -47,7 +49,8 @@
     "esbuild@0.28.2": true,
     "lmdb@3.5.6": true,
     "msgpackr-extract@3.0.4": true,
-    "nx@23.2.1": true
+    "nx@23.2.1": true,
+    "sharp@0.32.6": true
   },
   "overrides": {
     "smol-toml": "1.7.1"
