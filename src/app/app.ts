@@ -39,9 +39,8 @@ export class App {
       return;
     }
 
-    // await StatusBar.setBackgroundColor({ color: isDark ? '#061426' : '#f4f9fd' });
-    await StatusBar.hide();
-    // await StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark });
+    await StatusBar.setBackgroundColor({ color: isDark ? '#061426' : '#f4f9fd' });
+    await StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark });
   }
 
   // Listen for the toggle check/uncheck to toggle the dark palette

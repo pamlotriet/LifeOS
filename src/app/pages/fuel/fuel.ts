@@ -31,7 +31,7 @@ import { PageHeader } from '../../shared/components/page-header/page-header';
               [value]="option.value"
               [routerLink]="option.route"
             >
-              <ion-label class="text-sm font-semibold">{{ option.label }}</ion-label>
+              <ion-label class="text-xs font-semibold">{{ option.label }}</ion-label>
             </ion-segment-button>
           }
         </ion-segment>
