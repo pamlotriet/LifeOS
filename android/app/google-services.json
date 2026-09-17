@@ -12,7 +12,20 @@
           "package_name": "com.lotriet.lifeos"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "315434833958-fig2j8av50kvc16k0q56qrkk70uedr7q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lotriet.lifeos",
+            "certificate_hash": "43660135d246d38d6aae999b29bad9c473038b5f"
+          }
+        },
+        {
+          "client_id": "315434833958-lk87e6j9g91skk873itot98p6rk1s0pd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB3cQC0hMXofVhocW19CnaYPpzCIDpIRao"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "315434833958-lk87e6j9g91skk873itot98p6rk1s0pd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "315434833958-93ag5pejsm7ov8qhgq5bj37rb1le7f1e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.lotriet.lifeos"
+              }
+            }
+          ]
         }
       }
     }
