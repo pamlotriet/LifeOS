@@ -33,6 +33,7 @@
     "@angular/platform-server": "^22.1.0",
     "@angular/router": "^22.1.0",
     "@angular/ssr": "^22.1.8",
+    "@capacitor-firebase/authentication": "^8.5.2",
     "@capacitor/android": "^8.4.3",
     "@capacitor/core": "8.4.3",
     "@capacitor/ios": "^8.4.3",
