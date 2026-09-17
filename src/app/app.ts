@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   IonApp,
   IonTabs,
@@ -9,27 +9,19 @@ import {
   IonButton,
 } from '@ionic/angular';
 import { TabPopover, TabPopoverItem } from './shared/components/tab-popover/tab-popover';
+import { AuthService } from './shared/state/authentication/authentication.service';
 
 @Component({
-  imports: [
-    IonButton,
-    IonApp,
-    IonTabs,
-    IonTabBar,
-    IonTabButton,
-    IonIcon,
-    IonLabel,
-    TabPopover,
-  ],
+  imports: [IonButton, IonApp, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, TabPopover],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
 export class App {
-  isLoggedIn = true;
-  readonly addPopoverItems: TabPopoverItem[] = [{ label: 'Add content', route: '/add' }];
-  readonly morePopoverItems: TabPopoverItem[] = [{ label: 'More options', route: '/more' }];
+  authService = inject(AuthService);
+
   readonly paletteToggle = signal(false);
+
   ngOnInit() {
     if (typeof window === 'undefined') {
       return;
@@ -60,7 +52,8 @@ export class App {
       document.documentElement.classList.toggle('dark', shouldAdd);
     }
   }
-  onClick() {
-    // Handle login button click
+
+  authenticate() {
+    this.authService.loginWithGoogle();
   }
 }
