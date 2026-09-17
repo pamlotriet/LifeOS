@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "315434833958",
+    "project_id": "fuel-consumption-92c8c",
+    "storage_bucket": "fuel-consumption-92c8c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315434833958:android:01a1ee8ff5c9fb57d72ee7",
+        "android_client_info": {
+          "package_name": "com.lotriet.lifeos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3cQC0hMXofVhocW19CnaYPpzCIDpIRao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
