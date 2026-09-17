@@ -1,4 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import {
@@ -12,6 +14,7 @@ import {
 } from '@ionic/angular';
 import { TabPopover, TabPopoverItem } from './shared/components/tab-popover/tab-popover';
 import { AuthService } from './shared/state/authentication/authentication.service';
+import { filter, map } from 'rxjs';
 
 @Component({
   imports: [IonButton, IonApp, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, TabPopover],
@@ -21,8 +24,22 @@ import { AuthService } from './shared/state/authentication/authentication.servic
 })
 export class App {
   authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  readonly showTabBar = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map((event) => this.isTabRoute(event.urlAfterRedirects)),
+    ),
+    { initialValue: this.isTabRoute(this.router.url) },
+  );
 
   readonly paletteToggle = signal(false);
+
+  private isTabRoute(url: string): boolean {
+    const path = url.split(/[?#]/, 1)[0].replace(/\/$/, '') || '/home';
+    return ['/home', '/stats', '/add', '/search', '/more'].includes(path);
+  }
 
   ngOnInit() {
     if (typeof window === 'undefined') {

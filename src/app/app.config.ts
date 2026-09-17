@@ -11,10 +11,37 @@ import {
   grid,
   ellipsisVertical,
   logoGoogle,
+  car,
+  wallet,
+  book,
+  calendar,
+  lockClosed,
+  heart,
+  chevronForward,
+  chevronBack,
+  build,
 } from 'ionicons/icons';
 import { routes } from './app.routes';
 
-addIcons({ home, settings, add, statsChart, search, grid, ellipsisVertical, logoGoogle });
+addIcons({
+  home,
+  settings,
+  add,
+  statsChart,
+  search,
+  grid,
+  ellipsisVertical,
+  logoGoogle,
+  car,
+  wallet,
+  book,
+  calendar,
+  lockClosed,
+  heart,
+  chevronForward,
+  chevronBack,
+  build
+});
 
 export const appConfig: ApplicationConfig = {
   providers: [provideBrowserGlobalErrorListeners(), provideRouter(routes), provideIonicAngular()],

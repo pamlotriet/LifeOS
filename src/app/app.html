@@ -1,7 +1,9 @@
 <ion-app ngSkipHydration class="bg-background safe-area">
-  @if (authService.isAuthenticated()) {
+  @if (!authService.authReady()) {
+    <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
+  } @else if (authService.isAuthenticated()) {
     <ion-tabs>
-      <ion-tab-bar slot="bottom" class="h-24 bg-sidebar">
+      <ion-tab-bar slot="bottom" class="h-24 bg-sidebar" [style.display]="showTabBar() ? null : 'none'">
         <ion-tab-button
           tab="home"
           class="bg-sidebar [--color:var(--ion-text-color)] [--color-selected:var(--nav-active)]"
@@ -51,14 +53,13 @@
       </ion-tab-bar>
     </ion-tabs>
   } @else {
-    <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full  m-0 p-0" />
+    <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
     <ion-button
-      expand="block"
-      class="absolute bottom-10 w-4/5 left-1/2 transform -translate-x-1/2"
+      class="absolute bottom-36 w-4/5 left-1/2 transform -translate-x-1/2 [--background:white] rounded-4xl"
       (click)="authenticate()"
     >
-      <ion-icon name="logo-google" slot="start" class="mr-2"></ion-icon>
-      <ion-label class="text-white text-lg">Sign in with Google</ion-label>
+      <ion-icon name="logo-google" slot="start" class="mr-2 text-black"></ion-icon>
+      <ion-label class="text-black font-semibold text-lg">Sign in with Google</ion-label>
     </ion-button>
   }
 </ion-app>

@@ -6,6 +6,7 @@ import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import {
   getAuth,
   GoogleAuthProvider,
+  onAuthStateChanged,
   signInWithPopup,
   signOut as webSignOut,
   UserCredential,
@@ -18,22 +19,34 @@ import { firebaseApp } from '../../../core/firebase/firebase.config';
 export class AuthService {
   private readonly webAuth = getAuth(firebaseApp);
   private readonly authenticated = signal(false);
+  private readonly ready = signal(false);
 
   constructor() {
-    void this.refreshAuthState();
+    if (Capacitor.isNativePlatform()) {
+      void this.refreshAuthState();
+      return;
+    }
+
+    onAuthStateChanged(this.webAuth, (user) => {
+      this.authenticated.set(!!user);
+      this.ready.set(true);
+    });
   }
 
   readonly isAuthenticated = this.authenticated.asReadonly();
+  readonly authReady = this.ready.asReadonly();
 
   async refreshAuthState(): Promise<boolean> {
     if (Capacitor.isNativePlatform()) {
       const result = await FirebaseAuthentication.getCurrentUser();
       this.authenticated.set(!!result.user);
+      this.ready.set(true);
       return this.authenticated();
     }
 
     const isAuthenticated = !!this.webAuth.currentUser;
     this.authenticated.set(isAuthenticated);
+    this.ready.set(true);
     return isAuthenticated;
   }
 
