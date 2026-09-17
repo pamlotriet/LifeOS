@@ -11,7 +11,7 @@
     "generate:splashIcons": "npx @capacitor/assets generate --ios --android --assetPath=src/app/assets --iconBackgroundColor=#000000 --splashBackgroundColor=#000000",
     "cap:add:android": "npx cap add android",
     "cap:add:ios": "npx cap add ios",
-    "cap:sync": "npm run build && node -e \"require('fs').copyFileSync('dist/lifeos/browser/index.csr.html', 'dist/lifeos/browser/index.html')\" && npx cap sync",
+    "cap:sync": "npm run build && node -e \"const fs=require('fs'); const dir='dist/lifeos/browser'; if (!fs.existsSync(dir+'/index.html')) fs.copyFileSync(dir+'/index.csr.html', dir+'/index.html')\" && npx cap sync",
     "cap:update": "npx cap update",
     "cap:update:android": "npx cap update android",
     "cap:update:ios": "npx cap update ios",
