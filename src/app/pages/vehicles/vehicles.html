@@ -20,10 +20,18 @@
         </ion-label>
       </div>
 
-      <ion-button (click)="pickMedia()" class="m-0 w-fit min-w-40 h-10" size="small" shape="round">
-        <ion-icon name="camera" slot="start" class="mr-2"></ion-icon>
-        Choose photo
-      </ion-button>
+      <div class="flex flex-wrap gap-2">
+        <ion-button (click)="takePhoto()" class="m-0 w-fit h-10" size="small" shape="round">
+          <ion-icon name="camera" slot="start" class="mr-2"></ion-icon>
+          Take photo
+        </ion-button>
+        <ion-button (click)="pickMedia()" class="m-0 w-fit h-10" size="small" shape="round">
+          Choose photo
+        </ion-button>
+      </div>
+      @if (cameraError()) {
+        <ion-label class="text-sm text-red-300">{{ cameraError() }}</ion-label>
+      }
     </div>
   </div>
 </ion-card>

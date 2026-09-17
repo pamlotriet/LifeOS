@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { IonCard, IonIcon, IonLabel, IonButton } from '@ionic/angular';
 import { Camera, MediaTypeSelection } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 @Component({
   imports: [IonButton, IonLabel, IonIcon, IonCard],
   selector: 'app-vehicles',
@@ -8,6 +9,29 @@ import { Camera, MediaTypeSelection } from '@capacitor/camera';
   templateUrl: './vehicles.html',
 })
 export class Vehicles {
+  cameraError = signal('');
+
+  takePhoto = async () => {
+    this.cameraError.set('');
+    try {
+      if (Capacitor.isNativePlatform()) {
+        const { camera } = await Camera.requestPermissions({ permissions: ['camera'] });
+        if (camera !== 'granted') {
+          this.cameraError.set('Camera access is denied. Enable it in your device settings to take a photo.');
+          return;
+        }
+      }
+
+      const photo = await Camera.takePhoto({ includeMetadata: true });
+      console.log('webPath:', photo.webPath);
+      console.log('Format:', photo.metadata?.format);
+      console.log('Size:', photo.metadata?.size);
+    } catch (e) {
+      console.error('takePhoto failed:', e);
+      this.cameraError.set('Could not open the camera. Please try again.');
+    }
+  };
+
   pickMedia = async () => {
     try {
       const { results } = await Camera.chooseFromGallery({
