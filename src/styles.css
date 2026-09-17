@@ -9,6 +9,11 @@
 :root {
   color-scheme: light;
 
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+
   --font-sans:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
     sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -142,6 +147,11 @@
 
 :root.dark {
   color-scheme: dark;
+
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
 
   /* Charts */
   --chart-1: #00d9e8;
@@ -368,8 +378,8 @@
 }
 
 .safe-area {
-  padding-top: env(safe-area-inset-top);
-  padding-right: env(safe-area-inset-right);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
+  padding-top: max(16px, var(--safe-area-top));
+  padding-right: max(16px, var(--safe-area-right));
+  padding-bottom: max(16px, var(--safe-area-bottom));
+  padding-left: max(16px, var(--safe-area-left));
 }
