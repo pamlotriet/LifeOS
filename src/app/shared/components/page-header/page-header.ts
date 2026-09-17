@@ -22,6 +22,7 @@ import { IonButton, IonButtons, IonHeader, IonIcon, IonTitle, IonToolbar } from 
         </ion-buttons>
         <ion-title>{{ title() }}</ion-title>
       </ion-toolbar>
+      <ng-content></ng-content>
     </ion-header>
   `,
 })

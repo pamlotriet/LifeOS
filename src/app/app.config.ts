@@ -40,9 +40,13 @@ addIcons({
   heart,
   chevronForward,
   chevronBack,
-  build
+  build,
 });
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideBrowserGlobalErrorListeners(), provideRouter(routes), provideIonicAngular()],
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideRouter(routes),
+    provideIonicAngular({ swipeBackEnabled: true }),
+  ],
 };

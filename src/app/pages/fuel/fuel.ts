@@ -7,6 +7,7 @@ import { PageHeader } from '../../shared/components/page-header/page-header';
 
 @Component({
   selector: 'app-fuel',
+  styleUrl: './fuel.css',
   imports: [
     IonContent,
     IonLabel,
@@ -17,17 +18,26 @@ import { PageHeader } from '../../shared/components/page-header/page-header';
     RouterOutlet,
   ],
   template: `
-    <app-page-header title="Fuel"></app-page-header>
-    <ion-content class="[--background:var(--sidebar)] [--color:var(--sidebar-foreground)]">
-      <div class="px-4 pt-4">
-        <ion-segment mode="ios" [value]="selectedSegment()">
+    <app-page-header title="Fuel">
+      <div class="segment-bar">
+        <ion-segment
+          id="fuel-segment"
+          mode="ios"
+          [scrollable]="false"
+          [value]="selectedSegment()"
+        >
           @for (option of segments; track option.value) {
-            <ion-segment-button [value]="option.value" [routerLink]="option.route">
+            <ion-segment-button
+              [value]="option.value"
+              [routerLink]="option.route"
+            >
               <ion-label class="text-sm font-semibold">{{ option.label }}</ion-label>
             </ion-segment-button>
           }
         </ion-segment>
       </div>
+    </app-page-header>
+    <ion-content class="[--background:var(--sidebar)] [--color:var(--sidebar-foreground)]">
       <div class="p-4">
         <router-outlet></router-outlet>
       </div>

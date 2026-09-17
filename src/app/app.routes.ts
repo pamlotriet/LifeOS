@@ -10,14 +10,21 @@ import { Vehicles } from './pages/vehicles/vehicles';
 import { FuelConsumptions } from './pages/fuel-consumptions/fuel-consumptions';
 import { Fuel } from './pages/fuel/fuel';
 import { Insights } from './pages/insights/insights';
+import { TabsShell } from './shared/components/tabs-shell/tabs-shell';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: Home },
-  { path: 'stats', component: Statistics, canActivate: [authGuard] },
-  { path: 'add', component: AddContent, canActivate: [authGuard] },
-  { path: 'search', component: Search, canActivate: [authGuard] },
-  { path: 'more', component: More, canActivate: [authGuard] },
+  {
+    path: '',
+    component: TabsShell,
+    children: [
+      { path: 'home', component: Home },
+      { path: 'stats', component: Statistics, canActivate: [authGuard] },
+      { path: 'add', component: AddContent, canActivate: [authGuard] },
+      { path: 'search', component: Search, canActivate: [authGuard] },
+      { path: 'more', component: More, canActivate: [authGuard] },
+    ],
+  },
   {
     path: 'fuel',
     component: Fuel,
