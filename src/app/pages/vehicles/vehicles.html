@@ -1,6 +1,10 @@
-<ion-card class="m-0 w-full rounded-2xl border border-white/10 bg-ion-sidebar-border p-4 shadow-none">
+<ion-card
+  class="m-0 w-full rounded-2xl border border-white/10 bg-ion-sidebar-border p-4 shadow-none"
+>
   <div class="flex w-full flex-row items-center gap-4">
-    <div class="grid h-28 w-28 shrink-0 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/10">
+    <div
+      class="grid h-28 w-28 shrink-0 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/10"
+    >
       <div class="grid h-16 w-16 place-items-center rounded-full bg-white/85 shadow-sm">
         <ion-icon name="car" class="text-4xl text-ion-sidebar-border"></ion-icon>
       </div>
@@ -16,8 +20,8 @@
         </ion-label>
       </div>
 
-      <ion-button class="m-0 w-fit min-w-40 h-10" size="small" shape="round">
-        <ion-icon name="camera" slot="start" class='mr-2'></ion-icon>
+      <ion-button (click)="pickMedia()" class="m-0 w-fit min-w-40 h-10" size="small" shape="round">
+        <ion-icon name="camera" slot="start" class="mr-2"></ion-icon>
         Choose photo
       </ion-button>
     </div>
