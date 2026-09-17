@@ -1,6 +1,5 @@
 import { Component, signal } from '@angular/core';
 import {
-  IonRouterOutlet,
   IonApp,
   IonTabs,
   IonTabBar,
@@ -9,17 +8,18 @@ import {
   IonLabel,
   IonButton,
 } from '@ionic/angular';
+import { TabPopover, TabPopoverItem } from './shared/components/tab-popover/tab-popover';
 
 @Component({
   imports: [
     IonButton,
     IonApp,
-    IonRouterOutlet,
     IonTabs,
     IonTabBar,
     IonTabButton,
     IonIcon,
     IonLabel,
+    TabPopover,
   ],
   selector: 'app-root',
   styleUrl: './app.css',
@@ -27,6 +27,8 @@ import {
 })
 export class App {
   isLoggedIn = true;
+  readonly addPopoverItems: TabPopoverItem[] = [{ label: 'Add content', route: '/add' }];
+  readonly morePopoverItems: TabPopoverItem[] = [{ label: 'More options', route: '/more' }];
   readonly paletteToggle = signal(false);
   ngOnInit() {
     if (typeof window === 'undefined') {

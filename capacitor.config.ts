@@ -4,7 +4,7 @@ const config: CapacitorConfig = {
   appId: 'com.pamelalotriet.lifeos',
   appName: 'LifeOS',
   webDir: 'dist',
-   zoomEnabled: false,
+  zoomEnabled: false,
 };
 
 export default config;
