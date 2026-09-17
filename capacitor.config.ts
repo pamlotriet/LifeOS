@@ -10,13 +10,13 @@ const config: CapacitorConfig = {
       providers: ['google.com'],
     },
     StatusBar: {
-      overlaysWebView: true,
+      overlaysWebView: false,
     },
     SplashScreen: {
       launchShowDuration: 3000,
       launchAutoHide: true,
       launchFadeOutDuration: 3000,
-      backgroundColor: '#ffffffff',
+      backgroundColor: '#061426',
       androidSplashResourceName: 'splash',
       androidScaleType: 'CENTER_CROP',
       showSpinner: true,

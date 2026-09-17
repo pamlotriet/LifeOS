@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
@@ -17,11 +17,31 @@ import { firebaseApp } from '../../../core/firebase/firebase.config';
 })
 export class AuthService {
   private readonly webAuth = getAuth(firebaseApp);
+  private readonly authenticated = signal(false);
+
+  constructor() {
+    void this.refreshAuthState();
+  }
+
+  readonly isAuthenticated = this.authenticated.asReadonly();
+
+  async refreshAuthState(): Promise<boolean> {
+    if (Capacitor.isNativePlatform()) {
+      const result = await FirebaseAuthentication.getCurrentUser();
+      this.authenticated.set(!!result.user);
+      return this.authenticated();
+    }
+
+    const isAuthenticated = !!this.webAuth.currentUser;
+    this.authenticated.set(isAuthenticated);
+    return isAuthenticated;
+  }
 
   async loginWithGoogle() {
     if (Capacitor.isNativePlatform()) {
       const result = await FirebaseAuthentication.signInWithGoogle();
 
+      this.authenticated.set(!!result.user);
       return result.user;
     }
 
@@ -29,23 +49,18 @@ export class AuthService {
 
     const result: UserCredential = await signInWithPopup(this.webAuth, provider);
 
+    this.authenticated.set(!!result.user);
     return result.user;
   }
 
   async logout() {
     if (Capacitor.isNativePlatform()) {
       await FirebaseAuthentication.signOut();
+      this.authenticated.set(false);
       return;
     }
 
     await webSignOut(this.webAuth);
-  }
-
-  isAuthenticated(): boolean | Promise<boolean> {
-    if (Capacitor.isNativePlatform()) {
-      return FirebaseAuthentication.getCurrentUser().then((result) => !!result.user);
-    }
-
-    return !!this.webAuth.currentUser;
+    this.authenticated.set(false);
   }
 }

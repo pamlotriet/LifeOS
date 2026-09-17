@@ -383,3 +383,8 @@
   padding-bottom: max(16px, var(--safe-area-bottom));
   padding-left: max(16px, var(--safe-area-left));
 }
+
+ion-content,
+ion-content.ion-padding {
+  --padding-top: max(16px, var(--safe-area-top));
+}

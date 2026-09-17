@@ -53,7 +53,11 @@ export class App {
     }
   }
 
-  authenticate() {
-    this.authService.loginWithGoogle();
+  async authenticate() {
+    try {
+      await this.authService.loginWithGoogle();
+    } catch (error) {
+      console.error('Google sign-in failed', error);
+    }
   }
 }
