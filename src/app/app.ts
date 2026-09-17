@@ -1,4 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import {
   IonApp,
   IonTabs,
@@ -39,6 +41,16 @@ export class App {
   initializeDarkPalette(isDark: boolean) {
     this.paletteToggle.set(isDark);
     this.toggleDarkPalette(isDark);
+    void this.updateStatusBar(isDark);
+  }
+
+  private async updateStatusBar(isDark: boolean) {
+    if (!Capacitor.isNativePlatform()) {
+      return;
+    }
+
+    await StatusBar.setBackgroundColor({ color: isDark ? '#061426' : '#f4f9fd' });
+    await StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark });
   }
 
   // Listen for the toggle check/uncheck to toggle the dark palette
