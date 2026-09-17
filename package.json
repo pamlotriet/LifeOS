@@ -35,6 +35,7 @@
     "@angular/ssr": "^22.1.8",
     "@capacitor-firebase/authentication": "^8.5.2",
     "@capacitor/android": "^8.4.3",
+    "@capacitor/camera": "^8.2.4",
     "@capacitor/core": "8.4.3",
     "@capacitor/ios": "^8.4.3",
     "@capacitor/splash-screen": "^8.0.2",

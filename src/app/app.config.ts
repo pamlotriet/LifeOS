@@ -20,6 +20,7 @@ import {
   chevronForward,
   chevronBack,
   build,
+  camera,
 } from 'ionicons/icons';
 import { routes } from './app.routes';
 
@@ -41,6 +42,7 @@ addIcons({
   chevronForward,
   chevronBack,
   build,
+  camera,
 });
 
 export const appConfig: ApplicationConfig = {
