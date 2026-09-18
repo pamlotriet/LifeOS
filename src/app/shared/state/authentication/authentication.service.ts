@@ -4,23 +4,13 @@ import { Capacitor } from '@capacitor/core';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
 import {
-  deleteUser,
   getAuth,
-  getAdditionalUserInfo,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
   signOut as webSignOut,
-  UserCredential,
 } from 'firebase/auth';
 import { firebaseApp } from '../../../core/firebase/firebase.config';
-
-export class UnregisteredGoogleAccountError extends Error {
-  constructor() {
-    super('This Google account is not registered in Firebase. Contact the administrator for access.');
-    this.name = 'UnregisteredGoogleAccountError';
-  }
-}
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +19,6 @@ export class AuthService {
   private readonly webAuth = getAuth(firebaseApp);
   private readonly authenticated = signal(false);
   private readonly ready = signal(false);
-  private readonly rejectedUserIds = new Set<string>();
   private loginPending = false;
 
   constructor() {
@@ -40,9 +29,7 @@ export class AuthService {
 
     onAuthStateChanged(this.webAuth, (user) => {
       if (!this.loginPending) {
-        this.authenticated.set(
-          !!user && user.uid === this.webAuth.currentUser?.uid && !this.rejectedUserIds.has(user.uid),
-        );
+        this.authenticated.set(!!user);
       }
       this.ready.set(true);
     });
@@ -54,13 +41,13 @@ export class AuthService {
   async refreshAuthState(): Promise<boolean> {
     if (Capacitor.isNativePlatform()) {
       const result = await FirebaseAuthentication.getCurrentUser();
-      this.authenticated.set(!!result.user && !this.rejectedUserIds.has(result.user.uid));
+      this.authenticated.set(!!result.user);
       this.ready.set(true);
       return this.authenticated();
     }
 
     const user = this.webAuth.currentUser;
-    const isAuthenticated = !!user && !this.rejectedUserIds.has(user.uid);
+    const isAuthenticated = !!user;
     this.authenticated.set(isAuthenticated);
     this.ready.set(true);
     return isAuthenticated;
@@ -69,19 +56,7 @@ export class AuthService {
   async loginWithGoogle() {
     if (Capacitor.isNativePlatform()) {
       const result = await FirebaseAuthentication.signInWithGoogle();
-      if (!result.user || result.additionalUserInfo?.isNewUser !== false) {
-        this.authenticated.set(false);
-        if (result.user) this.rejectedUserIds.add(result.user.uid);
-        if (result.additionalUserInfo?.isNewUser) {
-          try {
-            await FirebaseAuthentication.deleteUser();
-          } catch (error) {
-            console.error('Could not remove a new Firebase account', error);
-          }
-        }
-        await FirebaseAuthentication.signOut();
-        throw new UnregisteredGoogleAccountError();
-      }
+      if (!result.user) throw new Error('Google sign-in returned no user.');
 
       this.authenticated.set(true);
       return result.user;
@@ -90,21 +65,7 @@ export class AuthService {
     const provider = new GoogleAuthProvider();
     this.loginPending = true;
     try {
-      const result: UserCredential = await signInWithPopup(this.webAuth, provider);
-      const userInfo = getAdditionalUserInfo(result);
-      if (!result.user || userInfo?.isNewUser !== false) {
-        this.authenticated.set(false);
-        if (result.user) this.rejectedUserIds.add(result.user.uid);
-        if (result.user && userInfo?.isNewUser) {
-          try {
-            await deleteUser(result.user);
-          } catch (error) {
-            console.error('Could not remove a new Firebase account', error);
-          }
-        }
-        await webSignOut(this.webAuth);
-        throw new UnregisteredGoogleAccountError();
-      }
+      const result = await signInWithPopup(this.webAuth, provider);
 
       this.authenticated.set(true);
       return result.user;

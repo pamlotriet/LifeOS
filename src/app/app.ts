@@ -5,7 +5,7 @@ import { Capacitor } from '@capacitor/core';
 import { Animation, StatusBar, Style } from '@capacitor/status-bar';
 import { IonApp, IonButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/angular';
 import { filter } from 'rxjs';
-import { AuthService, UnregisteredGoogleAccountError } from './shared/state/authentication/authentication.service';
+import { AuthService } from './shared/state/authentication/authentication.service';
 
 @Component({
   imports: [IonButton, IonApp, IonIcon, IonLabel, IonRouterOutlet],
@@ -94,11 +94,7 @@ export class App {
       await this.authService.loginWithGoogle();
     } catch (error) {
       console.error('Google sign-in failed', error);
-      this.signInError.set(
-        error instanceof UnregisteredGoogleAccountError
-          ? error.message
-          : 'Could not sign in with Google. Please try again.',
-      );
+      this.signInError.set('Could not sign in with Google. Please try again.');
     } finally {
       this.signingIn.set(false);
     }
