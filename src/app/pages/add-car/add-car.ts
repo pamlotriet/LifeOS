@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { Camera, MediaTypeSelection } from '@capacitor/camera';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
+import { saRegistrationValidator } from '../../shared/validators/sa-registration.validator';
 @Component({
   imports: [IonIcon, ReactiveFormsModule],
   selector: 'app-add-car',
@@ -23,7 +24,10 @@ export class AddCar {
       Validators.pattern(/\S/),
     ]),
     year: this.formBuilder.nonNullable.control('', Validators.required),
-    registration: this.formBuilder.nonNullable.control(''),
+    registration: this.formBuilder.nonNullable.control('', [
+      Validators.required,
+      saRegistrationValidator,
+    ]),
     fuelType: this.formBuilder.nonNullable.control('', Validators.required),
     tankCapacity: this.formBuilder.control<number | null>(null, Validators.min(0)),
     odometer: this.formBuilder.control<number | null>(null, [
@@ -89,7 +93,7 @@ export class AddCar {
       make: value.make.trim(),
       model: value.model.trim(),
       year: value.year,
-      registration: value.registration.trim(),
+      registration: value.registration.trim().toUpperCase().replace(/\s+/g, ' '),
       fuelType: value.fuelType,
       tankCapacity: value.tankCapacity,
       odometer: value.odometer,

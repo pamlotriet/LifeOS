@@ -1,20 +1,26 @@
 <ion-app
   ngSkipHydration
-  class="bg-background"
+  class="bg-[#0b2034] bg-[url('/assets/lifeos-background.svg')] bg-cover bg-top bg-no-repeat"
   [class.safe-area]="authService.authReady() && authService.isAuthenticated()"
 >
   @if (!authService.authReady()) {
     <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
   } @else if (authService.isAuthenticated()) {
-    <ion-router-outlet [swipeGesture]="true" [animated]="false"></ion-router-outlet>
+    <ion-router-outlet [swipeGesture]="true"></ion-router-outlet>
   } @else {
     <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
     <ion-button
       class="absolute bottom-36 w-4/5 left-1/2 transform -translate-x-1/2 [--background:white] rounded-4xl"
+      [disabled]="signingIn()"
       (click)="authenticate()"
     >
       <ion-icon name="logo-google" slot="start" class="mr-2 text-black"></ion-icon>
-      <ion-label class="text-black font-semibold text-lg">Sign in with Google</ion-label>
+      <ion-label class="text-black font-semibold text-lg">{{ signingIn() ? 'Checking account…' : 'Sign in with Google' }}</ion-label>
     </ion-button>
+    @if (signInError()) {
+      <p role="alert" class="absolute bottom-20 left-1/2 w-4/5 -translate-x-1/2 rounded-xl border border-red-400/40 bg-[#3a1926] px-4 py-3 text-center text-sm text-white">
+        {{ signInError() }}
+      </p>
+    }
   }
 </ion-app>

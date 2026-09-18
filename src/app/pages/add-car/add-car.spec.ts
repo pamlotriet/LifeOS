@@ -37,6 +37,7 @@ describe('AddCar', () => {
       make: ' Toyota ',
       model: ' Corolla ',
       year: '2024',
+      registration: 'caa 123 456',
       fuelType: 'Petrol',
       odometer: 12500,
     });
@@ -44,7 +45,7 @@ describe('AddCar', () => {
     component.submit();
 
     expect(addVehicle).toHaveBeenCalledWith(
-      expect.objectContaining({ make: 'Toyota', model: 'Corolla', year: '2024', odometer: 12500 }),
+      expect.objectContaining({ make: 'Toyota', model: 'Corolla', year: '2024', registration: 'CAA 123 456', odometer: 12500 }),
     );
     expect(navigate).toHaveBeenCalledWith('/fuel/vehicles');
   });

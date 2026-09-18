@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 848 1855" preserveAspectRatio="xMidYMin slice">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1f33"/>
+      <stop offset="0.45" stop-color="#0b2034"/>
+      <stop offset="1" stop-color="#0d2135"/>
+    </linearGradient>
+    <radialGradient id="top" cx="0.25" cy="0.2" r="0.95">
+      <stop offset="0" stop-color="#104266"/>
+      <stop offset="0.55" stop-color="#0c304f"/>
+      <stop offset="1" stop-color="#0a223b"/>
+    </radialGradient>
+    <linearGradient id="wave-line" x1="0" y1="0" x2="848" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d5ff"/>
+      <stop offset="0.18" stop-color="#1295d6"/>
+      <stop offset="0.38" stop-color="#0e628f"/>
+      <stop offset="0.72" stop-color="#133d62"/>
+      <stop offset="1" stop-color="#134e78"/>
+    </linearGradient>
+    <radialGradient id="soft-glow" cx="0.08" cy="0.04" r="0.9">
+      <stop offset="0" stop-color="#0c354f" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#0c354f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="848" height="1855" fill="url(#base)"/>
+  <rect width="848" height="1855" fill="url(#soft-glow)"/>
+  <path d="M0 68H54C157 68 184 211 330 211H613C712 211 749 69 848 69V0H0Z" fill="url(#top)"/>
+  <path d="M0 68H54C157 68 184 211 330 211H613C712 211 749 69 848 69" fill="none" stroke="url(#wave-line)" stroke-width="2"/>
+</svg>

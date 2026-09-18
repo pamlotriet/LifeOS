@@ -388,26 +388,3 @@ ion-content,
 ion-content.ion-padding {
   --padding-top: max(16px, var(--safe-area-top));
 }
-
-/* The Fuel segment is projected into the shared header, so size its Ionic hosts globally. */
-#fuel-segment {
-  width: 100%;
-  height: 30px !important;
-  min-height: 30px !important;
-  max-height: 30px !important;
-  --background: var(--background);
-  border-radius: 12px;
-}
-
-#fuel-segment ion-segment-button {
-  height: 26px !important;
-  min-height: 26px !important;
-  max-height: 26px !important;
-  --indicator-color: var(--nav-active);
-  --color: var(--text-secondary);
-  --color-checked: var(--nav-active-foreground);
-}
-
-#fuel-segment ion-segment-button::part(native) {
-  min-height: 26px !important;
-}

@@ -2,7 +2,7 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Animation, StatusBar, Style } from '@capacitor/status-bar';
 import { IonApp, IonButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/angular';
-import { AuthService } from './shared/state/authentication/authentication.service';
+import { AuthService, UnregisteredGoogleAccountError } from './shared/state/authentication/authentication.service';
 
 @Component({
   imports: [IonButton, IonApp, IonIcon, IonLabel, IonRouterOutlet],
@@ -13,6 +13,8 @@ import { AuthService } from './shared/state/authentication/authentication.servic
 export class App {
   authService = inject(AuthService);
   readonly paletteToggle = signal(false);
+  readonly signInError = signal('');
+  readonly signingIn = signal(false);
   private statusBarUpdate: Promise<void> = Promise.resolve();
 
   constructor() {
@@ -70,10 +72,20 @@ export class App {
   }
 
   async authenticate() {
+    if (this.signingIn()) return;
+    this.signInError.set('');
+    this.signingIn.set(true);
     try {
       await this.authService.loginWithGoogle();
     } catch (error) {
       console.error('Google sign-in failed', error);
+      this.signInError.set(
+        error instanceof UnregisteredGoogleAccountError
+          ? error.message
+          : 'Could not sign in with Google. Please try again.',
+      );
+    } finally {
+      this.signingIn.set(false);
     }
   }
 }

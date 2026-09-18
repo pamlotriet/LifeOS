@@ -1,40 +1,59 @@
-<div class="mx-auto flex w-full max-w-md flex-col gap-2 py-1 text-white">
-  <div class="mb-1 flex items-center justify-between">
-    <h1 class="text-base font-semibold">My Vehicles</h1>
-    <span class="text-xs font-semibold text-[#23d4ec]">See all</span>
+<div class="mx-auto flex w-full max-w-md flex-col gap-3 pt-3 text-white">
+  <div class="mb-1 flex items-center justify-between px-0.5">
+    <h1 class="text-xl font-bold tracking-tight">My Vehicles</h1>
   </div>
 
   @for (vehicle of vehicles(); track vehicle.id) {
-    <article class="flex min-h-18 items-center gap-2 overflow-hidden rounded-xl border border-[#1b4563] bg-[#102b44] pr-2 shadow-[0_4px_14px_rgba(0,0,0,0.1)]">
+    <article
+      class="flex min-h-24 items-center gap-3 overflow-hidden rounded-[22px] border border-[#32628a] bg-gradient-to-br from-[#173a5b] via-[#123351] to-[#0e2a46] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_8px_22px_rgba(0,0,0,0.15)]"
+    >
       @if (vehicle.image) {
-        <img [src]="vehicle.image" [alt]="vehicle.name" class="h-18 w-28 shrink-0 rounded-lg object-cover object-center" />
+        <img
+          [src]="vehicle.image"
+          [alt]="vehicle.name"
+          class="h-[72px] w-24 shrink-0 rounded-2xl border border-white/10 object-cover object-center"
+        />
       } @else {
-        <div class="grid h-18 w-28 shrink-0 place-items-center rounded-lg bg-[#193b58]">
-          <ion-icon name="car" class="text-4xl text-[#91afc8]" aria-hidden="true"></ion-icon>
+        <div
+          class="grid h-[72px] w-24 shrink-0 place-items-center rounded-2xl border border-white/10 bg-[#214a70]"
+        >
+          <ion-icon name="car" class="text-4xl text-[#a8c9e7]" aria-hidden="true"></ion-icon>
         </div>
       }
-      <div class="min-w-0 flex-1 py-1">
-        <h2 class="truncate text-xs font-semibold">{{ vehicle.name }}</h2>
-        <p class="mt-0.5 truncate text-[10px] text-[#b1c7d9]">{{ vehicle.description }}</p>
-        <span class="mt-1 inline-flex max-w-full truncate rounded-full border border-[#2a5570] px-2 py-0.5 text-[9px] text-[#a9bfd1]">{{ vehicle.registration }}</span>
+      <div class="min-w-0 flex-1 py-0.5">
+        <h2 class="truncate text-[15px] font-semibold leading-tight">{{ vehicle.name }}</h2>
+        <p class="mt-1 truncate text-xs text-[#b7cde1]">{{ vehicle.description }}</p>
+        <span
+          class="mt-1.5 inline-flex max-w-full truncate rounded-full border border-[#426f96] bg-[#193b5d] px-2 py-0.5 text-[10px] leading-tight text-[#b7cde1]"
+          >{{ vehicle.registration }}</span
+        >
       </div>
       <div class="flex shrink-0 items-center gap-2">
         <div class="text-right">
-          <p class="text-sm font-semibold leading-none">{{ vehicle.consumption }}</p>
-          <p class="mt-1 text-[9px] text-[#b1c7d9]">L/100km</p>
+          <p class="text-lg font-bold leading-none">{{ vehicle.consumption }}</p>
+          <p class="mt-1 text-[10px] text-[#b7cde1]">L/100km</p>
         </div>
-        <ion-icon name="chevron-forward" class="text-sm text-[#b1c7d9]" aria-hidden="true"></ion-icon>
+        <ion-icon
+          name="chevron-forward"
+          class="text-lg text-[#a9c9e6]"
+          aria-hidden="true"
+        ></ion-icon>
       </div>
     </article>
   }
 
-  <a routerLink="/fuel/add-car" class="mt-1 flex min-h-14 items-center justify-center gap-2 rounded-xl border border-dashed border-[#11cce7] bg-[#0b263c] px-3 text-left no-underline">
-    <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#19d2e5] text-[#062137]">
-      <ion-icon name="add" class="text-lg" aria-hidden="true"></ion-icon>
+  <a
+    routerLink="/fuel/add-car"
+    class="mt-0.5 flex min-h-[72px] items-center justify-center gap-3 rounded-[22px] border border-dashed border-[#1ce0f2] bg-[#0c2b47] px-3 text-left no-underline transition-colors hover:bg-[#103858]"
+  >
+    <span
+      class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#1ce5ef] to-[#14bfe5] text-[#062137] shadow-[0_5px_16px_rgba(20,207,231,0.2)]"
+    >
+      <ion-icon name="add" class="text-2xl" aria-hidden="true"></ion-icon>
     </span>
     <span class="flex flex-col">
-      <span class="text-xs font-semibold text-[#2bd9ed]">Add vehicle</span>
-      <span class="text-[10px] text-[#a8bece]">Start tracking fuel consumption</span>
+      <span class="text-sm font-semibold text-[#4be9f6]">Add vehicle</span>
+      <span class="mt-0.5 text-xs text-[#a8c4da]">Start tracking fuel consumption</span>
     </span>
   </a>
 </div>
