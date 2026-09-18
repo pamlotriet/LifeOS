@@ -6,7 +6,7 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
   imports: [IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs],
   template: `
     <ion-tabs>
-      <ion-tab-bar slot="bottom" class="h-20 border-t border-white/10 bg-[#0b2138] [--background:#0b2138] [--border:none]">
+      <ion-tab-bar slot="bottom" class="h-24 border-t border-white/10 bg-[#0b2138] pb-4 pt-2 [--background:#0b2138] [--border:none]">
         <ion-tab-button tab="home" class="[--background:#0b2138] [--color:#aebdd3] [--color-selected:#40e6f2]">
           <div class="flex flex-col items-center justify-center">
             <ion-icon size="large" name="home" class="mb-1"></ion-icon>

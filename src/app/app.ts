@@ -20,11 +20,10 @@ export class App {
   constructor() {
     effect(() => {
       const showStatusBar = this.authService.authReady() && this.authService.isAuthenticated();
-      const isDark = this.paletteToggle();
       if (!Capacitor.isNativePlatform()) return;
 
       this.statusBarUpdate = this.statusBarUpdate
-        .then(() => this.updateStatusBar(showStatusBar, isDark))
+        .then(() => this.updateStatusBar(showStatusBar))
         .catch((error) => console.error('Status bar update failed', error));
     });
   }
@@ -48,14 +47,14 @@ export class App {
     this.toggleDarkPalette(isDark);
   }
 
-  private async updateStatusBar(visible: boolean, isDark: boolean) {
+  private async updateStatusBar(visible: boolean) {
     if (!visible) {
       await StatusBar.hide({ animation: Animation.None });
       return;
     }
 
-    await StatusBar.setBackgroundColor({ color: isDark ? '#061426' : '#f4f9fd' });
-    await StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light });
+    await StatusBar.setBackgroundColor({ color: '#0d3454' });
+    await StatusBar.setStyle({ style: Style.Dark });
     await StatusBar.show({ animation: Animation.None });
   }
 
