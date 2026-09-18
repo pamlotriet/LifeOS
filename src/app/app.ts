@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
-import { StatusBar, Style } from '@capacitor/status-bar';
+import { Animation, StatusBar, Style } from '@capacitor/status-bar';
 import { IonApp, IonButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/angular';
 import { AuthService } from './shared/state/authentication/authentication.service';
 
@@ -13,6 +13,19 @@ import { AuthService } from './shared/state/authentication/authentication.servic
 export class App {
   authService = inject(AuthService);
   readonly paletteToggle = signal(false);
+  private statusBarUpdate: Promise<void> = Promise.resolve();
+
+  constructor() {
+    effect(() => {
+      const showStatusBar = this.authService.authReady() && this.authService.isAuthenticated();
+      const isDark = this.paletteToggle();
+      if (!Capacitor.isNativePlatform()) return;
+
+      this.statusBarUpdate = this.statusBarUpdate
+        .then(() => this.updateStatusBar(showStatusBar, isDark))
+        .catch((error) => console.error('Status bar update failed', error));
+    });
+  }
 
   ngOnInit() {
     if (typeof window === 'undefined') {
@@ -31,16 +44,17 @@ export class App {
   initializeDarkPalette(isDark: boolean) {
     this.paletteToggle.set(isDark);
     this.toggleDarkPalette(isDark);
-    void this.updateStatusBar(isDark);
   }
 
-  private async updateStatusBar(isDark: boolean) {
-    if (!Capacitor.isNativePlatform()) {
+  private async updateStatusBar(visible: boolean, isDark: boolean) {
+    if (!visible) {
+      await StatusBar.hide({ animation: Animation.None });
       return;
     }
 
     await StatusBar.setBackgroundColor({ color: isDark ? '#061426' : '#f4f9fd' });
-    await StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark });
+    await StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light });
+    await StatusBar.show({ animation: Animation.None });
   }
 
   // Listen for the toggle check/uncheck to toggle the dark palette
