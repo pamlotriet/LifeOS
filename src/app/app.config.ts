@@ -31,6 +31,13 @@ import {
   waterOutline,
   speedometerOutline,
   informationCircleOutline,
+  cloudy,
+  location,
+  flash,
+  cash,
+  checkmark,
+  documentText,
+  carSport,
 } from 'ionicons/icons';
 import { routes } from './app.routes';
 
@@ -63,6 +70,13 @@ addIcons({
   waterOutline,
   speedometerOutline,
   informationCircleOutline,
+  cloudy,
+  location,
+  flash,
+  cash,
+  checkmark,
+  documentText,
+  carSport,
 });
 
 export const appConfig: ApplicationConfig = {

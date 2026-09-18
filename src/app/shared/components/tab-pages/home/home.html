@@ -1,27 +1,84 @@
-<div class="grid grid-cols-3 gap-2 p-2">
-  @for (item of items; track item.id) {
-    <ion-card
-      [button]="true"
-      [routerLink]="item.route ?? null"
-      class="m-0 min-h-28 rounded-lg p-2 [--background:var(--card)] [--color:var(--card-foreground)]"
-    >
-      <div class="flex h-full min-h-24 flex-col justify-between">
-        <div class="flex items-start justify-between">
-          <ion-icon
-            [name]="item.icon"
-            size="large"
-            class="text-2xl"
-            [style.color]="item.color"
-          ></ion-icon>
-          <ion-icon name="chevron-forward" class="mt-1 text-lg text-(--text-muted)"></ion-icon>
+<ion-content class="[--background:#07182a] [--color:#f8fafc]">
+  <main class="mx-auto max-w-2xl px-4 pb-8 pt-4 text-white">
+    <header class="mb-5 px-1">
+      <p class="text-sm tracking-wide text-slate-400">{{ today }}</p>
+      <h1 class="mt-1 text-[clamp(1.75rem,7vw,2.5rem)] font-bold leading-tight tracking-tight">
+        {{ greeting }}!
+      </h1>
+      <p class="mt-1 text-sm tracking-wide text-slate-400">Small steps make a big life.</p>
+    </header>
+
+    <section aria-label="Daily overview" class="mb-3 grid grid-cols-5 gap-2.5">
+      <div class="col-span-3 rounded-2xl border border-white/10 bg-[#142b45] p-3 shadow-lg shadow-black/10">
+        <div class="flex items-center gap-2">
+          <ion-icon name="cloudy" class="shrink-0 text-4xl text-[#c4d9ff]"></ion-icon>
+          <div class="min-w-0">
+            <p class="text-2xl font-bold leading-none">22°</p>
+            <p class="mt-1 text-xs text-slate-300">Cloudy</p>
+          </div>
+          <span class="ml-auto flex items-center gap-0.5 self-start whitespace-nowrap text-[10px] text-slate-400">
+            <ion-icon name="location" aria-hidden="true"></ion-icon> Seattle
+          </span>
         </div>
-        <div>
-          <h2 class="m-0 text-sm font-semibold text-foreground">{{ item.title }}</h2>
-          <p class="m-0 mt-1 text-[0.65rem] leading-tight text-(--text-secondary)">
-            {{ item.description }}
-          </p>
+        <div class="mt-5 grid grid-cols-3 divide-x divide-white/10 text-center">
+          <div class="flex flex-col gap-1 px-1 text-[11px] text-slate-300">
+            <span>Tue</span><span class="whitespace-nowrap text-white">🌤️ 24°</span>
+          </div>
+          <div class="flex flex-col gap-1 px-1 text-[11px] text-slate-300">
+            <span>Wed</span><span class="whitespace-nowrap text-white">☀️ 26°</span>
+          </div>
+          <div class="flex flex-col gap-1 px-1 text-[11px] text-slate-300">
+            <span>Thu</span><span class="whitespace-nowrap text-white">🌧️ 18°</span>
+          </div>
         </div>
       </div>
-    </ion-card>
-  }
-</div>
+      <div class="col-span-2 flex flex-col rounded-2xl border border-violet-300/10 bg-[#1b2947] p-3 shadow-lg shadow-black/10">
+        <span class="text-4xl font-bold leading-none text-violet-400">“</span>
+        <p class="mt-1 text-[13px] leading-snug text-white">A better you builds a brighter tomorrow.</p>
+        <span class="mt-auto pt-3 text-[10px] uppercase tracking-wide text-slate-400">— Keep going</span>
+      </div>
+    </section>
+
+    <section aria-label="Life areas" class="grid grid-cols-3 gap-2">
+      @for (item of items; track item.id) {
+        <a
+          [routerLink]="item.route ?? null"
+          class="flex min-h-[116px] flex-col rounded-2xl border border-[#294661] bg-gradient-to-br from-[#1a3855] via-[#142f4a] to-[#10263d] p-2.5 text-white no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_20px_rgba(0,0,0,0.16)] transition-all duration-150 hover:border-cyan-300/30 hover:brightness-110 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-cyan-300"
+        >
+          <div class="flex items-start">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 ring-white/20 shadow-[0_4px_10px_rgba(0,0,0,0.18)]" [class]="item.iconBackground">
+              <ion-icon [name]="item.icon" class="text-[22px]" [class]="item.iconColor"></ion-icon>
+            </span>
+          </div>
+          <div class="mt-auto pt-2">
+            <h2 class="text-sm font-semibold leading-tight tracking-tight">{{ item.title }}</h2>
+            <p class="mt-0.5 text-[11px] leading-[1.25] text-slate-300">{{ item.description }}</p>
+          </div>
+        </a>
+      }
+    </section>
+
+    <section aria-labelledby="quick-actions-title" class="mt-3 rounded-2xl border border-white/10 bg-[#102942] p-2.5 shadow-lg shadow-black/10">
+      <div class="mb-2 flex items-center justify-between px-1">
+        <h2 id="quick-actions-title" class="flex items-center gap-2 text-sm font-semibold">
+          <ion-icon name="flash" class="text-xl text-cyan-400" aria-hidden="true"></ion-icon>
+          Quick actions
+        </h2>
+        <span class="flex items-center gap-0.5 text-xs text-slate-300">See all <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
+      </div>
+      <div class="grid grid-cols-4 gap-1.5">
+        @for (action of quickActions; track action.label) {
+          <a
+            [routerLink]="action.route ?? null"
+            class="flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-white/5 bg-[#1b334e] px-1 py-2 text-center text-white no-underline"
+          >
+            <span class="flex h-7 w-7 items-center justify-center rounded-full" [class]="action.iconBackground">
+              <ion-icon [name]="action.icon" class="text-base" [class]="action.iconColor"></ion-icon>
+            </span>
+            <span class="text-[10px] leading-tight">{{ action.label }}</span>
+          </a>
+        }
+      </div>
+    </section>
+  </main>
+</ion-content>
