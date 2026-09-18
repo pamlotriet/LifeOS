@@ -377,11 +377,11 @@
   background: var(--surface-soft-purple);
 }
 
-.safe-area {
-  padding-top: max(16px, var(--safe-area-top));
-  padding-right: max(16px, var(--safe-area-right));
-  padding-bottom: max(16px, var(--safe-area-bottom));
-  padding-left: max(16px, var(--safe-area-left));
+ion-router-outlet.app-route-outlet {
+  top: var(--safe-area-top);
+  right: var(--safe-area-right);
+  bottom: var(--safe-area-bottom);
+  left: var(--safe-area-left);
 }
 
 ion-content,

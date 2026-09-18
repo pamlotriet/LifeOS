@@ -1,12 +1,11 @@
 <ion-app
   ngSkipHydration
   class="bg-[#0b2034] bg-[url('/assets/lifeos-background.svg')] bg-cover bg-top bg-no-repeat"
-  [class.safe-area]="authService.authReady() && authService.isAuthenticated()"
 >
   @if (!authService.authReady()) {
     <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
   } @else if (authService.isAuthenticated()) {
-    <ion-router-outlet [swipeGesture]="true"></ion-router-outlet>
+    <ion-router-outlet class="app-route-outlet" [swipeGesture]="true"></ion-router-outlet>
   } @else {
     <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
     <ion-button
