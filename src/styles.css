@@ -395,7 +395,7 @@ ion-content.ion-padding {
   height: 30px !important;
   min-height: 30px !important;
   max-height: 30px !important;
-  --background: var(--card);
+  --background: var(--background);
   border-radius: 12px;
 }
 

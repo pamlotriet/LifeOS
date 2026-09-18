@@ -21,6 +21,16 @@ import {
   chevronBack,
   build,
   camera,
+  carSportOutline,
+  cameraOutline,
+  pricetagOutline,
+  calendarOutline,
+  chevronDownOutline,
+  cardOutline,
+  batteryChargingOutline,
+  waterOutline,
+  speedometerOutline,
+  informationCircleOutline,
 } from 'ionicons/icons';
 import { routes } from './app.routes';
 
@@ -43,6 +53,16 @@ addIcons({
   chevronBack,
   build,
   camera,
+  carSportOutline,
+  cameraOutline,
+  pricetagOutline,
+  calendarOutline,
+  chevronDownOutline,
+  cardOutline,
+  batteryChargingOutline,
+  waterOutline,
+  speedometerOutline,
+  informationCircleOutline,
 });
 
 export const appConfig: ApplicationConfig = {

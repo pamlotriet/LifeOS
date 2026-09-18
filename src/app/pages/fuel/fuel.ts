@@ -18,8 +18,8 @@ import { PageHeader } from '../../shared/components/page-header/page-header';
     RouterOutlet,
   ],
   template: `
-    <app-page-header title="Fuel">
-      <div class="segment-bar">
+    <ion-header app-page-header title="Fuel">
+      <div class="segment-bar mt-8">
         <ion-segment
           id="fuel-segment"
           mode="ios"
@@ -36,8 +36,8 @@ import { PageHeader } from '../../shared/components/page-header/page-header';
           }
         </ion-segment>
       </div>
-    </app-page-header>
-    <ion-content class="[--background:var(--sidebar)] [--color:var(--sidebar-foreground)]">
+    </ion-header>
+    <ion-content class="[--background:var(--background)] [--color:var(--foreground)]">
       <div class="p-4">
         <router-outlet></router-outlet>
       </div>
@@ -63,7 +63,7 @@ export class Fuel {
 
   private segmentFromUrl(url: string): string {
     const path = url.split(/[?#]/, 1)[0].replace(/\/$/, '');
-    if (path === '/fuel/vehicles') return 'vehicles';
+    if (path === '/fuel/vehicles' || path === '/fuel/add-car') return 'vehicles';
     if (path === '/fuel/insights') return 'insights';
     return 'consumption';
   }

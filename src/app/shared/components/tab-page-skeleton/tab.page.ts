@@ -13,27 +13,27 @@ import { More } from '../tab-pages/more/more';
   imports: [IonContent, Home, Statistics, AddContent, Search, More],
   template: `
     @if (tab() === 'home') {
-      <ion-content class="ion-padding bg-sidebar text-(--ion-text-color) [--color:var(--ion-text-color)]">
+      <ion-content class="ion-padding [--background:var(--background)] [--color:var(--foreground)]">
         <app-home></app-home>
       </ion-content>
     }
     @if (tab() === 'stats') {
-      <ion-content class="ion-padding bg-sidebar text-(--ion-text-color) [--color:var(--ion-text-color)]">
+      <ion-content class="ion-padding [--background:var(--background)] [--color:var(--foreground)]">
         <app-statistics></app-statistics>
       </ion-content>
     }
     @if (tab() === 'add') {
-      <ion-content class="ion-padding bg-sidebar text-(--ion-text-color) [--color:var(--ion-text-color)]">
+      <ion-content class="ion-padding [--background:var(--background)] [--color:var(--foreground)]">
         <app-add-content></app-add-content>
       </ion-content>
     }
     @if (tab() === 'search') {
-      <ion-content class="ion-padding bg-sidebar text-(--ion-text-color) [--color:var(--ion-text-color)]">
+      <ion-content class="ion-padding [--background:var(--background)] [--color:var(--foreground)]">
         <app-search></app-search>
       </ion-content>
     }
     @if (tab() === 'more') {
-      <ion-content class="ion-padding bg-sidebar text-(--ion-text-color) [--color:var(--ion-text-color)]">
+      <ion-content class="ion-padding [--background:var(--background)] [--color:var(--foreground)]">
         <app-more></app-more>
       </ion-content>
     }

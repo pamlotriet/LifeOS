@@ -59,6 +59,7 @@ export class Home {
       icon: 'car',
       color: '#28b8ff',
       id: 6,
+      route: '/fuel/vehicles',
     },
   ];
 }

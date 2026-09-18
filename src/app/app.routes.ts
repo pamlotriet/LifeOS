@@ -32,10 +32,11 @@ export const routes: Routes = [
     children: [
       { path: '', component: FuelConsumptions, pathMatch: 'full' },
       { path: 'vehicles', component: Vehicles },
+      { path: 'add-car', component: AddCar },
       { path: 'insights', component: Insights },
     ],
   },
-  { path: 'add/car', component: AddCar, canActivate: [authGuard] },
+  { path: 'add/car', redirectTo: 'fuel/add-car' },
   { path: 'vehicles', redirectTo: 'fuel/vehicles' },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
