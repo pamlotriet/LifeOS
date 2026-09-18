@@ -48,7 +48,8 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>LifeOS needs camera access so you can take a vehicle photo.</string>	<key>CFBundleURLTypes</key>
+	<string>LifeOS needs camera access so you can take a vehicle photo.</string>
+	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLSchemes</key>
@@ -59,5 +60,4 @@
 	</array>
 </dict>
 </plist>
-
 
