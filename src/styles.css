@@ -9,9 +9,8 @@
 :root {
   color-scheme: light;
 
-  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-top: max(48px, env(safe-area-inset-top, 0px));
   --safe-area-right: env(safe-area-inset-right, 0px);
-  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --safe-area-left: env(safe-area-inset-left, 0px);
 
   --font-sans:
@@ -148,9 +147,8 @@
 :root.dark {
   color-scheme: dark;
 
-  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-top: max(48px, env(safe-area-inset-top, 0px));
   --safe-area-right: env(safe-area-inset-right, 0px);
-  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --safe-area-left: env(safe-area-inset-left, 0px);
 
   /* Charts */
@@ -380,11 +378,17 @@
 ion-router-outlet.app-route-outlet {
   top: var(--safe-area-top);
   right: var(--safe-area-right);
-  bottom: var(--safe-area-bottom);
+  bottom: 0;
   left: var(--safe-area-left);
+}
+
+html.ios ion-tab-bar.lifeos-tab-bar {
+  height: calc(42px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 ion-content,
 ion-content.ion-padding {
-  --padding-top: max(16px, var(--safe-area-top));
+  --padding-top: 16px;
+  --padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
 }

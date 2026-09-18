@@ -7,7 +7,6 @@ import { PageHeader } from '../../shared/components/page-header/page-header';
 
 @Component({
   selector: 'app-fuel',
-  host: { class: "bg-[#0b2034] bg-[url('/assets/lifeos-background.svg')] bg-cover bg-top bg-no-repeat" },
   imports: [
     IonContent,
     IonIcon,

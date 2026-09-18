@@ -46,9 +46,9 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
-	<key>UIStatusBarHidden</key>
-	<true/>
+	<false/>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
 	<key>NSCameraUsageDescription</key>
 	<string>LifeOS needs camera access so you can take a vehicle photo.</string>
 	<key>CFBundleURLTypes</key>
@@ -62,4 +62,3 @@
 	</array>
 </dict>
 </plist>
-

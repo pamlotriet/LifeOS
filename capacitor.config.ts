@@ -9,11 +9,6 @@ const config: CapacitorConfig = {
     FirebaseAuthentication: {
       providers: ['google.com'],
     },
-    StatusBar: {
-      overlaysWebView: false,
-      backgroundColor: '#0d3454',
-      style: 'DARK',
-    },
     SplashScreen: {
       launchShowDuration: 3000,
       launchAutoHide: true,

@@ -5,7 +5,6 @@ import { IonContent, IonIcon } from '@ionic/angular';
 @Component({
   imports: [IonContent, IonIcon, RouterLink],
   selector: 'app-home',
-  host: { class: "bg-[#0b2034] bg-[url('/assets/lifeos-background.svg')] bg-cover bg-top bg-no-repeat" },
   templateUrl: './home.html',
 })
 export class Home {

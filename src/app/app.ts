@@ -1,10 +1,5 @@
-import { Component, effect, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router } from '@angular/router';
-import { Capacitor } from '@capacitor/core';
-import { Animation, StatusBar, Style } from '@capacitor/status-bar';
+import { Component, inject, signal } from '@angular/core';
 import { IonApp, IonButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/angular';
-import { filter } from 'rxjs';
 import { AuthService } from './shared/state/authentication/authentication.service';
 
 @Component({
@@ -15,28 +10,9 @@ import { AuthService } from './shared/state/authentication/authentication.servic
 })
 export class App {
   authService = inject(AuthService);
-  private readonly router = inject(Router);
   readonly paletteToggle = signal(false);
   readonly signInError = signal('');
   readonly signingIn = signal(false);
-  private statusBarUpdate: Promise<void> = Promise.resolve();
-
-  constructor() {
-    effect(() => {
-      const showStatusBar = this.authService.authReady();
-      if (!Capacitor.isNativePlatform()) return;
-
-      this.queueStatusBarUpdate(showStatusBar);
-    });
-
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd), takeUntilDestroyed())
-      .subscribe(() => {
-        if (Capacitor.isNativePlatform() && this.authService.authReady()) {
-          this.queueStatusBarUpdate(true);
-        }
-      });
-  }
 
   ngOnInit() {
     if (typeof window === 'undefined') {
@@ -55,23 +31,6 @@ export class App {
   initializeDarkPalette(isDark: boolean) {
     this.paletteToggle.set(isDark);
     this.toggleDarkPalette(isDark);
-  }
-
-  private async updateStatusBar(visible: boolean) {
-    if (!visible) {
-      await StatusBar.hide({ animation: Animation.None });
-      return;
-    }
-
-    await StatusBar.setBackgroundColor({ color: '#0d3454' });
-    await StatusBar.setStyle({ style: Style.Dark });
-    await StatusBar.show({ animation: Animation.None });
-  }
-
-  private queueStatusBarUpdate(visible: boolean) {
-    this.statusBarUpdate = this.statusBarUpdate
-      .then(() => this.updateStatusBar(visible))
-      .catch((error) => console.error('Status bar update failed', error));
   }
 
   // Listen for the toggle check/uncheck to toggle the dark palette
