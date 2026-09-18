@@ -1,4 +1,4 @@
-package com.pamelalotriet.lifeos;
+package com.lotriet.lifeos;
 
 import com.getcapacitor.BridgeActivity;
 

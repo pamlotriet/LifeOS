@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.pamelalotriet.lifeos"
+    namespace = "com.lotriet.lifeos"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.lotriet.lifeos"
