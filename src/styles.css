@@ -382,8 +382,26 @@ ion-router-outlet.app-route-outlet {
   left: var(--safe-area-left);
 }
 
+ion-tab-bar.lifeos-tab-bar {
+  height: 64px;
+}
+
+ion-tab-button.lifeos-tab-button {
+  height: 64px;
+  align-items: center;
+  justify-content: center;
+}
+
+ion-tab-button.lifeos-tab-button::part(native) {
+  display: flex;
+  height: 64px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
 html.ios ion-tab-bar.lifeos-tab-bar {
-  height: calc(42px + env(safe-area-inset-bottom, 0px));
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
