@@ -18,6 +18,11 @@ export class VehicleService {
     return documents.map((document) => this.toVehicle(document));
   }
 
+  async get(id: string): Promise<VehicleRecord> {
+    const { uid, token } = await this.auth.getSession();
+    return this.toVehicle(await this.firestore.getDocument(`users/${uid}/vehicles/${encodeURIComponent(id)}`, token));
+  }
+
   async add(vehicle: Omit<VehicleRecord, 'id'>): Promise<VehicleRecord> {
     const { uid, token } = await this.auth.getSession();
     const id = globalThis.crypto?.randomUUID?.() ?? `vehicle-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -28,7 +33,57 @@ export class VehicleService {
       record.photoStoragePath = uploaded.path;
       record.photoUrl = uploaded.url;
     }
-    const fields: Record<string, FirestoreValue> = {
+    const fields = this.toFields(record);
+
+    try {
+      await this.firestore.createDocument(path, id, fields, token);
+      return record;
+    } catch (error) {
+      if (record.photoStoragePath) {
+        try {
+          await this.photos.deleteVehiclePhoto(record.photoStoragePath, token);
+        } catch (cleanupError) {
+          console.error('Could not clean up the vehicle photo', cleanupError);
+        }
+      }
+      throw error;
+    }
+  }
+
+  async update(id: string, changes: Omit<VehicleRecord, 'id' | 'photoStoragePath'>): Promise<VehicleRecord> {
+    const { uid, token } = await this.auth.getSession();
+    const previous = await this.get(id);
+    const record: VehicleRecord = { ...previous, ...changes, id };
+    let uploadedPath: string | null = null;
+    if (changes.photoUrl && changes.photoUrl !== previous.photoUrl) {
+      const uploaded = await this.photos.uploadVehiclePhoto(uid, id, changes.photoUrl, token, `photo-${crypto.randomUUID()}`);
+      record.photoUrl = uploaded.url;
+      record.photoStoragePath = uploaded.path;
+      uploadedPath = uploaded.path;
+    }
+    try {
+      await this.firestore.updateDocument(`users/${uid}/vehicles/${encodeURIComponent(id)}`, this.toFields(record), token);
+    } catch (error) {
+      if (uploadedPath) await this.photos.deleteVehiclePhoto(uploadedPath, token).catch((cleanupError) => console.error('Could not clean up the vehicle photo', cleanupError));
+      throw error;
+    }
+    if (uploadedPath && previous.photoStoragePath) {
+      await this.photos.deleteVehiclePhoto(previous.photoStoragePath, token).catch((cleanupError) => console.error('Could not remove the old vehicle photo', cleanupError));
+    }
+    return record;
+  }
+
+  async delete(id: string): Promise<void> {
+    const { uid, token } = await this.auth.getSession();
+    const previous = await this.get(id);
+    await this.firestore.deleteDocument(`users/${uid}/vehicles`, id, token);
+    if (previous.photoStoragePath) {
+      await this.photos.deleteVehiclePhoto(previous.photoStoragePath, token).catch((cleanupError) => console.error('Could not remove the vehicle photo', cleanupError));
+    }
+  }
+
+  private toFields(record: VehicleRecord): Record<string, FirestoreValue> {
+    return {
       make: { stringValue: record.make },
       model: { stringValue: record.model },
       year: { stringValue: record.year },
@@ -45,20 +100,6 @@ export class VehicleService {
         ? { stringValue: record.photoUrl }
         : { nullValue: null },
     };
-
-    try {
-      await this.firestore.createDocument(path, id, fields, token);
-      return record;
-    } catch (error) {
-      if (record.photoStoragePath) {
-        try {
-          await this.photos.deleteVehiclePhoto(record.photoStoragePath, token);
-        } catch (cleanupError) {
-          console.error('Could not clean up the vehicle photo', cleanupError);
-        }
-      }
-      throw error;
-    }
   }
 
   private toVehicle(document: FirestoreDocument): VehicleRecord {

@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { Camera, MediaTypeSelection } from '@capacitor/camera';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
@@ -14,8 +14,12 @@ import { saRegistrationValidator } from '../../shared/validators/sa-registration
 })
 export class AddCar {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly formBuilder = inject(FormBuilder);
   private readonly vehicleStore = inject(VehicleStore);
+  readonly editId = this.route.snapshot.paramMap.get('id');
+  readonly loadingVehicle = signal(!!this.editId);
+  readonly deleting = signal(false);
 
   readonly vehicleForm = this.formBuilder.group({
     make: this.formBuilder.nonNullable.control('', [Validators.required, Validators.pattern(/\S/)]),
@@ -55,6 +59,30 @@ export class AddCar {
   );
   readonly fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric'];
 
+  constructor() {
+    if (this.editId) void this.loadVehicle(this.editId);
+  }
+
+  private async loadVehicle(id: string): Promise<void> {
+    try {
+      const vehicle = await this.vehicleStore.get(id);
+      this.vehicleForm.patchValue({
+        make: vehicle.make,
+        model: vehicle.model,
+        year: vehicle.year,
+        registration: vehicle.registration,
+        fuelType: vehicle.fuelType,
+        tankCapacity: vehicle.tankCapacity,
+        odometer: vehicle.odometer,
+        photoUrl: vehicle.photoUrl,
+      });
+    } catch (error) {
+      this.saveError.set(error instanceof Error ? error.message : 'Could not load this vehicle.');
+    } finally {
+      this.loadingVehicle.set(false);
+    }
+  }
+
   @HostListener('document:click', ['$event'])
   closeYearDropdownOnOutsideClick(event: MouseEvent): void {
     if (!this.yearDropdown()?.nativeElement.contains(event.target as Node)) {
@@ -84,7 +112,7 @@ export class AddCar {
   }
 
   async submit(): Promise<void> {
-    if (this.saving()) return;
+    if (this.saving() || this.deleting() || this.loadingVehicle()) return;
     this.submitAttempted.set(true);
     this.vehicleForm.markAllAsTouched();
     if (this.vehicleForm.invalid) return;
@@ -95,7 +123,7 @@ export class AddCar {
     this.saving.set(true);
     this.saveError.set('');
     try {
-      await this.vehicleStore.add({
+      const changes = {
         make: value.make.trim(),
         model: value.model.trim(),
         year: value.year,
@@ -104,7 +132,9 @@ export class AddCar {
         tankCapacity: value.tankCapacity,
         odometer: value.odometer,
         photoUrl: value.photoUrl,
-      });
+      };
+      if (this.editId) await this.vehicleStore.update(this.editId, changes);
+      else await this.vehicleStore.add(changes);
       await this.router.navigateByUrl('/fuel/vehicles');
     } catch (error) {
       console.error('Could not save vehicle', error);
@@ -116,6 +146,21 @@ export class AddCar {
 
   cancel(): void {
     void this.router.navigateByUrl('/fuel/vehicles');
+  }
+
+  async deleteVehicle(): Promise<void> {
+    if (!this.editId || this.saving() || this.deleting()) return;
+    if (!window.confirm('Delete this vehicle? This cannot be undone.')) return;
+    this.deleting.set(true);
+    this.saveError.set('');
+    try {
+      await this.vehicleStore.delete(this.editId);
+      await this.router.navigateByUrl('/fuel/vehicles');
+    } catch (error) {
+      this.saveError.set(error instanceof Error ? error.message : 'Could not delete this vehicle.');
+    } finally {
+      this.deleting.set(false);
+    }
   }
 
   pickMedia = async () => {

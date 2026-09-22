@@ -40,8 +40,9 @@
   }
 
   @for (vehicle of vehicles(); track vehicle.id) {
-    <article
-      class="flex min-h-24 items-center gap-3 overflow-hidden rounded-[22px] border border-[#32628a] bg-gradient-to-br from-[#173a5b] via-[#123351] to-[#0e2a46] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_8px_22px_rgba(0,0,0,0.15)]"
+    <a
+      [routerLink]="['/fuel/edit-car', vehicle.id]"
+      class="flex min-h-24 items-center gap-3 overflow-hidden rounded-[22px] border border-[#32628a] bg-gradient-to-br from-[#173a5b] via-[#123351] to-[#0e2a46] p-2.5 text-white no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_8px_22px_rgba(0,0,0,0.15)] focus-visible:outline-2 focus-visible:outline-cyan-300"
     >
       @if (vehicle.image) {
         <img
@@ -71,13 +72,8 @@
             <p class="mt-1 text-[10px] text-[#b7cde1]">L/100km</p>
           </div>
         }
-        <ion-icon
-          name="chevron-forward"
-          class="text-lg text-[#a9c9e6]"
-          aria-hidden="true"
-        ></ion-icon>
       </div>
-    </article>
+    </a>
   }
 
   <a

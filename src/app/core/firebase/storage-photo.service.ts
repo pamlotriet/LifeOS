@@ -10,7 +10,7 @@ export class StoragePhotoService {
   private readonly bucket = environment.firebaseConfig.storageBucket;
   private readonly baseUrl = `https://firebasestorage.googleapis.com/v0/b/${this.bucket}/o`;
 
-  async uploadVehiclePhoto(uid: string, vehicleId: string, localUrl: string, token: string): Promise<{ path: string; url: string }> {
+  async uploadVehiclePhoto(uid: string, vehicleId: string, localUrl: string, token: string, photoName = 'photo'): Promise<{ path: string; url: string }> {
     const photoResponse = await fetch(localUrl);
     if (!photoResponse.ok) throw new Error('Could not read the selected photo.');
     const photo = await photoResponse.blob();
@@ -21,7 +21,7 @@ export class StoragePhotoService {
       throw new Error('Choose a photo smaller than 5 MB.');
     }
 
-    const path = `users/${uid}/vehicles/${vehicleId}/photo`;
+    const path = `users/${uid}/vehicles/${vehicleId}/${photoName}`;
     const boundary = `lifeos-${crypto.randomUUID()}`;
     const body = new Blob([
       `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({ name: path, contentType: photo.type })}\r\n`,

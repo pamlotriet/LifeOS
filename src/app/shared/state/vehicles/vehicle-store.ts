@@ -71,6 +71,25 @@ export class VehicleStore {
     if (this.auth.userId() === uid) this.saved.update((vehicles) => [saved, ...vehicles]);
   }
 
+  async get(id: string): Promise<VehicleRecord> {
+    const cached = this.saved().find((vehicle) => vehicle.id === id);
+    return cached ?? this.service.get(id);
+  }
+
+  async update(id: string, changes: Omit<VehicleRecord, 'id' | 'photoStoragePath'>): Promise<void> {
+    const uid = this.auth.userId();
+    if (!uid) throw new Error('Sign in to update a vehicle.');
+    const updated = await this.service.update(id, changes);
+    if (this.auth.userId() === uid) this.saved.update((vehicles) => vehicles.map((vehicle) => vehicle.id === id ? updated : vehicle));
+  }
+
+  async delete(id: string): Promise<void> {
+    const uid = this.auth.userId();
+    if (!uid) throw new Error('Sign in to delete a vehicle.');
+    await this.service.delete(id);
+    if (this.auth.userId() === uid) this.saved.update((vehicles) => vehicles.filter((vehicle) => vehicle.id !== id));
+  }
+
   private async load(uid: string): Promise<void> {
     const version = ++this.loadVersion;
     const existingIds = new Set(this.saved().map((vehicle) => vehicle.id));

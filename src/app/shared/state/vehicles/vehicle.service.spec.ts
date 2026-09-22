@@ -10,13 +10,16 @@ describe('VehicleService', () => {
   const session = vi.fn();
   const listDocuments = vi.fn();
   const createDocument = vi.fn();
+  const getDocument = vi.fn();
+  const updateDocument = vi.fn();
+  const deleteDocument = vi.fn();
   const uploadVehiclePhoto = vi.fn();
   const deleteVehiclePhoto = vi.fn();
 
   function createService(): VehicleService {
     const injector = Injector.create({ providers: [
       { provide: AuthService, useValue: { getSession: session } },
-      { provide: FirestoreService, useValue: { listDocuments, createDocument } },
+      { provide: FirestoreService, useValue: { listDocuments, createDocument, getDocument, updateDocument, deleteDocument } },
       { provide: StoragePhotoService, useValue: { uploadVehiclePhoto, deleteVehiclePhoto } },
     ] });
     return runInInjectionContext(injector, () => new VehicleService());
@@ -71,5 +74,54 @@ describe('VehicleService', () => {
     expect(createDocument).toHaveBeenCalledWith('users/user-1/vehicles', expect.any(String),
       expect.objectContaining({ photoStoragePath: { stringValue: path }, photoUrl: { stringValue: url } }),
       'id-token');
+  });
+
+  it('updates vehicle fields without replacing its photo', async () => {
+    getDocument.mockResolvedValue({ name: 'users/user-1/vehicles/car-1', fields: {
+      make: { stringValue: 'Toyota' }, model: { stringValue: 'Corolla' },
+      photoStoragePath: { stringValue: 'users/user-1/vehicles/car-1/photo' },
+      photoUrl: { stringValue: 'https://firebasestorage.googleapis.com/photo' },
+    } });
+    updateDocument.mockResolvedValue(undefined);
+
+    const updated = await createService().update('car-1', {
+      ...vehicle, model: 'Yaris', photoUrl: 'https://firebasestorage.googleapis.com/photo',
+    });
+
+    expect(updated.model).toBe('Yaris');
+    expect(uploadVehiclePhoto).not.toHaveBeenCalled();
+    expect(updateDocument).toHaveBeenCalledWith('users/user-1/vehicles/car-1',
+      expect.objectContaining({ model: { stringValue: 'Yaris' } }), 'id-token');
+  });
+
+  it('replaces a vehicle photo after saving the updated record', async () => {
+    const oldPath = 'users/user-1/vehicles/car-1/photo';
+    const newPath = 'users/user-1/vehicles/car-1/photo-new';
+    getDocument.mockResolvedValue({ name: 'users/user-1/vehicles/car-1', fields: {
+      photoStoragePath: { stringValue: oldPath }, photoUrl: { stringValue: 'https://example.com/old' },
+    } });
+    uploadVehiclePhoto.mockResolvedValue({ path: newPath, url: 'https://example.com/new' });
+    updateDocument.mockResolvedValue(undefined);
+    deleteVehiclePhoto.mockResolvedValue(undefined);
+
+    const updated = await createService().update('car-1', { ...vehicle, photoUrl: 'blob:new' });
+
+    expect(updated.photoUrl).toBe('https://example.com/new');
+    expect(updateDocument).toHaveBeenCalledWith('users/user-1/vehicles/car-1',
+      expect.objectContaining({ photoStoragePath: { stringValue: newPath } }), 'id-token');
+    expect(deleteVehiclePhoto).toHaveBeenCalledWith(oldPath, 'id-token');
+  });
+
+  it('deletes the document and its stored photo', async () => {
+    getDocument.mockResolvedValue({ name: 'users/user-1/vehicles/car-1', fields: {
+      photoStoragePath: { stringValue: 'users/user-1/vehicles/car-1/photo' },
+    } });
+    deleteDocument.mockResolvedValue(undefined);
+    deleteVehiclePhoto.mockResolvedValue(undefined);
+
+    await createService().delete('car-1');
+
+    expect(deleteDocument).toHaveBeenCalledWith('users/user-1/vehicles', 'car-1', 'id-token');
+    expect(deleteVehiclePhoto).toHaveBeenCalledWith('users/user-1/vehicles/car-1/photo', 'id-token');
   });
 });

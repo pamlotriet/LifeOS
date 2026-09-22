@@ -94,6 +94,22 @@ export class FirestoreService {
     return (await response.json()) as FirestoreDocument;
   }
 
+  async getDocument(path: string, token: string): Promise<FirestoreDocument> {
+    const response = await this.request(`${this.baseUrl}/${path}`, token);
+    if (!response.ok) throw new Error(`Could not get Firestore document (${response.status}).`);
+    return (await response.json()) as FirestoreDocument;
+  }
+
+  async updateDocument(path: string, fields: Record<string, FirestoreValue>, token: string): Promise<void> {
+    const url = new URL(`${this.baseUrl}/${path}`);
+    for (const field of Object.keys(fields)) url.searchParams.append('updateMask.fieldPaths', field);
+    const response = await this.request(url.toString(), token, {
+      method: 'PATCH',
+      body: JSON.stringify({ fields }),
+    });
+    if (!response.ok) throw new Error(`Could not update Firestore document (${response.status}).`);
+  }
+
   async updateDocumentField(
     path: string,
     id: string,

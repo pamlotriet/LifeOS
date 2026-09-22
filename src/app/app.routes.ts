@@ -11,6 +11,7 @@ import { FuelConsumptions } from './pages/fuel-consumptions/fuel-consumptions';
 import { Fuel } from './pages/fuel/fuel';
 import { Insights } from './pages/insights/insights';
 import { TabsShell } from './shared/components/tabs-shell/tabs-shell';
+import { FuelHistory } from './pages/fuel-history/fuel-history';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -33,7 +34,9 @@ export const routes: Routes = [
       { path: '', component: FuelConsumptions, pathMatch: 'full' },
       { path: 'vehicles', component: Vehicles },
       { path: 'add-car', component: AddCar },
+      { path: 'edit-car/:id', component: AddCar },
       { path: 'insights', component: Insights },
+      { path: 'history', component: FuelHistory },
     ],
   },
   { path: 'add/car', redirectTo: 'fuel/add-car' },
