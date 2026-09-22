@@ -26,7 +26,7 @@ describe('BookService', () => {
   const input: BookInput = {
     title: 'Test Book', author: 'Author', category: 'Fantasy', coverUrl: '',
     publicationDate: '', status: 'Reading', rating: 4, spiceRating: 3, wheelSelected: false, favourite: true, wouldRecommend: false, reread: false,
-    seriesName: 'Series', seriesNumber: 2, startDate: '', finishDate: '', review: '',
+    seriesName: 'Series', seriesNumber: 2, startDate: '', finishDate: '', yearRead: null, review: '',
     copies: [{ id: 'copy-1', format: 'Paperback', label: '' }, { id: 'copy-2', format: 'Audiobook', label: 'Unabridged' }],
     moodTagIds: ['mood-1'], genreTagIds: ['genre-1'],
   };
@@ -55,6 +55,14 @@ describe('BookService', () => {
     expect((await service().getBook('book-1')).spiceRating).toBe(0);
   });
 
+  it('reads the stored year for yearly goal progress even without a finish date', async () => {
+    getDocument.mockResolvedValue({ name: 'projects/test/databases/(default)/documents/users/user-1/books/book-1', fields: {
+      title: { stringValue: 'Test Book' }, author: { stringValue: 'Author' }, status: { stringValue: 'Finished' },
+      yearRead: { integerValue: '2026' }, finishDate: { stringValue: '' },
+    } });
+    expect((await service().getBook('book-1')).yearRead).toBe(2026);
+  });
+
   it('saves wheel membership on the signed-in user book', async () => {
     await service().setWheelSelected('book-1', true);
     expect(updateDocumentField).toHaveBeenCalledWith(
@@ -81,5 +89,17 @@ describe('BookService', () => {
     expect(updateDocument).toHaveBeenCalledWith('users/user-1/books/book-1', expect.objectContaining({
       coverUrl: { stringValue: 'https://covers.openlibrary.org/b/id/123-M.jpg?default=false' },
     }), 'id-token');
+  });
+
+  it('keeps an existing Google Books cover when the title and author are unchanged', async () => {
+    const coverUrl = 'https://books.google.com/books/content?id=example';
+    getDocument.mockResolvedValue({ name: 'projects/test/databases/(default)/documents/users/user-1/books/book-1', fields: {
+      title: { stringValue: 'Test Book' }, author: { stringValue: 'Author' }, coverUrl: { stringValue: coverUrl },
+    } });
+    await service().saveBook(input, 'book-1');
+    expect(updateDocument).toHaveBeenCalledWith('users/user-1/books/book-1', expect.objectContaining({
+      coverUrl: { stringValue: coverUrl },
+    }), 'id-token');
+    expect(findCover).not.toHaveBeenCalled();
   });
 });

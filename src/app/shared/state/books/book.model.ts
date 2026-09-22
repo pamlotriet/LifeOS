@@ -31,6 +31,7 @@ export interface BookRecord {
   seriesNumber: number | null;
   startDate: string;
   finishDate: string;
+  yearRead: number | null;
   review: string;
   copies: BookCopy[];
   moodTagIds: string[];

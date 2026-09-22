@@ -84,7 +84,7 @@ export class BookForm {
     const cover = await this.covers.find(title, author);
     if (version !== this.coverLookupVersion) return;
     this.form.controls.coverUrl.setValue(cover ?? '');
-    this.coverMessage.set(cover ? 'Cover found on Open Library.' : 'No matching Open Library cover found.');
+    this.coverMessage.set(cover ? 'Cover found.' : 'No matching cover found on Open Library or Google Books.');
     this.lookingUpCover.set(false);
   }
   updateCopy(id: string, field: 'format' | 'label', value: string): void {
@@ -140,6 +140,8 @@ export class BookForm {
       const input: BookInput = {
         ...value, status: value.status as BookInput['status'],
         rating: Number(value.rating), spiceRating: Number(value.spiceRating), seriesName: this.isSeries() ? value.seriesName.trim() : '',
+        yearRead: value.status === 'Finished'
+          ? (Number(value.finishDate.slice(0, 4)) || (this.book()?.status === 'Finished' ? this.book()?.yearRead : null) || new Date().getFullYear()) : null,
         seriesNumber: this.isSeries() && value.seriesName.trim() ? value.seriesNumber : null,
         copies: this.copies(), moodTagIds: this.moodTagIds(), genreTagIds: this.genreTagIds(),
       };

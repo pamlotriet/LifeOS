@@ -28,10 +28,13 @@ export class BookService {
     if (!input.title.trim() || !input.author.trim() || !input.category) throw new Error('Title, author, and category are required.');
     if (!input.copies.length) throw new Error('Add at least one copy.');
     const { uid, token } = await this.auth.getSession();
-    const book: BookRecord = { ...input, title: input.title.trim(), author: input.author.trim(), id: id ?? crypto.randomUUID() };
+    const book: BookRecord = {
+      ...input, title: input.title.trim(), author: input.author.trim(), id: id ?? crypto.randomUUID(),
+      yearRead: input.status === 'Finished' ? (input.yearRead ?? (Number(input.finishDate.slice(0, 4)) || new Date().getFullYear())) : null,
+    };
     const path = `users/${uid}/books`;
     const previous = id ? await this.getBook(id) : null;
-    book.coverUrl = previous && previous.title === book.title && previous.author === book.author && previous.coverUrl.startsWith('https://covers.openlibrary.org/b/id/')
+    book.coverUrl = previous && previous.title === book.title && previous.author === book.author && previous.coverUrl
       ? previous.coverUrl
       : await this.covers.find(book.title, book.author) ?? '';
     if (id) await this.firestore.updateDocument(`${path}/${encodeURIComponent(id)}`, this.toBookFields(book), token);
@@ -92,6 +95,7 @@ export class BookService {
       reread: { booleanValue: book.reread }, seriesName: text(book.seriesName),
       seriesNumber: book.seriesNumber === null ? { nullValue: null } : { integerValue: String(book.seriesNumber) },
       startDate: text(book.startDate), finishDate: text(book.finishDate), review: text(book.review),
+      yearRead: book.yearRead === null ? { nullValue: null } : { integerValue: String(book.yearRead) },
       moodTagIds: strings(book.moodTagIds), genreTagIds: strings(book.genreTagIds),
       copies: { arrayValue: { values: book.copies.map((copy) => ({ mapValue: { fields: {
         id: text(copy.id), format: text(copy.format), label: text(copy.label),
@@ -111,6 +115,7 @@ export class BookService {
       wouldRecommend: f['wouldRecommend']?.booleanValue ?? false, reread: f['reread']?.booleanValue ?? false,
       seriesName: s('seriesName'), seriesNumber: f['seriesNumber']?.integerValue === undefined ? null : Number(f['seriesNumber'].integerValue),
       startDate: s('startDate'), finishDate: s('finishDate'), review: s('review'),
+      yearRead: f['yearRead']?.integerValue === undefined ? (Number(s('finishDate').slice(0, 4)) || null) : Number(f['yearRead'].integerValue),
       moodTagIds: ids('moodTagIds'), genreTagIds: ids('genreTagIds'),
       copies: (f['copies']?.arrayValue?.values ?? []).map((value) => ({
         id: value.mapValue?.fields?.['id']?.stringValue ?? '',
