@@ -7,6 +7,9 @@ export interface FirestoreValue {
   doubleValue?: number;
   nullValue?: null;
   timestampValue?: string;
+  booleanValue?: boolean;
+  arrayValue?: { values?: FirestoreValue[] };
+  mapValue?: { fields?: Record<string, FirestoreValue> };
 }
 
 export interface FirestoreDocument {

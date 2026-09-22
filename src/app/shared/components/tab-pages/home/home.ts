@@ -47,6 +47,7 @@ export class Home {
       iconBackground: 'bg-gradient-to-br from-violet-400 to-purple-600',
       iconColor: 'text-white',
       id: 2,
+      route: '/books',
     },
     {
       title: 'Planning',
