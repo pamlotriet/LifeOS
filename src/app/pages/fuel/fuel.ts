@@ -64,7 +64,7 @@ export class Fuel {
   private readonly router = inject(Router);
 
   readonly segments = [
-    { value: 'consumption', label: 'Fuel Consumption', route: '/fuel', icon: '' },
+    { value: 'consumption', label: 'Refuel', route: '/fuel', icon: '' },
     { value: 'vehicles', label: 'Vehicles', route: '/fuel/vehicles', icon: 'car-sport-outline' },
     { value: 'history', label: 'History', route: '/fuel/history', icon: 'book' },
     { value: 'insights', label: 'Insights', route: '/fuel/insights', icon: 'stats-chart' },
@@ -82,7 +82,7 @@ export class Fuel {
     const path = url.split(/[?#]/, 1)[0].replace(/\/$/, '');
     if (path === '/fuel/vehicles' || path === '/fuel/add-car' || path.startsWith('/fuel/edit-car/'))
       return 'vehicles';
-    if (path === '/fuel/history') return 'history';
+    if (path === '/fuel/history' || path.startsWith('/fuel/refuels/')) return 'history';
     if (path === '/fuel/insights') return 'insights';
     return 'consumption';
   }

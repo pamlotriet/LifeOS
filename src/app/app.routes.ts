@@ -12,6 +12,7 @@ import { Fuel } from './pages/fuel/fuel';
 import { Insights } from './pages/insights/insights';
 import { TabsShell } from './shared/components/tabs-shell/tabs-shell';
 import { FuelHistory } from './pages/fuel-history/fuel-history';
+import { RefuelForm } from './pages/refuel-form/refuel-form';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -37,6 +38,8 @@ export const routes: Routes = [
       { path: 'edit-car/:id', component: AddCar },
       { path: 'insights', component: Insights },
       { path: 'history', component: FuelHistory },
+      { path: 'refuels/add', component: RefuelForm },
+      { path: 'refuels/:vehicleId/:id/edit', component: RefuelForm },
     ],
   },
   { path: 'add/car', redirectTo: 'fuel/add-car' },

@@ -54,4 +54,17 @@ describe('FirestoreService', () => {
     expect(documents.map((document) => document.name)).toEqual(['car-1', 'car-2']);
     expect(request.mock.calls[1][0]).toContain('pageToken=more');
   });
+
+  it('commits related document writes in one request', async () => {
+    const request = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal('fetch', request);
+    const writes = [{ delete: 'projects/test/databases/(default)/documents/users/user-1/vehicles/car-1/refuels/old' }];
+
+    await new FirestoreService().commitWrites(writes, 'id-token');
+
+    expect(request).toHaveBeenCalledOnce();
+    expect(request.mock.calls[0][0]).toContain('/documents:commit');
+    expect(request.mock.calls[0][1].headers.Authorization).toBe('Bearer id-token');
+    expect(JSON.parse(request.mock.calls[0][1].body).writes).toEqual(writes);
+  });
 });

@@ -13,7 +13,12 @@ export interface FirestoreDocument {
   name: string;
   fields?: Record<string, FirestoreValue>;
   createTime?: string;
+  updateTime?: string;
 }
+
+export type FirestoreWrite =
+  | { update: FirestoreDocument; updateMask?: { fieldPaths: string[] }; currentDocument?: { exists?: boolean; updateTime?: string } }
+  | { delete: string; currentDocument?: { exists?: boolean; updateTime?: string } };
 
 interface FirestoreList {
   documents?: FirestoreDocument[];
@@ -135,6 +140,19 @@ export class FirestoreService {
     if (!response.ok && response.status !== 404) {
       throw new Error(`Could not delete Firestore document (${response.status}).`);
     }
+  }
+
+  async commitWrites(writes: FirestoreWrite[], token: string): Promise<void> {
+    if (!writes.length) return;
+    const response = await this.request(`${this.baseUrl}:commit`, token, {
+      method: 'POST',
+      body: JSON.stringify({ writes }),
+    });
+    if (!response.ok) throw new Error(`Could not save Firestore documents together (${response.status}).`);
+  }
+
+  documentName(path: string): string {
+    return `projects/${environment.firebaseConfig.projectId}/databases/(default)/documents/${path}`;
   }
 
   private request(url: string, token: string, init: RequestInit = {}): Promise<Response> {

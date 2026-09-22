@@ -1,0 +1,73 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="mx-auto flex w-full max-w-md flex-col gap-3 pb-8 text-white">
+  <header class="flex items-start justify-between gap-3">
+    <div><h1 class="text-2xl font-bold">{{ entryId ? 'Edit Refuel' : 'Add Refuel' }}</h1><p class="mt-1 text-sm text-[#b5cbe2]">{{ entryId ? 'Update your fuel purchase details.' : 'Record a new fuel purchase.' }}</p></div>
+    @if (entryId) { <button type="button" (click)="confirmDelete.set(true)" class="rounded-full border border-rose-400/60 px-3 py-2 text-xs font-semibold text-rose-200">Delete</button> }
+  </header>
+
+  @if (loading()) { <p class="rounded-xl bg-[#112e4b] p-4 text-sm">Loading refuel...</p> }
+  <div class="rounded-xl border border-[#264d6d] bg-gradient-to-br from-[#123653] to-[#0d2945] p-3">
+    @if (!entryId) {
+      <label class="mb-3 block text-xs">Vehicle
+        <select formControlName="vehicleId" class="mt-1 block h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-sm text-white">
+          @for (vehicle of refuels.vehicleOptions(); track vehicle.id) { <option [value]="vehicle.id">{{ vehicle.name }}</option> }
+        </select>
+      </label>
+    }
+    <div class="grid gap-3">
+      <label class="grid gap-1 text-xs">Date of purchase
+        <input formControlName="dop" type="date" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300" />
+      </label>
+      <label class="grid gap-1 text-xs">Place of purchase
+        <input formControlName="pop" type="text" placeholder="e.g. Shell" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300" />
+      </label>
+      <label class="grid gap-1 text-xs">Fuel type
+        <select formControlName="fuelType" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300">
+          <option value="">Select fuel type</option>
+          @for (fuel of fuelTypes; track fuel) { <option [value]="fuel">{{ fuel }}</option> }
+        </select>
+      </label>
+      <label class="grid gap-1 text-xs">Area / Town
+        <input formControlName="areaTown" type="text" placeholder="e.g. Sandton" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300" />
+      </label>
+      <label class="grid gap-1 text-xs">Odometer reading (km)
+        <input formControlName="odometer" type="number" min="0" step="0.1" inputmode="decimal" placeholder="e.g. 63420" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300" />
+      </label>
+      <label class="grid gap-1 text-xs">Quantity refueled (L)
+        <input formControlName="qtyLiters" type="number" min="0.001" step="0.001" inputmode="decimal" placeholder="e.g. 40.2" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300" />
+      </label>
+      <label class="grid gap-1 text-xs">Amount paid (R)
+        <input formControlName="amountPaid" type="number" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 892.00" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300" />
+      </label>
+      <label class="grid gap-1 text-xs">Initial range driven (km)
+        <input formControlName="initialRangeKm" type="number" min="0.001" step="0.1" inputmode="decimal" placeholder="First entry only" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300" />
+        <span class="text-[11px] leading-4 text-[#9ebbd6]">Enter this for the first refuel. Later ranges use the current odometer minus the previous odometer.</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="rounded-xl border border-[#264d6d] bg-gradient-to-r from-[#123653] to-[#0d2945] p-3 text-sm">
+    <p class="font-semibold text-cyan-200">R{{ number(pricePerLiter) }} per litre</p>
+    <p class="mt-1 text-xs text-[#b5cbe2]">Range {{ number(previewRange, 0) }} km · {{ number(previewKmPerLiter) }} km/L · {{ number(previewLitersPer100Km) }} L/100km</p>
+  </div>
+  @if (attempted() && form.invalid) { <p role="alert" class="text-sm text-rose-200">Complete all required fields with valid positive values.</p> }
+  @if (error()) { <p role="alert" class="text-sm text-rose-200">{{ error() }}</p> }
+
+  <div class="grid grid-cols-2 gap-2">
+    <button type="button" (click)="cancel()" [disabled]="saving() || deleting()" class="min-h-11 rounded-xl border border-[#6e96bf] bg-[#0e2944] text-sm font-semibold disabled:opacity-60">Cancel</button>
+    <button type="submit" [disabled]="saving() || deleting() || loading()" class="min-h-11 rounded-xl bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 text-sm font-bold disabled:opacity-60">{{ saving() ? 'Saving...' : entryId ? 'Update Refuel' : 'Save Refuel' }}</button>
+  </div>
+</form>
+
+@if (confirmDelete()) {
+  <div class="fixed inset-0 z-[100] flex items-end justify-center bg-black/70 p-4 sm:items-center" role="presentation">
+    <div role="dialog" aria-modal="true" aria-labelledby="delete-refuel-title" class="w-full max-w-md rounded-3xl border border-[#315877] bg-[#112c49] p-5 text-center text-white shadow-2xl">
+      <div class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-rose-400/15 text-2xl text-rose-300"><ion-icon name="trash-outline" aria-hidden="true"></ion-icon></div>
+      <h2 id="delete-refuel-title" class="mt-3 text-lg font-bold">Delete this refuel?</h2>
+      <p class="mt-2 text-sm text-[#b5cbe2]">This permanently removes the record. Later ranges and averages will recalculate.</p>
+      <div class="mt-5 grid grid-cols-2 gap-2">
+        <button type="button" (click)="confirmDelete.set(false)" [disabled]="deleting()" class="min-h-11 rounded-xl border border-[#6486a8]">Cancel</button>
+        <button type="button" (click)="delete()" [disabled]="deleting()" class="min-h-11 rounded-xl bg-rose-500 font-semibold disabled:opacity-60">{{ deleting() ? 'Deleting...' : 'Delete Refuel' }}</button>
+      </div>
+    </div>
+  </div>
+}
