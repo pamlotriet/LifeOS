@@ -5,7 +5,11 @@
   @if (!authService.authReady()) {
     <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
   } @else if (authService.isAuthenticated()) {
-    <ion-router-outlet class="app-route-outlet" [swipeGesture]="true"></ion-router-outlet>
+    <ion-router-outlet
+      class="app-route-outlet"
+      [animated]="nativePlatform"
+      [swipeGesture]="nativePlatform"
+    ></ion-router-outlet>
   } @else {
     <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
     <ion-button
@@ -14,10 +18,15 @@
       (click)="authenticate()"
     >
       <ion-icon name="logo-google" slot="start" class="mr-2 text-black"></ion-icon>
-      <ion-label class="text-black font-semibold text-lg">{{ signingIn() ? 'Checking account…' : 'Sign in with Google' }}</ion-label>
+      <ion-label class="text-black font-semibold text-lg">{{
+        signingIn() ? 'Checking account…' : 'Sign in with Google'
+      }}</ion-label>
     </ion-button>
     @if (signInError()) {
-      <p role="alert" class="absolute bottom-20 left-1/2 w-4/5 -translate-x-1/2 rounded-xl border border-red-400/40 bg-[#3a1926] px-4 py-3 text-center text-sm text-white">
+      <p
+        role="alert"
+        class="absolute bottom-20 left-1/2 w-4/5 -translate-x-1/2 rounded-xl border border-red-400/40 bg-[#3a1926] px-4 py-3 text-center text-sm text-white"
+      >
         {{ signInError() }}
       </p>
     }

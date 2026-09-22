@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { IonApp, IonButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/angular';
+import { Capacitor } from '@capacitor/core';
 import { AuthService } from './shared/state/authentication/authentication.service';
 
 @Component({
@@ -10,6 +11,7 @@ import { AuthService } from './shared/state/authentication/authentication.servic
 })
 export class App {
   authService = inject(AuthService);
+  readonly nativePlatform = Capacitor.isNativePlatform();
   readonly paletteToggle = signal(false);
   readonly signInError = signal('');
   readonly signingIn = signal(false);
@@ -53,7 +55,11 @@ export class App {
       await this.authService.loginWithGoogle();
     } catch (error) {
       console.error('Google sign-in failed', error);
-      this.signInError.set('Could not sign in with Google. Please try again.');
+      this.signInError.set(
+        error instanceof Error && error.message.includes('Firebase user profile')
+          ? 'Could not set up your account. Please try again.'
+          : 'Could not sign in with Google. Please try again.',
+      );
     } finally {
       this.signingIn.set(false);
     }
