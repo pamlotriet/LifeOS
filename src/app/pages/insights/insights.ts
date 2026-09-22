@@ -1,5 +1,6 @@
 import { Component, computed, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
 import { IonIcon } from '@ionic/angular';
+import { refuelLifetimeSummary } from '../../shared/state/refuels/refuel.model';
 import { RefuelStore } from '../../shared/state/refuels/refuel-store';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
 
@@ -8,6 +9,7 @@ export class Insights {
   readonly refuels = inject(RefuelStore);
   readonly vehicles = inject(VehicleStore);
   readonly vehicleDropdownOpen = signal(false);
+  readonly lifetime = computed(() => refuelLifetimeSummary(this.refuels.entries()));
   private readonly vehicleDropdown = viewChild<ElementRef<HTMLElement>>('vehicleDropdown');
 
   readonly recentConsumption = computed(() => this.refuels.entries()
@@ -44,14 +46,6 @@ export class Insights {
     const months = this.monthlySpend();
     if (months.length < 2 || months.at(-2)!.value === 0) return null;
     return (months.at(-1)!.value / months.at(-2)!.value - 1) * 100;
-  });
-  readonly averageRange = computed(() => {
-    const valid = this.refuels.entries().filter((entry) => entry.rangeKm !== null);
-    return valid.length ? this.refuels.averages().totalRangeKm / valid.length : null;
-  });
-  readonly averageMonthlySpend = computed(() => {
-    const count = new Set(this.refuels.entries().map((entry) => entry.dop.slice(0, 7))).size;
-    return count ? this.refuels.averages().totalSpent / count : null;
   });
   readonly bestTank = computed(() => this.refuels.entries().filter((entry) => entry.kmPerLiter !== null)
     .sort((a, b) => (b.kmPerLiter ?? 0) - (a.kmPerLiter ?? 0))[0] ?? null);

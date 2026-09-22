@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateRefuels, refuelAverages, RefuelRecord } from './refuel.model';
+import { calculateRefuels, refuelAverages, refuelLifetimeSummary, RefuelRecord } from './refuel.model';
 
 const entry = (id: string, odometer: number, qtyLiters: number, amountPaid: number, initialRangeKm: number | null = null): RefuelRecord => ({
   id, vehicleId: 'car-1', dop: `2026-09-${id.padStart(2, '0')}`, pop: 'Shell',
@@ -33,5 +33,15 @@ describe('refuel calculations', () => {
     expect(averages.randPerLiter).toBeCloseTo(900 / 45);
     expect(averages.kmPerLiter).toBeCloseTo(700 / 45);
     expect(averages.litersPer100Km).toBeCloseTo(45 / 700 * 100);
+  });
+
+  it('summarizes lifetime values and months with recorded refuels', () => {
+    const records = [entry('1', 100, 20, 400, 300), entry('2', 500, 25, 500)];
+    const summary = refuelLifetimeSummary(calculateRefuels(records));
+    expect(summary).toEqual(expect.objectContaining({
+      lifetimeTotalSpent: 900, lifetimeTotalRangeKm: 700, lifetimeTotalLitres: 45,
+      lifetimeRefuelCount: 2, lifetimeAverageMonthlySpend: 900, lifetimeAverageRangeKm: 350,
+    }));
+    expect(refuelLifetimeSummary([]).lifetimeAverageMonthlySpend).toBeNull();
   });
 });
