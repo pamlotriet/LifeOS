@@ -19,7 +19,6 @@ export interface BookRecord {
   author: string;
   category: string;
   coverUrl: string;
-  coverStoragePath: string;
   publicationDate: string;
   status: BookStatus;
   rating: number;

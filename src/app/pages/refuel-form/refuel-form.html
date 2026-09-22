@@ -7,25 +7,20 @@
   @if (loading()) { <p class="rounded-xl bg-[#112e4b] p-4 text-sm">Loading refuel...</p> }
   <div class="rounded-xl border border-[#264d6d] bg-gradient-to-br from-[#123653] to-[#0d2945] p-3">
     @if (!entryId) {
-      <label class="mb-3 block text-xs">Vehicle
-        <select formControlName="vehicleId" class="mt-1 block h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-sm text-white">
-          @for (vehicle of refuels.vehicleOptions(); track vehicle.id) { <option [value]="vehicle.id">{{ vehicle.name }}</option> }
-        </select>
-      </label>
+      <div class="mb-3 block text-xs">Vehicle
+        <app-select class="mt-1 block" ariaLabel="Select vehicle" placeholder="Select vehicle" [options]="vehicleOptions()" formControlName="vehicleId" />
+      </div>
     }
     <div class="grid gap-3">
-      <label class="grid gap-1 text-xs">Date of purchase
-        <input formControlName="dop" type="date" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300" />
-      </label>
+      <div class="grid gap-1 text-xs">Date of purchase
+        <app-date-picker ariaLabel="Date of purchase" formControlName="dop" />
+      </div>
       <label class="grid gap-1 text-xs">Place of purchase
         <input formControlName="pop" type="text" placeholder="e.g. Shell" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300" />
       </label>
-      <label class="grid gap-1 text-xs">Fuel type
-        <select formControlName="fuelType" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300">
-          <option value="">Select fuel type</option>
-          @for (fuel of fuelTypes; track fuel) { <option [value]="fuel">{{ fuel }}</option> }
-        </select>
-      </label>
+      <div class="grid gap-1 text-xs">Fuel type
+        <app-select ariaLabel="Select fuel type" placeholder="Select fuel type" [options]="fuelOptions" formControlName="fuelType" />
+      </div>
       <label class="grid gap-1 text-xs">Area / Town
         <input formControlName="areaTown" type="text" placeholder="e.g. Sandton" class="h-10 w-full rounded-lg border border-[#2e5778] bg-[#102e4a] px-3 text-base text-white outline-none focus:border-cyan-300" />
       </label>

@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,8 +6,9 @@ import { IonIcon } from '@ionic/angular';
 import { Camera, MediaTypeSelection } from '@capacitor/camera';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
 import { saRegistrationValidator } from '../../shared/validators/sa-registration.validator';
+import { AppSelect } from '../../shared/components/app-select/app-select';
 @Component({
-  imports: [IonIcon, ReactiveFormsModule],
+  imports: [IonIcon, ReactiveFormsModule, AppSelect],
   selector: 'app-add-car',
   styleUrl: './add-car.css',
   templateUrl: './add-car.html',
@@ -49,15 +50,13 @@ export class AddCar {
   readonly submitAttempted = signal(false);
   readonly saving = signal(false);
   readonly saveError = signal('');
-  readonly yearDropdownOpen = signal(false);
-  readonly fuelDropdownOpen = signal(false);
-  private readonly yearDropdown = viewChild<ElementRef<HTMLElement>>('yearDropdown');
-  private readonly fuelDropdown = viewChild<ElementRef<HTMLElement>>('fuelDropdown');
   private readonly latestModelYear = new Date().getFullYear() + 1;
   readonly yearOptions = Array.from({ length: this.latestModelYear - 1899 }, (_, index) =>
     String(this.latestModelYear - index),
   );
   readonly fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric'];
+  readonly yearSelectOptions = this.yearOptions.map((year) => ({ value: year, label: year }));
+  readonly fuelSelectOptions = this.fuelTypes.map((fuel) => ({ value: fuel, label: fuel }));
 
   constructor() {
     if (this.editId) void this.loadVehicle(this.editId);
@@ -81,34 +80,6 @@ export class AddCar {
     } finally {
       this.loadingVehicle.set(false);
     }
-  }
-
-  @HostListener('document:click', ['$event'])
-  closeYearDropdownOnOutsideClick(event: MouseEvent): void {
-    if (!this.yearDropdown()?.nativeElement.contains(event.target as Node)) {
-      this.yearDropdownOpen.set(false);
-    }
-    if (!this.fuelDropdown()?.nativeElement.contains(event.target as Node)) {
-      this.fuelDropdownOpen.set(false);
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  closeYearDropdown(): void {
-    this.yearDropdownOpen.set(false);
-    this.fuelDropdownOpen.set(false);
-  }
-
-  selectYear(year: string): void {
-    this.vehicleForm.controls.year.setValue(year);
-    this.vehicleForm.controls.year.markAsTouched();
-    this.yearDropdownOpen.set(false);
-  }
-
-  selectFuelType(fuelType: string): void {
-    this.vehicleForm.controls.fuelType.setValue(fuelType);
-    this.vehicleForm.controls.fuelType.markAsTouched();
-    this.fuelDropdownOpen.set(false);
   }
 
   async submit(): Promise<void> {

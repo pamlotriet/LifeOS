@@ -26,4 +26,5 @@ describe('StoragePhotoService', () => {
       .rejects.toThrow('Choose a JPG');
     expect(request).toHaveBeenCalledOnce();
   });
+
 });

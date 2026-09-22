@@ -11,14 +11,5 @@ service firebase.storage {
         && request.resource.contentType.matches('image/(jpeg|png|webp|heic|heif)');
     }
 
-    match /users/{userId}/books/{bookId}/{coverName} {
-      allow read, delete: if request.auth != null && request.auth.uid == userId && coverName.matches('cover-[a-zA-Z0-9-]+');
-      allow create, update: if request.auth != null
-        && request.auth.uid == userId
-        && coverName.matches('cover-[a-zA-Z0-9-]+')
-        && request.resource.size > 0
-        && request.resource.size <= 5 * 1024 * 1024
-        && request.resource.contentType.matches('image/(jpeg|png|webp|heic|heif)');
-    }
   }
 }

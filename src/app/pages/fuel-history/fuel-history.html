@@ -1,17 +1,15 @@
 <div class="mx-auto flex w-full max-w-md flex-col gap-3 pb-8 text-white">
   <header><h1 class="text-2xl font-bold">Refuel History</h1><p class="mt-1 text-sm text-[#b5cbe2]">View and manage your refuelling records.</p></header>
 
-  @if (refuels.vehicleOptions().length > 1) {
-    <label class="text-xs text-[#b5cbe2]">Vehicle
-      <select class="mt-1 block min-h-11 w-full rounded-xl border border-[#315b7e] bg-[#112f4c] px-3 text-sm text-white" [value]="refuels.selectedVehicleId() || ''" (change)="refuels.selectVehicle($any($event.target).value)">
-        @for (vehicle of refuels.vehicleOptions(); track vehicle.id) { <option [value]="vehicle.id">{{ vehicle.name }}</option> }
-      </select>
-    </label>
+  @if (refuels.vehicleOptions().length) {
+    <div class="text-xs text-[#b5cbe2]">Vehicle
+      <app-select class="mt-1 block" ariaLabel="Select vehicle for history" [options]="vehicleOptions()" [selectedValue]="refuels.selectedVehicleId() || ''" (valueChange)="refuels.selectVehicle($event)" />
+    </div>
   }
   <div class="flex items-end gap-2">
-    <label class="min-w-0 flex-1 text-xs text-[#b5cbe2]">Filter by date
-      <input type="date" aria-label="Filter refuels by date" [value]="selectedDate()" (change)="setDate($any($event.target).value)" class="mt-1 block min-h-11 w-full rounded-xl border border-[#315b7e] bg-[#112f4c] px-3 text-base text-white outline-none focus:border-cyan-300" />
-    </label>
+    <div class="min-w-0 flex-1 text-xs text-[#b5cbe2]">Filter by date
+      <app-date-picker class="mt-1 block" ariaLabel="Filter refuels by date" [clearable]="true" [selectedValue]="selectedDate()" (valueChange)="setDate($event)" />
+    </div>
     @if (selectedDate()) {
       <button type="button" (click)="setDate('')" class="min-h-11 rounded-xl border border-[#315b7e] px-4 text-sm font-semibold text-cyan-200">Clear</button>
     }

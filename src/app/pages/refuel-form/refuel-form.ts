@@ -1,13 +1,15 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { RefuelStore } from '../../shared/state/refuels/refuel-store';
 import { RefuelInput } from '../../shared/state/refuels/refuel.model';
+import { AppSelect } from '../../shared/components/app-select/app-select';
+import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
 
 @Component({
   selector: 'app-refuel-form',
-  imports: [ReactiveFormsModule, IonIcon],
+  imports: [ReactiveFormsModule, IonIcon, AppSelect, AppDatePicker],
   templateUrl: './refuel-form.html',
 })
 export class RefuelForm {
@@ -37,6 +39,10 @@ export class RefuelForm {
   });
 
   readonly fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'ULP 93', 'ULP 95'];
+  readonly fuelOptions = this.fuelTypes.map((fuel) => ({ value: fuel, label: fuel }));
+  readonly vehicleOptions = computed(() => this.refuels.vehicleOptions().map((vehicle) => ({
+    value: vehicle.id, label: vehicle.name, description: `${vehicle.description} · ${vehicle.registration}`, image: vehicle.image,
+  })));
 
   private today(): string {
     const now = new Date();

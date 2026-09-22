@@ -3,7 +3,7 @@ import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthService } from '../authentication/authentication.service';
 import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { StoragePhotoService } from '../../../core/firebase/storage-photo.service';
+import { OpenLibraryCoverService } from './open-library-cover.service';
 import { BookService } from './book.service';
 import { BookInput, BookRecord, BookTag } from './book.model';
 
@@ -16,21 +16,20 @@ describe('BookService', () => {
   const commitWrites = vi.fn();
   const deleteDocument = vi.fn();
   const documentName = vi.fn((path: string) => `projects/test/databases/(default)/documents/${path}`);
-  const uploadBookCover = vi.fn();
-  const deletePhoto = vi.fn();
+  const findCover = vi.fn();
   const service = () => runInInjectionContext(Injector.create({ providers: [
     { provide: AuthService, useValue: { getSession } },
     { provide: FirestoreService, useValue: { listDocuments, createDocument, updateDocument, getDocument, commitWrites, deleteDocument, documentName } },
-    { provide: StoragePhotoService, useValue: { uploadBookCover, deletePhoto } },
+    { provide: OpenLibraryCoverService, useValue: { find: findCover } },
   ] }), () => new BookService());
   const input: BookInput = {
-    title: 'Test Book', author: 'Author', category: 'Fantasy', coverUrl: '', coverStoragePath: '',
+    title: 'Test Book', author: 'Author', category: 'Fantasy', coverUrl: '',
     publicationDate: '', status: 'Reading', rating: 4, favourite: true, wouldRecommend: false, reread: false,
     seriesName: 'Series', seriesNumber: 2, startDate: '', finishDate: '', review: '',
     copies: [{ id: 'copy-1', format: 'Paperback', label: '' }, { id: 'copy-2', format: 'Audiobook', label: 'Unabridged' }],
     moodTagIds: ['mood-1'], genreTagIds: ['genre-1'],
   };
-  beforeEach(() => { vi.clearAllMocks(); getSession.mockResolvedValue({ uid: 'user-1', token: 'id-token' }); });
+  beforeEach(() => { vi.clearAllMocks(); getSession.mockResolvedValue({ uid: 'user-1', token: 'id-token' }); findCover.mockResolvedValue('https://covers.openlibrary.org/b/id/123-M.jpg?default=false'); });
 
   it('saves independent copies and both kinds of tags under the signed-in user', async () => {
     await service().saveBook(input);
@@ -41,7 +40,9 @@ describe('BookService', () => {
       ] } },
       moodTagIds: { arrayValue: { values: [{ stringValue: 'mood-1' }] } },
       genreTagIds: { arrayValue: { values: [{ stringValue: 'genre-1' }] } },
+      coverUrl: { stringValue: 'https://covers.openlibrary.org/b/id/123-M.jpg?default=false' },
     }), 'id-token');
+    expect(findCover).toHaveBeenCalledWith('Test Book', 'Author');
   });
 
   it('removes a deleted tag from affected books in one commit', async () => {
@@ -52,5 +53,16 @@ describe('BookService', () => {
       expect.objectContaining({ updateMask: { fieldPaths: ['moodTagIds'] }, update: expect.objectContaining({ fields: { moodTagIds: { arrayValue: { values: [] } } } }) }),
       { delete: 'projects/test/databases/(default)/documents/users/user-1/bookTags/mood-1' },
     ], 'id-token');
+  });
+
+  it('retries Open Library when an existing book has no cover', async () => {
+    getDocument.mockResolvedValue({ name: 'projects/test/databases/(default)/documents/users/user-1/books/book-1', fields: {
+      title: { stringValue: 'Test Book' }, author: { stringValue: 'Author' }, coverUrl: { stringValue: '' },
+    } });
+    await service().saveBook(input, 'book-1');
+    expect(findCover).toHaveBeenCalledWith('Test Book', 'Author');
+    expect(updateDocument).toHaveBeenCalledWith('users/user-1/books/book-1', expect.objectContaining({
+      coverUrl: { stringValue: 'https://covers.openlibrary.org/b/id/123-M.jpg?default=false' },
+    }), 'id-token');
   });
 });

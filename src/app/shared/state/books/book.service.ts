@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { FirestoreDocument, FirestoreService, FirestoreValue } from '../../../core/firebase/firestore.service';
 import { AuthService } from '../authentication/authentication.service';
-import { StoragePhotoService } from '../../../core/firebase/storage-photo.service';
+import { OpenLibraryCoverService } from './open-library-cover.service';
 import { BookInput, BookRecord, BookTag, BookTagType } from './book.model';
 
 const text = (value: string): FirestoreValue => ({ stringValue: value });
@@ -11,7 +11,7 @@ const strings = (values: string[]): FirestoreValue => ({ arrayValue: { values: v
 export class BookService {
   private readonly auth = inject(AuthService);
   private readonly firestore = inject(FirestoreService);
-  private readonly photos = inject(StoragePhotoService);
+  private readonly covers = inject(OpenLibraryCoverService);
 
   async listBooks(): Promise<BookRecord[]> {
     const { uid, token } = await this.auth.getSession();
@@ -31,29 +31,17 @@ export class BookService {
     const book: BookRecord = { ...input, title: input.title.trim(), author: input.author.trim(), id: id ?? crypto.randomUUID() };
     const path = `users/${uid}/books`;
     const previous = id ? await this.getBook(id) : null;
-    let uploadedPath = '';
-    if (book.coverUrl.startsWith('data:') || book.coverUrl.startsWith('blob:')) {
-      const uploaded = await this.photos.uploadBookCover(uid, book.id, book.coverUrl, token);
-      book.coverUrl = uploaded.url;
-      book.coverStoragePath = uploaded.path;
-      uploadedPath = uploaded.path;
-    }
-    try {
-      if (id) await this.firestore.updateDocument(`${path}/${encodeURIComponent(id)}`, this.toBookFields(book), token);
-      else await this.firestore.createDocument(path, book.id, this.toBookFields(book), token);
-    } catch (error) {
-      if (uploadedPath) await this.photos.deletePhoto(uploadedPath, token).catch(console.error);
-      throw error;
-    }
-    if (uploadedPath && previous?.coverStoragePath) await this.photos.deletePhoto(previous.coverStoragePath, token).catch(console.error);
+    book.coverUrl = previous && previous.title === book.title && previous.author === book.author && previous.coverUrl.startsWith('https://covers.openlibrary.org/b/id/')
+      ? previous.coverUrl
+      : await this.covers.find(book.title, book.author) ?? '';
+    if (id) await this.firestore.updateDocument(`${path}/${encodeURIComponent(id)}`, this.toBookFields(book), token);
+    else await this.firestore.createDocument(path, book.id, this.toBookFields(book), token);
     return book;
   }
 
   async deleteBook(id: string): Promise<void> {
     const { uid, token } = await this.auth.getSession();
-    const previous = await this.getBook(id);
     await this.firestore.deleteDocument(`users/${uid}/books`, id, token);
-    if (previous.coverStoragePath) await this.photos.deletePhoto(previous.coverStoragePath, token).catch(console.error);
   }
 
   async listTags(): Promise<BookTag[]> {
@@ -91,7 +79,7 @@ export class BookService {
 
   private toBookFields(book: BookRecord): Record<string, FirestoreValue> {
     return {
-      title: text(book.title), author: text(book.author), category: text(book.category), coverUrl: text(book.coverUrl), coverStoragePath: text(book.coverStoragePath),
+      title: text(book.title), author: text(book.author), category: text(book.category), coverUrl: text(book.coverUrl),
       publicationDate: text(book.publicationDate), status: text(book.status), rating: { integerValue: String(book.rating) },
       favourite: { booleanValue: book.favourite }, wouldRecommend: { booleanValue: book.wouldRecommend },
       reread: { booleanValue: book.reread }, seriesName: text(book.seriesName),
@@ -110,7 +98,7 @@ export class BookService {
     const ids = (key: string) => f[key]?.arrayValue?.values?.map((value) => value.stringValue ?? '') ?? [];
     return {
       id: doc.name.split('/').at(-1) ?? '', title: s('title'), author: s('author'), category: s('category'),
-      coverUrl: s('coverUrl'), coverStoragePath: s('coverStoragePath'), publicationDate: s('publicationDate'), status: (s('status') || 'Not Started') as BookRecord['status'],
+      coverUrl: s('coverUrl'), publicationDate: s('publicationDate'), status: (s('status') || 'Not Started') as BookRecord['status'],
       rating: Number(f['rating']?.integerValue ?? 0), favourite: f['favourite']?.booleanValue ?? false,
       wouldRecommend: f['wouldRecommend']?.booleanValue ?? false, reread: f['reread']?.booleanValue ?? false,
       seriesName: s('seriesName'), seriesNumber: f['seriesNumber']?.integerValue === undefined ? null : Number(f['seriesNumber'].integerValue),

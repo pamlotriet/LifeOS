@@ -42,20 +42,9 @@
         </div>
       </div>
 
-      <div #yearDropdown class="relative min-w-0 rounded-2xl border border-[#2a587e] bg-[#143453] p-3">
+      <div class="relative min-w-0 rounded-2xl border border-[#2a587e] bg-[#143453] p-3">
         <span class="mb-2 block text-xs font-medium text-[#e0edfa]">Year *</span>
-        <button type="button" aria-label="Select vehicle year" aria-controls="vehicle-year-options" [attr.aria-expanded]="yearDropdownOpen()" (click)="yearDropdownOpen.set(!yearDropdownOpen()); fuelDropdownOpen.set(false)" class="flex h-12 w-full items-center gap-3 rounded-xl border border-[#305f88] bg-[#0d2945] px-3 text-left text-base focus:border-[#21d9ef] focus:outline-none">
-          <ion-icon name="calendar-outline" class="shrink-0 text-base text-[#9fc9fa]" aria-hidden="true"></ion-icon>
-          <span class="min-w-0 flex-1 truncate" [class.text-[#91aecd]]="!vehicleForm.controls.year.value">{{ vehicleForm.controls.year.value || 'Select year' }}</span>
-          <ion-icon name="chevron-down-outline" class="shrink-0 text-sm text-[#9fc9fa]" aria-hidden="true"></ion-icon>
-        </button>
-        @if (yearDropdownOpen()) {
-          <div id="vehicle-year-options" class="absolute top-full left-0 z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl border border-[#305f88] bg-[#143453] p-1 shadow-xl">
-            @for (year of yearOptions; track year) {
-              <button type="button" (click)="selectYear(year)" class="block w-full rounded-md px-3 py-2 text-left text-sm hover:bg-[#1a415e] focus:bg-[#1a415e] focus:outline-none">{{ year }}</button>
-            }
-          </div>
-        }
+        <app-select ariaLabel="Select vehicle year" placeholder="Select year" [options]="yearSelectOptions" formControlName="year" />
       </div>
 
       <div class="min-w-0 rounded-2xl border border-[#2a587e] bg-[#143453] p-3">
@@ -75,20 +64,9 @@
         }
       </div>
 
-      <div #fuelDropdown class="relative min-w-0 rounded-2xl border border-[#2a587e] bg-[#143453] p-3">
+      <div class="relative min-w-0 rounded-2xl border border-[#2a587e] bg-[#143453] p-3">
         <span class="mb-2 block text-xs font-medium text-[#e0edfa]">Fuel Type *</span>
-        <button type="button" aria-label="Select fuel type" aria-controls="vehicle-fuel-options" [attr.aria-expanded]="fuelDropdownOpen()" (click)="fuelDropdownOpen.set(!fuelDropdownOpen()); yearDropdownOpen.set(false)" class="flex h-12 w-full items-center gap-3 rounded-xl border border-[#305f88] bg-[#0d2945] px-3 text-left text-base focus:border-[#21d9ef] focus:outline-none">
-          <ion-icon name="battery-charging-outline" class="shrink-0 text-base text-[#9fc9fa]" aria-hidden="true"></ion-icon>
-          <span class="min-w-0 flex-1 truncate" [class.text-[#91aecd]]="!vehicleForm.controls.fuelType.value">{{ vehicleForm.controls.fuelType.value || 'Select fuel type' }}</span>
-          <ion-icon name="chevron-down-outline" class="shrink-0 text-sm text-[#9fc9fa]" aria-hidden="true"></ion-icon>
-        </button>
-        @if (fuelDropdownOpen()) {
-          <div id="vehicle-fuel-options" class="absolute top-full left-0 z-50 mt-1 w-full rounded-xl border border-[#305f88] bg-[#143453] p-1 shadow-xl">
-            @for (fuelType of fuelTypes; track fuelType) {
-              <button type="button" (click)="selectFuelType(fuelType)" class="block w-full rounded-md px-3 py-2 text-left text-sm hover:bg-[#1a415e] focus:bg-[#1a415e] focus:outline-none">{{ fuelType }}</button>
-            }
-          </div>
-        }
+        <app-select ariaLabel="Select fuel type" placeholder="Select fuel type" [options]="fuelSelectOptions" formControlName="fuelType" />
       </div>
 
       <div class="min-w-0 rounded-2xl border border-[#2a587e] bg-[#143453] p-3">
