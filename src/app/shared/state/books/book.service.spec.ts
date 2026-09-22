@@ -24,7 +24,7 @@ describe('BookService', () => {
   ] }), () => new BookService());
   const input: BookInput = {
     title: 'Test Book', author: 'Author', category: 'Fantasy', coverUrl: '',
-    publicationDate: '', status: 'Reading', rating: 4, favourite: true, wouldRecommend: false, reread: false,
+    publicationDate: '', status: 'Reading', rating: 4, spiceRating: 3, favourite: true, wouldRecommend: false, reread: false,
     seriesName: 'Series', seriesNumber: 2, startDate: '', finishDate: '', review: '',
     copies: [{ id: 'copy-1', format: 'Paperback', label: '' }, { id: 'copy-2', format: 'Audiobook', label: 'Unabridged' }],
     moodTagIds: ['mood-1'], genreTagIds: ['genre-1'],
@@ -41,8 +41,16 @@ describe('BookService', () => {
       moodTagIds: { arrayValue: { values: [{ stringValue: 'mood-1' }] } },
       genreTagIds: { arrayValue: { values: [{ stringValue: 'genre-1' }] } },
       coverUrl: { stringValue: 'https://covers.openlibrary.org/b/id/123-M.jpg?default=false' },
+      spiceRating: { integerValue: '3' },
     }), 'id-token');
     expect(findCover).toHaveBeenCalledWith('Test Book', 'Author');
+  });
+
+  it('loads older books without a spice rating as unrated', async () => {
+    getDocument.mockResolvedValue({ name: 'projects/test/databases/(default)/documents/users/user-1/books/book-1', fields: {
+      title: { stringValue: 'Test Book' }, author: { stringValue: 'Author' },
+    } });
+    expect((await service().getBook('book-1')).spiceRating).toBe(0);
   });
 
   it('removes a deleted tag from affected books in one commit', async () => {

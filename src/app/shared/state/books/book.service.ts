@@ -81,6 +81,7 @@ export class BookService {
     return {
       title: text(book.title), author: text(book.author), category: text(book.category), coverUrl: text(book.coverUrl),
       publicationDate: text(book.publicationDate), status: text(book.status), rating: { integerValue: String(book.rating) },
+      spiceRating: { integerValue: String(book.spiceRating) },
       favourite: { booleanValue: book.favourite }, wouldRecommend: { booleanValue: book.wouldRecommend },
       reread: { booleanValue: book.reread }, seriesName: text(book.seriesName),
       seriesNumber: book.seriesNumber === null ? { nullValue: null } : { integerValue: String(book.seriesNumber) },
@@ -99,7 +100,7 @@ export class BookService {
     return {
       id: doc.name.split('/').at(-1) ?? '', title: s('title'), author: s('author'), category: s('category'),
       coverUrl: s('coverUrl'), publicationDate: s('publicationDate'), status: (s('status') || 'Not Started') as BookRecord['status'],
-      rating: Number(f['rating']?.integerValue ?? 0), favourite: f['favourite']?.booleanValue ?? false,
+      rating: Number(f['rating']?.integerValue ?? 0), spiceRating: Number(f['spiceRating']?.integerValue ?? 0), favourite: f['favourite']?.booleanValue ?? false,
       wouldRecommend: f['wouldRecommend']?.booleanValue ?? false, reread: f['reread']?.booleanValue ?? false,
       seriesName: s('seriesName'), seriesNumber: f['seriesNumber']?.integerValue === undefined ? null : Number(f['seriesNumber'].integerValue),
       startDate: s('startDate'), finishDate: s('finishDate'), review: s('review'),

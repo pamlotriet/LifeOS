@@ -22,6 +22,7 @@ export interface BookRecord {
   publicationDate: string;
   status: BookStatus;
   rating: number;
+  spiceRating: number;
   favourite: boolean;
   wouldRecommend: boolean;
   reread: boolean;

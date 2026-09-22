@@ -3,7 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
-import { BookCopy, BookFormat, BookInput, BOOK_CATEGORIES, BOOK_FORMATS, BOOK_STATUSES } from '../../shared/state/books/book.model';
+import { BookCopy, BookFormat, BookInput, BookRecord, BookTag, BOOK_CATEGORIES, BOOK_FORMATS, BOOK_STATUSES } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
 import { OpenLibraryCoverService } from '../../shared/state/books/open-library-cover.service';
 import { AppSelect } from '../../shared/components/app-select/app-select';
@@ -32,6 +32,9 @@ export class BookForm {
   readonly deleting = signal(false);
   readonly error = signal('');
   readonly showDelete = signal(false);
+  readonly book = signal<BookRecord | null>(null);
+  readonly showEditor = signal(!this.id);
+  readonly step = signal<1 | 2>(1);
   readonly isSeries = signal(false);
   readonly lookingUpCover = signal(false);
   readonly coverMessage = signal('');
@@ -39,7 +42,7 @@ export class BookForm {
 
   readonly form = this.fb.nonNullable.group({
     title: ['', Validators.required], author: ['', Validators.required], category: ['', Validators.required],
-    coverUrl: [''], publicationDate: [''], status: ['Not Started'], rating: [0],
+    coverUrl: [''], publicationDate: [''], status: ['Not Started'], rating: [0], spiceRating: [0],
     favourite: [false], wouldRecommend: [false], reread: [false],
     seriesName: [''], seriesNumber: [null as number | null], startDate: [''], finishDate: [''], review: [''],
   });
@@ -49,13 +52,18 @@ export class BookForm {
   private async load(id: string): Promise<void> {
     try {
       const book = await this.store.getBook(id);
-      this.form.patchValue(book);
-      this.isSeries.set(!!book.seriesName);
-      this.copies.set(book.copies);
-      this.moodTagIds.set(book.moodTagIds);
-      this.genreTagIds.set(book.genreTagIds);
+      this.book.set(book);
+      this.populate(book);
     } catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not load book.'); }
     finally { this.loading.set(false); }
+  }
+
+  private populate(book: BookRecord): void {
+    this.form.patchValue(book);
+    this.isSeries.set(!!book.seriesName);
+    this.copies.set(book.copies.map((copy) => ({ ...copy })));
+    this.moodTagIds.set([...book.moodTagIds]);
+    this.genreTagIds.set([...book.genreTagIds]);
   }
 
   addCopy(): void { this.copies.update((copies) => [...copies, { id: crypto.randomUUID(), format: 'Paperback', label: '' }]); }
@@ -63,6 +71,11 @@ export class BookForm {
     this.isSeries.set(checked);
     if (!checked) this.form.patchValue({ seriesName: '', seriesNumber: null });
   }
+  toggleFormFlag(field: 'favourite' | 'wouldRecommend' | 'reread'): void {
+    const control = this.form.controls[field];
+    control.setValue(!control.value);
+  }
+  setSpiceRating(rating: number): void { this.form.controls.spiceRating.setValue(rating); }
   async lookupCover(): Promise<void> {
     const { title, author } = this.form.getRawValue();
     if (!title.trim() || !author.trim()) return;
@@ -78,8 +91,42 @@ export class BookForm {
     this.copies.update((copies) => copies.map((copy) => copy.id === id ? { ...copy, [field]: value as BookFormat } : copy));
   }
   removeCopy(id: string): void { this.copies.update((copies) => copies.filter((copy) => copy.id !== id)); }
+  tagFor(id: string): BookTag | undefined { return this.store.tags().find((tag) => tag.id === id); }
+  formatDate(value: string): string {
+    return value ? new Date(`${value}T12:00:00`).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Not set';
+  }
+  openEditor(): void { this.error.set(''); this.step.set(1); this.showEditor.set(true); }
+  addCopyFromDetails(): void { this.openEditor(); this.addCopy(); }
+  cancel(): void {
+    if (this.id) { const book = this.book(); if (book) this.populate(book); this.error.set(''); this.showEditor.set(false); this.step.set(1); }
+    else void this.router.navigateByUrl('/books');
+  }
+  nextStep(): void {
+    for (const key of ['title', 'author', 'category'] as const) this.form.controls[key].markAsTouched();
+    if (this.form.controls.title.invalid || this.form.controls.author.invalid || this.form.controls.category.invalid) {
+      this.error.set('Enter a title, author and main category.'); return;
+    }
+    if (!this.copies().length) { this.error.set('Add at least one copy.'); return; }
+    this.error.set(''); this.step.set(2);
+  }
+  async toggleFlag(field: 'favourite' | 'wouldRecommend' | 'reread'): Promise<void> {
+    const book = this.book();
+    if (!book || this.saving()) return;
+    this.saving.set(true); this.error.set('');
+    const { id, ...input } = book;
+    try {
+      const saved = await this.store.saveBook({ ...input, [field]: !book[field] }, id);
+      this.book.set(saved);
+      this.form.patchValue({ [field]: saved[field] });
+    } catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not update book.'); }
+    finally { this.saving.set(false); }
+  }
   toggleTag(type: 'mood' | 'genre', id: string): void {
     const target = type === 'mood' ? this.moodTagIds : this.genreTagIds;
+    if (type === 'genre' && !target().includes(id) && target().length >= 5) {
+      this.error.set('Choose up to five genre tags.'); return;
+    }
+    this.error.set('');
     target.update((ids) => ids.includes(id) ? ids.filter((item) => item !== id) : [...ids, id]);
   }
 
@@ -92,12 +139,18 @@ export class BookForm {
       const value = this.form.getRawValue();
       const input: BookInput = {
         ...value, status: value.status as BookInput['status'],
-        rating: Number(value.rating), seriesName: this.isSeries() ? value.seriesName.trim() : '',
+        rating: Number(value.rating), spiceRating: Number(value.spiceRating), seriesName: this.isSeries() ? value.seriesName.trim() : '',
         seriesNumber: this.isSeries() && value.seriesName.trim() ? value.seriesNumber : null,
         copies: this.copies(), moodTagIds: this.moodTagIds(), genreTagIds: this.genreTagIds(),
       };
       await this.store.saveBook(input, this.id ?? undefined);
-      await this.router.navigateByUrl('/books', { replaceUrl: true });
+      if (this.id) {
+        this.book.set(await this.store.getBook(this.id));
+        this.showEditor.set(false);
+        this.step.set(1);
+      } else {
+        await this.router.navigateByUrl('/books', { replaceUrl: true });
+      }
     } catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not save book.'); }
     finally { this.saving.set(false); }
   }
