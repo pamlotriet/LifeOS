@@ -111,9 +111,12 @@
   @if (submitAttempted() && formStatus() === 'INVALID') {
     <p role="alert" class="text-xs text-[#ff8991]">Complete all required fields and enter a valid SA registration number.</p>
   }
+  @if (saveError()) {
+    <p role="alert" class="text-xs text-[#ff8991]">{{ saveError() }}</p>
+  }
 
   <div class="flex flex-col gap-2.5 pb-4">
-    <button type="submit" class="min-h-12 w-full rounded-full border border-cyan-200/70 bg-gradient-to-r from-[#15dce7] via-[#28bdf4] to-[#3989f7] text-base font-bold text-[#061426] shadow-[0_8px_24px_rgba(20,181,238,0.2)]">Add Vehicle</button>
-    <button type="button" (click)="cancel()" class="min-h-11 w-full rounded-full border border-[#8aaff0] bg-[#0d2741] text-sm font-semibold text-[#e0ebfa]">Cancel</button>
+    <button type="submit" [disabled]="saving()" class="min-h-12 w-full rounded-full border border-cyan-200/70 bg-gradient-to-r from-[#15dce7] via-[#28bdf4] to-[#3989f7] text-base font-bold text-[#061426] shadow-[0_8px_24px_rgba(20,181,238,0.2)] disabled:opacity-60">{{ saving() ? 'Saving vehicle…' : 'Add Vehicle' }}</button>
+    <button type="button" (click)="cancel()" [disabled]="saving()" class="min-h-11 w-full rounded-full border border-[#8aaff0] bg-[#0d2741] text-sm font-semibold text-[#e0ebfa] disabled:opacity-60">Cancel</button>
   </div>
 </form>

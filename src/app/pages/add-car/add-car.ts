@@ -43,6 +43,8 @@ export class AddCar {
     initialValue: this.vehicleForm.status,
   });
   readonly submitAttempted = signal(false);
+  readonly saving = signal(false);
+  readonly saveError = signal('');
   readonly yearDropdownOpen = signal(false);
   readonly fuelDropdownOpen = signal(false);
   private readonly yearDropdown = viewChild<ElementRef<HTMLElement>>('yearDropdown');
@@ -81,7 +83,8 @@ export class AddCar {
     this.fuelDropdownOpen.set(false);
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
+    if (this.saving()) return;
     this.submitAttempted.set(true);
     this.vehicleForm.markAllAsTouched();
     if (this.vehicleForm.invalid) return;
@@ -89,17 +92,26 @@ export class AddCar {
     const value = this.vehicleForm.getRawValue();
     if (value.odometer === null) return;
 
-    this.vehicleStore.add({
-      make: value.make.trim(),
-      model: value.model.trim(),
-      year: value.year,
-      registration: value.registration.trim().toUpperCase().replace(/\s+/g, ' '),
-      fuelType: value.fuelType,
-      tankCapacity: value.tankCapacity,
-      odometer: value.odometer,
-      photoUrl: value.photoUrl,
-    });
-    void this.router.navigateByUrl('/fuel/vehicles');
+    this.saving.set(true);
+    this.saveError.set('');
+    try {
+      await this.vehicleStore.add({
+        make: value.make.trim(),
+        model: value.model.trim(),
+        year: value.year,
+        registration: value.registration.trim().toUpperCase().replace(/\s+/g, ' '),
+        fuelType: value.fuelType,
+        tankCapacity: value.tankCapacity,
+        odometer: value.odometer,
+        photoUrl: value.photoUrl,
+      });
+      await this.router.navigateByUrl('/fuel/vehicles');
+    } catch (error) {
+      console.error('Could not save vehicle', error);
+      this.saveError.set(error instanceof Error ? error.message : 'Could not save vehicle. Please try again.');
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   cancel(): void {

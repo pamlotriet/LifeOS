@@ -10,5 +10,13 @@ import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
   templateUrl: './vehicles.html',
 })
 export class Vehicles {
-  readonly vehicles = inject(VehicleStore).vehicles;
+  private readonly store = inject(VehicleStore);
+  readonly vehicles = this.store.vehicles;
+  readonly loading = this.store.loading;
+  readonly error = this.store.error;
+
+  reload(): void {
+    void this.store.reload();
+  }
+
 }

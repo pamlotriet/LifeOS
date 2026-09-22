@@ -1,4 +1,6 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { AuthService } from '../authentication/authentication.service';
+import { VehicleService } from './vehicle.service';
 
 export interface VehicleRecord {
   id: string;
@@ -10,6 +12,7 @@ export interface VehicleRecord {
   tankCapacity: number | null;
   odometer: number;
   photoUrl: string | null;
+  photoStoragePath?: string | null;
 }
 
 export interface VehicleListItem {
@@ -17,77 +20,81 @@ export interface VehicleListItem {
   name: string;
   description: string;
   registration: string;
-  consumption: string;
+  consumption: string | null;
   image: string | null;
 }
 
-const storageKey = 'lifeos.vehicles';
-
-const sampleVehicles: VehicleListItem[] = [
-  {
-    id: 'sample-haval',
-    name: 'Haval Jolion',
-    description: '1.5T Luxury',
-    registration: 'CAA 123 456',
-    consumption: '7.6',
-    image: '/assets/vehicles/white-suv.png',
-  },
-  {
-    id: 'sample-suzuki',
-    name: 'Suzuki Swift',
-    description: '1.2 GL',
-    registration: 'CAA 987 654',
-    consumption: '5.9',
-    image: '/assets/vehicles/silver-hatchback.png',
-  },
-];
-
 @Injectable({ providedIn: 'root' })
 export class VehicleStore {
-  private readonly saved = signal<VehicleRecord[]>(this.readSaved());
+  private readonly auth = inject(AuthService);
+  private readonly service = inject(VehicleService);
+  private readonly saved = signal<VehicleRecord[]>([]);
+  private loadVersion = 0;
 
-  readonly vehicles = computed<VehicleListItem[]>(() => [
-    ...this.saved().map((vehicle) => ({
+  readonly loading = signal(true);
+  readonly error = signal('');
+  readonly vehicles = computed<VehicleListItem[]>(() =>
+    this.saved().map((vehicle) => ({
       id: vehicle.id,
       name: `${vehicle.make} ${vehicle.model}`,
       description: `${vehicle.year} · ${vehicle.fuelType}`,
       registration: vehicle.registration || 'No registration',
-      consumption: '—',
+      consumption: null,
       image: vehicle.photoUrl,
     })),
-    ...sampleVehicles,
-  ]);
+  );
 
-  add(vehicle: Omit<VehicleRecord, 'id'>): void {
-    const id = globalThis.crypto?.randomUUID?.() ?? `vehicle-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    const record: VehicleRecord = { ...vehicle, id };
-    this.saved.update((vehicles) => [record, ...vehicles]);
-
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(this.saved()));
-    } catch {
-      // Keep the vehicle available for this session when storage is unavailable.
-    }
+  constructor() {
+    effect(() => {
+      const uid = this.auth.userId();
+      untracked(() => {
+        this.saved.set([]);
+        this.error.set('');
+        if (uid) void this.load(uid);
+        else {
+          this.loadVersion++;
+          this.loading.set(false);
+        }
+      });
+    });
   }
 
-  private readSaved(): VehicleRecord[] {
+  async reload(): Promise<void> {
+    const uid = this.auth.userId();
+    if (uid) await this.load(uid);
+  }
+
+  async add(vehicle: Omit<VehicleRecord, 'id'>): Promise<void> {
+    const uid = this.auth.userId();
+    if (!uid) throw new Error('Sign in to add a vehicle.');
+    const saved = await this.service.add(vehicle);
+    if (this.auth.userId() === uid) this.saved.update((vehicles) => [saved, ...vehicles]);
+  }
+
+  private async load(uid: string): Promise<void> {
+    const version = ++this.loadVersion;
+    const existingIds = new Set(this.saved().map((vehicle) => vehicle.id));
+    this.loading.set(true);
+    this.error.set('');
     try {
-      const value = localStorage.getItem(storageKey);
-      const records: unknown = value ? JSON.parse(value) : [];
-      if (!Array.isArray(records)) return [];
-      return records.filter(
-        (record): record is VehicleRecord =>
-          typeof record === 'object' &&
-          record !== null &&
-          typeof record.id === 'string' &&
-          typeof record.make === 'string' &&
-          typeof record.model === 'string' &&
-          typeof record.year === 'string' &&
-          typeof record.fuelType === 'string' &&
-          typeof record.odometer === 'number',
-      );
-    } catch {
-      return [];
+      const vehicles = await this.service.list(uid);
+      if (version === this.loadVersion && this.auth.userId() === uid) {
+        const loadedIds = new Set(vehicles.map((vehicle) => vehicle.id));
+        this.saved.update((current) => {
+          const next = [
+            ...current.filter((vehicle) => !existingIds.has(vehicle.id) && !loadedIds.has(vehicle.id)),
+            ...vehicles,
+          ];
+          return next;
+        });
+      }
+    } catch (error) {
+      if (version === this.loadVersion) {
+        console.error('Could not load vehicles', error);
+        this.error.set('Could not load vehicles. Please try again.');
+      }
+    } finally {
+      if (version === this.loadVersion) this.loading.set(false);
     }
   }
 }

@@ -21,13 +21,13 @@ describe('FirestoreService', () => {
     expect(request.mock.calls[1][1].headers.Authorization).toBe('Bearer id-token');
   });
 
-  it('returns an empty list when the user has no vehicle documents', async () => {
+  it('returns an empty list when a collection has no documents', async () => {
     const request = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) });
     vi.stubGlobal('fetch', request);
 
-    const vehicles = await new FirestoreService().listDocuments('users/user-1/vehicles', 'id-token');
+    const documents = await new FirestoreService().listDocuments('users/user-1/vehicles', 'id-token');
 
-    expect(vehicles).toEqual([]);
+    expect(documents).toEqual([]);
     expect(request.mock.calls[0][0]).toContain('/users/user-1/vehicles');
   });
 
@@ -43,15 +43,15 @@ describe('FirestoreService', () => {
     expect(request.mock.calls[0][1].method).toBeUndefined();
   });
 
-  it('reads every page of a user vehicle collection', async () => {
+  it('reads every page of a collection', async () => {
     const request = vi.fn()
       .mockResolvedValueOnce({ ok: true, json: async () => ({ documents: [{ name: 'car-1' }], nextPageToken: 'more' }) })
       .mockResolvedValueOnce({ ok: true, json: async () => ({ documents: [{ name: 'car-2' }] }) });
     vi.stubGlobal('fetch', request);
 
-    const vehicles = await new FirestoreService().listDocuments('users/user-1/vehicles', 'id-token');
+    const documents = await new FirestoreService().listDocuments('users/user-1/vehicles', 'id-token');
 
-    expect(vehicles.map((vehicle) => vehicle.name)).toEqual(['car-1', 'car-2']);
+    expect(documents.map((document) => document.name)).toEqual(['car-1', 'car-2']);
     expect(request.mock.calls[1][0]).toContain('pageToken=more');
   });
 });
