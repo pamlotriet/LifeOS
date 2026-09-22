@@ -23,6 +23,7 @@ export interface BookRecord {
   status: BookStatus;
   rating: number;
   spiceRating: number;
+  wheelSelected: boolean;
   favourite: boolean;
   wouldRecommend: boolean;
   reread: boolean;

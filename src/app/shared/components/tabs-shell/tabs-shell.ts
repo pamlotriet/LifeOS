@@ -26,10 +26,10 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
             </div>
           </div>
         </ion-tab-button>
-        <ion-tab-button tab="search" class="lifeos-tab-button [--background:#0b2138] [--color:#aebdd3] [--color-selected:#40e6f2]">
+        <ion-tab-button tab="wheel" class="lifeos-tab-button [--background:#0b2138] [--color:#aebdd3] [--color-selected:#40e6f2]">
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <ion-icon size="large" name="search" class="mb-1"></ion-icon>
-            <ion-label>Search</ion-label>
+            <ion-icon size="large" name="disc" class="mb-1"></ion-icon>
+            <ion-label>Wheel</ion-label>
           </div>
         </ion-tab-button>
         <ion-tab-button tab="more" class="lifeos-tab-button [--background:#0b2138] [--color:#aebdd3] [--color-selected:#40e6f2]">

@@ -68,6 +68,13 @@ export class BookStore {
     if (this.auth.userId() === uid) this.books.update((books) => books.filter((book) => book.id !== id));
   }
 
+  async setWheelSelected(id: string, selected: boolean): Promise<void> {
+    const uid = this.auth.userId();
+    if (!uid) throw new Error('Sign in to manage your reading wheel.');
+    await this.service.setWheelSelected(id, selected);
+    if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book, wheelSelected: selected } : book));
+  }
+
   async saveTag(input: Pick<BookTag, 'name' | 'type' | 'color'>, id?: string): Promise<void> {
     const uid = this.auth.userId();
     const tag = await this.service.saveTag(input, id);

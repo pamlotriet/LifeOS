@@ -44,6 +44,11 @@ export class BookService {
     await this.firestore.deleteDocument(`users/${uid}/books`, id, token);
   }
 
+  async setWheelSelected(id: string, selected: boolean): Promise<void> {
+    const { uid, token } = await this.auth.getSession();
+    await this.firestore.updateDocumentField(`users/${uid}/books`, id, 'wheelSelected', { booleanValue: selected }, token);
+  }
+
   async listTags(): Promise<BookTag[]> {
     const { uid, token } = await this.auth.getSession();
     return (await this.firestore.listDocuments(`users/${uid}/bookTags`, token)).map((doc) => this.fromTag(doc));
@@ -82,6 +87,7 @@ export class BookService {
       title: text(book.title), author: text(book.author), category: text(book.category), coverUrl: text(book.coverUrl),
       publicationDate: text(book.publicationDate), status: text(book.status), rating: { integerValue: String(book.rating) },
       spiceRating: { integerValue: String(book.spiceRating) },
+      wheelSelected: { booleanValue: book.wheelSelected },
       favourite: { booleanValue: book.favourite }, wouldRecommend: { booleanValue: book.wouldRecommend },
       reread: { booleanValue: book.reread }, seriesName: text(book.seriesName),
       seriesNumber: book.seriesNumber === null ? { nullValue: null } : { integerValue: String(book.seriesNumber) },
@@ -100,7 +106,8 @@ export class BookService {
     return {
       id: doc.name.split('/').at(-1) ?? '', title: s('title'), author: s('author'), category: s('category'),
       coverUrl: s('coverUrl'), publicationDate: s('publicationDate'), status: (s('status') || 'Not Started') as BookRecord['status'],
-      rating: Number(f['rating']?.integerValue ?? 0), spiceRating: Number(f['spiceRating']?.integerValue ?? 0), favourite: f['favourite']?.booleanValue ?? false,
+      rating: Number(f['rating']?.integerValue ?? 0), spiceRating: Number(f['spiceRating']?.integerValue ?? 0),
+      wheelSelected: f['wheelSelected']?.booleanValue ?? false, favourite: f['favourite']?.booleanValue ?? false,
       wouldRecommend: f['wouldRecommend']?.booleanValue ?? false, reread: f['reread']?.booleanValue ?? false,
       seriesName: s('seriesName'), seriesNumber: f['seriesNumber']?.integerValue === undefined ? null : Number(f['seriesNumber'].integerValue),
       startDate: s('startDate'), finishDate: s('finishDate'), review: s('review'),

@@ -43,7 +43,7 @@ export class BookForm {
   readonly form = this.fb.nonNullable.group({
     title: ['', Validators.required], author: ['', Validators.required], category: ['', Validators.required],
     coverUrl: [''], publicationDate: [''], status: ['Not Started'], rating: [0], spiceRating: [0],
-    favourite: [false], wouldRecommend: [false], reread: [false],
+    favourite: [false], wouldRecommend: [false], reread: [false], wheelSelected: [false],
     seriesName: [''], seriesNumber: [null as number | null], startDate: [''], finishDate: [''], review: [''],
   });
 

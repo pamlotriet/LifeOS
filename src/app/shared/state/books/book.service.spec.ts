@@ -12,6 +12,7 @@ describe('BookService', () => {
   const listDocuments = vi.fn();
   const createDocument = vi.fn();
   const updateDocument = vi.fn();
+  const updateDocumentField = vi.fn();
   const getDocument = vi.fn();
   const commitWrites = vi.fn();
   const deleteDocument = vi.fn();
@@ -19,12 +20,12 @@ describe('BookService', () => {
   const findCover = vi.fn();
   const service = () => runInInjectionContext(Injector.create({ providers: [
     { provide: AuthService, useValue: { getSession } },
-    { provide: FirestoreService, useValue: { listDocuments, createDocument, updateDocument, getDocument, commitWrites, deleteDocument, documentName } },
+    { provide: FirestoreService, useValue: { listDocuments, createDocument, updateDocument, updateDocumentField, getDocument, commitWrites, deleteDocument, documentName } },
     { provide: OpenLibraryCoverService, useValue: { find: findCover } },
   ] }), () => new BookService());
   const input: BookInput = {
     title: 'Test Book', author: 'Author', category: 'Fantasy', coverUrl: '',
-    publicationDate: '', status: 'Reading', rating: 4, spiceRating: 3, favourite: true, wouldRecommend: false, reread: false,
+    publicationDate: '', status: 'Reading', rating: 4, spiceRating: 3, wheelSelected: false, favourite: true, wouldRecommend: false, reread: false,
     seriesName: 'Series', seriesNumber: 2, startDate: '', finishDate: '', review: '',
     copies: [{ id: 'copy-1', format: 'Paperback', label: '' }, { id: 'copy-2', format: 'Audiobook', label: 'Unabridged' }],
     moodTagIds: ['mood-1'], genreTagIds: ['genre-1'],
@@ -42,6 +43,7 @@ describe('BookService', () => {
       genreTagIds: { arrayValue: { values: [{ stringValue: 'genre-1' }] } },
       coverUrl: { stringValue: 'https://covers.openlibrary.org/b/id/123-M.jpg?default=false' },
       spiceRating: { integerValue: '3' },
+      wheelSelected: { booleanValue: false },
     }), 'id-token');
     expect(findCover).toHaveBeenCalledWith('Test Book', 'Author');
   });
@@ -51,6 +53,13 @@ describe('BookService', () => {
       title: { stringValue: 'Test Book' }, author: { stringValue: 'Author' },
     } });
     expect((await service().getBook('book-1')).spiceRating).toBe(0);
+  });
+
+  it('saves wheel membership on the signed-in user book', async () => {
+    await service().setWheelSelected('book-1', true);
+    expect(updateDocumentField).toHaveBeenCalledWith(
+      'users/user-1/books', 'book-1', 'wheelSelected', { booleanValue: true }, 'id-token',
+    );
   });
 
   it('removes a deleted tag from affected books in one commit', async () => {
