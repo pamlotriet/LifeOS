@@ -9,7 +9,7 @@ describe('AddCar', () => {
   let addVehicle: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
-    addVehicle = vi.fn();
+    addVehicle = vi.fn().mockResolvedValue(undefined);
     await TestBed.configureTestingModule({
       imports: [AddCar],
       providers: [provideRouter([]), { provide: VehicleStore, useValue: { add: addVehicle } }],
@@ -31,7 +31,7 @@ describe('AddCar', () => {
     expect(addVehicle).not.toHaveBeenCalled();
   });
 
-  it('saves a valid vehicle and returns to the list', () => {
+  it('saves a valid vehicle and returns to the list', async () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     component.vehicleForm.patchValue({
       make: ' Toyota ',
@@ -42,11 +42,25 @@ describe('AddCar', () => {
       odometer: 12500,
     });
 
-    component.submit();
+    await component.submit();
 
     expect(addVehicle).toHaveBeenCalledWith(
       expect.objectContaining({ make: 'Toyota', model: 'Corolla', year: '2024', registration: 'CAA 123 456', odometer: 12500 }),
     );
     expect(navigate).toHaveBeenCalledWith('/fuel/vehicles');
+  });
+
+  it('stays on the form when Firebase cannot save the vehicle', async () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    addVehicle.mockRejectedValue(new Error('Could not save vehicle (403).'));
+    component.vehicleForm.patchValue({
+      make: 'Toyota', model: 'Corolla', year: '2024', registration: 'CAA 123 456',
+      fuelType: 'Petrol', odometer: 12500,
+    });
+
+    await component.submit();
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(component.saveError()).toContain('Could not save vehicle');
   });
 });
