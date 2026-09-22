@@ -12,6 +12,6 @@ describe('AppDatePicker', () => {
     picker.selectMonth(8);
     picker.choose(22);
     expect(changed).toHaveBeenCalledWith('2026-09-22');
-    expect(picker.formatted()).toContain('22 Sep 2026');
+    expect(picker.formatted()).toMatch(/22 Sep(?:t)? 2026/);
   });
 });

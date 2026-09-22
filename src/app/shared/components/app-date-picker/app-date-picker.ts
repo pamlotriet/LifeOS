@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, forwardRef, HostListener, input, output, signal } from '@angular/core';
+import { Component, computed, ElementRef, forwardRef, HostListener, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IonIcon } from '@ionic/angular';
 
@@ -12,7 +12,7 @@ const localIso = (date: Date) => `${date.getFullYear()}-${String(date.getMonth()
     <div class="relative" [class.z-50]="open()">
       <button type="button" [attr.aria-label]="ariaLabel()" [attr.aria-expanded]="open()" aria-haspopup="dialog" [disabled]="disabled()" (click)="toggle()"
         class="flex min-h-11 w-full items-center gap-3 rounded-xl border border-[#315b7e] bg-gradient-to-r from-[#143755] to-[#102b47] px-3 text-left text-base text-white outline-none focus-visible:border-cyan-300 disabled:opacity-50">
-        <ion-icon name="calendar-outline" class="shrink-0 text-cyan-300" aria-hidden="true"></ion-icon><span class="min-w-0 flex-1 truncate" [class.text-[#91aecd]]="!value()">{{ formatted() || placeholder() }}</span><ion-icon name="chevron-down-outline" class="shrink-0 text-[#afc9e7]" aria-hidden="true"></ion-icon>
+        <ion-icon name="calendar-outline" class="shrink-0 text-cyan-300" aria-hidden="true"></ion-icon><span class="min-w-0 flex-1 truncate" [class.text-[#91aecd]]="!currentValue()">{{ formatted() || placeholder() }}</span><ion-icon name="chevron-down-outline" class="shrink-0 text-[#afc9e7]" aria-hidden="true"></ion-icon>
       </button>
       @if (open()) { <div role="dialog" [attr.aria-label]="ariaLabel()" class="absolute top-full z-50 mt-1 w-full min-w-[270px] max-w-[340px] rounded-xl border border-[#315b7e] bg-[#123451] p-3 text-white shadow-[0_14px_32px_rgba(0,0,0,0.4)]" [class.left-0]="align() === 'left'" [class.right-0]="align() === 'right'">
         <div class="mb-3 flex items-center justify-between"><button type="button" aria-label="Previous month" (click)="shiftMonth(-1)" [disabled]="mode() !== 'days'" class="grid h-9 w-9 place-items-center rounded-lg hover:bg-[#1c486a] disabled:opacity-30"><ion-icon name="chevron-back"></ion-icon></button><button type="button" (click)="mode.set('years')" class="rounded-lg px-2 py-1 text-sm font-semibold hover:bg-[#1c486a]">{{ monthLabel() }} ▾</button><button type="button" aria-label="Next month" (click)="shiftMonth(1)" [disabled]="mode() !== 'days'" class="grid h-9 w-9 place-items-center rounded-lg hover:bg-[#1c486a] disabled:opacity-30"><ion-icon name="chevron-forward"></ion-icon></button></div>
@@ -34,6 +34,7 @@ export class AppDatePicker implements ControlValueAccessor {
   readonly clearable = input(false);
   readonly align = input<'left' | 'right'>('left');
   readonly value = signal('');
+  readonly currentValue = computed(() => this.selectedValue() ?? this.value());
   readonly valueChange = output<string>();
   readonly open = signal(false);
   readonly disabled = signal(false);
@@ -43,7 +44,7 @@ export class AppDatePicker implements ControlValueAccessor {
   readonly mode = signal<'days' | 'months' | 'years'>('days');
   readonly viewMonth = signal(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
   readonly monthLabel = computed(() => this.viewMonth().toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' }));
-  readonly formatted = computed(() => this.value() ? new Date(`${this.value()}T12:00:00`).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
+  readonly formatted = computed(() => this.currentValue() ? new Date(`${this.currentValue()}T12:00:00`).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
   readonly days = computed(() => {
     const month = this.viewMonth();
     const offset = (new Date(month.getFullYear(), month.getMonth(), 1).getDay() + 6) % 7;
@@ -52,15 +53,13 @@ export class AppDatePicker implements ControlValueAccessor {
   });
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
-  constructor(private readonly element: ElementRef<HTMLElement>) {
-    effect(() => { const selected = this.selectedValue(); if (selected !== undefined) this.value.set(selected); });
-  }
-  toggle(): void { if (!this.open()) { this.viewMonth.set(this.value() ? new Date(`${this.value()}T12:00:00`) : new Date()); this.mode.set('days'); } this.open.set(!this.open()); this.onTouched(); }
+  constructor(private readonly element: ElementRef<HTMLElement>) {}
+  toggle(): void { if (!this.open()) { this.viewMonth.set(this.currentValue() ? new Date(`${this.currentValue()}T12:00:00`) : new Date()); this.mode.set('days'); } this.open.set(!this.open()); this.onTouched(); }
   shiftMonth(delta: number): void { const month = this.viewMonth(); this.viewMonth.set(new Date(month.getFullYear(), month.getMonth() + delta, 1)); }
   selectYear(year: number): void { this.viewMonth.set(new Date(year, this.viewMonth().getMonth(), 1)); this.mode.set('months'); }
   selectMonth(month: number): void { this.viewMonth.set(new Date(this.viewMonth().getFullYear(), month, 1)); this.mode.set('days'); }
   dateLabel(day: number): string { return new Date(this.viewMonth().getFullYear(), this.viewMonth().getMonth(), day).toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' }); }
-  isSelected(day: number): boolean { return this.value() === localIso(new Date(this.viewMonth().getFullYear(), this.viewMonth().getMonth(), day)); }
+  isSelected(day: number): boolean { return this.currentValue() === localIso(new Date(this.viewMonth().getFullYear(), this.viewMonth().getMonth(), day)); }
   choose(day: number): void { this.set(localIso(new Date(this.viewMonth().getFullYear(), this.viewMonth().getMonth(), day))); }
   chooseToday(): void { this.set(localIso(new Date())); }
   chooseEmpty(): void { this.set(''); }
