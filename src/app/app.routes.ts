@@ -55,6 +55,8 @@ export const routes: Routes = [
   { path: 'recipes/:id/edit', loadComponent: () => import('./pages/recipes/recipe-form').then((m) => m.RecipeForm), canActivate: [authGuard] },
   { path: 'recipes/:id', loadComponent: () => import('./pages/recipes/recipe-detail').then((m) => m.RecipeDetail), canActivate: [authGuard] },
   { path: 'passwords', loadComponent: () => import('./pages/passwords/passwords').then((m) => m.Passwords), canActivate: [authGuard] },
+  { path: 'passwords/settings', loadComponent: () => import('./pages/passwords/password-settings').then((m) => m.PasswordSettings), canActivate: [authGuard] },
+  { path: 'settings', loadComponent: () => import('./pages/passwords/password-settings').then((m) => m.PasswordSettings), canActivate: [authGuard] },
   { path: 'passwords/add', loadComponent: () => import('./pages/passwords/password-form').then((m) => m.PasswordForm), canActivate: [authGuard] },
   { path: 'passwords/:id/edit', loadComponent: () => import('./pages/passwords/password-form').then((m) => m.PasswordForm), canActivate: [authGuard] },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },

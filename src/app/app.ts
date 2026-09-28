@@ -94,4 +94,17 @@ export class App {
       this.signingIn.set(false);
     }
   }
+
+  async authenticateWithBiometrics(): Promise<void> {
+    if (this.signingIn()) return;
+    this.signInError.set('');
+    this.signingIn.set(true);
+    try {
+      await this.authService.unlockWithBiometrics();
+    } catch (error) {
+      this.signInError.set(error instanceof Error ? error.message : 'Could not unlock LifeOS.');
+    } finally {
+      this.signingIn.set(false);
+    }
+  }
 }

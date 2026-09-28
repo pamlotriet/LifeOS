@@ -8,18 +8,26 @@ const bytes = (value: string) => Uint8Array.from(atob(value), (character) => cha
 
 @Injectable({ providedIn: 'root' })
 export class VaultCryptoService {
-  readonly unlocked = signal(false); private key: CryptoKey | null = null; private timer?: ReturnType<typeof setTimeout>;
+  readonly unlocked = signal(false);
+  readonly autoLockMinutes = signal(this.readNumber('lifeos.vault.autoLockMinutes', 5));
+  readonly lockOnBackground = signal(this.readBoolean('lifeos.vault.lockOnBackground', true));
+  private key: CryptoKey | null = null; private timer?: ReturnType<typeof setTimeout>;
   constructor() {
     if (typeof document !== 'undefined') {
       for (const event of ['pointerdown', 'keydown', 'touchstart']) document.addEventListener(event, () => this.touch(), { passive: true });
-      document.addEventListener('visibilitychange', () => { if (document.hidden) this.scheduleLock(60_000); else this.touch(); });
+      document.addEventListener('visibilitychange', () => { if (document.hidden && this.lockOnBackground()) this.lock(); else if (!document.hidden) this.touch(); });
     }
   }
   randomSalt(): string { return base64(crypto.getRandomValues(new Uint8Array(16))); }
-  async derive(passphrase: string, salt: string): Promise<CryptoKey> {
-    const material = await crypto.subtle.importKey('raw', encoder.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
-    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: bytes(salt), iterations: ITERATIONS, hash: 'SHA-256' }, material, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  async deriveBytes(passphrase: string, salt: string): Promise<Uint8Array> {
+    const material = await crypto.subtle.importKey('raw', encoder.encode(passphrase), 'PBKDF2', false, ['deriveBits']);
+    const derived = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: bytes(salt), iterations: ITERATIONS, hash: 'SHA-256' }, material, 256);
+    return new Uint8Array(derived);
   }
+  async derive(passphrase: string, salt: string): Promise<CryptoKey> { return this.importKey(await this.deriveBytes(passphrase, salt)); }
+  async importKey(raw: Uint8Array): Promise<CryptoKey> { const keyData = raw.slice().buffer as ArrayBuffer; return crypto.subtle.importKey('raw', keyData, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']); }
+  encodeKey(raw: Uint8Array): string { return base64(raw); }
+  decodeKey(encoded: string): Uint8Array { return bytes(encoded); }
   setKey(key: CryptoKey): void { this.key = key; this.unlocked.set(true); this.touch(); }
   lock(): void { this.key = null; this.unlocked.set(false); if (this.timer) clearTimeout(this.timer); }
   async encrypt(value: unknown, context: string, key = this.requiredKey()): Promise<EncryptedPayload> {
@@ -32,6 +40,11 @@ export class VaultCryptoService {
     return JSON.parse(decoder.decode(plain)) as T;
   }
   requiredKey(): CryptoKey { if (!this.key) throw new Error('Unlock your vault first.'); return this.key; }
-  touch(): void { if (!this.key) return; this.scheduleLock(5 * 60_000); }
+  setAutoLockMinutes(minutes: number): void { const allowed = [1, 5, 15, 30]; const value = allowed.includes(minutes) ? minutes : 5; this.autoLockMinutes.set(value); this.writePreference('lifeos.vault.autoLockMinutes', String(value)); this.touch(); }
+  setLockOnBackground(enabled: boolean): void { this.lockOnBackground.set(enabled); this.writePreference('lifeos.vault.lockOnBackground', String(enabled)); }
+  touch(): void { if (!this.key) return; this.scheduleLock(this.autoLockMinutes() * 60_000); }
   private scheduleLock(delay: number): void { if (this.timer) clearTimeout(this.timer); this.timer = setTimeout(() => this.lock(), delay); }
+  private readNumber(key: string, fallback: number): number { try { if (typeof localStorage === 'undefined') return fallback; const value = Number(localStorage.getItem(key)); return [1, 5, 15, 30].includes(value) ? value : fallback; } catch { return fallback; } }
+  private readBoolean(key: string, fallback: boolean): boolean { try { if (typeof localStorage === 'undefined') return fallback; const value = localStorage.getItem(key); return value === null ? fallback : value === 'true'; } catch { return fallback; } }
+  private writePreference(key: string, value: string): void { try { if (typeof localStorage !== 'undefined') localStorage.setItem(key, value); } catch { /* The vault still works when preference persistence is unavailable. */ } }
 }

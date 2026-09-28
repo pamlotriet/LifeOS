@@ -24,6 +24,16 @@
     ></ion-router-outlet>
   } @else {
     <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
+    @if (authService.biometric.enrolled()) {
+      <ion-button
+        class="absolute bottom-52 w-4/5 left-1/2 transform -translate-x-1/2 rounded-4xl [--background:#22d3ee] [--color:#062642]"
+        [disabled]="signingIn()"
+        (click)="authenticateWithBiometrics()"
+      >
+        <ion-icon name="finger-print" slot="start" class="mr-2"></ion-icon>
+        <ion-label class="font-semibold text-lg">Unlock with {{ authService.biometric.kind() }}</ion-label>
+      </ion-button>
+    }
     <ion-button
       class="absolute bottom-36 w-4/5 left-1/2 transform -translate-x-1/2 [--background:white] rounded-4xl"
       [disabled]="signingIn()"
@@ -31,7 +41,7 @@
     >
       <ion-icon name="logo-google" slot="start" class="mr-2 text-black"></ion-icon>
       <ion-label class="text-black font-semibold text-lg">{{
-        signingIn() ? 'Checking account…' : 'Sign in with Google'
+        signingIn() ? 'Checking account…' : authService.biometric.enrolled() ? 'Use Google sign-in' : 'Sign in with Google'
       }}</ion-label>
     </ion-button>
     @if (signInError()) {

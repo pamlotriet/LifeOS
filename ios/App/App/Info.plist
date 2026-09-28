@@ -51,6 +51,8 @@
 	<string>UIStatusBarStyleLightContent</string>
 	<key>NSCameraUsageDescription</key>
 	<string>LifeOS uses the camera to scan book barcodes and add vehicle photos.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>LifeOS uses Face ID to unlock your encrypted password vault.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

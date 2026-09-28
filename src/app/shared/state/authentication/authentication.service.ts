@@ -12,6 +12,7 @@ import {
 } from 'firebase/auth';
 import { firebaseApp } from '../../../core/firebase/firebase.config';
 import { FirestoreService } from '../../../core/firebase/firestore.service';
+import { BiometricAuthService } from './biometric-auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,7 @@ import { FirestoreService } from '../../../core/firebase/firestore.service';
 export class AuthService {
   private readonly webAuth = getAuth(firebaseApp);
   private readonly firestore = inject(FirestoreService);
+  readonly biometric = inject(BiometricAuthService);
   private readonly authenticated = signal(false);
   private readonly ready = signal(false);
   private readonly uid = signal<string | null>(null);
@@ -90,7 +92,14 @@ export class AuthService {
     if (Capacitor.isNativePlatform()) {
       try {
         const { user } = await FirebaseAuthentication.getCurrentUser();
-        if (user) await this.ensureNativeProfile(user);
+        if (user) {
+          await this.biometric.refresh(user.uid);
+          if (this.biometric.enrolled()) {
+            this.uid.set(null); this.authenticated.set(false);
+            return false;
+          }
+          await this.ensureNativeProfile(user);
+        }
         this.uid.set(user?.uid ?? null);
         this.authenticated.set(!!user);
         return !!user;
@@ -111,6 +120,11 @@ export class AuthService {
 
   async loginWithGoogle() {
     if (Capacitor.isNativePlatform()) {
+      if (this.biometric.enrolled()) {
+        const existing = (await FirebaseAuthentication.getCurrentUser()).user;
+        if (existing) await this.biometric.disable(existing.uid);
+        await FirebaseAuthentication.signOut();
+      }
       const result = await FirebaseAuthentication.signInWithGoogle();
       if (!result.user) throw new Error('Google sign-in returned no user.');
 
@@ -156,8 +170,22 @@ export class AuthService {
     }
   }
 
+  async unlockWithBiometrics(): Promise<void> {
+    if (!Capacitor.isNativePlatform()) throw new Error('Biometric app unlock is only available in the mobile app.');
+    const { user } = await FirebaseAuthentication.getCurrentUser();
+    if (!user) { this.biometric.enrolled.set(false); throw new Error('Your Google session has expired. Sign in again.'); }
+    await this.biometric.unlock(user.uid);
+    await this.ensureNativeProfile(user);
+    this.uid.set(user.uid); this.authenticated.set(true);
+  }
+
+  async enableBiometricLogin(): Promise<void> { const { uid } = await this.getSession(); await this.biometric.enable(uid); }
+  async disableBiometricLogin(): Promise<void> { const uid = this.uid(); if (uid) await this.biometric.disable(uid); }
+
   async logout() {
     if (Capacitor.isNativePlatform()) {
+      const uid = this.uid();
+      if (uid) { try { await this.biometric.disable(uid); } catch { /* Firebase sign-out must still continue. */ } }
       await FirebaseAuthentication.signOut();
       this.uid.set(null);
       this.authenticated.set(false);

@@ -40,6 +40,7 @@
     "@capacitor/core": "8.4.3",
     "@capacitor/ios": "^8.4.3",
     "@capacitor/splash-screen": "^8.0.2",
+    "@capgo/capacitor-native-biometric": "^8.6.11",
     "@ionic/angular": "^9.0.3",
     "@spartan-ng/brain": "^1.4.1",
     "express": "^5.1.0",
