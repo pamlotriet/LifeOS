@@ -1,6 +1,6 @@
 <ion-header app-page-header [title]="id ? 'Edit Recipe' : 'Add Recipe'"></ion-header>
 <ion-content class="[--background:transparent] [--color:#fff]">
-  <main class="mx-auto max-w-2xl px-4 pb-16 pt-2 text-white">
+  <main class="mx-auto max-w-2xl px-4 pb-16 pt-4 text-white">
     @if (loading()) { <p class="rounded-2xl border border-[#315b7e] bg-[#123451] p-5">Loading recipe...</p> } @else {
     <form (ngSubmit)="save()" class="space-y-4">
       <button type="button" (click)="pickPhoto()" class="relative grid min-h-44 w-full place-items-center overflow-hidden rounded-3xl border border-dashed border-cyan-300/70 bg-[#123451]">@if (model.photoUrl) { <img [src]="model.photoUrl" alt="Recipe preview" class="absolute inset-0 h-full w-full object-cover" /><span class="absolute inset-x-0 bottom-0 bg-black/60 py-2 text-sm">Change photo</span> } @else { <span class="text-center text-sm text-[#b5cbe2]"><ion-icon name="camera-outline" class="mb-2 block text-4xl text-cyan-300"></ion-icon>Add a recipe photo</span> }</button>

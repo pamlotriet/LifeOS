@@ -23,9 +23,9 @@
 
     <section aria-label="Life areas" class="relative z-10 grid grid-cols-2 gap-3">
       @for (item of items; track item.id) {
-        <a [routerLink]="item.route ?? null" class="home-card relative flex min-h-[122px] items-center gap-3 overflow-hidden rounded-[1.7rem] p-4 no-underline active:scale-[.98]" [class.col-span-2]="item.title === 'Vehicles'" [attr.data-accent]="item.accent">
-          <span class="home-card-icon flex h-14 w-14 shrink-0 items-center justify-center rounded-full" [class]="item.iconBackground"><ion-icon [name]="item.icon" class="text-2xl" [class]="item.iconColor" aria-hidden="true"></ion-icon></span>
-          <span class="relative z-10 min-w-0"><span class="block text-lg font-bold leading-tight">{{ item.title }}</span><span class="home-muted mt-1 block text-sm leading-snug">{{ item.description }}</span></span>
+        <a [routerLink]="item.route ?? null" class="home-card relative flex items-center overflow-hidden rounded-[1.7rem] no-underline active:scale-[.98]" [class.col-span-2]="item.title === 'Vehicles'" [attr.data-accent]="item.accent">
+          <span class="home-card-icon flex shrink-0 items-center justify-center rounded-full" [class]="item.iconBackground"><ion-icon [name]="item.icon" [class]="item.iconColor" aria-hidden="true"></ion-icon></span>
+          <span class="relative z-10 min-w-0"><span class="home-card-title block font-bold">{{ item.title }}</span><span class="home-muted mt-1 block text-sm leading-snug">{{ item.description }}</span></span>
           <span class="home-card-wave" aria-hidden="true"></span>
         </a>
       }

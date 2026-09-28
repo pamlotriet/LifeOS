@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { Component, effect, inject, signal, untracked } from '@angular/core';
 import { IonApp, IonButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
@@ -12,10 +13,12 @@ import { ThemeService } from './shared/state/theme/theme.service';
   templateUrl: './app.html',
 })
 export class App {
+  private readonly document = inject(DOCUMENT);
   authService = inject(AuthService);
   readonly refreshCoordinator = inject(RefreshCoordinator);
   readonly theme = inject(ThemeService);
   readonly nativePlatform = Capacitor.isNativePlatform();
+  readonly androidPlatform = Capacitor.getPlatform() === 'android';
   readonly paletteToggle = signal(false);
   readonly signInError = signal('');
   readonly signingIn = signal(false);
@@ -24,6 +27,7 @@ export class App {
   private touchStart: number | null = null;
 
   constructor() {
+    if (this.androidPlatform) this.document.documentElement.classList.add('platform-android-native');
     effect(() => {
       const ready = this.authService.authReady();
       const enrolled = this.authService.biometric.enrolled();

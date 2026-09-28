@@ -1,6 +1,6 @@
 <ion-header app-page-header [title]="id ? (showEditor() ? 'Edit Book' : 'Books') : 'Add Book'"></ion-header>
 <ion-content class="[--background:transparent] [--color:#fff]">
-  <main class="mx-auto max-w-xl px-4 pb-10 pt-2 text-white">
+  <main class="mx-auto max-w-xl px-4 pb-10 pt-4 text-white">
     @if (loading()) {
       <p class="rounded-2xl border border-[#315b7e] bg-[#123451] p-5 text-sm text-[#b5cbe2]">Loading book...</p>
     } @else if (id && !showEditor()) {

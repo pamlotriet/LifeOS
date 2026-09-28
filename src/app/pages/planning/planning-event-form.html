@@ -1,5 +1,5 @@
 <ion-header app-page-header [title]="id ? 'Edit Event' : 'Add Event'"></ion-header>
-<ion-content class="[--background:transparent]"><main class="planner-page mx-auto max-w-2xl px-4 pb-16 pt-2"><form [formGroup]="form" (ngSubmit)="submit()" class="planner-card space-y-4 p-4">
+<ion-content class="[--background:transparent]"><main class="planner-page mx-auto max-w-2xl px-4 pb-16 pt-4"><form [formGroup]="form" (ngSubmit)="submit()" class="planner-card space-y-4 p-4">
   <label class="field"><span>Event title *</span><input formControlName="title" class="control" placeholder="e.g. Family dinner" /></label>
   <label class="field"><span>Date *</span><app-date-picker formControlName="date" /></label>
   <div class="grid grid-cols-2 gap-3"><label class="field"><span>Starts</span><input type="time" formControlName="startTime" class="control" /></label><label class="field"><span>Ends</span><input type="time" formControlName="endTime" class="control" /></label></div>

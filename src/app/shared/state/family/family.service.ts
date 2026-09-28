@@ -6,6 +6,20 @@ const text=(v:string):FirestoreValue=>({stringValue:v}); const bool=(v:boolean):
 
 @Injectable({providedIn:'root'}) export class FamilyService {
   private readonly auth=inject(AuthService); private readonly db=inject(FirestoreService);
+  async removeMember(family: FamilyRecord, memberId: string): Promise<void> {
+    const { uid, token } = await this.auth.getSession();
+    if (uid !== family.ownerId) throw new Error('Only the family owner can remove members.');
+    if (memberId === family.ownerId) throw new Error('The family owner cannot be removed.');
+    if (!family.memberIds.includes(memberId)) throw new Error('This person is no longer in the family.');
+    await this.db.commitWrites([
+      { transform: { document: this.db.documentName(`families/${family.id}`), fieldTransforms: [
+        { fieldPath: 'memberIds', removeAllFromArray: { values: [text(memberId)] } }
+      ] } },
+      { delete: this.db.documentName(`families/${family.id}/members/${memberId}`) },
+      { update: { name: this.db.documentName(`users/${memberId}`), fields: { familyId: text(''), familyOwnerId: text('') } },
+        updateMask: { fieldPaths: ['familyId', 'familyOwnerId'] }, currentDocument: { exists: true } }
+    ], token);
+  }
   async context():Promise<FamilyContext|null>{const {uid,token}=await this.auth.getSession();const profile=await this.db.tryGetDocument(`users/${uid}`,token);const familyId=profile?.fields?.['familyId']?.stringValue??'';const ownerId=profile?.fields?.['familyOwnerId']?.stringValue??'';return familyId&&ownerId?{familyId,ownerId}:null;}
   async load():Promise<{family:FamilyRecord;members:FamilyMember[]}|null>{const {token}=await this.auth.getSession();const context=await this.context();if(!context)return null;const doc=await this.db.tryGetDocument(`families/${context.familyId}`,token);if(!doc)return null;const members=(await this.db.listDocuments(`families/${context.familyId}/members`,token)).map(d=>this.member(d));return{family:this.family(doc),members};}
   async pendingInvites():Promise<FamilyInvite[]>{const {uid,token}=await this.auth.getSession();const profile=await this.db.getDocument(`users/${uid}`,token);const email=(profile.fields?.['email']?.stringValue??'').trim().toLowerCase();if(!email)return[];return(await this.db.queryDocuments('familyInvites','email',text(email),token)).map(d=>this.inviteRecord(d)).filter(x=>x.active);}

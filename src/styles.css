@@ -8,6 +8,10 @@
 @import '@ionic/angular/css/palettes/dark.class.css';
 :root {
   color-scheme: light;
+  --app-font-size: 93.75%;
+  --app-section-gap: 1.5rem;
+  --app-field-gap: 1.25rem;
+  font-size: var(--app-font-size);
 
   --safe-area-top: max(48px, env(safe-area-inset-top, 0px));
   --safe-area-right: env(safe-area-inset-right, 0px);
@@ -532,6 +536,55 @@ html.ios ion-tab-bar.lifeos-tab-bar {
 
 ion-content,
 ion-content.ion-padding {
-  --padding-top: 16px;
-  --padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  --padding-top: 20px;
+  --padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+}
+
+/* Android WebView may apply text autosizing. Keep
+   text at the shared app scale. */
+html.platform-android-native {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+ion-app.platform-android {
+  --safe-area-top: max(28px, env(safe-area-inset-top, 0px));
+}
+
+ion-app.platform-android ion-header[app-page-header] > div {
+  height: 64px;
+}
+
+ion-app.platform-android ion-header[app-page-header] .lifeos-back-button {
+  width: 44px;
+  height: 44px;
+}
+
+ion-app.platform-android ion-tab-bar.lifeos-tab-bar,
+ion-app.platform-android ion-tab-button.lifeos-tab-button,
+ion-app.platform-android ion-tab-button.lifeos-tab-button::part(native) {
+  height: 60px;
+}
+
+ion-app.platform-android ion-tab-button.lifeos-tab-button ion-icon[size='large'] {
+  font-size: 26px;
+}
+
+ion-app.platform-android ion-content,
+ion-app.platform-android ion-content.ion-padding {
+  --padding-top: 20px;
+  --padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+}
+
+/* Shared vertical rhythm without reducing the width available to mobile text. */
+ion-content main > header {
+  margin-bottom: var(--app-section-gap);
+}
+
+ion-content form.flex.flex-col {
+  row-gap: var(--app-field-gap);
+}
+
+ion-content form:is(.space-y-3, .space-y-4) > :not(:last-child) {
+  margin-block-end: var(--app-field-gap);
 }

@@ -1,5 +1,5 @@
 <ion-header app-page-header title="Meal Plan & Grocery"></ion-header>
-<ion-content class="[--background:transparent]"><main class="planner-page mx-auto max-w-2xl px-4 pb-16 pt-2">
+<ion-content class="[--background:transparent]"><main class="planner-page mx-auto max-w-2xl px-4 pb-16 pt-4">
   <nav class="planner-card mb-4 grid grid-cols-2 p-1"><button (click)="tab.set('meals')" class="rounded-2xl py-2 font-bold" [class.bg-cyan-400]="tab()==='meals'" [class.text-slate-900]="tab()==='meals'">Dinner Plan</button><button (click)="tab.set('groceries')" class="rounded-2xl py-2 font-bold" [class.bg-cyan-400]="tab()==='groceries'" [class.text-slate-900]="tab()==='groceries'">Grocery List</button></nav>
   @if (tab()==='meals') {
     <div class="mb-4 grid grid-cols-7 gap-1">@for (day of week; track day.iso) { <button (click)="choose(day.iso)" class="week-day border border-[var(--border)]" [class.selected]="selectedDate()===day.iso"><span>{{ day.day }}</span><strong>{{ day.number }}</strong></button> }</div>

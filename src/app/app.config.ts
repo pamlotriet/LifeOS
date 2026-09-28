@@ -41,6 +41,10 @@ import {
   carSport,
   scanOutline,
   restaurantOutline,
+  people,
+  personAdd,
+  copy,
+  refresh,
 } from 'ionicons/icons';
 import { routes } from './app.routes';
 
@@ -83,6 +87,10 @@ addIcons({
   carSport,
   scanOutline,
   restaurantOutline,
+  people,
+  personAdd,
+  copy,
+  refresh,
 });
 
 export const appConfig: ApplicationConfig = {

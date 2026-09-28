@@ -4,8 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FirestoreService } from '../../../core/firebase/firestore.service';
 import { AuthService } from '../authentication/authentication.service';
 import { FamilyService } from './family.service';
+import { FamilyRecord } from './family.model';
 
 describe('FamilyService', () => {
+  const family: FamilyRecord = { id: 'family-1', name: 'Family', ownerId: 'owner-1', memberIds: ['owner-1', 'member-1'], sharePlanning: true, shareRecipes: true, createdAt: '' };
   const getSession=vi.fn(); const getDocument=vi.fn(); const tryGetDocument=vi.fn(); const listDocuments=vi.fn(); const queryDocuments=vi.fn(); const createDocument=vi.fn(); const updateDocument=vi.fn(); const deleteDocument=vi.fn(); const commitWrites=vi.fn();
   const service=()=>runInInjectionContext(Injector.create({providers:[{provide:AuthService,useValue:{getSession}},{provide:FirestoreService,useValue:{getDocument,tryGetDocument,listDocuments,queryDocuments,createDocument,updateDocument,deleteDocument,commitWrites,documentName:(path:string)=>`projects/p/databases/(default)/documents/${path}`}}]}),()=>new FamilyService());
   beforeEach(()=>{vi.clearAllMocks();getSession.mockResolvedValue({uid:'owner-1',token:'token'});createDocument.mockResolvedValue(undefined);updateDocument.mockResolvedValue(undefined);commitWrites.mockResolvedValue(undefined);});
@@ -15,6 +17,39 @@ describe('FamilyService', () => {
     await service().create('Lotriet Family');
     expect(createDocument).toHaveBeenCalledWith('families',expect.any(String),expect.objectContaining({ownerId:{stringValue:'owner-1'},memberIds:{arrayValue:{values:[{stringValue:'owner-1'}]}}}),'token');
     expect(updateDocument).toHaveBeenCalledWith('users/owner-1',expect.objectContaining({familyOwnerId:{stringValue:'owner-1'}}),'token');
+  });
+
+  it('atomically removes membership and clears only the family profile fields', async () => {
+    await service().removeMember(family, 'member-1');
+    expect(commitWrites).toHaveBeenCalledWith([
+      { transform: { document: 'projects/p/databases/(default)/documents/families/family-1', fieldTransforms: [
+        { fieldPath: 'memberIds', removeAllFromArray: { values: [{ stringValue: 'member-1' }] } }
+      ] } },
+      { delete: 'projects/p/databases/(default)/documents/families/family-1/members/member-1' },
+      { update: { name: 'projects/p/databases/(default)/documents/users/member-1', fields: { familyId: { stringValue: '' }, familyOwnerId: { stringValue: '' } } },
+        updateMask: { fieldPaths: ['familyId', 'familyOwnerId'] }, currentDocument: { exists: true } }
+    ], 'token');
+    expect(updateDocument).not.toHaveBeenCalled();
+    expect(deleteDocument).not.toHaveBeenCalled();
+  });
+
+  it('rejects removal by a non-owner', async () => {
+    getSession.mockResolvedValue({ uid: 'member-1', token: 'token' });
+    await expect(service().removeMember(family, 'owner-1')).rejects.toThrow('Only the family owner');
+    expect(commitWrites).not.toHaveBeenCalled();
+  });
+
+  it('protects the owner and rejects unknown members', async () => {
+    await expect(service().removeMember(family, 'owner-1')).rejects.toThrow('owner cannot be removed');
+    await expect(service().removeMember(family, 'unknown')).rejects.toThrow('no longer in the family');
+    expect(commitWrites).not.toHaveBeenCalled();
+  });
+
+  it('reports a rejected removal without attempting separate writes', async () => {
+    commitWrites.mockRejectedValueOnce(new Error('Permission denied'));
+    await expect(service().removeMember(family, 'member-1')).rejects.toThrow('Permission denied');
+    expect(updateDocument).not.toHaveBeenCalled();
+    expect(deleteDocument).not.toHaveBeenCalled();
   });
 
   it('creates an unguessable family invite linked to the owner',async()=>{
