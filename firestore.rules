@@ -93,7 +93,10 @@ service cloud.firestore {
     match /familyInvites/{inviteCode} {
       allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid
         && get(/databases/$(database)/documents/families/$(request.resource.data.familyId)).data.ownerId == request.auth.uid;
+      // The document ID is a random UUID and acts as the private manual invite code.
+      // Direct lookup is allowed for signed-in users who possess it; listing remains email-scoped.
       allow get: if signedIn() && resource.data.active == true;
+      allow list: if signedIn() && resource.data.email == request.auth.token.email;
       allow update, delete: if signedIn() && resource.data.createdBy == request.auth.uid;
     }
   }

@@ -28,6 +28,8 @@ interface FirestoreList {
   nextPageToken?: string;
 }
 
+interface FirestoreRunQueryResult { document?: FirestoreDocument; }
+
 @Injectable({ providedIn: 'root' })
 export class FirestoreService {
   private readonly baseUrl = `https://firestore.googleapis.com/v1/projects/${environment.firebaseConfig.projectId}/databases/(default)/documents`;
@@ -100,6 +102,19 @@ export class FirestoreService {
     );
     if (!response.ok) throw new Error(`Could not create Firestore document (${response.status}).`);
     return (await response.json()) as FirestoreDocument;
+  }
+
+  async queryDocuments(collectionId: string, field: string, value: FirestoreValue, token: string): Promise<FirestoreDocument[]> {
+    const response = await this.request(`${this.baseUrl}:runQuery`, token, {
+      method: 'POST',
+      body: JSON.stringify({ structuredQuery: {
+        from: [{ collectionId }],
+        where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value } },
+        limit: 100,
+      } }),
+    });
+    if (!response.ok) throw new Error(`Could not query Firestore documents (${response.status}).`);
+    return ((await response.json()) as FirestoreRunQueryResult[]).flatMap((result) => result.document ? [result.document] : []);
   }
 
   async getDocument(path: string, token: string): Promise<FirestoreDocument> {
