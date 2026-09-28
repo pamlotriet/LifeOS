@@ -39,6 +39,7 @@ import {
   checkmark,
   documentText,
   carSport,
+  scanOutline,
 } from 'ionicons/icons';
 import { routes } from './app.routes';
 
@@ -79,6 +80,7 @@ addIcons({
   checkmark,
   documentText,
   carSport,
+  scanOutline,
 });
 
 export const appConfig: ApplicationConfig = {

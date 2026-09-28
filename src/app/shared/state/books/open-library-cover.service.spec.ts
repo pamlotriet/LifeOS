@@ -5,6 +5,17 @@ import { OpenLibraryCoverService } from './open-library-cover.service';
 describe('OpenLibraryCoverService', () => {
   afterEach(() => vi.unstubAllGlobals());
 
+  it('fills book details from an Open Library ISBN lookup', async () => {
+    vi.stubGlobal('fetch', vi.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ title: 'Matilda', authors: [{ key: '/authors/OL34184A' }], publish_date: '1988', subjects: ['Fantasy'], covers: [123] }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ name: 'Roald Dahl' }) }));
+
+    await expect(new OpenLibraryCoverService().lookupByIsbn('9780140328721')).resolves.toEqual({
+      isbn: '9780140328721', title: 'Matilda', author: 'Roald Dahl', category: 'Fantasy',
+      publicationDate: '1988-01-01', coverUrl: 'https://covers.openlibrary.org/b/id/123-L.jpg?default=false',
+    });
+  });
+
   it('selects a cover only when title and author match', async () => {
     const request = vi.fn().mockResolvedValue({
       ok: true,

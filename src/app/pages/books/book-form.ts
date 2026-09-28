@@ -8,6 +8,7 @@ import { BookStore } from '../../shared/state/books/book-store';
 import { OpenLibraryCoverService } from '../../shared/state/books/open-library-cover.service';
 import { AppSelect } from '../../shared/components/app-select/app-select';
 import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
+import { BookBarcodeScannerService } from '../../shared/state/books/book-barcode-scanner.service';
 
 @Component({ selector: 'app-book-form', imports: [IonContent, IonIcon, PageHeader, RouterLink, ReactiveFormsModule, AppSelect, AppDatePicker], templateUrl: './book-form.html' })
 export class BookForm {
@@ -16,6 +17,7 @@ export class BookForm {
   private readonly router = inject(Router);
   readonly store = inject(BookStore);
   private readonly covers = inject(OpenLibraryCoverService);
+  private readonly barcodeScanner = inject(BookBarcodeScannerService);
   readonly id = this.route.snapshot.paramMap.get('id');
   readonly categories = BOOK_CATEGORIES;
   readonly formats = BOOK_FORMATS;
@@ -38,6 +40,8 @@ export class BookForm {
   readonly isSeries = signal(false);
   readonly lookingUpCover = signal(false);
   readonly coverMessage = signal('');
+  readonly scanning = signal(false);
+  readonly scanMessage = signal('');
   private coverLookupVersion = 0;
 
   readonly form = this.fb.nonNullable.group({
@@ -86,6 +90,34 @@ export class BookForm {
     this.form.controls.coverUrl.setValue(cover ?? '');
     this.coverMessage.set(cover ? 'Cover found.' : 'No matching cover found on Open Library or Google Books.');
     this.lookingUpCover.set(false);
+  }
+  async scanBook(): Promise<void> {
+    if (this.scanning()) return;
+    this.scanning.set(true);
+    this.scanMessage.set('');
+    this.error.set('');
+    try {
+      const isbn = await this.barcodeScanner.scan();
+      this.scanMessage.set('Looking up scanned ISBN...');
+      const book = await this.covers.lookupByIsbn(isbn);
+      if (!book || !book.title || !book.author) {
+        throw new Error(`No book details were found for ISBN ${isbn}. You can still enter it manually.`);
+      }
+      this.form.patchValue({
+        title: book.title,
+        author: book.author,
+        category: book.category,
+        publicationDate: book.publicationDate,
+        coverUrl: book.coverUrl,
+      });
+      this.coverMessage.set(book.coverUrl ? 'Cover found from the scanned ISBN.' : 'Book details found without a cover.');
+      this.scanMessage.set(`Book details filled from ISBN ${isbn}.`);
+    } catch (error) {
+      this.error.set(error instanceof Error ? error.message : 'Could not scan this book.');
+      this.scanMessage.set('');
+    } finally {
+      this.scanning.set(false);
+    }
   }
   updateCopy(id: string, field: 'format' | 'label', value: string): void {
     this.copies.update((copies) => copies.map((copy) => copy.id === id ? { ...copy, [field]: value as BookFormat } : copy));

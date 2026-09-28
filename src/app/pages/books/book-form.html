@@ -54,6 +54,11 @@
         <div class="text-center"><p class="text-xs text-[#b5cbe2]">{{ step() }} of 2 · {{ step() === 1 ? 'Basics' : 'Details' }}</p><div class="mx-auto mt-2 flex max-w-44 gap-1.5"><span class="h-1.5 flex-1 rounded-full bg-cyan-400"></span><span class="h-1.5 flex-1 rounded-full" [class]="step() === 2 ? 'bg-cyan-400' : 'bg-[#315b7e]'"></span></div></div>
 
         @if (step() === 1) {
+          @if (!id) {
+            <button type="button" (click)="scanBook()" [disabled]="scanning()" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-cyan-300/60 bg-gradient-to-r from-cyan-400/20 to-blue-500/20 px-4 font-semibold text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.12)] disabled:opacity-60"><ion-icon name="scan-outline" class="text-xl" aria-hidden="true"></ion-icon>{{ scanning() ? 'Scanning or looking up book...' : 'Scan ISBN barcode' }}</button>
+            @if (scanMessage()) { <p role="status" class="-mt-1 text-center text-xs text-emerald-200">{{ scanMessage() }}</p> }
+            <div class="flex items-center gap-3 text-[11px] uppercase tracking-widest text-[#7895b1]"><span class="h-px flex-1 bg-[#315b7e]"></span>or enter manually<span class="h-px flex-1 bg-[#315b7e]"></span></div>
+          }
           <div class="grid grid-cols-[90px_1fr] gap-3">
             <div class="grid min-h-32 place-items-center overflow-hidden rounded-xl border border-dashed border-cyan-400/70 bg-[#123451] text-center text-xs text-[#b5cbe2]">@if (form.value.coverUrl) { <img [src]="form.value.coverUrl" alt="Book cover" class="h-32 w-full object-cover" /> } @else { <span><ion-icon name="book" class="block text-2xl text-cyan-300" aria-hidden="true"></ion-icon>Cover from<br />book catalogues</span> }</div>
             <div class="flex flex-col gap-2"><label class="text-xs">Title *<input formControlName="title" placeholder="Enter book title" (blur)="lookupCover()" class="mt-1 block w-full rounded-xl border border-[#315b7e] bg-[#123451] px-3 py-2.5 text-base text-white outline-none focus:border-cyan-300" /></label><label class="text-xs">Author *<input formControlName="author" placeholder="Enter author name" (blur)="lookupCover()" class="mt-1 block w-full rounded-xl border border-[#315b7e] bg-[#123451] px-3 py-2.5 text-base text-white outline-none focus:border-cyan-300" /></label></div>

@@ -116,6 +116,7 @@ export class OpenLibraryCoverService {
         if (!authorResponse.ok) return '';
         return ((await authorResponse.json()) as { name?: string }).name ?? '';
       }));
+      if (!authorNames.some(Boolean)) return null;
       const coverId = edition.covers?.find((id) => id > 0);
       return {
         isbn,

@@ -50,7 +50,7 @@
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
 	<key>NSCameraUsageDescription</key>
-	<string>LifeOS needs camera access so you can take a vehicle photo.</string>
+	<string>LifeOS uses the camera to scan book barcodes and add vehicle photos.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
