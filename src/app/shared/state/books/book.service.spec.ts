@@ -63,6 +63,20 @@ describe('BookService', () => {
     expect((await service().getBook('book-1')).yearRead).toBe(2026);
   });
 
+  it('does not assign a reading year when a finished book has no valid finish date', async () => {
+    await service().saveBook({ ...input, status: 'Finished', finishDate: '', yearRead: 2026 });
+    expect(createDocument).toHaveBeenCalledWith('users/user-1/books', expect.any(String), expect.objectContaining({
+      yearRead: { nullValue: null },
+    }), 'id-token');
+  });
+
+  it('derives the reading year from the finish date', async () => {
+    await service().saveBook({ ...input, status: 'Finished', finishDate: '2025-12-31', yearRead: 2026 });
+    expect(createDocument).toHaveBeenCalledWith('users/user-1/books', expect.any(String), expect.objectContaining({
+      yearRead: { integerValue: '2025' },
+    }), 'id-token');
+  });
+
   it('saves wheel membership on the signed-in user book', async () => {
     await service().setWheelSelected('book-1', true);
     expect(updateDocumentField).toHaveBeenCalledWith(

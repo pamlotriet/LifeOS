@@ -1,18 +1,18 @@
-import { AfterViewInit, Component, computed, inject, signal, ViewChild } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
 import { BookRecord, BOOK_CATEGORIES } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
 import { ReadingGoalService } from '../../shared/state/books/reading-goal.service';
+import { RefreshCoordinator } from '../../shared/state/refresh/refresh-coordinator.service';
 
 @Component({ selector: 'app-books-library', imports: [IonContent, IonIcon, PageHeader, RouterLink], templateUrl: './books-library.html' })
-export class BooksLibrary implements AfterViewInit {
-  @ViewChild(IonContent) private content!: IonContent;
-  private scrollElement?: HTMLElement;
-  private touchStart: number | null = null;
+export class BooksLibrary {
   readonly store = inject(BookStore);
   private readonly goals = inject(ReadingGoalService);
+  private readonly refreshCoordinator = inject(RefreshCoordinator);
+  private readonly destroyRef = inject(DestroyRef);
   readonly categories = BOOK_CATEGORIES;
   readonly year = new Date().getFullYear();
   readonly search = signal('');
@@ -25,8 +25,6 @@ export class BooksLibrary implements AfterViewInit {
   readonly goalSaving = signal(false);
   readonly goalError = signal('');
   readonly goalLoading = signal(true);
-  readonly pullDistance = signal(0);
-  readonly refreshing = signal(false);
   readonly filtered = computed(() => {
     const query = this.search().toLowerCase().trim();
     return this.store.sortedBooks().filter((book) =>
@@ -41,35 +39,14 @@ export class BooksLibrary implements AfterViewInit {
   readonly favourites = computed(() => this.store.books().filter((book) => book.favourite).length);
   readonly reading = computed(() => this.store.books().filter((book) => book.status === 'Reading').length);
 
-  constructor() { void this.loadGoal(); }
-
-  ngAfterViewInit(): void { void this.content.getScrollElement().then((element) => { this.scrollElement = element; }); }
+  constructor() {
+    void this.loadGoal();
+    const unregister = this.refreshCoordinator.register(() => this.loadGoal());
+    this.destroyRef.onDestroy(unregister);
+  }
 
   private finishedInYear(book: BookRecord): boolean {
-    return book.status === 'Finished' && (book.yearRead === this.year || (!book.yearRead && book.finishDate.startsWith(String(this.year))));
-  }
-
-  onTouchStart(event: TouchEvent): void {
-    this.touchStart = !this.refreshing() && (this.scrollElement?.scrollTop ?? 0) <= 2 ? event.touches[0]?.clientY ?? null : null;
-  }
-
-  onTouchMove(event: TouchEvent): void {
-    if (this.touchStart === null || this.refreshing()) return;
-    this.pullDistance.set(Math.min(104, Math.max(0, (event.touches[0]?.clientY ?? this.touchStart) - this.touchStart)));
-  }
-
-  onTouchEnd(): void {
-    const shouldRefresh = this.pullDistance() >= 72;
-    this.touchStart = null;
-    this.pullDistance.set(0);
-    if (shouldRefresh) void this.refresh();
-  }
-
-  async refresh(): Promise<void> {
-    if (this.refreshing()) return;
-    this.refreshing.set(true);
-    try { await Promise.all([this.store.reload(), this.loadGoal()]); }
-    finally { this.refreshing.set(false); }
+    return book.status === 'Finished' && book.finishDate.startsWith(`${this.year}-`);
   }
 
   async loadGoal(): Promise<void> {

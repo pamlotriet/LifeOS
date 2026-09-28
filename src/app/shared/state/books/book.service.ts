@@ -30,7 +30,8 @@ export class BookService {
     const { uid, token } = await this.auth.getSession();
     const book: BookRecord = {
       ...input, title: input.title.trim(), author: input.author.trim(), id: id ?? crypto.randomUUID(),
-      yearRead: input.status === 'Finished' ? (input.yearRead ?? (Number(input.finishDate.slice(0, 4)) || new Date().getFullYear())) : null,
+      yearRead: input.status === 'Finished' && input.finishDate
+        ? (Number(input.finishDate.slice(0, 4)) || null) : null,
     };
     const path = `users/${uid}/books`;
     const previous = id ? await this.getBook(id) : null;

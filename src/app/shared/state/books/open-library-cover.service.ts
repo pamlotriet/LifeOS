@@ -29,11 +29,30 @@ interface GoogleVolume {
       identifier?: string;
     }>;
     imageLinks?: GoogleImageLinks;
+    publishedDate?: string;
+    categories?: string[];
   };
 }
 
 interface GoogleSearchResponse {
   items?: GoogleVolume[];
+}
+
+interface OpenLibraryEdition {
+  title?: string;
+  authors?: Array<{ key?: string }>;
+  publish_date?: string;
+  subjects?: Array<string | { name?: string }>;
+  covers?: number[];
+}
+
+export interface BookCatalogueResult {
+  isbn: string;
+  title: string;
+  author: string;
+  category: string;
+  publicationDate: string;
+  coverUrl: string;
 }
 
 export function normalizedBookText(value: string): string {
@@ -77,6 +96,78 @@ export class OpenLibraryCoverService {
 
   clearCache(): void {
     this.cache.clear();
+  }
+
+  async lookupByIsbn(isbn: string): Promise<BookCatalogueResult | null> {
+    const cleanIsbn = this.cleanIsbn(isbn);
+    if (!cleanIsbn) return null;
+    return (await this.lookupOpenLibraryByIsbn(cleanIsbn)) ?? (await this.lookupGoogleByIsbn(cleanIsbn));
+  }
+
+  private async lookupOpenLibraryByIsbn(isbn: string): Promise<BookCatalogueResult | null> {
+    try {
+      const response = await fetch(`https://openlibrary.org/isbn/${encodeURIComponent(isbn)}.json`);
+      if (!response.ok) return null;
+      const edition = (await response.json()) as OpenLibraryEdition;
+      if (!edition.title) return null;
+      const authorNames = await Promise.all((edition.authors ?? []).map(async ({ key }) => {
+        if (!key) return '';
+        const authorResponse = await fetch(`https://openlibrary.org${key}.json`);
+        if (!authorResponse.ok) return '';
+        return ((await authorResponse.json()) as { name?: string }).name ?? '';
+      }));
+      const coverId = edition.covers?.find((id) => id > 0);
+      return {
+        isbn,
+        title: edition.title,
+        author: authorNames.filter(Boolean).join(', '),
+        category: this.categoryFor((edition.subjects ?? []).map((subject) => typeof subject === 'string' ? subject : subject.name ?? '')),
+        publicationDate: this.normalizedPublicationDate(edition.publish_date ?? ''),
+        coverUrl: coverId ? this.openLibraryCoverUrl(coverId) : '',
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private async lookupGoogleByIsbn(isbn: string): Promise<BookCatalogueResult | null> {
+    try {
+      const volume = (await this.fetchGoogleBooks(`isbn:${isbn}`))[0];
+      const info = volume?.volumeInfo;
+      if (!info?.title) return null;
+      return {
+        isbn,
+        title: info.title,
+        author: (info.authors ?? []).join(', '),
+        category: this.categoryFor(info.categories ?? []),
+        publicationDate: this.normalizedPublicationDate(info.publishedDate ?? ''),
+        coverUrl: this.ensureHttps(this.getGoogleCover(info.imageLinks) ?? '') ?? '',
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private normalizedPublicationDate(value: string): string {
+    const year = /\b(\d{4})\b/.exec(value)?.[1];
+    if (!year) return '';
+    const numeric = value.match(/^(\d{4})(?:-(\d{1,2}))?(?:-(\d{1,2}))?$/);
+    const month = numeric?.[2]?.padStart(2, '0') ?? '01';
+    const day = numeric?.[3]?.padStart(2, '0') ?? '01';
+    return `${year}-${month}-${day}`;
+  }
+
+  private categoryFor(values: string[]): string {
+    const text = normalizedBookText(values.join(' '));
+    const matches: Array<[string, string[]]> = [
+      ['Romantasy', ['romantasy']], ['Fantasy', ['fantasy', 'magic']], ['Romance', ['romance', 'love stories']],
+      ['Science Fiction', ['science fiction', 'sci fi']], ['Historical Fiction', ['historical fiction']],
+      ['Literary Fiction', ['literary fiction']], ['Contemporary Fiction', ['contemporary fiction']],
+      ['Horror', ['horror']], ['Mystery', ['mystery', 'detective']], ['Thriller', ['thriller', 'suspense']],
+      ['Biography', ['biography', 'autobiography', 'memoir']], ['Nonfiction', ['nonfiction', 'non fiction']],
+      ['Young Adult', ['young adult', 'juvenile fiction']],
+    ];
+    return matches.find(([, terms]) => terms.some((term) => text.includes(term)))?.[0] ?? 'Other';
   }
 
   private async search(title: string, author: string, isbn?: string): Promise<string | null> {

@@ -3,12 +3,14 @@ import { AuthService } from '../authentication/authentication.service';
 import { VehicleStore } from '../vehicles/vehicle-store';
 import { calculateRefuels, RefuelEntry, RefuelInput, RefuelRecord, refuelAverages } from './refuel.model';
 import { RefuelService } from './refuel.service';
+import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
 
 @Injectable({ providedIn: 'root' })
 export class RefuelStore {
   private readonly auth = inject(AuthService);
   private readonly vehicles = inject(VehicleStore);
   private readonly service = inject(RefuelService);
+  private readonly refreshCoordinator = inject(RefreshCoordinator);
   private readonly records = signal<RefuelRecord[]>([]);
   private loadVersion = 0;
 
@@ -22,6 +24,7 @@ export class RefuelStore {
   readonly error = signal('');
 
   constructor() {
+    this.refreshCoordinator.register(() => this.reload());
     effect(() => {
       const uid = this.auth.userId();
       const options = this.vehicleOptions();

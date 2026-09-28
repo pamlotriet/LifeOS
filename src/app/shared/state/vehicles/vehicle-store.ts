@@ -1,6 +1,7 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { AuthService } from '../authentication/authentication.service';
 import { VehicleService } from './vehicle.service';
+import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
 
 export interface VehicleRecord {
   id: string;
@@ -28,6 +29,7 @@ export interface VehicleListItem {
 export class VehicleStore {
   private readonly auth = inject(AuthService);
   private readonly service = inject(VehicleService);
+  private readonly refreshCoordinator = inject(RefreshCoordinator);
   private readonly saved = signal<VehicleRecord[]>([]);
   private loadVersion = 0;
 
@@ -45,6 +47,7 @@ export class VehicleStore {
   );
 
   constructor() {
+    this.refreshCoordinator.register(() => this.reload());
     effect(() => {
       const uid = this.auth.userId();
       untracked(() => {

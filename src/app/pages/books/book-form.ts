@@ -140,8 +140,8 @@ export class BookForm {
       const input: BookInput = {
         ...value, status: value.status as BookInput['status'],
         rating: Number(value.rating), spiceRating: Number(value.spiceRating), seriesName: this.isSeries() ? value.seriesName.trim() : '',
-        yearRead: value.status === 'Finished'
-          ? (Number(value.finishDate.slice(0, 4)) || (this.book()?.status === 'Finished' ? this.book()?.yearRead : null) || new Date().getFullYear()) : null,
+        yearRead: value.status === 'Finished' && value.finishDate
+          ? (Number(value.finishDate.slice(0, 4)) || null) : null,
         seriesNumber: this.isSeries() && value.seriesName.trim() ? value.seriesNumber : null,
         copies: this.copies(), moodTagIds: this.moodTagIds(), genreTagIds: this.genreTagIds(),
       };

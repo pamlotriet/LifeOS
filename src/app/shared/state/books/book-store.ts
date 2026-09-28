@@ -2,11 +2,13 @@ import { computed, effect, inject, Injectable, signal, untracked } from '@angula
 import { AuthService } from '../authentication/authentication.service';
 import { BookInput, BookRecord, BookTag } from './book.model';
 import { BookService } from './book.service';
+import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
 
 @Injectable({ providedIn: 'root' })
 export class BookStore {
   private readonly auth = inject(AuthService);
   private readonly service = inject(BookService);
+  private readonly refreshCoordinator = inject(RefreshCoordinator);
   readonly books = signal<BookRecord[]>([]);
   readonly tags = signal<BookTag[]>([]);
   readonly loading = signal(false);
@@ -15,6 +17,7 @@ export class BookStore {
   private version = 0;
 
   constructor() {
+    this.refreshCoordinator.register(() => this.reload());
     effect(() => {
       const uid = this.auth.userId();
       untracked(() => {
