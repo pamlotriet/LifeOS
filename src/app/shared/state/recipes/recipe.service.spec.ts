@@ -13,7 +13,7 @@ describe('RecipeService', () => {
   const uploadRecipePhoto = vi.fn(); const deletePhoto = vi.fn();
   const service = () => runInInjectionContext(Injector.create({ providers: [
     { provide: AuthService, useValue: { getSession } },
-    { provide: FirestoreService, useValue: { listDocuments, createDocument, getDocument, updateDocument, deleteDocument } },
+    { provide: FirestoreService, useValue: { listDocuments, createDocument, getDocument, updateDocument, deleteDocument, tryGetDocument: vi.fn().mockResolvedValue(null) } },
     { provide: StoragePhotoService, useValue: { uploadRecipePhoto, deletePhoto } },
   ] }), () => new RecipeService());
   const input: RecipeInput = { title: 'Pasta', description: 'Creamy', category: 'Dinner', cookTime: 30, servings: 4, difficulty: 'Easy', photoUrl: '', photoPath: '', ingredients: ['300 g pasta'], steps: [{ id: 'step-1', title: 'Cook', instruction: 'Boil pasta.' }], tags: ['Quick'], source: '', sourceLink: '', notes: '', favourite: true, private: true };

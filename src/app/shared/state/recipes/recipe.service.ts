@@ -14,18 +14,18 @@ export class RecipeService {
   private readonly storage = inject(StoragePhotoService);
 
   async list(): Promise<RecipeRecord[]> {
-    const { uid, token } = await this.auth.getSession();
-    return (await this.firestore.listDocuments(`users/${uid}/recipes`, token)).map((doc) => this.fromDocument(doc));
+    const { ownerId, token } = await this.scope();
+    return (await this.firestore.listDocuments(`users/${ownerId}/recipes`, token)).map((doc) => this.fromDocument(doc));
   }
   async get(id: string): Promise<RecipeRecord> {
-    const { uid, token } = await this.auth.getSession();
-    return this.fromDocument(await this.firestore.getDocument(`users/${uid}/recipes/${encodeURIComponent(id)}`, token));
+    const { ownerId, token } = await this.scope();
+    return this.fromDocument(await this.firestore.getDocument(`users/${ownerId}/recipes/${encodeURIComponent(id)}`, token));
   }
   async save(input: RecipeInput, id?: string): Promise<RecipeRecord> {
     if (!input.title.trim()) throw new Error('Enter a recipe title.');
     if (!input.ingredients.length) throw new Error('Add at least one ingredient.');
     if (!input.steps.length) throw new Error('Add at least one step.');
-    const { uid, token } = await this.auth.getSession();
+    const { uid, ownerId, token } = await this.scope();
     const recipeId = id ?? crypto.randomUUID();
     const previous = id ? await this.get(id) : null;
     let photoUrl = input.photoUrl;
@@ -35,16 +35,21 @@ export class RecipeService {
       photoUrl = uploaded.url; photoPath = uploaded.path;
     }
     const recipe: RecipeRecord = { ...input, id: recipeId, title: input.title.trim(), photoUrl, photoPath, createdAt: previous?.createdAt ?? new Date().toISOString() };
-    const path = `users/${uid}/recipes`;
+    const path = `users/${ownerId}/recipes`;
     if (id) await this.firestore.updateDocument(`${path}/${encodeURIComponent(id)}`, this.fields(recipe), token);
     else await this.firestore.createDocument(path, recipe.id, this.fields(recipe), token);
     if (previous?.photoPath && previous.photoPath !== photoPath) await this.storage.deletePhoto(previous.photoPath, token);
     return recipe;
   }
   async delete(recipe: RecipeRecord): Promise<void> {
-    const { uid, token } = await this.auth.getSession();
-    await this.firestore.deleteDocument(`users/${uid}/recipes`, recipe.id, token);
+    const { ownerId, token } = await this.scope();
+    await this.firestore.deleteDocument(`users/${ownerId}/recipes`, recipe.id, token);
     if (recipe.photoPath) await this.storage.deletePhoto(recipe.photoPath, token);
+  }
+  private async scope(): Promise<{ uid: string; ownerId: string; token: string }> {
+    const { uid, token } = await this.auth.getSession();
+    const profile = await this.firestore.tryGetDocument(`users/${uid}`, token);
+    return { uid, ownerId: profile?.fields?.['familyOwnerId']?.stringValue || uid, token };
   }
   private fields(recipe: RecipeRecord): Record<string, FirestoreValue> {
     return {

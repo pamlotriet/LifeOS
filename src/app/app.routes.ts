@@ -60,6 +60,7 @@ export const routes: Routes = [
   { path: 'planning/events/:id/edit', loadComponent: () => import('./pages/planning/planning-event-form').then((m) => m.PlanningEventForm), canActivate: [authGuard] },
   { path: 'planning/reminders', loadComponent: () => import('./pages/planning/planning-reminders').then((m) => m.PlanningReminders), canActivate: [authGuard] },
   { path: 'planning/meals', loadComponent: () => import('./pages/planning/planning-meals').then((m) => m.PlanningMeals), canActivate: [authGuard] },
+  { path: 'family', loadComponent: () => import('./pages/family/family-settings').then((m) => m.FamilySettings), canActivate: [authGuard] },
   { path: 'passwords', loadComponent: () => import('./pages/passwords/passwords').then((m) => m.Passwords), canActivate: [authGuard] },
   { path: 'passwords/settings', loadComponent: () => import('./pages/passwords/password-settings').then((m) => m.PasswordSettings), canActivate: [authGuard] },
   { path: 'settings', loadComponent: () => import('./pages/passwords/password-settings').then((m) => m.PasswordSettings), canActivate: [authGuard] },

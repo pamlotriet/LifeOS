@@ -7,6 +7,7 @@
   <label class="field"><span>Location</span><input formControlName="location" class="control" placeholder="Optional" /></label>
   <label class="field"><span>Notes</span><textarea formControlName="notes" class="control" placeholder="Optional notes"></textarea></label>
   <label class="field"><span>Repeat</span><app-select formControlName="repeat" [options]="repeatOptions" /></label>
+  @if (family.members().length) { <fieldset class="rounded-2xl border border-[var(--border)] p-3"><legend class="px-1 text-sm font-bold">Family attendees</legend><div class="mt-2 space-y-2">@for (member of family.members(); track member.id) { <label class="flex items-center gap-3"><input type="checkbox" class="h-5 w-5 accent-cyan-400" [checked]="attendees().includes(member.id)" (change)="toggleAttendee(member.id)" /><span><strong class="block text-sm">{{ member.displayName }}</strong><small class="planner-muted">{{ member.email }}</small></span></label> }</div></fieldset> }
   <label class="flex items-center justify-between rounded-2xl border border-[var(--border)] p-3"><span><strong class="block text-sm">Reminder</strong><small class="planner-muted">Notify me before this event</small></span><input type="checkbox" formControlName="reminder" class="h-6 w-6 accent-cyan-400" /></label>
   @if (error()) { <p class="planner-error">{{ error() }}</p> }
   <button type="submit" class="primary-button" [disabled]="saving()">{{ saving() ? 'Saving...' : id ? 'Update event' : 'Save event' }}</button>

@@ -9,13 +9,13 @@ describe('PlanningService', () => {
   const getSession = vi.fn(); const listDocuments = vi.fn(); const createDocument = vi.fn(); const updateDocument = vi.fn(); const deleteDocument = vi.fn();
   const service = () => runInInjectionContext(Injector.create({ providers: [
     { provide: AuthService, useValue: { getSession } },
-    { provide: FirestoreService, useValue: { listDocuments, createDocument, updateDocument, deleteDocument } },
+    { provide: FirestoreService, useValue: { listDocuments, createDocument, updateDocument, deleteDocument, tryGetDocument: vi.fn().mockResolvedValue(null) } },
   ] }), () => new PlanningService());
 
   beforeEach(() => { vi.clearAllMocks(); getSession.mockResolvedValue({ uid: 'user-1', token: 'token' }); });
 
   it('stores events in the signed-in user collection', async () => {
-    await service().saveEvent({ title: 'Family dinner', date: '2026-09-28', startTime: '13:00', endTime: '14:00', location: 'Home', notes: '', category: 'Family', repeat: 'Does not repeat', reminder: true });
+    await service().saveEvent({ title: 'Family dinner', date: '2026-09-28', startTime: '13:00', endTime: '14:00', location: 'Home', notes: '', category: 'Family', repeat: 'Does not repeat', reminder: true, attendeeIds: ['user-1'] });
     expect(createDocument).toHaveBeenCalledWith('users/user-1/planningEvents', expect.any(String), expect.objectContaining({ title: { stringValue: 'Family dinner' }, reminder: { booleanValue: true } }), 'token');
   });
 

@@ -2,7 +2,7 @@ export type PlanningCategory = 'Personal' | 'Bills' | 'Health' | 'Work' | 'Famil
 
 export interface PlanningEvent {
   id: string; title: string; date: string; startTime: string; endTime: string;
-  location: string; notes: string; category: PlanningCategory; repeat: string; reminder: boolean; createdAt: string;
+  location: string; notes: string; category: PlanningCategory; repeat: string; reminder: boolean; attendeeIds: string[]; createdAt: string;
 }
 export type PlanningEventInput = Omit<PlanningEvent, 'id' | 'createdAt'>;
 
