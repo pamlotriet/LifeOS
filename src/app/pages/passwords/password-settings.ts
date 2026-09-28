@@ -4,6 +4,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
 import { PasswordStore } from '../../shared/state/passwords/password-store';
 import { AuthService } from '../../shared/state/authentication/authentication.service';
+import { ThemeService } from '../../shared/state/theme/theme.service';
 
 @Component({
   selector: 'app-password-settings',
@@ -13,6 +14,7 @@ import { AuthService } from '../../shared/state/authentication/authentication.se
 export class PasswordSettings {
   readonly store = inject(PasswordStore);
   readonly auth = inject(AuthService);
+  readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
   readonly busy = signal(false);
   readonly message = signal('');

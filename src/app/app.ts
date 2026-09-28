@@ -3,6 +3,7 @@ import { IonApp, IonButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/an
 import { Capacitor } from '@capacitor/core';
 import { AuthService } from './shared/state/authentication/authentication.service';
 import { RefreshCoordinator } from './shared/state/refresh/refresh-coordinator.service';
+import { ThemeService } from './shared/state/theme/theme.service';
 
 @Component({
   imports: [IonButton, IonApp, IonIcon, IonLabel, IonRouterOutlet],
@@ -13,6 +14,7 @@ import { RefreshCoordinator } from './shared/state/refresh/refresh-coordinator.s
 export class App {
   authService = inject(AuthService);
   readonly refreshCoordinator = inject(RefreshCoordinator);
+  readonly theme = inject(ThemeService);
   readonly nativePlatform = Capacitor.isNativePlatform();
   readonly paletteToggle = signal(false);
   readonly signInError = signal('');
@@ -21,22 +23,13 @@ export class App {
   private touchStart: number | null = null;
 
   ngOnInit() {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    this.initializeDarkPalette(prefersDark.matches);
-
-    prefersDark.addEventListener('change', (mediaQuery) =>
-      this.initializeDarkPalette(mediaQuery.matches),
-    );
+    this.paletteToggle.set(this.theme.dark());
   }
 
   // Check/uncheck the toggle and update the palette based on isDark
   initializeDarkPalette(isDark: boolean) {
     this.paletteToggle.set(isDark);
-    this.toggleDarkPalette(isDark);
+    this.theme.setDark(isDark);
   }
 
   // Listen for the toggle check/uncheck to toggle the dark palette
@@ -46,9 +39,7 @@ export class App {
 
   // Add or remove the dark theme classes used by both Ionic and the custom Tailwind variables
   toggleDarkPalette(shouldAdd: boolean) {
-    if (typeof document !== 'undefined') {
-      document.documentElement.classList.toggle('dark', shouldAdd);
-    }
+    this.theme.setDark(shouldAdd);
   }
 
   onTouchStart(event: TouchEvent): void {

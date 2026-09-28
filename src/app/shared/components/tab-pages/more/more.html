@@ -9,5 +9,7 @@
         <ion-icon name="chevron-forward" class="text-xl text-[#8daac4]"></ion-icon>
       </a>
     </section>
+    <button type="button" (click)="logout()" [disabled]="signingOut()" class="mt-5 flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl border border-rose-400/50 bg-rose-400/10 font-semibold text-rose-200 disabled:opacity-60"><ion-icon name="log-out" class="text-xl"></ion-icon>{{ signingOut() ? 'Signing out...' : 'Log out' }}</button>
+    @if (error()) { <p role="alert" class="mt-3 rounded-xl border border-rose-400/40 bg-[#3a1926] p-3 text-center text-sm">{{ error() }}</p> }
   </main>
 </ion-content>
