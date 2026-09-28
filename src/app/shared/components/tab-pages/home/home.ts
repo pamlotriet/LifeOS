@@ -64,6 +64,7 @@ export class Home {
       iconBackground: 'bg-gradient-to-br from-fuchsia-400 to-pink-500',
       iconColor: 'text-slate-900',
       id: 4,
+      route: '/passwords',
     },
     {
       title: 'Recipes',
