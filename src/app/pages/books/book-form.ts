@@ -51,7 +51,12 @@ export class BookForm {
     seriesName: [''], seriesNumber: [null as number | null], startDate: [''], finishDate: [''], review: [''],
   });
 
-  constructor() { if (this.id) void this.load(this.id); }
+  constructor() {
+    if (this.id) void this.load(this.id);
+    else if (this.route.snapshot.data['scan']) {
+      setTimeout(() => void this.scanBook());
+    }
+  }
 
   private async load(id: string): Promise<void> {
     try {

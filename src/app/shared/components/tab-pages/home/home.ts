@@ -89,6 +89,6 @@ export class Home {
     { label: 'Add expense', icon: 'cash', iconBackground: 'bg-emerald-300', iconColor: 'text-slate-900' },
     { label: 'Log refuel', icon: 'car', iconBackground: 'bg-orange-400', iconColor: 'text-slate-900', route: '/fuel' },
     { label: 'Add task', icon: 'checkmark', iconBackground: 'bg-sky-400', iconColor: 'text-slate-900' },
-    { label: 'Add note', icon: 'document-text', iconBackground: 'bg-violet-400', iconColor: 'text-slate-900' },
+    { label: 'Scan book', icon: 'scan-outline', iconBackground: 'bg-violet-400', iconColor: 'text-slate-900', route: '/books/scan' },
   ];
 }

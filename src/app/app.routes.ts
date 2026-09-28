@@ -46,6 +46,7 @@ export const routes: Routes = [
   { path: 'vehicles', redirectTo: 'fuel/vehicles' },
   { path: 'books', loadComponent: () => import('./pages/books/books-library').then((m) => m.BooksLibrary), canActivate: [authGuard] },
   { path: 'books/finished', loadComponent: () => import('./pages/books/finished-books').then((m) => m.FinishedBooks), canActivate: [authGuard] },
+  { path: 'books/scan', loadComponent: () => import('./pages/books/book-form').then((m) => m.BookForm), data: { scan: true }, canActivate: [authGuard] },
   { path: 'books/add', loadComponent: () => import('./pages/books/book-form').then((m) => m.BookForm), canActivate: [authGuard] },
   { path: 'books/:id/edit', loadComponent: () => import('./pages/books/book-form').then((m) => m.BookForm), canActivate: [authGuard] },
   { path: 'books/tags', loadComponent: () => import('./pages/books/book-tags').then((m) => m.BookTags), canActivate: [authGuard] },
