@@ -14,6 +14,10 @@ export class StoragePhotoService {
     return this.uploadPhoto(`users/${uid}/vehicles/${vehicleId}/${photoName}`, localUrl, token);
   }
 
+  async uploadRecipePhoto(uid: string, recipeId: string, localUrl: string, token: string): Promise<{ path: string; url: string }> {
+    return this.uploadPhoto(`users/${uid}/recipes/${recipeId}/photo-${crypto.randomUUID()}`, localUrl, token);
+  }
+
   private async uploadPhoto(path: string, localUrl: string, token: string): Promise<{ path: string; url: string }> {
     const photoResponse = await fetch(localUrl);
     if (!photoResponse.ok) throw new Error('Could not read the selected photo.');
@@ -44,7 +48,7 @@ export class StoragePhotoService {
       body,
     });
 
-    if (!response.ok) throw new Error(`Could not upload the vehicle photo to Firebase Storage (${response.status}).`);
+    if (!response.ok) throw new Error(`Could not upload the photo to Firebase Storage (${response.status}).`);
     const metadata = (await response.json()) as StoredPhoto;
     const downloadToken = metadata.downloadTokens?.split(',')[0];
 

@@ -49,5 +49,9 @@ export const routes: Routes = [
   { path: 'books/add', loadComponent: () => import('./pages/books/book-form').then((m) => m.BookForm), canActivate: [authGuard] },
   { path: 'books/:id/edit', loadComponent: () => import('./pages/books/book-form').then((m) => m.BookForm), canActivate: [authGuard] },
   { path: 'books/tags', loadComponent: () => import('./pages/books/book-tags').then((m) => m.BookTags), canActivate: [authGuard] },
+  { path: 'recipes', loadComponent: () => import('./pages/recipes/recipes').then((m) => m.Recipes), canActivate: [authGuard] },
+  { path: 'recipes/add', loadComponent: () => import('./pages/recipes/recipe-form').then((m) => m.RecipeForm), canActivate: [authGuard] },
+  { path: 'recipes/:id/edit', loadComponent: () => import('./pages/recipes/recipe-form').then((m) => m.RecipeForm), canActivate: [authGuard] },
+  { path: 'recipes/:id', loadComponent: () => import('./pages/recipes/recipe-detail').then((m) => m.RecipeDetail), canActivate: [authGuard] },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];

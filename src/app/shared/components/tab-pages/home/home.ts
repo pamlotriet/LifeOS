@@ -66,12 +66,13 @@ export class Home {
       id: 4,
     },
     {
-      title: 'Health',
-      description: 'Feel your best',
-      icon: 'heart',
-      iconBackground: 'bg-gradient-to-br from-rose-400 to-pink-500',
+      title: 'Recipes',
+      description: 'Cook your favourites',
+      icon: 'restaurant-outline',
+      iconBackground: 'bg-gradient-to-br from-amber-300 to-orange-500',
       iconColor: 'text-slate-900',
       id: 5,
+      route: '/recipes',
     },
     {
       title: 'Vehicles',
