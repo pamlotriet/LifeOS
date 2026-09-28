@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, untracked } from '@angular/core';
 import { IonApp, IonButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import { AuthService } from './shared/state/authentication/authentication.service';
@@ -19,8 +19,23 @@ export class App {
   readonly paletteToggle = signal(false);
   readonly signInError = signal('');
   readonly signingIn = signal(false);
+  readonly biometricFailures = signal(0);
   readonly pullDistance = signal(0);
   private touchStart: number | null = null;
+
+  constructor() {
+    effect(() => {
+      const ready = this.authService.authReady();
+      const enrolled = this.authService.biometric.enrolled();
+      const authenticated = this.authService.isAuthenticated();
+      const failures = this.biometricFailures();
+      untracked(() => {
+        if (ready && enrolled && !authenticated && failures === 0 && !this.signingIn()) {
+          queueMicrotask(() => void this.authenticateWithBiometrics());
+        }
+      });
+    });
+  }
 
   ngOnInit() {
     this.paletteToggle.set(this.theme.dark());
@@ -92,7 +107,9 @@ export class App {
     this.signingIn.set(true);
     try {
       await this.authService.unlockWithBiometrics();
+      this.biometricFailures.set(0);
     } catch (error) {
+      this.biometricFailures.update((count) => Math.min(3, count + 1));
       this.signInError.set(error instanceof Error ? error.message : 'Could not unlock LifeOS.');
     } finally {
       this.signingIn.set(false);

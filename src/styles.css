@@ -269,6 +269,131 @@
   --ion-color-tertiary-tint: #985dff;
 }
 
+/* Complete light palette for screens originally composed with dark utility colors. */
+:root:not(.dark) ion-app {
+  background-color: var(--background) !important;
+  background-image: none !important;
+  color: var(--foreground) !important;
+}
+
+:root:not(.dark) ion-content {
+  --background: transparent !important;
+  --color: var(--foreground) !important;
+  color: var(--foreground) !important;
+}
+
+:root:not(.dark) input,
+:root:not(.dark) textarea,
+:root:not(.dark) select {
+  color: var(--foreground) !important;
+  caret-color: var(--foreground);
+}
+
+:root:not(.dark) input::placeholder,
+:root:not(.dark) textarea::placeholder { color: var(--text-muted) !important; opacity: 1; }
+
+:root:not(.dark) [class~="text-white"] { color: var(--foreground) !important; }
+:root:not(.dark) [class~="text-[#b5cbe2]"],
+:root:not(.dark) [class~="text-[#b8cce0]"],
+:root:not(.dark) [class~="text-[#a9c2db]"],
+:root:not(.dark) [class~="text-[#afc4dc]"],
+:root:not(.dark) [class~="text-[#afc9e7]"],
+:root:not(.dark) [class~="text-[#b7cde1]"],
+:root:not(.dark) [class~="text-[#b8cfe8]"],
+:root:not(.dark) [class~="text-[#c5d7e7]"],
+:root:not(.dark) [class~="text-[#c8d8eb]"],
+:root:not(.dark) [class~="text-[#c9dff2]"],
+:root:not(.dark) [class~="text-[#d4e3f2]"],
+:root:not(.dark) [class~="text-[#e0edfa]"],
+:root:not(.dark) [class~="text-[#c3d5e7]"],
+:root:not(.dark) [class~="text-[#8daac4]"],
+:root:not(.dark) [class~="text-[#91aecd]"],
+:root:not(.dark) [class~="text-[#7895b1]"] { color: var(--text-secondary) !important; }
+
+:root:not(.dark) [class~="bg-[#061426]"],
+:root:not(.dark) [class~="bg-[#0b2034]"],
+:root:not(.dark) [class~="bg-[#0b2138]"],
+:root:not(.dark) [class~="bg-[#0b2945]"],
+:root:not(.dark) [class~="bg-[#0c2943]"],
+:root:not(.dark) [class~="bg-[#0d2d49]"],
+:root:not(.dark) [class~="bg-[#0d2945]"],
+:root:not(.dark) [class~="bg-[#0d2741]"],
+:root:not(.dark) [class~="bg-[#0d2d4c]"],
+:root:not(.dark) [class~="bg-[#0e2c47]"],
+:root:not(.dark) [class~="bg-[#0e2944]"],
+:root:not(.dark) [class~="bg-[#102e4a]"],
+:root:not(.dark) [class~="bg-[#102b47]"],
+:root:not(.dark) [class~="bg-[#102d49]"],
+:root:not(.dark) [class~="bg-[#102f4c]"],
+:root:not(.dark) [class~="bg-[#112e4b]"],
+:root:not(.dark) [class~="bg-[#112c49]"],
+:root:not(.dark) [class~="bg-[#123351]"],
+:root:not(.dark) [class~="bg-[#123653]"],
+:root:not(.dark) [class~="bg-[#143453]"],
+:root:not(.dark) [class~="bg-[#143755]"],
+:root:not(.dark) [class~="bg-[#143856]"],
+:root:not(.dark) [class~="bg-[#153653]"],
+:root:not(.dark) [class~="bg-[#153854]"],
+:root:not(.dark) [class~="bg-[#153b5c]"],
+:root:not(.dark) [class~="bg-[#173a59]"],
+:root:not(.dark) [class~="bg-[#174363]"],
+:root:not(.dark) [class~="bg-[#183b5b]"],
+:root:not(.dark) [class~="bg-[#204765]"],
+:root:not(.dark) [class~="bg-[#103454]"],
+:root:not(.dark) [class~="bg-[#123451]"],
+:root:not(.dark) [class~="bg-[#173f60]"] { background-color: var(--card) !important; }
+
+:root:not(.dark) [class~="bg-[#1c486a]"],
+:root:not(.dark) [class~="hover:bg-[#1c486a]"]:hover,
+:root:not(.dark) [class~="focus-visible:bg-[#1c486a]"]:focus-visible { background-color: var(--muted) !important; }
+
+:root:not(.dark) [class~="bg-[#2b2037]"],
+:root:not(.dark) [class~="bg-[#311d32]"],
+:root:not(.dark) [class~="bg-[#3a1926]"] { background-color: #fff1f2 !important; color: #9f1239 !important; }
+
+:root:not(.dark) [class~="border-[#315b7e]"],
+:root:not(.dark) [class~="border-[#3c7098]"],
+:root:not(.dark) [class~="border-[#416987]"],
+:root:not(.dark) [class~="border-[#497090]"],
+:root:not(.dark) [class~="border-[#32658c]"],
+:root:not(.dark) [class~="border-[#305f88]"],
+:root:not(.dark) [class~="border-[#2a587e]"],
+:root:not(.dark) [class~="border-[#2e5778]"],
+:root:not(.dark) [class~="border-[#507399]"],
+:root:not(.dark) [class~="border-[#4a6584]"],
+:root:not(.dark) [class~="border-[#6e96bf]"],
+:root:not(.dark) [class~="border-[#315877]"],
+:root:not(.dark) [class~="border-[#41698b]"],
+:root:not(.dark) [class~="border-[#456987]"],
+:root:not(.dark) [class~="border-[#2c5677]"] { border-color: var(--border) !important; }
+
+:root:not(.dark) [class*="from-[#0"],
+:root:not(.dark) [class*="from-[#1"] {
+  background-image: none !important;
+  background-color: var(--card) !important;
+}
+
+.lifeos-back-button {
+  border-color: #3f86b6;
+  background: linear-gradient(135deg, #1d5a87, #123e64 50%, #0a2c4e);
+  box-shadow: 0 0 0 4px rgb(35 129 193 / 12%), inset 0 1px 4px rgb(181 231 255 / 20%), 0 8px 18px rgb(0 0 0 / 22%);
+}
+
+:root:not(.dark) .lifeos-back-button {
+  border-color: #9fd9ea;
+  background: linear-gradient(135deg, #ffffff, #eaf8fc);
+  color: #17304f !important;
+  box-shadow: 0 5px 16px rgb(34 79 121 / 12%);
+}
+
+:root:not(.dark) ion-tab-bar.lifeos-tab-bar,
+:root:not(.dark) ion-tab-button.lifeos-tab-button {
+  --background: var(--nav-background) !important;
+  --color: var(--nav-inactive) !important;
+  --color-selected: var(--nav-active) !important;
+  background: var(--nav-background) !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

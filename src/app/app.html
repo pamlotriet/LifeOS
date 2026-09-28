@@ -24,7 +24,7 @@
     ></ion-router-outlet>
   } @else {
     <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
-    @if (authService.biometric.enrolled()) {
+    @if (authService.biometric.enrolled() && biometricFailures() < 3) {
       <ion-button
         class="absolute bottom-52 w-4/5 left-1/2 transform -translate-x-1/2 rounded-4xl [--background:#22d3ee] [--color:#062642]"
         [disabled]="signingIn()"
@@ -33,6 +33,9 @@
         <ion-icon name="finger-print" slot="start" class="mr-2"></ion-icon>
         <ion-label class="font-semibold text-lg">Unlock with {{ authService.biometric.kind() }}</ion-label>
       </ion-button>
+    }
+    @if (biometricFailures() >= 3) {
+      <p class="absolute bottom-52 left-1/2 w-4/5 -translate-x-1/2 rounded-xl border border-amber-300/40 bg-amber-100 px-4 py-3 text-center text-sm text-amber-900">Biometric unlock failed three times. Sign in with Google to continue.</p>
     }
     <ion-button
       class="absolute bottom-36 w-4/5 left-1/2 transform -translate-x-1/2 [--background:white] rounded-4xl"

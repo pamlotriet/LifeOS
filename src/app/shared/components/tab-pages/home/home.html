@@ -1,31 +1,32 @@
-<ion-content class="[--background:transparent] [--color:#f8fafc]">
-  <main class="mx-auto max-w-2xl px-4 pb-8 pt-4 text-white">
+<ion-content class="[--background:transparent]">
+  <main class="home-page mx-auto min-h-full max-w-2xl px-5 pb-10 pt-4">
     <header class="mb-5 px-1">
-      <p class="text-sm tracking-wide text-slate-400">{{ today }}</p>
+      <p class="home-muted text-sm tracking-wide">{{ today }}</p>
       <h1 class="mt-1 text-[clamp(1.75rem,7vw,2.5rem)] font-bold leading-tight tracking-tight">{{ greeting }}!</h1>
-      <p class="mt-1 text-sm tracking-wide text-slate-400">Small steps make a big life.</p>
+      <p class="home-muted mt-1 text-sm tracking-wide">Small steps make a big life.</p>
     </header>
 
-    <section aria-labelledby="quick-actions-title" class="mb-4 rounded-2xl border border-white/10 bg-[#102942] p-2.5 shadow-lg shadow-black/10">
-      <div class="mb-2 flex items-center justify-between px-1">
-        <h2 id="quick-actions-title" class="flex items-center gap-2 text-sm font-semibold"><ion-icon name="flash" class="text-xl text-cyan-400" aria-hidden="true"></ion-icon>Quick actions</h2>
-        <span class="text-xs text-slate-300">Shortcuts</span>
+    <section aria-labelledby="quick-actions-title" class="home-panel relative z-10 mb-5 rounded-[2rem] p-4 sm:p-5">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 id="quick-actions-title" class="flex items-center gap-2 text-xl font-bold sm:text-2xl"><ion-icon name="flash" class="text-2xl text-cyan-400" aria-hidden="true"></ion-icon>Quick actions</h2>
+        <span class="home-muted text-sm font-semibold">Shortcuts</span>
       </div>
-      <div class="grid grid-cols-4 gap-1.5">
+      <div class="grid grid-cols-4 gap-2 sm:gap-4">
         @for (action of quickActions; track action.label) {
-          <a [routerLink]="action.route ?? null" class="flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-white/5 bg-[#1b334e] px-1 py-2 text-center text-white no-underline active:scale-[.97]">
-            <span class="flex h-7 w-7 items-center justify-center rounded-full" [class]="action.iconBackground"><ion-icon [name]="action.icon" class="text-base" [class]="action.iconColor"></ion-icon></span>
-            <span class="text-[10px] leading-tight">{{ action.label }}</span>
+          <a [routerLink]="action.route ?? null" class="home-action flex min-w-0 flex-col items-center gap-2 text-center no-underline active:scale-[.96]">
+            <span class="home-action-icon" [attr.data-accent]="action.accent"><ion-icon [name]="action.icon" aria-hidden="true"></ion-icon></span>
+            <span class="text-[11px] font-semibold leading-tight sm:text-sm">{{ action.label }}</span>
           </a>
         }
       </div>
     </section>
 
-    <section aria-label="Life areas" class="grid grid-cols-3 gap-2">
+    <section aria-label="Life areas" class="relative z-10 grid grid-cols-2 gap-3">
       @for (item of items; track item.id) {
-        <a [routerLink]="item.route ?? null" class="flex min-h-[116px] flex-col rounded-2xl border border-[#294661] bg-gradient-to-br from-[#1a3855] via-[#142f4a] to-[#10263d] p-2.5 text-white no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_20px_rgba(0,0,0,0.16)] transition-all duration-150 hover:border-cyan-300/30 hover:brightness-110 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-cyan-300">
-          <div class="flex items-start"><span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 ring-white/20 shadow-[0_4px_10px_rgba(0,0,0,0.18)]" [class]="item.iconBackground"><ion-icon [name]="item.icon" class="text-[22px]" [class]="item.iconColor"></ion-icon></span></div>
-          <div class="mt-auto pt-2"><h2 class="text-sm font-semibold leading-tight tracking-tight">{{ item.title }}</h2><p class="mt-0.5 text-[11px] leading-[1.25] text-slate-300">{{ item.description }}</p></div>
+        <a [routerLink]="item.route ?? null" class="home-card relative flex min-h-[122px] items-center gap-3 overflow-hidden rounded-[1.7rem] p-4 no-underline active:scale-[.98]" [class.col-span-2]="item.title === 'Vehicles'" [attr.data-accent]="item.accent">
+          <span class="home-card-icon flex h-14 w-14 shrink-0 items-center justify-center rounded-full" [class]="item.iconBackground"><ion-icon [name]="item.icon" class="text-2xl" [class]="item.iconColor" aria-hidden="true"></ion-icon></span>
+          <span class="relative z-10 min-w-0"><span class="block text-lg font-bold leading-tight">{{ item.title }}</span><span class="home-muted mt-1 block text-sm leading-snug">{{ item.description }}</span></span>
+          <span class="home-card-wave" aria-hidden="true"></span>
         </a>
       }
     </section>
