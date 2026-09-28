@@ -97,7 +97,14 @@ service cloud.firestore {
       // Direct lookup is allowed for signed-in users who possess it; listing remains email-scoped.
       allow get: if signedIn() && resource.data.active == true;
       allow list: if signedIn() && resource.data.email == request.auth.token.email;
-      allow update, delete: if signedIn() && resource.data.createdBy == request.auth.uid;
+      allow update: if signedIn() && (
+        resource.data.createdBy == request.auth.uid || (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active'])
+          && request.resource.data.active == false
+          && request.auth.uid in get(/databases/$(database)/documents/families/$(resource.data.familyId)).data.memberIds
+        )
+      );
+      allow delete: if signedIn() && resource.data.createdBy == request.auth.uid;
     }
   }
 }

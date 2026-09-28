@@ -20,7 +20,7 @@ export interface FirestoreDocument {
 }
 
 export type FirestoreWrite =
-  | { update: FirestoreDocument; updateMask?: { fieldPaths: string[] }; currentDocument?: { exists?: boolean; updateTime?: string } }
+  | { update: FirestoreDocument; updateMask?: { fieldPaths: string[] }; updateTransforms?: Array<{ fieldPath: string; appendMissingElements?: { values: FirestoreValue[] } }>; currentDocument?: { exists?: boolean; updateTime?: string } }
   | { delete: string; currentDocument?: { exists?: boolean; updateTime?: string } };
 
 interface FirestoreList {
