@@ -1,0 +1,14 @@
+<ion-header app-page-header [title]="id ? 'Edit Event' : 'Add Event'"></ion-header>
+<ion-content class="[--background:transparent]"><main class="planner-page mx-auto max-w-2xl px-4 pb-16 pt-2"><form [formGroup]="form" (ngSubmit)="submit()" class="planner-card space-y-4 p-4">
+  <label class="field"><span>Event title *</span><input formControlName="title" class="control" placeholder="e.g. Family dinner" /></label>
+  <label class="field"><span>Date *</span><app-date-picker formControlName="date" /></label>
+  <div class="grid grid-cols-2 gap-3"><label class="field"><span>Starts</span><input type="time" formControlName="startTime" class="control" /></label><label class="field"><span>Ends</span><input type="time" formControlName="endTime" class="control" /></label></div>
+  <label class="field"><span>Category</span><app-select formControlName="category" [options]="categoryOptions" /></label>
+  <label class="field"><span>Location</span><input formControlName="location" class="control" placeholder="Optional" /></label>
+  <label class="field"><span>Notes</span><textarea formControlName="notes" class="control" placeholder="Optional notes"></textarea></label>
+  <label class="field"><span>Repeat</span><app-select formControlName="repeat" [options]="repeatOptions" /></label>
+  <label class="flex items-center justify-between rounded-2xl border border-[var(--border)] p-3"><span><strong class="block text-sm">Reminder</strong><small class="planner-muted">Notify me before this event</small></span><input type="checkbox" formControlName="reminder" class="h-6 w-6 accent-cyan-400" /></label>
+  @if (error()) { <p class="planner-error">{{ error() }}</p> }
+  <button type="submit" class="primary-button" [disabled]="saving()">{{ saving() ? 'Saving...' : id ? 'Update event' : 'Save event' }}</button>
+  @if (id) { <button type="button" (click)="remove()" class="secondary-button w-full border-rose-400 text-rose-400">Delete event</button> }
+</form></main></ion-content>

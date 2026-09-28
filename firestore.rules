@@ -20,6 +20,22 @@ service cloud.firestore {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
 
+      match /planningEvents/{eventId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /planningReminders/{reminderId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /mealPlan/{mealId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /groceryItems/{itemId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
       match /vault/{documentId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
