@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 1672" preserveAspectRatio="none">
+ <defs>
+  <linearGradient id="top" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#00efff"/><stop offset=".32" stop-color="#0064e5"/><stop offset=".6" stop-color="#001647"/><stop offset="1" stop-color="#6400ff"/></linearGradient>
+  <linearGradient id="bottom"><stop stop-color="#00dfff"/><stop offset=".42" stop-color="#0060ff"/><stop offset="1" stop-color="#6800ff"/></linearGradient>
+  <linearGradient id="edge"><stop stop-color="#9cffff"/><stop offset=".5" stop-color="#168cff"/><stop offset="1" stop-color="#b467ff"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="18"/></filter>
+ </defs>
+ <path d="M-10 72C280 330 389 90 700 228 800 260 900 158 950 83V417C735 126 507 184 331 199 174 211 72 150-10 82Z" fill="url(#top)"/>
+ <path d="M-10 80C270 337 391 90 700 228 803 268 900 157 950 83M-10 1477C293 1513 413 1690 708 1745M281 1672C543 1580 776 1535 950 1480" fill="none" stroke="url(#edge)" stroke-width="23" filter="url(#glow)"/>
+ <path d="M-10 80C270 337 391 90 700 228 803 268 900 157 950 83M700 228Q860 280 950 417" fill="none" stroke="url(#edge)" stroke-width="1.4"/>
+ <path d="M-10 1477C293 1513 413 1690 708 1745H-10Z" fill="url(#bottom)"/>
+ <path d="M281 1672C543 1580 776 1535 950 1480V1680Z" fill="url(#bottom)" opacity=".8"/>
+ <path d="M-10 1477C293 1513 413 1690 708 1745M281 1672C543 1580 776 1535 950 1480" fill="none" stroke="url(#edge)" stroke-width="1.4"/>
+</svg>

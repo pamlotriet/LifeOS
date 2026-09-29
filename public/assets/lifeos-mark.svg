@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 310">
+  <defs>
+    <linearGradient id="stem" x2=".6" y2="1"><stop stop-color="#00fff0"/><stop offset=".5" stop-color="#00beff"/><stop offset="1" stop-color="#083fff"/></linearGradient>
+    <linearGradient id="leaf" x1=".8" y1="0" x2=".25" y2="1"><stop stop-color="#00fff0"/><stop offset=".5" stop-color="#00caff"/><stop offset="1" stop-color="#0039ff"/></linearGradient>
+    <linearGradient id="foot" x1=".1" y1=".6" x2="1" y2=".2"><stop stop-color="#073aff"/><stop offset=".4" stop-color="#6822ff"/><stop offset=".8" stop-color="#d94bff"/><stop offset="1" stop-color="#fa94ff"/></linearGradient>
+    <linearGradient id="fold"><stop stop-color="#2900ff"/><stop offset="1" stop-color="#ef00ee"/></linearGradient>
+  </defs>
+  <path d="M204 6C144 0 78 40 29 104 9 130 6 148 6 179v47c0 49 32 78 77 78h119L99 189 204 83Z" fill="url(#stem)"/>
+  <path d="M204 6v51c0 35-17 52-43 75l-65 57C42 169 40 110 77 62 116 24 161 4 204 6Z" fill="url(#leaf)" stroke="#6ffaff" stroke-width="1"/>
+  <path d="M96 189h102c35 0 57 24 57 58 0 33-23 57-56 57H83c-31-11-41-39-32-75Z" fill="url(#foot)"/>
+  <path d="M83 304c42-10 80-52 120-52 25 0 40 7 48 19-8 21-26 33-52 33Z" fill="url(#fold)"/>
+</svg>

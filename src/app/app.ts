@@ -1,13 +1,13 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, effect, inject, signal, untracked } from '@angular/core';
-import { IonApp, IonButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/angular';
+import { IonApp, IonRouterOutlet } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import { AuthService } from './shared/state/authentication/authentication.service';
 import { RefreshCoordinator } from './shared/state/refresh/refresh-coordinator.service';
 import { ThemeService } from './shared/state/theme/theme.service';
 
 @Component({
-  imports: [IonButton, IonApp, IonIcon, IonLabel, IonRouterOutlet],
+  imports: [IonApp, IonRouterOutlet],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

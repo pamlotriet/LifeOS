@@ -47,7 +47,7 @@ export class ImageCacheService {
         let bytes = 0;
         let count = 0;
         // Keep the newest entries, within both byte and entry limits.
-        for (const key of keys.reverse()) {
+        for (const key of [...keys].reverse()) {
           const item = await target.match(key);
           bytes += Number(item?.headers.get('x-lifeos-bytes') || MAX_IMAGE_BYTES);
           if (++count > 100 || bytes > MAX_BYTES) await target.delete(key);
