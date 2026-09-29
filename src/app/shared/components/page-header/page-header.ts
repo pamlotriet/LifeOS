@@ -1,5 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 
 @Component({
@@ -23,9 +24,16 @@ import { IonIcon } from '@ionic/angular';
 })
 export class PageHeader {
   private readonly location = inject(Location);
+  private readonly router = inject(Router);
   readonly title = input.required<string>();
+  readonly backUrl = input<string | null>(null);
 
   goBack(): void {
+    const backUrl = this.backUrl();
+    if (backUrl) {
+      void this.router.navigateByUrl(backUrl);
+      return;
+    }
     this.location.back();
   }
 }

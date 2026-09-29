@@ -18,6 +18,10 @@ export class StoragePhotoService {
     return this.uploadPhoto(`users/${uid}/recipes/${recipeId}/photo-${crypto.randomUUID()}`, localUrl, token);
   }
 
+  async uploadBudgetReceipt(uid: string, transactionId: string, localUrl: string, token: string): Promise<{ path: string; url: string }> {
+    return this.uploadPhoto(`users/${uid}/budget/${transactionId}/receipt-${crypto.randomUUID()}`, localUrl, token);
+  }
+
   private async uploadPhoto(path: string, localUrl: string, token: string): Promise<{ path: string; url: string }> {
     const photoResponse = await fetch(localUrl);
     if (!photoResponse.ok) throw new Error('Could not read the selected photo.');

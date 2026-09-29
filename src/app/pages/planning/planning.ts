@@ -1,9 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
+import { PageHeader } from '../../shared/components/page-header/page-header';
 import { PlanningStore } from '../../shared/state/planning/planning-store';
 
-@Component({ selector: 'app-planning', imports: [IonContent, IonIcon, RouterLink], templateUrl: './planning.html', styleUrl: './planning.css' })
+@Component({ selector: 'app-planning', imports: [IonContent, IonIcon, RouterLink, PageHeader], templateUrl: './planning.html', styleUrl: './planning.css' })
 export class Planning {
   readonly store = inject(PlanningStore); readonly today = iso(new Date());
   readonly dateLabel = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date());

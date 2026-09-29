@@ -1,0 +1,33 @@
+<ion-content><main class="budget-page">
+  <header class="page-header"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><h1 class="compact-title">{{ id ? 'Edit' : 'Add' }} Transaction</h1><button class="primary-button" type="submit" form="transaction-form" [disabled]="busy() || store.loading() || !!store.error() || (!!id && !loaded())">{{ busy() ? 'Saving...' : 'Save' }}</button></header>
+  @if (store.loading()) { <p class="status" role="status">Loading your budget...</p> }
+  @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
+  @if (error()) { <p class="status error" role="alert">{{ error() }}</p> }
+  @if (id && !loaded() && !store.loading() && !store.error()) { <p class="status error">Transaction not found. <a routerLink="/budget">Return to Budget</a></p> }
+  @if ((!id || loaded()) && !store.loading() && !store.error()) {
+    <form id="transaction-form" (ngSubmit)="save()">
+      <fieldset [disabled]="busy()" style="border:0;padding:0;margin:0;min-width:0">
+        <div class="segments" aria-label="Transaction type">@for (item of types; track item) { <button type="button" [class.active]="type() === item" [class.expense]="item === 'expense'" [attr.aria-pressed]="type() === item" (click)="changeType(item)">{{ item === 'expense' ? 'Expense' : item === 'income' ? 'Income' : 'Transfer' }}</button> }</div>
+        @if (type() === 'transfer') { <p class="status">Transfers move money into savings. They reduce your remaining balance and are excluded from expenses.</p> }
+        <label class="field"><span>Amount (R) <em>*</em></span><input name="amount" type="number" inputmode="decimal" min="0.01" max="999999999" step="0.01" required placeholder="0.00" [(ngModel)]="model.amount" /></label>
+        <label class="field"><span>Date <em>*</em></span><input name="date" type="date" required [(ngModel)]="model.date" /></label>
+        <label class="field"><span>Category <em>*</em></span><select name="category" required [(ngModel)]="model.categoryId"><option value="" disabled>Choose a category</option>@for (category of categories(); track category.id) { <option [value]="category.id">{{ category.name }}{{ category.type === 'bills' ? ' (Bill)' : '' }}</option> }</select></label>
+        @if (!categories().length) { <p class="status">Create a category before saving. <a class="text-link" routerLink="/budget/categories">Manage categories</a></p> }
+        <label class="field"><span>Title / Description <em>*</em></span><input name="title" required maxlength="120" placeholder="e.g. Checkers groceries" [(ngModel)]="model.title" /></label>
+        <label class="field"><span>Payment Method</span><select name="payment" [(ngModel)]="model.paymentMethod">@for (method of ['Card', 'Cash', 'Bank transfer', 'Debit order', 'Other']; track method) { <option>{{ method }}</option> }</select></label>
+        <label class="field"><span>Notes</span><textarea name="notes" maxlength="2000" placeholder="Any additional notes..." [(ngModel)]="model.notes"></textarea></label>
+        <section class="panel receipt-panel"><h2><ion-icon name="camera-outline" aria-hidden="true" /> Receipt photo</h2><p class="muted">Optional · up to 5 MB</p>
+          @if (localReceipt() || model.receiptUrl) { <img [src]="localReceipt() || model.receiptUrl" alt="Transaction receipt" /> }
+          <div class="receipt-actions">
+            @if (native) { <button class="secondary-button" type="button" (click)="pickNative(true)">Take photo</button><button class="secondary-button" type="button" (click)="pickNative(false)">Choose photo</button> }
+            @else { <button class="secondary-button" type="button" (click)="receiptCamera.click()">Take photo</button><button class="secondary-button" type="button" (click)="receiptFile.click()">Choose photo</button><input #receiptCamera hidden type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" capture="environment" (change)="pickFile($event)" /><input #receiptFile hidden type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" (change)="pickFile($event)" /> }
+            @if (localReceipt() || model.receiptUrl) { <button class="text-link" type="button" (click)="removeReceipt()">Remove photo</button> }
+          </div>
+        </section>
+        <div class="form-actions"><a class="secondary-button" routerLink="/budget">Cancel</a><button class="primary-button" type="submit">Save transaction</button></div>
+        @if (id) { <button class="text-link negative" type="button" (click)="confirmDelete.set(true)">Delete transaction</button> }
+        @if (confirmDelete()) { <div class="status error" role="alert"><p>Delete this transaction and its receipt? This cannot be undone.</p><div class="form-actions"><button type="button" class="secondary-button" (click)="confirmDelete.set(false)">Keep it</button><button type="button" class="secondary-button danger-button" (click)="remove()">Delete</button></div></div> }
+      </fieldset>
+    </form>
+  }
+</main></ion-content>

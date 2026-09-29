@@ -43,6 +43,7 @@
     "@capgo/capacitor-native-biometric": "^8.6.11",
     "@ionic/angular": "^9.0.3",
     "@spartan-ng/brain": "^1.4.1",
+    "chart.js": "^4.5.1",
     "express": "^5.1.0",
     "firebase": "^12.19.0",
     "rxjs": "~7.8.0",

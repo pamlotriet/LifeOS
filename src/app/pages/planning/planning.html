@@ -1,6 +1,7 @@
+<ion-header app-page-header title="Planning" backUrl="/home"></ion-header>
 <ion-content class="[--background:transparent]">
-  <main class="planner-page mx-auto min-h-full max-w-2xl px-4 pb-16 pt-5">
-    <header class="mb-5"><p class="planner-muted text-sm">{{ dateLabel }}</p><h1 class="text-4xl font-bold">Planning</h1><p class="planner-muted mt-1">Organize today. A calmer tomorrow.</p></header>
+  <main class="planner-page mx-auto min-h-full max-w-2xl px-4 pb-16 pt-4">
+    <header class="mb-5"><p class="planner-muted text-sm">{{ dateLabel }}</p><p class="planner-muted mt-1">Organize today. A calmer tomorrow.</p></header>
     <section class="planner-card p-4"><div class="mb-4 flex items-center justify-between"><h2 class="text-lg font-bold"><ion-icon name="flash" class="mr-2 text-cyan-400"></ion-icon>Quick actions</h2><span class="planner-muted text-xs">Shortcuts</span></div><div class="grid grid-cols-4 gap-2">
       <a routerLink="/planning/events/add" class="planner-action"><span class="from-emerald-300 to-teal-500"><ion-icon name="calendar"></ion-icon></span><small>Add event</small></a>
       <a routerLink="/planning/reminders" class="planner-action"><span class="from-sky-300 to-blue-500"><ion-icon name="checkmark"></ion-icon></span><small>Reminder</small></a>

@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { AddContent } from './shared/components/tab-pages/add-content/add-content';
 import { Home } from './shared/components/tab-pages/home/home';
+import { AddContent } from './shared/components/tab-pages/add-content/add-content';
 import { More } from './shared/components/tab-pages/more/more';
 import { Statistics } from './shared/components/tab-pages/statistics/statistics';
 import { authGuard } from './shared/guards/auth.guard';
@@ -27,6 +27,7 @@ export const routes: Routes = [
       { path: 'more', component: More, canActivate: [authGuard] },
     ],
   },
+  { path: 'budget', loadComponent: () => import('./pages/budget/budget-overview').then(m => m.BudgetOverview), canActivate: [authGuard] },
   {
     path: 'fuel',
     component: Fuel,
@@ -43,6 +44,11 @@ export const routes: Routes = [
     ],
   },
   { path: 'add/car', redirectTo: 'fuel/add-car' },
+  { path: 'budget/month', loadComponent: () => import('./pages/budget/budget-overview').then(m => m.BudgetOverview), data: { monthly: true }, canActivate: [authGuard] },
+  { path: 'budget/transactions/add', loadComponent: () => import('./pages/budget/budget-transaction-form').then(m => m.BudgetTransactionForm), canActivate: [authGuard] },
+  { path: 'budget/transactions/:id/edit', loadComponent: () => import('./pages/budget/budget-transaction-form').then(m => m.BudgetTransactionForm), canActivate: [authGuard] },
+  { path: 'budget/categories', loadComponent: () => import('./pages/budget/budget-categories').then(m => m.BudgetCategories), canActivate: [authGuard] },
+  { path: 'budget/insights', loadComponent: () => import('./pages/budget/budget-insights').then(m => m.BudgetInsights), canActivate: [authGuard] },
   { path: 'vehicles', redirectTo: 'fuel/vehicles' },
   { path: 'books', loadComponent: () => import('./pages/books/books-library').then((m) => m.BooksLibrary), canActivate: [authGuard] },
   { path: 'books/finished', loadComponent: () => import('./pages/books/finished-books').then((m) => m.FinishedBooks), canActivate: [authGuard] },

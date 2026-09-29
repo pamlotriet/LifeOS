@@ -6,6 +6,7 @@
 @import 'tailwindcss/utilities.css';
 @import '@ionic/angular/css/ionic.bundle.css';
 @import '@ionic/angular/css/palettes/dark.class.css';
+
 :root {
   color-scheme: light;
   --app-font-size: 93.75%;

@@ -1,0 +1,22 @@
+<ion-content><main class="budget-page">
+  <header class="page-header"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><h1 class="compact-title">Insights</h1><span style="width:42px"></span></header>
+  <div class="month-nav"><span class="muted">Report month</span><input type="month" aria-label="Report month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></div>
+  <nav class="segments" aria-label="Report type">@for (item of ['spending', 'income', 'trends']; track item) { <button [class.active]="tab() === item" [attr.aria-pressed]="tab() === item" (click)="tab.set(item)">{{ item === 'spending' ? 'Spending' : item === 'income' ? 'Income' : 'Trends' }}</button> }</nav>
+  @if (store.loading()) { <p class="status" role="status">Loading insights...</p> }
+  @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
+  @if (!store.loading() && !store.error()) {
+    @if (tab() !== 'trends') {
+      <section class="panel chart-panel"><h2>{{ tab() === 'income' ? 'Monthly Income' : 'Monthly Spending' }}</h2>
+        @if (breakdown().length) { <app-budget-chart [config]="horizontal()" label="Monthly category amounts; full values in the table below" /><table class="data-table"><thead><tr><th scope="col">Category</th><th scope="col">Amount</th></tr></thead><tbody>@for (item of breakdown(); track item.id) { <tr><td><span class="swatch" [style.background]="item.colour" style="display:inline-block;margin-right:6px"></span>{{ item.name }}</td><td>{{ money(item.amount) }}</td></tr> }</tbody></table> }
+        @else { <div class="empty-state"><p>No {{ tab() === 'income' ? 'income' : 'expenses' }} recorded for this month.</p><a class="text-link" routerLink="/budget/transactions/add">Add a transaction</a></div> }
+      </section>
+    }
+    <section class="panel chart-panel"><h2>Income vs Expenses</h2>
+      @if (hasHistory()) { <app-budget-chart [config]="comparison()" label="Income and expenses for the four months ending in the selected month; exact amounts available below" /> }
+      @else { <p class="empty-state">Your monthly comparison will appear when you record income or expenses.</p> }
+      <details><summary>View monthly amounts</summary><table class="data-table"><thead><tr><th scope="col">Month</th><th scope="col">Income</th><th scope="col">Expenses</th></tr></thead><tbody>@for (period of periods(); track period.month) { <tr><th scope="row">{{ period.month }}</th><td>{{ money(period.income) }}</td><td>{{ money(period.expenses) }}</td></tr> }</tbody></table></details>
+    </section>
+    <section class="panel average-card"><span class="category-icon" style="background:#094577"><ion-icon name="wallet" /></span><div class="row-copy"><small>Average Monthly Spending</small><strong>{{ money(average()) }}</strong></div>@if (change() !== null) { <span [class.negative]="change()! > 0" [class.positive]="change()! <= 0">{{ change()! > 0 ? '↑' : change()! < 0 ? '↓' : '' }} {{ change()! < 0 ? -change()! : change() }}%</span> }</section>
+    <p class="muted" style="font-size:12px;margin-top:12px">Average across the four months shown, including months with no recorded spending. Percentage compares the selected month's spending with the previous month. Bills are included in expenses; savings transfers are excluded.</p>
+  }
+</main></ion-content>

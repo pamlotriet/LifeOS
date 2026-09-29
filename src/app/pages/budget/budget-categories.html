@@ -1,0 +1,29 @@
+<ion-content><main class="budget-page">
+  <header class="page-header"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><h1 class="compact-title">Categories</h1><button class="primary-button" aria-label="Add category" [disabled]="busy() || store.loading() || !!store.error()" (click)="open()"><ion-icon name="add" /></button></header>
+  <div class="month-nav"><span class="muted">Totals for</span><input type="month" aria-label="Category totals month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></div>
+  <nav class="segments" aria-label="Category types">@for (type of types; track type) { <button [class.active]="tab() === type" [attr.aria-pressed]="tab() === type" (click)="tab.set(type)">{{ label(type) }}</button> }</nav>
+  @if (store.loading()) { <p class="status" role="status">Loading categories...</p> }
+  @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
+  @if (!store.loading() && !store.error()) {
+    @if (editor(); as model) {
+      <section class="panel editor" aria-labelledby="category-editor-title">
+        <h2 id="category-editor-title">{{ isNew() ? 'Add' : 'Edit' }} category</h2>
+        @if (error()) { <p class="status error" role="alert">{{ error() }}</p> }
+        <form (ngSubmit)="save()"><fieldset [disabled]="busy()" style="border:0;padding:0;margin:16px 0 0;min-width:0">
+          <label class="field"><span>Name</span><input name="name" required maxlength="40" [(ngModel)]="model.name" placeholder="Category name" /></label>
+          <label class="field"><span>Type</span><select name="type" [(ngModel)]="model.type">@for (type of types; track type) { <option [value]="type">{{ label(type) }}</option> }</select></label>
+          <label class="field"><span>Display order</span><input name="order" type="number" min="0" step="1" required [(ngModel)]="model.order" /></label>
+          <span class="muted">Icon</span><div class="icon-options" aria-label="Choose icon">@for (icon of icons; track icon) { <button type="button" [class.selected]="model.icon === icon" [attr.aria-label]="icon" [attr.aria-pressed]="model.icon === icon" (click)="model.icon = icon"><ion-icon [name]="icon" /></button> }</div>
+          <span class="muted">Colour</span><div class="colour-options" aria-label="Choose colour">@for (colour of colours; track colour) { <button type="button" [style.background]="colour" [class.selected]="model.colour === colour" [attr.aria-label]="'Colour ' + colour" [attr.aria-pressed]="model.colour === colour" (click)="model.colour = colour"></button> }</div>
+          <label class="field"><span>Custom colour</span><input type="color" name="colour" [(ngModel)]="model.colour" /></label>
+          <div class="form-actions"><button type="button" class="secondary-button" (click)="editor.set(null)">Cancel</button><button class="primary-button" type="submit">{{ busy() ? 'Saving...' : 'Save category' }}</button></div>
+          @if (!isNew()) { <button type="button" class="text-link negative" (click)="confirming.set(true)">Delete category</button> }
+          @if (confirming()) { <div class="status error"><p>Delete {{ model.name }}? Categories with transactions must be emptied first.</p><div class="form-actions"><button type="button" class="secondary-button" (click)="confirming.set(false)">Keep it</button><button type="button" class="secondary-button danger-button" (click)="remove()">Delete</button></div></div> }
+        </fieldset></form>
+      </section>
+    } @else {
+      <div class="panel category-list">@for (category of rows(); track category.id) { <button class="category-row" (click)="open(category)"><span class="category-icon" [style.background]="category.colour"><ion-icon [name]="category.icon" /></span><span class="row-copy"><strong>{{ category.name }}</strong><small>{{ money(category.amount) }} · {{ category.percent }}%</small></span><ion-icon name="chevron-forward" /></button> } @empty { <div class="empty-state"><h3>No categories here yet</h3><p>Add one to organise your {{ label(tab()).toLowerCase() }}.</p><button class="text-link" (click)="open()">Add category</button></div> }</div>
+      <p class="muted" style="font-size:12px;margin-top:16px">Percentages show each category's share of this tab's monthly total.</p>
+    }
+  }
+</main></ion-content>
