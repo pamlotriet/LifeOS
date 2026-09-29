@@ -2,6 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { BudgetChart } from '../../../../pages/budget/budget-ui';
+import { AppSkeleton } from '../../../components/app-skeleton/app-skeleton';
 import {
   StatsModule,
   StatsRange,
@@ -11,7 +12,7 @@ import {
 
 @Component({
   selector: 'app-statistics',
-  imports: [IonContent, IonContent, IonIcon, RouterLink, BudgetChart],
+  imports: [IonContent, IonIcon, RouterLink, BudgetChart, AppSkeleton],
   styleUrl: './statistics.css',
   templateUrl: './statistics.html',
 })
@@ -26,6 +27,9 @@ export class Statistics {
   readonly loading = computed(() => this.service.loading(this.selected()));
   readonly error = computed(() => this.service.error(this.selected()));
   constructor() {
+    effect(() => {
+      if (this.selected() === 'fuel' && this.service.selectedVehicleId()) this.service.ensureFuelLoaded();
+    });
     effect(() => {
       try {
         localStorage.setItem('lifeos.stats.module', this.selected());

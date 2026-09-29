@@ -1,10 +1,10 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
-import { ArcElement, BarController, BarElement, CategoryScale, Chart, ChartConfiguration, DoughnutController, Legend, LinearScale, Tooltip } from 'chart.js';
+import { ArcElement, BarController, BarElement, CategoryScale, Chart, ChartConfiguration, DoughnutController, Filler, Legend, LineController, LineElement, LinearScale, PointElement, Tooltip } from 'chart.js';
 import { BudgetCategory, BudgetTransaction, money, summary } from '../../shared/state/budget/budget.model';
 
-Chart.register(ArcElement, BarController, BarElement, CategoryScale, DoughnutController, Legend, LinearScale, Tooltip);
+Chart.register(ArcElement, BarController, BarElement, CategoryScale, DoughnutController, Filler, Legend, LineController, LineElement, LinearScale, PointElement, Tooltip);
 
 @Component({ selector: 'app-budget-chart', template: '<div class="chart-frame" [style.height.px]="height"><canvas #canvas role="img" [attr.aria-label]="label"></canvas></div>', styles: ':host { display:block; min-width:0; } .chart-frame { position:relative; }' })
 export class BudgetChart implements AfterViewInit, OnChanges, OnDestroy {

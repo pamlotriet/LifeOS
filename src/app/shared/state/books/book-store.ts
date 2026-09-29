@@ -77,6 +77,20 @@ export class BookStore {
     await this.service.setWheelSelected(id, selected);
     if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book, wheelSelected: selected } : book));
   }
+  async setReadingProgress(id: string, progress: number): Promise<void> {
+    const uid = this.auth.userId();
+    if (!uid) throw new Error('Sign in to update reading progress.');
+    const value = Math.max(0, Math.min(100, Math.round(progress)));
+    await this.service.setReadingProgress(id, value);
+    if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book, progress: value } : book));
+  }
+  async setReadingPosition(id: string, pageProgress: number, pageCount: number): Promise<void> {
+    const uid = this.auth.userId();
+    if (!uid) throw new Error('Sign in to update reading progress.');
+    const pages = Math.max(0, Math.round(pageCount)); const position = Math.max(0, Math.min(pages, Math.round(pageProgress)));
+    await this.service.setReadingPosition(id, position, pages);
+    if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book, pageProgress: position, progress: pages ? Math.round(position / pages * 100) : 0 } : book));
+  }
 
   async saveTag(input: Pick<BookTag, 'name' | 'type' | 'color'>, id?: string): Promise<void> {
     const uid = this.auth.userId();

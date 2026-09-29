@@ -37,7 +37,7 @@ export class BookService {
     const previous = id ? await this.getBook(id) : null;
     book.coverUrl = previous && previous.title === book.title && previous.author === book.author && previous.coverUrl
       ? previous.coverUrl
-      : await this.covers.find(book.title, book.author) ?? '';
+      : await this.covers.find(book.title, book.author, book.isbn) ?? '';
     if (id) await this.firestore.updateDocument(`${path}/${encodeURIComponent(id)}`, this.toBookFields(book), token);
     else await this.firestore.createDocument(path, book.id, this.toBookFields(book), token);
     return book;
@@ -51,6 +51,19 @@ export class BookService {
   async setWheelSelected(id: string, selected: boolean): Promise<void> {
     const { uid, token } = await this.auth.getSession();
     await this.firestore.updateDocumentField(`users/${uid}/books`, id, 'wheelSelected', { booleanValue: selected }, token);
+  }
+
+  async setReadingProgress(id: string, progress: number): Promise<void> {
+    const { uid, token } = await this.auth.getSession();
+    await this.firestore.updateDocumentField(`users/${uid}/books`, id, 'progress', { integerValue: String(Math.max(0, Math.min(100, Math.round(progress)))) }, token);
+  }
+
+  async setReadingPosition(id: string, pageProgress: number, pageCount: number): Promise<void> {
+    const { uid, token } = await this.auth.getSession();
+    const pages = Math.max(0, Math.round(pageCount));
+    const position = Math.max(0, Math.min(pages, Math.round(pageProgress)));
+    const progress = pages ? Math.round(position / pages * 100) : 0;
+    await this.firestore.updateDocument(`users/${uid}/books/${encodeURIComponent(id)}`, { pageProgress: { integerValue: String(position) }, progress: { integerValue: String(progress) } }, token);
   }
 
   async listTags(): Promise<BookTag[]> {
@@ -88,8 +101,8 @@ export class BookService {
 
   private toBookFields(book: BookRecord): Record<string, FirestoreValue> {
     return {
-      title: text(book.title), author: text(book.author), category: text(book.category), coverUrl: text(book.coverUrl),
-      publicationDate: text(book.publicationDate), status: text(book.status), rating: { integerValue: String(book.rating) },
+      title: text(book.title), author: text(book.author), category: text(book.category), coverUrl: text(book.coverUrl), isbn: text(book.isbn),
+      publicationDate: text(book.publicationDate), status: text(book.status), progress: { integerValue: String(book.progress) }, pageCount: { integerValue: String(book.pageCount) }, pageProgress: { integerValue: String(book.pageProgress) }, rating: { integerValue: String(book.rating) },
       spiceRating: { integerValue: String(book.spiceRating) },
       wheelSelected: { booleanValue: book.wheelSelected },
       favourite: { booleanValue: book.favourite }, wouldRecommend: { booleanValue: book.wouldRecommend },
@@ -109,9 +122,9 @@ export class BookService {
     const s = (key: string) => f[key]?.stringValue ?? '';
     const ids = (key: string) => f[key]?.arrayValue?.values?.map((value) => value.stringValue ?? '') ?? [];
     return {
-      id: doc.name.split('/').at(-1) ?? '', title: s('title'), author: s('author'), category: s('category'),
+      id: doc.name.split('/').at(-1) ?? '', title: s('title'), author: s('author'), category: s('category'), isbn: s('isbn'),
       coverUrl: s('coverUrl'), publicationDate: s('publicationDate'), status: (s('status') || 'Not Started') as BookRecord['status'],
-      rating: Number(f['rating']?.integerValue ?? 0), spiceRating: Number(f['spiceRating']?.integerValue ?? 0),
+      rating: Number(f['rating']?.integerValue ?? 0), progress: Number(f['progress']?.integerValue ?? 0), pageCount: Number(f['pageCount']?.integerValue ?? 0), pageProgress: Number(f['pageProgress']?.integerValue ?? 0), spiceRating: Number(f['spiceRating']?.integerValue ?? 0),
       wheelSelected: f['wheelSelected']?.booleanValue ?? false, favourite: f['favourite']?.booleanValue ?? false,
       wouldRecommend: f['wouldRecommend']?.booleanValue ?? false, reread: f['reread']?.booleanValue ?? false,
       seriesName: s('seriesName'), seriesNumber: f['seriesNumber']?.integerValue === undefined ? null : Number(f['seriesNumber'].integerValue),

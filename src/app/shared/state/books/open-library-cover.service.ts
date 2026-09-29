@@ -84,7 +84,7 @@ export class OpenLibraryCoverService {
     const authorKey = normalizedAuthorText(author);
     const isbnKey = this.cleanIsbn(isbn ?? '');
 
-    if (!titleKey || !authorKey) return Promise.resolve(null);
+    if (!isbnKey && (!titleKey || !authorKey)) return Promise.resolve(null);
 
     const key = `${titleKey}|${authorKey}|${isbnKey}`;
     if (!this.cache.has(key)) {
@@ -101,7 +101,11 @@ export class OpenLibraryCoverService {
   async lookupByIsbn(isbn: string): Promise<BookCatalogueResult | null> {
     const cleanIsbn = this.cleanIsbn(isbn);
     if (!cleanIsbn) return null;
-    return (await this.lookupOpenLibraryByIsbn(cleanIsbn)) ?? (await this.lookupGoogleByIsbn(cleanIsbn));
+    const openLibrary = await this.lookupOpenLibraryByIsbn(cleanIsbn);
+    if (openLibrary) {
+      return { ...openLibrary, coverUrl: openLibrary.coverUrl || await this.searchByIsbn(cleanIsbn) || '' };
+    }
+    return this.lookupGoogleByIsbn(cleanIsbn);
   }
 
   private async lookupOpenLibraryByIsbn(isbn: string): Promise<BookCatalogueResult | null> {

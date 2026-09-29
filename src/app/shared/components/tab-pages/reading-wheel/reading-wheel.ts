@@ -15,8 +15,6 @@ const COLORS = ['#2477c6', '#7437d0', '#1aa89f', '#edae28', '#e45a53', '#b12e83'
 export class ReadingWheel {
   readonly store = inject(BookStore);
   readonly mode = signal<'wheel' | 'manage' | 'result'>('wheel');
-  readonly search = signal('');
-  readonly filter = signal('All');
   readonly busy = signal(false);
   readonly spinning = signal(false);
   readonly error = signal('');
@@ -26,16 +24,7 @@ export class ReadingWheel {
   readonly recentPickIds = signal<string[]>(this.restoreHistory());
   readonly eligible = computed(() => this.store.sortedBooks().filter((book) => book.status === 'Not Started'));
   readonly selected = computed(() => this.eligible().filter((book) => book.wheelSelected));
-  readonly categories = computed(() => ['All', ...new Set(this.eligible().map((book) => book.category))]);
-  readonly filtered = computed(() => this.eligible().filter((book) =>
-    (this.filter() === 'All' || book.category === this.filter()) &&
-    `${book.title} ${book.author}`.toLowerCase().includes(this.search().trim().toLowerCase()),
-  ));
-  /** The filter applies to the spin pool, not only the management list. */
-  readonly wheelCandidates = computed(() => this.selected().filter((book) =>
-    (this.filter() === 'All' || book.category === this.filter()) &&
-    `${book.title} ${book.author}`.toLowerCase().includes(this.search().trim().toLowerCase()),
-  ));
+  readonly wheelCandidates = this.selected;
   readonly favourites = computed(() => this.eligible().filter(book => book.favourite).length);
   readonly genres = computed(() => new Set(this.eligible().map(book => book.category)).size);
   readonly recentPicks = computed(() => this.recentPickIds().map(id => this.store.books().find(book => book.id === id)).filter((book): book is BookRecord => !!book));

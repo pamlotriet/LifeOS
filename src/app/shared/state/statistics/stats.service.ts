@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
 import { BookStore } from '../books/book-store';
 import { BudgetStore } from '../budget/budget.store';
@@ -106,12 +106,14 @@ const categoryChart = (
 
 @Injectable({ providedIn: 'root' })
 export class StatsService {
-  private readonly refuels = inject(RefuelStore);
-  private readonly books = inject(BookStore);
-  private readonly budget = inject(BudgetStore);
-  private readonly planning = inject(PlanningStore);
-  private readonly recipes = inject(RecipeStore);
-  private readonly vehicles = inject(VehicleStore);
+  private readonly injector = inject(Injector);
+  /** Stores are resolved on demand so opening Fuel Stats does not load every LifeOS module. */
+  private get refuels(): RefuelStore { return this.injector.get(RefuelStore); }
+  private get books(): BookStore { return this.injector.get(BookStore); }
+  private get budget(): BudgetStore { return this.injector.get(BudgetStore); }
+  private get planning(): PlanningStore { return this.injector.get(PlanningStore); }
+  private get recipes(): RecipeStore { return this.injector.get(RecipeStore); }
+  private get vehicles(): VehicleStore { return this.injector.get(VehicleStore); }
 
   dashboard(module: StatsModule, range: StatsRange): StatsDashboard {
     switch (module) {
@@ -165,6 +167,8 @@ export class StatsService {
     else if (module === 'recipes') void this.recipes.reload();
     else void this.vehicles.reload();
   }
+  /** Refuels depend on the vehicle-selection signal, so only reload after it exists. */
+  ensureFuelLoaded(): void { void this.refuels.reload(); }
   vehicleOptions() {
     return this.refuels.vehicleOptions();
   }
@@ -180,13 +184,15 @@ export class StatsService {
     const allowed = new Set(statsMonths(range));
     const entries = range === 'All' ? all : all.filter((x) => allowed.has(x.dop.slice(0, 7)));
     const averages = refuelAverages(entries);
-    const grouped = sumByMonth(
-      entries,
+    const spendByMonth = sumByMonth(
+      all,
       (x) => x.dop,
       (x) => x.amountPaid,
     );
-    const monthly = [...grouped].sort().slice(-(range === 'All' ? 12 : statsMonths(range).length));
-    const economy = entries.filter((x) => x.kmPerLiter !== null);
+    const spendMonths = statsMonths('1Y');
+    const economy = entries
+      .filter((x) => x.kmPerLiter !== null)
+      .sort((a, b) => a.dop.localeCompare(b.dop) || a.odometer - b.odometer);
     const labelsFor = economy.map((x) =>
       new Date(`${x.dop}T12:00:00`).toLocaleDateString('en-ZA', { month: 'short', day: 'numeric' }),
     );
@@ -209,10 +215,10 @@ export class StatsService {
           'water-outline',
           '#2497ff',
         ),
-        this.kpi('Total refuels', String(entries.length), 'car-sport-outline', '#14ddea'),
+        this.kpi('Total refuels', String(all.length), 'car-sport-outline', '#14ddea'),
       ],
       primaryTitle: 'Fuel efficiency trend',
-      secondaryTitle: 'Monthly fuel spend',
+      secondaryTitle: 'Monthly fuel spend · 12 months',
       primary: {
         type: 'line',
         data: {
@@ -234,11 +240,11 @@ export class StatsService {
       secondary: {
         type: 'bar',
         data: {
-          labels: labels(monthly.map((x) => x[0])),
+          labels: labels(spendMonths),
           datasets: [
             {
               label: 'Spend',
-              data: monthly.map((x) => x[1]),
+              data: spendMonths.map((month) => spendByMonth.get(month) ?? 0),
               backgroundColor: '#2497ff',
               borderRadius: 6,
             },

@@ -3,9 +3,8 @@ import { IonIcon } from '@ionic/angular';
 import { refuelLifetimeSummary } from '../../shared/state/refuels/refuel.model';
 import { RefuelStore } from '../../shared/state/refuels/refuel-store';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
-import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-insights', imports: [IonIcon, AppSkeleton], templateUrl: './insights.html' })
+@Component({ selector: 'app-insights', imports: [IonIcon], templateUrl: './insights.html' })
 export class Insights {
   readonly refuels = inject(RefuelStore);
   readonly vehicles = inject(VehicleStore);

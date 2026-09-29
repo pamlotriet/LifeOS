@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { AppSelect, SelectOption } from '../../shared/components/app-select/app-select';
 import { PageHeader } from '../../shared/components/page-header/page-header';
+import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 import { BookStore } from '../../shared/state/books/book-store';
 import { finishDateParts } from './finished-books-filter';
 
@@ -10,7 +11,7 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
 
 @Component({
   selector: 'app-finished-books',
-  imports: [IonContent, IonIcon, RouterLink, AppSelect, PageHeader],
+  imports: [IonContent, IonIcon, RouterLink, AppSelect, PageHeader, AppSkeleton],
   templateUrl: './finished-books.html',
 })
 export class FinishedBooks {

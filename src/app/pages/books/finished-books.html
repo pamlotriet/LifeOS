@@ -25,7 +25,7 @@
     </div>
 
     @if (store.loading() && !store.books().length) {
-      <p class="rounded-2xl border border-[#315b7e] bg-[#123451] p-6 text-center text-sm text-[#b5cbe2]">Loading finished books...</p>
+      <app-skeleton variant="grid" [count]="6" />
     } @else if (store.error()) {
       <div role="alert" class="rounded-2xl border border-rose-400/50 bg-[#2b2037] p-4 text-sm">{{ store.error() }} <button type="button" (click)="store.reload()" class="ml-2 text-cyan-300 underline">Retry</button></div>
     } @else if (!books().length) {

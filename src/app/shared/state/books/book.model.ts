@@ -4,7 +4,7 @@ export const BOOK_CATEGORIES = [
   'Nonfiction', 'Biography', 'Young Adult', 'Other',
 ] as const;
 
-export const BOOK_FORMATS = ['Paperback', 'Hardcover', 'Kindle', 'Ebook', 'Audiobook', 'Other'] as const;
+export const BOOK_FORMATS = ['Paperback', 'Hardcover', 'Kindle', 'Kindle Unlimited', 'Ebook', 'Audiobook', 'Other'] as const;
 export const BOOK_STATUSES = ['Not Started', 'Reading', 'Finished', 'Did Not Finish'] as const;
 
 export type BookFormat = typeof BOOK_FORMATS[number];
@@ -19,8 +19,12 @@ export interface BookRecord {
   author: string;
   category: string;
   coverUrl: string;
+  isbn: string;
   publicationDate: string;
   status: BookStatus;
+  progress: number;
+  pageCount: number;
+  pageProgress: number;
   rating: number;
   spiceRating: number;
   wheelSelected: boolean;

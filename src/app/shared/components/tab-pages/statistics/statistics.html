@@ -48,9 +48,8 @@
       }
     </header>
     @if (loading()) {
-      <section class="stats-skeleton" aria-label="Loading statistics">
-        <i></i><i></i><i></i><i></i><i class="chart"></i><i class="chart"></i>
-      </section>
+      <app-skeleton variant="cards" [count]="4" />
+      <div class="mt-4"><app-skeleton variant="chart" /></div>
     } @else if (error()) {
       <div role="alert" class="stats-message error">
         {{ error() }} <button type="button" (click)="service.reload(selected())">Retry</button>
@@ -97,7 +96,7 @@
               }
             </nav>
           </div>
-          <app-budget-chart [config]="data.primary" height="230" [label]="data.primaryTitle" />
+          <app-budget-chart [config]="data.primary" [height]="230" [label]="data.primaryTitle" />
         </section>
         <section class="stats-chart-card">
           <div class="chart-heading">
@@ -106,7 +105,7 @@
               <p>Actual recorded data</p>
             </div>
           </div>
-          <app-budget-chart [config]="data.secondary" height="230" [label]="data.secondaryTitle" />
+          <app-budget-chart [config]="data.secondary" [height]="230" [label]="data.secondaryTitle" />
         </section>
         <section class="stats-insight">
           <ion-icon name="bulb-outline"></ion-icon>

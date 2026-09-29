@@ -9,8 +9,9 @@ import { OpenLibraryCoverService } from '../../shared/state/books/open-library-c
 import { AppSelect } from '../../shared/components/app-select/app-select';
 import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
 import { BookBarcodeScannerService } from '../../shared/state/books/book-barcode-scanner.service';
+import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-book-form', imports: [IonContent, IonIcon, PageHeader, RouterLink, ReactiveFormsModule, AppSelect, AppDatePicker], templateUrl: './book-form.html' })
+@Component({ selector: 'app-book-form', imports: [IonContent, IonIcon, PageHeader, RouterLink, ReactiveFormsModule, AppSelect, AppDatePicker, AppSkeleton], templateUrl: './book-form.html', styleUrl: './book-form.css' })
 export class BookForm {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
@@ -46,7 +47,7 @@ export class BookForm {
 
   readonly form = this.fb.nonNullable.group({
     title: ['', Validators.required], author: ['', Validators.required], category: ['', Validators.required],
-    coverUrl: [''], publicationDate: [''], status: ['Not Started'], rating: [0], spiceRating: [0],
+    coverUrl: [''], isbn: [''], publicationDate: [''], status: ['Not Started'], progress: [0], pageCount: [0], pageProgress: [0], rating: [0], spiceRating: [0],
     favourite: [false], wouldRecommend: [false], reread: [false], wheelSelected: [false],
     seriesName: [''], seriesNumber: [null as number | null], startDate: [''], finishDate: [''], review: [''],
   });
@@ -76,6 +77,7 @@ export class BookForm {
   }
 
   addCopy(): void { this.copies.update((copies) => [...copies, { id: crypto.randomUUID(), format: 'Paperback', label: '' }]); }
+  hasPageFormat(): boolean { return this.copies().some(copy => copy.format !== 'Audiobook'); }
   toggleSeries(checked: boolean): void {
     this.isSeries.set(checked);
     if (!checked) this.form.patchValue({ seriesName: '', seriesNumber: null });
@@ -86,11 +88,11 @@ export class BookForm {
   }
   setSpiceRating(rating: number): void { this.form.controls.spiceRating.setValue(rating); }
   async lookupCover(): Promise<void> {
-    const { title, author } = this.form.getRawValue();
-    if (!title.trim() || !author.trim()) return;
+    const { title, author, isbn } = this.form.getRawValue();
+    if ((!title.trim() || !author.trim()) && !isbn.trim()) return;
     const version = ++this.coverLookupVersion;
     this.lookingUpCover.set(true);
-    const cover = await this.covers.find(title, author);
+    const cover = await this.covers.find(title, author, isbn);
     if (version !== this.coverLookupVersion) return;
     this.form.controls.coverUrl.setValue(cover ?? '');
     this.coverMessage.set(cover ? 'Cover found.' : 'No matching cover found on Open Library or Google Books.');
@@ -114,6 +116,7 @@ export class BookForm {
         category: book.category,
         publicationDate: book.publicationDate,
         coverUrl: book.coverUrl,
+        isbn,
       });
       this.coverMessage.set(book.coverUrl ? 'Cover found from the scanned ISBN.' : 'Book details found without a cover.');
       this.scanMessage.set(`Book details filled from ISBN ${isbn}.`);
@@ -144,6 +147,9 @@ export class BookForm {
       this.error.set('Enter a title, author and main category.'); return;
     }
     if (!this.copies().length) { this.error.set('Add at least one copy.'); return; }
+    if (this.hasPageFormat() && Number(this.form.controls.pageCount.value) < 1) {
+      this.error.set('Enter the number of pages for this book.'); return;
+    }
     this.error.set(''); this.step.set(2);
   }
   async toggleFlag(field: 'favourite' | 'wouldRecommend' | 'reread'): Promise<void> {
@@ -174,8 +180,13 @@ export class BookForm {
     this.saving.set(true); this.error.set('');
     try {
       const value = this.form.getRawValue();
+      const pageCount = this.hasPageFormat() ? Math.max(0, Number(value.pageCount)) : 0;
+      const pageProgress = pageCount ? Math.min(pageCount, Math.max(0, Number(value.pageProgress))) : 0;
       const input: BookInput = {
         ...value, status: value.status as BookInput['status'],
+        progress: pageCount ? Math.round(pageProgress / pageCount * 100) : Number(value.progress),
+        pageCount,
+        pageProgress,
         rating: Number(value.rating), spiceRating: Number(value.spiceRating), seriesName: this.isSeries() ? value.seriesName.trim() : '',
         yearRead: value.status === 'Finished' && value.finishDate
           ? (Number(value.finishDate.slice(0, 4)) || null) : null,

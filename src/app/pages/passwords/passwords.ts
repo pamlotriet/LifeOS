@@ -5,9 +5,8 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
 import { PASSWORD_CATEGORIES } from '../../shared/state/passwords/password.model';
 import { PasswordStore } from '../../shared/state/passwords/password-store';
-import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-passwords', imports: [IonContent, IonIcon, RouterLink, FormsModule, PageHeader, AppSkeleton], templateUrl: './passwords.html' })
+@Component({ selector: 'app-passwords', imports: [IonContent, IonIcon, RouterLink, FormsModule, PageHeader], templateUrl: './passwords.html' })
 export class Passwords {
   readonly store = inject(PasswordStore); readonly categories = PASSWORD_CATEGORIES; readonly search = signal(''); readonly category = signal('All');
   readonly masterPassword = signal(''); readonly confirmation = signal(''); readonly enableBiometric = signal(false); readonly busy = signal(false); readonly message = signal('');

@@ -5,7 +5,7 @@
   </header>
 
   @if (vehicles.loading()) {
-    <p class="rounded-2xl border border-[#2b5375] bg-[#112e4b] p-5 text-sm text-[#b5cbe2]">Loading vehicles...</p>
+    <app-skeleton variant="cards" [count]="2" />
   } @else if (!refuels.vehicleOptions().length) {
     <div class="rounded-2xl border border-[#2b5375] bg-[#112e4b] p-5 text-center">
       <ion-icon name="car-sport-outline" class="text-4xl text-cyan-300" aria-hidden="true"></ion-icon>
@@ -48,7 +48,7 @@
     </a>
 
     @if (refuels.loading()) {
-      <p class="rounded-xl bg-[#112e4b] p-4 text-sm text-[#b5cbe2]">Loading refuels...</p>
+      <app-skeleton variant="cards" [count]="4" />
     } @else if (refuels.error()) {
       <div class="rounded-xl border border-rose-400/50 bg-[#2b2037] p-4 text-sm">
         {{ refuels.error() }} <button type="button" (click)="refuels.reload()" class="ml-2 text-cyan-300 underline">Retry</button>

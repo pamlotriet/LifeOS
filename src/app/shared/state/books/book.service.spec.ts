@@ -24,8 +24,8 @@ describe('BookService', () => {
     { provide: OpenLibraryCoverService, useValue: { find: findCover } },
   ] }), () => new BookService());
   const input: BookInput = {
-    title: 'Test Book', author: 'Author', category: 'Fantasy', coverUrl: '',
-    publicationDate: '', status: 'Reading', rating: 4, spiceRating: 3, wheelSelected: false, favourite: true, wouldRecommend: false, reread: false,
+    title: 'Test Book', author: 'Author', category: 'Fantasy', coverUrl: '', isbn: '9780140328721',
+    publicationDate: '', status: 'Reading', progress: 0, pageCount: 0, pageProgress: 0, rating: 4, spiceRating: 3, wheelSelected: false, favourite: true, wouldRecommend: false, reread: false,
     seriesName: 'Series', seriesNumber: 2, startDate: '', finishDate: '', yearRead: null, review: '',
     copies: [{ id: 'copy-1', format: 'Paperback', label: '' }, { id: 'copy-2', format: 'Audiobook', label: 'Unabridged' }],
     moodTagIds: ['mood-1'], genreTagIds: ['genre-1'],
@@ -45,7 +45,7 @@ describe('BookService', () => {
       spiceRating: { integerValue: '3' },
       wheelSelected: { booleanValue: false },
     }), 'id-token');
-    expect(findCover).toHaveBeenCalledWith('Test Book', 'Author');
+    expect(findCover).toHaveBeenCalledWith('Test Book', 'Author', '9780140328721');
   });
 
   it('loads older books without a spice rating as unrated', async () => {
@@ -99,7 +99,7 @@ describe('BookService', () => {
       title: { stringValue: 'Test Book' }, author: { stringValue: 'Author' }, coverUrl: { stringValue: '' },
     } });
     await service().saveBook(input, 'book-1');
-    expect(findCover).toHaveBeenCalledWith('Test Book', 'Author');
+    expect(findCover).toHaveBeenCalledWith('Test Book', 'Author', '9780140328721');
     expect(updateDocument).toHaveBeenCalledWith('users/user-1/books/book-1', expect.objectContaining({
       coverUrl: { stringValue: 'https://covers.openlibrary.org/b/id/123-M.jpg?default=false' },
     }), 'id-token');
