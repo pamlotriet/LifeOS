@@ -1,3 +1,12 @@
+.lifeos-app {
+  background:
+    url('/assets/login-waves.svg') center / cover no-repeat,
+    radial-gradient(ellipse at 0 22%, rgb(0 157 255 / 34%), transparent 42%),
+    radial-gradient(ellipse at 100% 72%, rgb(100 40 255 / 30%), transparent 44%),
+    linear-gradient(160deg, #071d39 0%, #06172d 48%, #101943 100%);
+}
+.lifeos-app .app-route-outlet { background: transparent; }
+
 .login-page {
   height: 100%;
   overflow-y: auto;

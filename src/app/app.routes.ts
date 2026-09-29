@@ -47,6 +47,7 @@ export const routes: Routes = [
   { path: 'budget/transactions/add', loadComponent: () => import('./pages/budget/budget-transaction-form').then(m => m.BudgetTransactionForm), canActivate: [authGuard] },
   { path: 'budget/transactions/:id/edit', loadComponent: () => import('./pages/budget/budget-transaction-form').then(m => m.BudgetTransactionForm), canActivate: [authGuard] },
   { path: 'budget/categories', loadComponent: () => import('./pages/budget/budget-categories').then(m => m.BudgetCategories), canActivate: [authGuard] },
+  { path: 'budget/debts', loadComponent: () => import('./pages/budget/budget-debts').then(m => m.BudgetDebts), canActivate: [authGuard] },
   { path: 'budget/insights', loadComponent: () => import('./pages/budget/budget-insights').then(m => m.BudgetInsights), canActivate: [authGuard] },
   { path: 'vehicles', redirectTo: 'fuel/vehicles' },
   { path: 'books', loadComponent: () => import('./pages/books/books-library').then((m) => m.BooksLibrary), canActivate: [authGuard] },

@@ -20,8 +20,19 @@ export interface BudgetTransaction {
   notes: string;
   receiptUrl: string;
   receiptPath: string;
+  debtId?: string;
 }
 export type TransactionInput = Omit<BudgetTransaction, 'id'>;
+export interface BudgetPlan { id: string; month: string; categoryId: string; amount: number; }
+export interface BudgetDebt {
+  id: string;
+  name: string;
+  type: 'credit-card' | 'loan' | 'other';
+  openingBalance: number;
+  annualInterestRate: number;
+  openingOverride: number | null;
+}
+export type BudgetDebtInput = Omit<BudgetDebt, 'id'>;
 export const CATEGORY_TYPES: CategoryType[] = ['expense', 'income', 'bills', 'savings'];
 export const CATEGORY_ICONS = ['restaurant-outline', 'home', 'car', 'wallet', 'heart', 'document-text', 'book', 'cash', 'card-outline', 'people', 'flash', 'disc'];
 export const CATEGORY_COLOURS = ['#ff608b', '#00b6ee', '#ff9b58', '#a56aef', '#12c9c1', '#768bad', '#35dba4', '#536dfe'];
@@ -58,6 +69,12 @@ export function summary(items: BudgetTransaction[], categories: BudgetCategory[]
   const bills = total(items.filter(x => x.type === 'expense' && categories.find(c => c.id === x.categoryId)?.type === 'bills'));
   const savings = total(items.filter(x => x.type === 'transfer' && categories.find(c => c.id === x.categoryId)?.type === 'savings'));
   return { income, expenses, bills, savings, remaining: Math.round((income - expenses - savings) * 100) / 100 };
+}
+export function debtSummary(debt: BudgetDebt, payments: BudgetTransaction[]) {
+  const opening = debt.openingOverride ?? debt.openingBalance;
+  const interest = debt.type === 'credit-card' ? Math.round(opening * debt.annualInterestRate / 1200 * 100) / 100 : 0;
+  const paid = total(payments.filter(item => item.type === 'expense' && item.debtId === debt.id));
+  return { opening, interest, paid, closing: Math.max(0, Math.round((opening + interest - paid) * 100) / 100) };
 }
 export function validateTransaction(input: TransactionInput): void {
   if (!Number.isFinite(input.amount) || input.amount <= 0 || input.amount > 999999999 || Math.abs(input.amount * 100 - Math.round(input.amount * 100)) > .00001) throw new Error('Enter an amount greater than zero with up to two decimal places.');

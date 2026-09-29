@@ -131,4 +131,7 @@ export class BooksLibrary {
   async updatePageProgress(book: BookRecord, value: number): Promise<void> {
     await this.store.setReadingPosition(book.id, value, book.pageCount);
   }
+  pagePercent(book: BookRecord): number {
+    return book.pageCount ? Math.round((book.pageProgress / book.pageCount) * 100) : 0;
+  }
 }

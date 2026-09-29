@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal, untracked } from '@angula
 import { AuthService } from '../authentication/authentication.service';
 import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
 import { BudgetService } from './budget.service';
-import { BudgetCategory, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, localDate, TransactionInput } from './budget.model';
+import { BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, localDate, TransactionInput } from './budget.model';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetStore {
@@ -11,6 +11,8 @@ export class BudgetStore {
   private generation = 0;
   readonly transactions = signal<BudgetTransaction[]>([]);
   readonly categories = signal<BudgetCategory[]>(DEFAULT_CATEGORIES.map(x => ({ ...x })));
+  readonly plans = signal<BudgetPlan[]>([]);
+  readonly debts = signal<BudgetDebt[]>([]);
   readonly activeCategories = computed(() => this.categories().filter(x => !x.deleted).sort((a, b) => a.order - b.order || a.name.localeCompare(b.name)));
   readonly month = signal(localDate().slice(0, 7));
   readonly monthly = computed(() => this.transactions().filter(x => x.date.startsWith(this.month())).sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title)));
@@ -25,6 +27,7 @@ export class BudgetStore {
         ++this.generation;
         this.transactions.set([]);
         this.categories.set(DEFAULT_CATEGORIES.map(x => ({ ...x })));
+        this.plans.set([]); this.debts.set([]);
         this.month.set(localDate().slice(0, 7));
         this.error.set(''); this.notice.set(''); this.loading.set(false);
         if (uid) void this.reload();
@@ -38,6 +41,8 @@ export class BudgetStore {
       const data = await this.service.load();
       if (version !== this.generation) return;
       this.transactions.set(data.transactions);
+      this.plans.set(data.plans);
+      this.debts.set(data.debts);
       const categories = new Map(DEFAULT_CATEGORIES.map(x => [x.id, { ...x }]));
       data.categories.forEach(x => categories.set(x.id, x));
       this.categories.set([...categories.values()]);
@@ -78,6 +83,19 @@ export class BudgetStore {
     ++this.generation;
     this.loading.set(false);
     this.categories.update(items => [...items.filter(x => x.id !== saved.id), saved]);
+  }
+  async savePlan(month: string, categoryId: string, amount: number): Promise<void> {
+    const id = `${month}-${categoryId}`;
+    const saved = await this.service.savePlan({ id, month, categoryId, amount });
+    this.plans.update(items => [...items.filter(item => item.id !== id), saved]);
+  }
+  async saveDebt(input: BudgetDebtInput, id?: string): Promise<void> {
+    const saved = await this.service.saveDebt(input, id);
+    this.debts.update(items => [...items.filter(item => item.id !== saved.id), saved]);
+  }
+  async deleteDebt(id: string): Promise<void> {
+    await this.service.deleteDebt(id);
+    this.debts.update(items => items.filter(item => item.id !== id));
   }
   async deleteCategory(category: BudgetCategory): Promise<void> {
     if (this.transactions().some(x => x.categoryId === category.id)) throw new Error('Move or delete this category’s transactions before deleting it.');

@@ -4,10 +4,11 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { ChartConfiguration } from 'chart.js';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
-import { money, summary, total } from '../../shared/state/budget/budget.model';
+import { debtSummary, money, summary, total } from '../../shared/state/budget/budget.model';
 import { BudgetChart, BudgetSummary, BudgetTransactions } from './budget-ui';
+import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-budget-overview', imports: [IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions], templateUrl: './budget-overview.html', styleUrl: './budget.css' })
+@Component({ selector: 'app-budget-overview', imports: [IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrl: './budget.css' })
 export class BudgetOverview {
   readonly store = inject(BudgetStore);
   readonly monthlyView = !!inject(ActivatedRoute).snapshot.data['monthly'];
@@ -15,6 +16,13 @@ export class BudgetOverview {
   readonly tab = signal('overview');
   readonly money = money;
   readonly totals = computed(() => summary(this.store.monthly(), this.store.categories()));
+  readonly planned = computed(() => this.store.activeCategories().filter(category => category.type === 'expense' || category.type === 'bills').map(category => {
+    const planned = this.store.plans().find(plan => plan.month === this.store.month() && plan.categoryId === category.id)?.amount ?? 0;
+    const actual = total(this.store.monthly().filter(item => item.type === 'expense' && item.categoryId === category.id));
+    return { ...category, planned, actual };
+  }));
+  readonly plannedTotal = computed(() => this.planned().reduce((sum, item) => sum + item.planned, 0));
+  readonly debtCards = computed(() => this.store.debts().map(debt => ({ debt, ...debtSummary(debt, this.store.monthly()) })));
   readonly filtered = computed(() => this.store.monthly().filter(x => !this.selectedDate() || x.date === this.selectedDate()));
   readonly spending = computed(() => {
     const items = this.store.monthly().filter(x => x.type === 'expense');
@@ -37,4 +45,5 @@ export class BudgetOverview {
   hasTransactions(day: number): boolean { return this.store.monthly().some(x => x.date === this.dayDate(day)); }
   selectDay(day: number): void { const date = this.dayDate(day); this.selectedDate.set(this.selectedDate() === date ? '' : date); }
   ratio(value: number): number { return Math.min(100, value / Math.max(this.totals().income, this.totals().expenses, 1) * 100); }
+  async savePlan(categoryId: string, amount: number): Promise<void> { await this.store.savePlan(this.store.month(), categoryId, Number(amount) || 0); }
 }

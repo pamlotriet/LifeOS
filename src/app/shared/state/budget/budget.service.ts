@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { FirestoreDocument, FirestoreService, FirestoreValue } from '../../../core/firebase/firestore.service';
 import { StoragePhotoService } from '../../../core/firebase/storage-photo.service';
 import { AuthService } from '../authentication/authentication.service';
-import { BudgetCategory, BudgetTransaction, CATEGORY_ICONS, CATEGORY_TYPES, TransactionInput, validateTransaction } from './budget.model';
+import { BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, CATEGORY_ICONS, CATEGORY_TYPES, TransactionInput, validateTransaction } from './budget.model';
 
 function fields(record: object): Record<string, FirestoreValue> {
   return Object.fromEntries(Object.entries(record).filter(([key, value]) => key !== 'id' && value !== undefined).map(([key, value]) => [key,
-    typeof value === 'number' ? { doubleValue: value } : typeof value === 'boolean' ? { booleanValue: value } : { stringValue: String(value) }]));
+    value === null ? { nullValue: null } : typeof value === 'number' ? { doubleValue: value } : typeof value === 'boolean' ? { booleanValue: value } : { stringValue: String(value) }]));
 }
 function decode<T>(doc: FirestoreDocument): T {
   return { ...Object.fromEntries(Object.entries(doc.fields ?? {}).map(([key, value]) => [key, value.stringValue ?? value.doubleValue ?? (value.integerValue !== undefined ? Number(value.integerValue) : value.booleanValue)])), id: doc.name.split('/').at(-1) } as T;
@@ -17,13 +17,15 @@ export class BudgetService {
   private readonly firestore = inject(FirestoreService);
   private readonly photos = inject(StoragePhotoService);
 
-  async load(): Promise<{ transactions: BudgetTransaction[]; categories: BudgetCategory[] }> {
+  async load(): Promise<{ transactions: BudgetTransaction[]; categories: BudgetCategory[]; plans: BudgetPlan[]; debts: BudgetDebt[] }> {
     const { uid, token } = await this.auth.getSession();
-    const [transactions, categories] = await Promise.all([
+    const [transactions, categories, plans, debts] = await Promise.all([
       this.firestore.listDocuments(`budgets/${uid}/transactions`, token),
       this.firestore.listDocuments(`budgets/${uid}/categories`, token),
+      this.firestore.listDocuments(`budgets/${uid}/plans`, token),
+      this.firestore.listDocuments(`budgets/${uid}/debts`, token),
     ]);
-    return { transactions: transactions.map(x => decode<BudgetTransaction>(x)), categories: categories.map(x => decode<BudgetCategory>(x)) };
+    return { transactions: transactions.map(x => decode<BudgetTransaction>(x)), categories: categories.map(x => decode<BudgetCategory>(x)), plans: plans.map(x => decode<BudgetPlan>(x)), debts: debts.map(x => { const debt = decode<BudgetDebt>(x); return { ...debt, openingOverride: debt.openingOverride ?? null }; }) };
   }
 
   async saveTransaction(input: TransactionInput, id?: string, localReceipt?: string): Promise<BudgetTransaction> {
@@ -67,5 +69,26 @@ export class BudgetService {
     // PATCH also creates an override for a starter category on its first edit.
     await this.firestore.updateDocument(`budgets/${uid}/categories/${encodeURIComponent(record.id)}`, fields(record), token);
     return record;
+  }
+
+  async savePlan(plan: BudgetPlan): Promise<BudgetPlan> {
+    const { uid, token } = await this.auth.getSession();
+    const record = { ...plan, amount: Math.max(0, Math.round(plan.amount * 100) / 100) };
+    await this.firestore.updateDocument(`budgets/${uid}/plans/${encodeURIComponent(record.id)}`, fields(record), token);
+    return record;
+  }
+
+  async saveDebt(input: BudgetDebtInput, id?: string): Promise<BudgetDebt> {
+    if (!input.name.trim() || input.name.length > 80) throw new Error('Enter a debt name of up to 80 characters.');
+    if (!['credit-card', 'loan', 'other'].includes(input.type) || input.openingBalance < 0 || input.annualInterestRate < 0 || input.annualInterestRate > 100) throw new Error('Enter valid debt details.');
+    const { uid, token } = await this.auth.getSession();
+    const record: BudgetDebt = { ...input, name: input.name.trim(), id: id ?? crypto.randomUUID() };
+    await this.firestore.updateDocument(`budgets/${uid}/debts/${encodeURIComponent(record.id)}`, fields(record), token);
+    return record;
+  }
+
+  async deleteDebt(id: string): Promise<void> {
+    const { uid, token } = await this.auth.getSession();
+    await this.firestore.deleteDocument(`budgets/${uid}/debts`, id, token);
   }
 }

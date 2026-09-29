@@ -1,7 +1,7 @@
 <ion-header app-page-header title="Books"></ion-header>
 <ion-content class="[--background:transparent] [--color:#fff]">
-  <main class="mx-auto max-w-2xl px-4 pb-12 pt-4 text-white">
-    <header class="mb-5 flex items-end justify-between gap-3">
+  <main class="mx-auto flex max-w-2xl flex-col gap-4 px-4 pb-8 pt-3 text-white">
+    <header class="flex items-end justify-between gap-3">
       <div>
         <p class="text-xs font-semibold uppercase tracking-[0.23em] text-cyan-300">
           Your personal library
@@ -103,12 +103,12 @@
     </section>
 
     @if (currentlyReading().length) {
-      <section aria-labelledby="reading-now-title" class="mb-4 rounded-3xl border border-cyan-400/35 bg-gradient-to-br from-[#123c5b] to-[#0d2945] p-4 shadow-[0_12px_28px_rgba(0,0,0,.16)]"><div class="mb-3 flex items-center justify-between"><div><p class="text-xs font-semibold uppercase tracking-widest text-cyan-300">In progress</p><h2 id="reading-now-title" class="mt-1 text-lg font-bold">Currently reading</h2></div><span class="rounded-full border border-cyan-300/40 px-2.5 py-1 text-xs text-cyan-100">{{ currentlyReading().length }}</span></div><div class="flex snap-x gap-3 overflow-x-auto pb-1">@for (book of currentlyReading(); track book.id) { <article class="w-64 shrink-0 snap-start rounded-2xl border border-[#315b7e] bg-[#102e4a] p-3"><div class="flex gap-3">@if (book.coverUrl) { <img [src]="book.coverUrl" [alt]="book.title" class="h-20 w-14 rounded-lg object-cover" loading="lazy" /> } @else { <span class="grid h-20 w-14 place-items-center rounded-lg bg-[#174363]"><ion-icon name="book" class="text-cyan-200"></ion-icon></span> }<div class="min-w-0 flex-1"><strong class="block truncate text-sm">{{ book.title }}</strong><span class="mt-1 block truncate text-xs text-[#b5cbe2]">{{ book.author }}</span>@if (book.pageCount > 0) { <span class="mt-2 block text-xs font-semibold text-cyan-200">p {{ book.pageProgress }} / {{ book.pageCount }}</span> } @else { <span class="mt-2 block text-xs font-semibold text-cyan-200">{{ book.progress }}% complete</span> }</div></div>@if (book.pageCount > 0) { <label class="mt-3 block text-xs text-[#b5cbe2]">Update page<input type="number" min="0" [max]="book.pageCount" inputmode="numeric" [value]="book.pageProgress" (change)="updatePageProgress(book, $any($event.target).valueAsNumber)" class="mt-1 block w-full rounded-xl border border-[#315b7e] bg-[#123451] px-3 py-2 text-sm text-white" /></label> } @else { <label class="mt-3 block text-xs text-[#b5cbe2]">Update progress<input type="range" min="0" max="100" step="5" [value]="book.progress" (change)="updateProgress(book, $any($event.target).valueAsNumber)" class="mt-1 w-full accent-cyan-400" /></label> }</article> }</div></section>
+      <section aria-labelledby="reading-now-title" class="rounded-3xl border border-cyan-400/35 bg-gradient-to-br from-[#123c5b] to-[#0d2945] p-4 shadow-[0_12px_28px_rgba(0,0,0,.16)]"><div class="mb-3 flex items-center justify-between"><div><p class="text-xs font-semibold uppercase tracking-widest text-cyan-300">In progress</p><h2 id="reading-now-title" class="mt-1 text-lg font-bold">Currently reading</h2></div><span class="rounded-full border border-cyan-300/40 px-2.5 py-1 text-xs text-cyan-100">{{ currentlyReading().length }}</span></div><div class="flex snap-x gap-3 overflow-x-auto pb-1">@for (book of currentlyReading(); track book.id) { <article class="w-64 shrink-0 snap-start rounded-2xl border border-[#315b7e] bg-[#102e4a] p-3"><div class="flex gap-3">@if (book.coverUrl) { <img [src]="book.coverUrl" [alt]="book.title" class="h-20 w-14 rounded-lg object-cover" loading="lazy" /> } @else { <span class="grid h-20 w-14 place-items-center rounded-lg bg-[#174363]"><ion-icon name="book" class="text-cyan-200"></ion-icon></span> }<div class="min-w-0 flex-1"><strong class="block truncate text-sm">{{ book.title }}</strong><span class="mt-1 block truncate text-xs text-[#b5cbe2]">{{ book.author }}</span>@if (book.pageCount > 0) { <span class="mt-2 block text-xs font-semibold text-cyan-200">p {{ book.pageProgress }} / {{ book.pageCount }} · {{ pagePercent(book) }}%</span> } @else { <span class="mt-2 block text-xs font-semibold text-cyan-200">{{ book.progress }}% complete</span> }</div></div>@if (book.pageCount > 0) { <label class="mt-3 block text-xs text-[#b5cbe2]">Update page<input type="number" min="0" [max]="book.pageCount" inputmode="numeric" [value]="book.pageProgress" (change)="updatePageProgress(book, $any($event.target).valueAsNumber)" class="mt-1 block w-full rounded-xl border border-[#315b7e] bg-[#123451] px-3 py-2 text-sm text-white" /></label> } @else { <label class="mt-3 block text-xs text-[#b5cbe2]">Update progress<input type="range" min="0" max="100" step="5" [value]="book.progress" (change)="updateProgress(book, $any($event.target).valueAsNumber)" class="mt-1 w-full accent-cyan-400" /></label> }</article> }</div></section>
     }
 
     <section
       aria-label="Library totals"
-      class="my-4 grid grid-cols-3 divide-x divide-[#315b7e] rounded-2xl border border-[#315b7e] bg-[#113251] py-3 text-center"
+      class="grid grid-cols-3 divide-x divide-[#315b7e] rounded-2xl border border-[#315b7e] bg-[#113251] py-3 text-center"
     >
       <div>
         <p class="text-lg font-bold text-cyan-300">{{ store.books().length }}</p>
@@ -124,7 +124,7 @@
       </div>
     </section>
 
-    <section aria-label="Books navigation" class="my-4 grid grid-cols-2 gap-3">
+    <section aria-label="Books navigation" class="grid grid-cols-2 gap-3">
       <a routerLink="/books/shelf" class="flex min-h-24 flex-col justify-between rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-[#123c5b] to-[#102e4a] p-4 text-white no-underline"><ion-icon name="library" class="text-2xl text-cyan-300"></ion-icon><span><strong class="block text-sm">Bookshelf</strong><small class="text-xs text-[#b5cbe2]">Browse your library</small></span></a>
       <a routerLink="/books/tags" class="flex min-h-24 flex-col justify-between rounded-2xl border border-violet-400/35 bg-gradient-to-br from-[#25375f] to-[#102e4a] p-4 text-white no-underline"><ion-icon name="pricetags" class="text-2xl text-violet-300"></ion-icon><span><strong class="block text-sm">Tags</strong><small class="text-xs text-[#b5cbe2]">Genres and moods</small></span></a>
     </section>

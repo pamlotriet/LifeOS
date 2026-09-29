@@ -11,7 +11,7 @@
         @if (error()) { <p class="status error" role="alert">{{ error() }}</p> }
         <form (ngSubmit)="save()"><fieldset [disabled]="busy()" style="border:0;padding:0;margin:16px 0 0;min-width:0">
           <label class="field"><span>Name</span><input name="name" required maxlength="40" [(ngModel)]="model.name" placeholder="Category name" /></label>
-          <label class="field"><span>Type</span><select name="type" [(ngModel)]="model.type">@for (type of types; track type) { <option [value]="type">{{ label(type) }}</option> }</select></label>
+          <label class="field"><span>Type</span><select class="lifeos-select" name="type" [(ngModel)]="model.type">@for (type of types; track type) { <option [value]="type">{{ label(type) }}</option> }</select></label>
           <label class="field"><span>Display order</span><input name="order" type="number" min="0" step="1" required [(ngModel)]="model.order" /></label>
           <span class="muted">Icon</span><div class="icon-options" aria-label="Choose icon">@for (icon of icons; track icon) { <button type="button" [class.selected]="model.icon === icon" [attr.aria-label]="icon" [attr.aria-pressed]="model.icon === icon" (click)="model.icon = icon"><ion-icon [name]="icon" /></button> }</div>
           <span class="muted">Colour</span><div class="colour-options" aria-label="Choose colour">@for (colour of colours; track colour) { <button type="button" [style.background]="colour" [class.selected]="model.colour === colour" [attr.aria-label]="'Colour ' + colour" [attr.aria-pressed]="model.colour === colour" (click)="model.colour = colour"></button> }</div>

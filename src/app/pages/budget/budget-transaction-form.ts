@@ -18,7 +18,7 @@ export class BudgetTransactionForm {
   readonly type = signal<TransactionType>('expense');
   readonly types: TransactionType[] = ['expense', 'income', 'transfer'];
   readonly categories = computed(() => this.store.activeCategories().filter(x => compatibleCategory(this.type(), x.type)));
-  model: TransactionInput = { amount: null as unknown as number, type: 'expense', categoryId: 'food', title: '', date: localDate(), paymentMethod: 'Card', notes: '', receiptUrl: '', receiptPath: '' };
+  model: TransactionInput = { amount: null as unknown as number, type: 'expense', categoryId: 'food', title: '', date: localDate(), paymentMethod: 'Card', notes: '', receiptUrl: '', receiptPath: '', debtId: '' };
   constructor() {
     effect(() => {
       const transactions = this.store.transactions();
@@ -30,7 +30,7 @@ export class BudgetTransactionForm {
   }
   ionViewWillEnter(): void {
     if (!this.id) {
-      this.model = { amount: null as unknown as number, type: 'expense', categoryId: this.store.activeCategories().find(x => x.type === 'expense')?.id ?? '', title: '', date: localDate(), paymentMethod: 'Card', notes: '', receiptUrl: '', receiptPath: '' };
+      this.model = { amount: null as unknown as number, type: 'expense', categoryId: this.store.activeCategories().find(x => x.type === 'expense')?.id ?? '', title: '', date: localDate(), paymentMethod: 'Card', notes: '', receiptUrl: '', receiptPath: '', debtId: '' };
       this.type.set('expense'); this.localReceipt.set(''); this.error.set(''); this.confirmDelete.set(false);
     }
   }
