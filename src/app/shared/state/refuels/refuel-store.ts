@@ -1,7 +1,13 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { AuthService } from '../authentication/authentication.service';
 import { VehicleStore } from '../vehicles/vehicle-store';
-import { calculateRefuels, RefuelEntry, RefuelInput, RefuelRecord, refuelAverages } from './refuel.model';
+import {
+  calculateRefuels,
+  RefuelEntry,
+  RefuelInput,
+  RefuelRecord,
+  refuelAverages,
+} from './refuel.model';
 import { RefuelService } from './refuel.service';
 import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
 
@@ -16,9 +22,13 @@ export class RefuelStore {
 
   readonly selectedVehicleId = signal<string | null>(null);
   readonly vehicleOptions = this.vehicles.vehicles;
-  readonly selectedVehicle = computed(() => this.vehicleOptions().find((vehicle) => vehicle.id === this.selectedVehicleId()) ?? null);
+  readonly selectedVehicle = computed(
+    () => this.vehicleOptions().find((vehicle) => vehicle.id === this.selectedVehicleId()) ?? null,
+  );
   readonly entries = computed(() => calculateRefuels(this.records()));
-  readonly newestFirst = computed(() => [...this.entries()].sort((a, b) => b.dop.localeCompare(a.dop) || b.odometer - a.odometer));
+  readonly newestFirst = computed(() =>
+    [...this.entries()].sort((a, b) => b.dop.localeCompare(a.dop) || b.odometer - a.odometer),
+  );
   readonly averages = computed(() => refuelAverages(this.entries()));
   readonly loading = signal(false);
   readonly error = signal('');
@@ -69,7 +79,12 @@ export class RefuelStore {
     this.error.set('');
     try {
       const records = await this.service.list(vehicleId);
-      if (version === this.loadVersion && this.auth.userId() === uid && this.selectedVehicleId() === vehicleId) this.records.set(records);
+      if (
+        version === this.loadVersion &&
+        this.auth.userId() === uid &&
+        this.selectedVehicleId() === vehicleId
+      )
+        this.records.set(records);
     } catch (error) {
       if (version === this.loadVersion) {
         console.error('Could not load refuels', error);
@@ -81,14 +96,18 @@ export class RefuelStore {
   }
 
   async get(vehicleId: string, id: string): Promise<RefuelRecord> {
-    return this.records().find((entry) => entry.vehicleId === vehicleId && entry.id === id)
-      ?? this.service.get(vehicleId, id);
+    return (
+      this.records().find((entry) => entry.vehicleId === vehicleId && entry.id === id) ??
+      this.service.get(vehicleId, id)
+    );
   }
 
   async save(vehicleId: string, input: RefuelInput, id?: string): Promise<void> {
     const uid = this.auth.userId();
     if (!uid) throw new Error('Sign in to save a refuel.');
-    const saved = id ? await this.service.update(vehicleId, id, input) : await this.service.add(vehicleId, input);
+    const saved = id
+      ? await this.service.update(vehicleId, id, input)
+      : await this.service.add(vehicleId, input);
     if (this.auth.userId() === uid && this.selectedVehicleId() === vehicleId) {
       this.records.update((records) => [...records.filter((entry) => entry.id !== id), saved]);
     }
@@ -105,7 +124,9 @@ export class RefuelStore {
 
   isFirst(vehicleId: string, odometer: number, id?: string): boolean {
     if (this.selectedVehicleId() !== vehicleId) return false;
-    return this.records().filter((entry) => entry.id !== id).every((entry) => entry.odometer > odometer);
+    return this.records()
+      .filter((entry) => entry.id !== id)
+      .every((entry) => entry.odometer > odometer);
   }
 
   latest(): RefuelEntry | null {

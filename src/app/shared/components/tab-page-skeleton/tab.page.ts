@@ -5,12 +5,10 @@ import { IonContent } from '@ionic/angular';
 import { filter, map } from 'rxjs';
 import { Home } from '../tab-pages/home/home';
 import { Statistics } from '../tab-pages/statistics/statistics';
-import { AddContent } from '../tab-pages/add-content/add-content';
-import { Search } from '../tab-pages/search/search';
 import { More } from '../tab-pages/more/more';
 @Component({
   standalone: true,
-  imports: [IonContent, Home, Statistics, AddContent, Search, More],
+  imports: [IonContent, Home, Statistics, More],
   template: `
     @if (tab() === 'home') {
       <ion-content class="ion-padding [--background:var(--background)] [--color:var(--foreground)]">
@@ -20,16 +18,6 @@ import { More } from '../tab-pages/more/more';
     @if (tab() === 'stats') {
       <ion-content class="ion-padding [--background:var(--background)] [--color:var(--foreground)]">
         <app-statistics></app-statistics>
-      </ion-content>
-    }
-    @if (tab() === 'add') {
-      <ion-content class="ion-padding [--background:var(--background)] [--color:var(--foreground)]">
-        <app-add-content></app-add-content>
-      </ion-content>
-    }
-    @if (tab() === 'search') {
-      <ion-content class="ion-padding [--background:var(--background)] [--color:var(--foreground)]">
-        <app-search></app-search>
       </ion-content>
     }
     @if (tab() === 'more') {

@@ -513,18 +513,18 @@ ion-router-outlet.app-route-outlet {
 }
 
 ion-tab-bar.lifeos-tab-bar {
-  height: 64px;
+  height: 58px;
 }
 
 ion-tab-button.lifeos-tab-button {
-  height: 64px;
+  height: 58px;
   align-items: center;
   justify-content: center;
 }
 
 ion-tab-button.lifeos-tab-button::part(native) {
   display: flex;
-  height: 64px;
+  height: 58px;
   align-items: center;
   justify-content: center;
   padding: 0;

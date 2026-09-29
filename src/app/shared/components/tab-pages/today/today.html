@@ -1,14 +1,202 @@
-<ion-content class="[--background:transparent]"><main class="today-page mx-auto min-h-full max-w-3xl px-4 pb-10 pt-5">
-  <header class="today-header"><div><h1>Today</h1><p>{{ formatDate() }}</p></div><a routerLink="/today/customise" aria-label="Customise Today"><ion-icon name="settings"></ion-icon></a></header>
-  @if (!isToday()) { <button class="return-today" type="button" (click)="today.resetDate()">Return to today</button> }
-  <nav class="date-strip" aria-label="Choose a day">@for (day of today.days(); track day.iso) { <button type="button" [class.active]="day.iso === today.selectedDate()" (click)="today.selectDate(day.iso)"><small>{{ day.day }}</small><strong>{{ day.number }}</strong></button> }</nav>
-  @if (today.loading()) { <section class="today-skeleton"><i></i><i></i><i></i></section> } @else {
-    @if (today.show('events')) { <section class="today-card events"><div class="card-title"><h2><ion-icon name="calendar"></ion-icon> Today's events</h2><a routerLink="/planning/calendar">View all</a></div>@if (today.events().length) { @for (event of today.events(); track event.id) { <a class="event-row" [routerLink]="['/planning/events', event.id, 'edit']"><time>{{ time(event.startTime) }}</time><span><strong>{{ event.title }}</strong><small>{{ event.location || event.category }}</small></span><ion-icon name="chevron-forward"></ion-icon></a> } } @else { <p class="empty-copy">No events today.</p> }<a class="outline-action" [routerLink]="['/planning/events/add']" [queryParams]="{date: today.selectedDate()}"><ion-icon name="add"></ion-icon>Add event</a></section> }
-    <div class="today-pair">@if (today.show('reminders')) { <section class="today-card"><div class="card-title"><h2><ion-icon name="notifications"></ion-icon> Reminders</h2><a routerLink="/planning/reminders">View all</a></div>@if (today.reminders().length) { @for (item of today.reminders(); track item.id) { <label class="check-row"><input type="checkbox" [checked]="item.completed" (change)="today.toggleReminder(item.id)"><span>{{ item.title }}</span></label> } } @else { <p class="empty-copy">Nothing to remember today.</p> }<a class="small-link" routerLink="/planning/reminders">Add reminder</a></section> }
-    @if (today.show('groceries')) { <section class="today-card"><div class="card-title"><h2><ion-icon name="restaurant-outline"></ion-icon> Grocery list</h2><a [routerLink]="['/planning/meals']" fragment="groceries">View all</a></div>@if (today.groceries().length) { @for (item of today.groceries(); track item.id) { <label class="check-row"><input type="checkbox" [checked]="item.checked" (change)="today.toggleGrocery(item.id)"><span>{{ item.name }}</span></label> } } @else { <p class="empty-copy">Your grocery list is clear.</p> }<a class="small-link" [routerLink]="['/planning/meals']" fragment="groceries">Add grocery item</a></section> }</div>
-    @if (today.show('dinner')) { <section class="today-card dinner"><div class="card-title"><h2><ion-icon name="restaurant-outline"></ion-icon> Dinner tonight</h2><a routerLink="/planning/meals">Plan dinner</a></div>@if (today.dinner(); as meal) { <div class="dinner-body">@if (today.dinnerRecipe()?.photoUrl) { <img [src]="today.dinnerRecipe()!.photoUrl" [alt]="meal.title"> }<div><strong>{{ meal.title }}</strong><p>{{ meal.detail || today.dinnerRecipe()?.description }}</p>@if (today.dinnerRecipe(); as recipe) { <small>{{ recipe.cookTime }} min · {{ recipe.difficulty }}</small> }</div></div> } @else { <p class="empty-copy">No dinner planned yet.</p> }</section> }
-    <div class="today-pair">@if (today.show('budget')) { <a routerLink="/budget" class="today-card summary-card"><div class="card-title"><h2><ion-icon name="wallet"></ion-icon> Budget</h2><small>This month</small></div><strong>{{ today.money(today.budget().remaining) }}</strong><p>actual left after recorded spending</p></a> } @if (today.show('fuel')) { <a routerLink="/fuel" class="today-card summary-card"><div class="card-title"><h2><ion-icon name="car"></ion-icon> Fuel</h2><small>This month</small></div>@if (today.fuel().totalSpent) { <strong>{{ today.money(today.fuel().totalSpent) }}</strong><p>{{ today.fuel().litersPer100Km !== null ? today.fuel().litersPer100Km!.toFixed(1) + ' L/100km avg' : 'fuel spend' }}</p> } @else { <p class="empty-copy">No refuels recorded.</p> }</a> }</div>
-    @if (today.show('reading')) { <section class="today-card reading"><div class="card-title"><h2><ion-icon name="book"></ion-icon> Reading</h2><a routerLink="/books">View books</a></div>@if (today.reading(); as book) { <a routerLink="/books" class="reading-body">@if (book.coverUrl) { <img [src]="book.coverUrl" [alt]="book.title + ' cover'"> }<span><strong>{{ book.title }}</strong><small>{{ book.author }}</small><p>Currently reading</p></span></a> } @else { <p class="empty-copy">No book currently being read.</p> }</section> }
-    @if (today.show('quickActions')) { <section class="today-card"><div class="card-title"><h2><ion-icon name="flash"></ion-icon> Quick actions</h2></div><div class="quick-actions"><a [routerLink]="['/planning/events/add']" [queryParams]="{date: today.selectedDate()}">Add event</a><a routerLink="/planning/reminders">Add reminder</a><a routerLink="/planning/meals">Plan dinner</a><a routerLink="/fuel">Log refuel</a></div></section> }
-  }
-</main></ion-content>
+<ion-content class="[--background:transparent]"
+  ><main class="today-page mx-auto min-h-full max-w-3xl px-4 pb-10 pt-5">
+    <header class="today-header">
+      <div>
+        <h1>Today</h1>
+        <p>{{ formatDate() }}</p>
+      </div>
+      <a routerLink="/today/customise" aria-label="Customise Today"
+        ><ion-icon name="settings"></ion-icon
+      ></a>
+    </header>
+    @if (!isToday()) {
+      <button class="return-today" type="button" (click)="today.resetDate()">
+        Return to today
+      </button>
+    }
+    <nav class="date-strip" aria-label="Choose a day">
+      @for (day of today.days(); track day.iso) {
+        <button
+          type="button"
+          [class.active]="day.iso === today.selectedDate()"
+          (click)="today.selectDate(day.iso)"
+        >
+          <small>{{ day.day }}</small
+          ><strong>{{ day.number }}</strong>
+        </button>
+      }
+    </nav>
+    @if (today.loading()) {
+      <section class="today-skeleton"><i></i><i></i><i></i></section>
+    } @else {
+      @if (today.show('events')) {
+        <section class="today-card events">
+          <div class="card-title">
+            <h2><ion-icon name="calendar"></ion-icon> Today's events</h2>
+            <a routerLink="/planning/calendar">View all</a>
+          </div>
+          @if (today.events().length) {
+            @for (event of today.events(); track event.id) {
+              <a class="event-row" [routerLink]="['/planning/events', event.id, 'edit']"
+                ><time>{{ time(event.startTime) }}</time
+                ><span
+                  ><strong>{{ event.title }}</strong
+                  ><small>{{ event.location || event.category }}</small></span
+                ><ion-icon name="chevron-forward"></ion-icon
+              ></a>
+            }
+          } @else {
+            <p class="empty-copy">No events today.</p>
+          }
+          <a
+            class="outline-action"
+            [routerLink]="['/planning/events/add']"
+            [queryParams]="{ date: today.selectedDate() }"
+            ><ion-icon name="add"></ion-icon>Add event</a
+          >
+        </section>
+      }
+      <div class="today-pair">
+        @if (today.show('reminders')) {
+          <section class="today-card">
+            <div class="card-title">
+              <h2><ion-icon name="notifications"></ion-icon> Reminders</h2>
+              <a routerLink="/planning/reminders">View all</a>
+            </div>
+            @if (today.reminders().length) {
+              @for (item of today.reminders(); track item.id) {
+                <label class="check-row"
+                  ><input
+                    type="checkbox"
+                    [checked]="item.completed"
+                    (change)="today.toggleReminder(item.id)"
+                  /><span>{{ item.title }}</span></label
+                >
+              }
+            } @else {
+              <p class="empty-copy">Nothing to remember today.</p>
+            }
+            <a class="small-link" routerLink="/planning/reminders">Add reminder</a>
+          </section>
+        }
+        @if (today.show('groceries')) {
+          <section class="today-card">
+            <div class="card-title">
+              <h2><ion-icon name="restaurant-outline"></ion-icon> Grocery list</h2>
+              <a [routerLink]="['/planning/meals']" fragment="groceries">View all</a>
+            </div>
+            @if (today.groceries().length) {
+              @for (item of today.groceries(); track item.id) {
+                <label class="check-row"
+                  ><input
+                    type="checkbox"
+                    [checked]="item.checked"
+                    (change)="today.toggleGrocery(item.id)"
+                  /><span>{{ item.name }}</span></label
+                >
+              }
+            } @else {
+              <p class="empty-copy">Your grocery list is clear.</p>
+            }
+            <a class="small-link" [routerLink]="['/planning/meals']" fragment="groceries"
+              >Add grocery item</a
+            >
+          </section>
+        }
+      </div>
+      @if (today.show('dinner')) {
+        <section class="today-card dinner">
+          <div class="card-title">
+            <h2><ion-icon name="restaurant-outline"></ion-icon> Dinner tonight</h2>
+            <a routerLink="/planning/meals">Plan dinner</a>
+          </div>
+          @if (today.dinner(); as meal) {
+            <div class="dinner-body">
+              @if (today.dinnerRecipe()?.photoUrl) {
+                <img [src]="today.dinnerRecipe()!.photoUrl" [alt]="meal.title" />
+              }
+              <div>
+                <strong>{{ meal.title }}</strong>
+                <p>{{ meal.detail || today.dinnerRecipe()?.description }}</p>
+                @if (today.dinnerRecipe(); as recipe) {
+                  <small>{{ recipe.cookTime }} min · {{ recipe.difficulty }}</small>
+                }
+              </div>
+            </div>
+          } @else {
+            <p class="empty-copy">No dinner planned yet.</p>
+          }
+        </section>
+      }
+      <div class="today-pair">
+        @if (today.show('budget')) {
+          <a routerLink="/budget" class="today-card summary-card"
+            ><div class="card-title">
+              <h2><ion-icon name="wallet"></ion-icon> Budget</h2>
+              <small>This month</small>
+            </div>
+            <strong>{{ today.money(today.budget().remaining) }}</strong>
+            <p>actual left after recorded spending</p></a
+          >
+        }
+        @if (today.show('fuel')) {
+          <a routerLink="/fuel" class="today-card summary-card"
+            ><div class="card-title">
+              <h2><ion-icon name="car"></ion-icon> Fuel</h2>
+              <small>This month</small>
+            </div>
+            @if (today.fuel().totalSpent) {
+              <strong>{{ today.money(today.fuel().totalSpent) }}</strong>
+              <p>
+                {{
+                  today.fuel().litersPer100Km !== null
+                    ? today.fuel().litersPer100Km!.toFixed(1) + ' L/100km avg'
+                    : 'fuel spend'
+                }}
+              </p>
+            } @else {
+              <p class="empty-copy">No refuels recorded.</p>
+            }
+          </a>
+        }
+      </div>
+      @if (today.show('reading')) {
+        <section class="today-card reading">
+          <div class="card-title">
+            <h2><ion-icon name="book"></ion-icon> Reading</h2>
+            <a routerLink="/books">View books</a>
+          </div>
+          @if (today.reading(); as book) {
+            <a routerLink="/books" class="reading-body">
+              @if (book.coverUrl) {
+                <img [src]="book.coverUrl" [alt]="book.title + ' cover'" />
+              }
+              <span
+                ><strong>{{ book.title }}</strong
+                ><small>{{ book.author }}</small>
+                <p>Currently reading</p></span
+              ></a
+            >
+          } @else {
+            <p class="empty-copy">No book currently being read.</p>
+          }
+        </section>
+      }
+      @if (today.show('quickActions')) {
+        <section class="today-card">
+          <div class="card-title">
+            <h2><ion-icon name="flash"></ion-icon> Quick actions</h2>
+          </div>
+          <div class="quick-actions">
+            <a
+              [routerLink]="['/planning/events/add']"
+              [queryParams]="{ date: today.selectedDate() }"
+              >Add event</a
+            ><a routerLink="/planning/reminders">Add reminder</a
+            ><a routerLink="/planning/meals">Plan dinner</a><a routerLink="/fuel">Log refuel</a>
+          </div>
+        </section>
+      }
+    }
+  </main></ion-content
+>

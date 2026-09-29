@@ -14,7 +14,7 @@ import { ThemeService } from './shared/state/theme/theme.service';
 })
 export class App {
   private readonly document = inject(DOCUMENT);
-  authService = inject(AuthService);
+ 
   readonly refreshCoordinator = inject(RefreshCoordinator);
   readonly theme = inject(ThemeService);
   readonly nativePlatform = Capacitor.isNativePlatform();
@@ -25,6 +25,8 @@ export class App {
   readonly biometricFailures = signal(0);
   readonly pullDistance = signal(0);
   private touchStart: number | null = null;
+
+  authService = inject(AuthService);
 
   constructor() {
     if (this.androidPlatform) this.document.documentElement.classList.add('platform-android-native');
@@ -45,18 +47,15 @@ export class App {
     this.paletteToggle.set(this.theme.dark());
   }
 
-  // Check/uncheck the toggle and update the palette based on isDark
   initializeDarkPalette(isDark: boolean) {
     this.paletteToggle.set(isDark);
     this.theme.setDark(isDark);
   }
 
-  // Listen for the toggle check/uncheck to toggle the dark palette
   toggleChange(event: CustomEvent) {
     this.initializeDarkPalette(event.detail.checked);
   }
 
-  // Add or remove the dark theme classes used by both Ionic and the custom Tailwind variables
   toggleDarkPalette(shouldAdd: boolean) {
     this.theme.setDark(shouldAdd);
   }

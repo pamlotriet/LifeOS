@@ -1,16 +1,121 @@
-<ion-content class="[--background:transparent]"><main class="stats-page mx-auto min-h-full max-w-3xl px-4 pb-10 pt-5">
-  <header class="stats-header"><h1>Stats</h1><p>Viewing stats for</p><div class="module-selector">
-    <button type="button" class="module-trigger" [attr.aria-expanded]="selectorOpen()" aria-controls="stats-module-options" (click)="selectorOpen.set(!selectorOpen())"><ion-icon [name]="option().icon"></ion-icon><strong>{{ option().label }}</strong><ion-icon name="chevron-down-outline" class="chevron"></ion-icon></button>
-    @if (selectorOpen()) { <div id="stats-module-options" class="module-options">@for (module of modules; track module.id) { <button type="button" (click)="choose(module.id)" [attr.aria-current]="module.id === selected() ? 'true' : null"><ion-icon [name]="module.icon"></ion-icon><span>{{ module.label }}</span>@if (module.id === selected()) { <ion-icon name="checkmark"></ion-icon> }</button> }</div> }
-  </div>@if ((selected() === 'fuel' || selected() === 'vehicles') && service.vehicleOptions().length > 1) { <label class="vehicle-filter"><span>Vehicle</span><select [value]="service.selectedVehicleId()" (change)="service.selectVehicle($any($event.target).value)">@for (vehicle of service.vehicleOptions(); track vehicle.id) { <option [value]="vehicle.id">{{ vehicle.name }}</option> }</select></label> }</header>
-  @if (loading()) { <section class="stats-skeleton" aria-label="Loading statistics"><i></i><i></i><i></i><i></i><i class="chart"></i><i class="chart"></i></section> }
-  @else if (error()) { <div role="alert" class="stats-message error">{{ error() }} <button type="button" (click)="service.reload(selected())">Retry</button></div> }
-  @else { @let data = dashboard();
-    @if (data.empty) { <section class="stats-empty"><ion-icon [name]="option().icon"></ion-icon><h2>{{ data.emptyTitle }}</h2><p>{{ data.emptyMessage }}</p>@if (data.action) { <a [routerLink]="data.action" class="stats-primary">Get started</a> }</section> }
-    @else { <section class="kpi-grid" aria-label="Key statistics">@for (item of data.kpis; track item.label) { <article class="kpi-card"><span [style.background]="item.accent"><ion-icon [name]="item.icon"></ion-icon></span><div><small>{{ item.label }}</small><strong>{{ item.value }}</strong></div></article> }</section>
-      <section class="stats-chart-card"><div class="chart-heading"><div><h2>{{ data.primaryTitle }}</h2><p>{{ option().label }} · {{ range() }}</p></div><nav aria-label="Time range">@for (item of ranges; track item) { <button type="button" [class.active]="range() === item" [attr.aria-pressed]="range() === item" (click)="range.set(item)">{{ item }}</button> }</nav></div><app-budget-chart [config]="data.primary" [height]="230" [label]="data.primaryTitle" /></section>
-      <section class="stats-chart-card"><div class="chart-heading"><div><h2>{{ data.secondaryTitle }}</h2><p>Actual recorded data</p></div></div><app-budget-chart [config]="data.secondary" [height]="230" [label]="data.secondaryTitle" /></section>
-      <section class="stats-insight"><ion-icon name="bulb-outline"></ion-icon><div><h2>Insights</h2><p>{{ data.insight }}</p></div></section>
+<ion-content class="[--background:transparent]"
+  ><main class="stats-page mx-auto min-h-full max-w-3xl px-4 pb-10 pt-5">
+    <header class="stats-header">
+      <h1>Stats</h1>
+      <p>Viewing stats for</p>
+      <div class="module-selector">
+        <button
+          type="button"
+          class="module-trigger"
+          [attr.aria-expanded]="selectorOpen()"
+          aria-controls="stats-module-options"
+          (click)="selectorOpen.set(!selectorOpen())"
+        >
+          <ion-icon [name]="option().icon"></ion-icon><strong>{{ option().label }}</strong
+          ><ion-icon name="chevron-down-outline" class="chevron"></ion-icon>
+        </button>
+        @if (selectorOpen()) {
+          <div id="stats-module-options" class="module-options">
+            @for (module of modules; track module.id) {
+              <button
+                type="button"
+                (click)="choose(module.id)"
+                [attr.aria-current]="module.id === selected() ? 'true' : null"
+              >
+                <ion-icon [name]="module.icon"></ion-icon><span>{{ module.label }}</span>
+                @if (module.id === selected()) {
+                  <ion-icon name="checkmark"></ion-icon>
+                }
+              </button>
+            }
+          </div>
+        }
+      </div>
+      @if (
+        (selected() === 'fuel' || selected() === 'vehicles') && service.vehicleOptions().length > 1
+      ) {
+        <label class="vehicle-filter"
+          ><span>Vehicle</span
+          ><select
+            [value]="service.selectedVehicleId()"
+            (change)="service.selectVehicle($any($event.target).value)"
+          >
+            @for (vehicle of service.vehicleOptions(); track vehicle.id) {
+              <option [value]="vehicle.id">{{ vehicle.name }}</option>
+            }
+          </select></label
+        >
+      }
+    </header>
+    @if (loading()) {
+      <section class="stats-skeleton" aria-label="Loading statistics">
+        <i></i><i></i><i></i><i></i><i class="chart"></i><i class="chart"></i>
+      </section>
+    } @else if (error()) {
+      <div role="alert" class="stats-message error">
+        {{ error() }} <button type="button" (click)="service.reload(selected())">Retry</button>
+      </div>
+    } @else {
+      @let data = dashboard();
+      @if (data.empty) {
+        <section class="stats-empty">
+          <ion-icon [name]="option().icon"></ion-icon>
+          <h2>{{ data.emptyTitle }}</h2>
+          <p>{{ data.emptyMessage }}</p>
+          @if (data.action) {
+            <a [routerLink]="data.action" class="stats-primary">Get started</a>
+          }
+        </section>
+      } @else {
+        <section class="kpi-grid" aria-label="Key statistics">
+          @for (item of data.kpis; track item.label) {
+            <article class="kpi-card">
+              <span [style.background]="item.accent"><ion-icon [name]="item.icon"></ion-icon></span>
+              <div>
+                <small>{{ item.label }}</small
+                ><strong>{{ item.value }}</strong>
+              </div>
+            </article>
+          }
+        </section>
+        <section class="stats-chart-card">
+          <div class="chart-heading">
+            <div>
+              <h2>{{ data.primaryTitle }}</h2>
+              <p>{{ option().label }} · {{ range() }}</p>
+            </div>
+            <nav aria-label="Time range">
+              @for (item of ranges; track item) {
+                <button
+                  type="button"
+                  [class.active]="range() === item"
+                  [attr.aria-pressed]="range() === item"
+                  (click)="range.set(item)"
+                >
+                  {{ item }}
+                </button>
+              }
+            </nav>
+          </div>
+          <app-budget-chart [config]="data.primary" height="230" [label]="data.primaryTitle" />
+        </section>
+        <section class="stats-chart-card">
+          <div class="chart-heading">
+            <div>
+              <h2>{{ data.secondaryTitle }}</h2>
+              <p>Actual recorded data</p>
+            </div>
+          </div>
+          <app-budget-chart [config]="data.secondary" height="230" [label]="data.secondaryTitle" />
+        </section>
+        <section class="stats-insight">
+          <ion-icon name="bulb-outline"></ion-icon>
+          <div>
+            <h2>Insights</h2>
+            <p>{{ data.insight }}</p>
+          </div>
+        </section>
+      }
     }
-  }
-</main></ion-content>
+  </main></ion-content
+>
