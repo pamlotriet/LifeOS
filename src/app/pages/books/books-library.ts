@@ -6,8 +6,9 @@ import { BookRecord, BOOK_CATEGORIES } from '../../shared/state/books/book.model
 import { BookStore } from '../../shared/state/books/book-store';
 import { ReadingGoalService } from '../../shared/state/books/reading-goal.service';
 import { RefreshCoordinator } from '../../shared/state/refresh/refresh-coordinator.service';
+import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-books-library', imports: [IonContent, IonIcon, PageHeader, RouterLink], templateUrl: './books-library.html' })
+@Component({ selector: 'app-books-library', imports: [IonContent, IonIcon, PageHeader, RouterLink, AppSkeleton], templateUrl: './books-library.html' })
 export class BooksLibrary {
   readonly store = inject(BookStore);
   private readonly goals = inject(ReadingGoalService);

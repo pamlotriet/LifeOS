@@ -45,6 +45,13 @@ import {
   personAdd,
   copy,
   refresh,
+  bulbOutline,
+  notifications,
+  sunny,
+  layersOutline,
+  sparklesOutline,
+  optionsOutline,
+  shuffle,
 } from 'ionicons/icons';
 import { routes } from './app.routes';
 
@@ -91,6 +98,13 @@ addIcons({
   personAdd,
   copy,
   refresh,
+  bulbOutline,
+  notifications,
+  sunny,
+  layersOutline,
+  sparklesOutline,
+  optionsOutline,
+  shuffle,
 });
 
 export const appConfig: ApplicationConfig = {

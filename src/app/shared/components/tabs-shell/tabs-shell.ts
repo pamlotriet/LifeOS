@@ -19,11 +19,12 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
             <ion-label>Stats</ion-label>
           </div>
         </ion-tab-button>
-        <ion-tab-button tab="add" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">
-          <div class="flex h-full w-full items-center justify-center text-center">
-            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-cyan-300 to-cyan-500 shadow-lg shadow-cyan-400/30">
-              <ion-icon size="large" name="add" class="text-white"></ion-icon>
+        <ion-tab-button tab="today" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">
+          <div class="flex h-full w-full flex-col items-center justify-center text-center">
+            <div class="mb-1 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-cyan-300 to-cyan-500 shadow-lg shadow-cyan-400/30">
+              <ion-icon size="large" name="sunny" class="text-white"></ion-icon>
             </div>
+            <ion-label>Today</ion-label>
           </div>
         </ion-tab-button>
         <ion-tab-button tab="wheel" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">

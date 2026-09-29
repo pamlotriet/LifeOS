@@ -3,8 +3,9 @@ import { IonIcon } from '@ionic/angular';
 import { refuelLifetimeSummary } from '../../shared/state/refuels/refuel.model';
 import { RefuelStore } from '../../shared/state/refuels/refuel-store';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
+import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-insights', imports: [IonIcon], templateUrl: './insights.html' })
+@Component({ selector: 'app-insights', imports: [IonIcon, AppSkeleton], templateUrl: './insights.html' })
 export class Insights {
   readonly refuels = inject(RefuelStore);
   readonly vehicles = inject(VehicleStore);
@@ -20,9 +21,17 @@ export class Insights {
     const max = Math.max(10, ...entries.map((entry) => entry.litersPer100Km ?? 0));
     return entries.map((entry, index) => ({
       id: entry.id, date: entry.dop, value: entry.litersPer100Km!,
-      x: entries.length === 1 ? 50 : 8 + index * 84 / (entries.length - 1),
+      x: entries.length === 1 ? 66 : 22 + index * 86 / (entries.length - 1),
       y: 88 - entry.litersPer100Km! / max * 76,
     }));
+  });
+  readonly trendAxis = computed(() => {
+    const max = Math.max(10, ...this.recentConsumption().map((entry) => entry.litersPer100Km ?? 0));
+    return [
+      { value: max, y: 12 },
+      { value: max / 2, y: 50 },
+      { value: 0, y: 88 },
+    ];
   });
   readonly trendLine = computed(() => this.trendPoints().map((point) => `${point.x},${point.y}`).join(' '));
   readonly trendDirection = computed(() => {
@@ -41,6 +50,10 @@ export class Insights {
       .map(([month, value]) => ({ month, value, label: this.shortDate(`${month}-01`) }));
   });
   readonly maxMonthlySpend = computed(() => Math.max(1, ...this.monthlySpend().map((month) => month.value)));
+  readonly monthlySpendAxis = computed(() => {
+    const max = this.maxMonthlySpend();
+    return [max, max / 2, 0].map((value) => ({ value, label: `R${Math.round(value).toLocaleString('en-ZA')}` }));
+  });
   readonly latestMonth = computed(() => this.monthlySpend().at(-1) ?? null);
   readonly spendChange = computed(() => {
     const months = this.monthlySpend();

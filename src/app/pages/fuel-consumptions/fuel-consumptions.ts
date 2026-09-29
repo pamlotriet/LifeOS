@@ -3,9 +3,10 @@ import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { RefuelStore } from '../../shared/state/refuels/refuel-store';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
+import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
 @Component({
-  imports: [IonIcon, RouterLink],
+  imports: [IonIcon, RouterLink, AppSkeleton],
   selector: 'app-fuel-consumptions',
   templateUrl: './fuel-consumptions.html',
 })

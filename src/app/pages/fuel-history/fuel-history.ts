@@ -4,9 +4,10 @@ import { IonIcon } from '@ionic/angular';
 import { RefuelStore } from '../../shared/state/refuels/refuel-store';
 import { AppSelect } from '../../shared/components/app-select/app-select';
 import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
+import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
 @Component({
-  imports: [IonIcon, RouterLink, AppSelect, AppDatePicker],
+  imports: [IonIcon, RouterLink, AppSelect, AppDatePicker, AppSkeleton],
   selector: 'app-fuel-history',
   styleUrl: './fuel-history.css',
   templateUrl: './fuel-history.html',

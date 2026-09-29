@@ -47,20 +47,23 @@
       <section class="rounded-2xl border border-[#32658c] bg-gradient-to-br from-[#153b5c] to-[#0d2d4c] p-4" aria-label="Consumption trend">
         <div class="flex items-start justify-between gap-2"><div><h2 class="text-base font-bold">Consumption Trend</h2><p class="text-xs text-[#b5cbe2]">Litres per 100 km (lower is better)</p></div>@if (trendDirection()) { <span class="rounded-full border px-2 py-1 text-xs" [class]="trendDirection() === 'Improving' ? 'border-emerald-400/50 text-emerald-300' : 'border-[#5a89b5] text-[#b5cbe2]'">{{ trendDirection() }}</span> }</div>
         @if (trendPoints().length) {
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="mt-3 h-36 w-full overflow-visible" role="img" aria-label="Consumption of recent refuels in chronological order">
-            <path d="M8 12H92 M8 31H92 M8 50H92 M8 69H92 M8 88H92" fill="none" stroke="#456987" stroke-width="0.35" />
+          <svg viewBox="0 0 116 100" preserveAspectRatio="none" class="mt-3 h-36 w-full overflow-visible" role="img" aria-label="Consumption of recent refuels in chronological order; vertical values are litres per 100 kilometres and horizontal values are refuel months">
+            <path d="M22 12H108 M22 31H108 M22 50H108 M22 69H108 M22 88H108 M22 10V90 M22 88H110" fill="none" stroke="#456987" stroke-width="0.35" />
+            @for (tick of trendAxis(); track tick.y) { <text x="18" [attr.y]="tick.y + 2" text-anchor="end" fill="#b5cbe2" font-size="6">{{ number(tick.value) }}</text> }
             @if (trendPoints().length > 1) { <polyline [attr.points]="trendLine()" fill="none" stroke="#22dded" stroke-width="1.2" vector-effect="non-scaling-stroke" /> }
             @for (point of trendPoints(); track point.id) { <circle [attr.cx]="point.x" [attr.cy]="point.y" r="1.2" fill="#43e5f5"><title>{{ date(point.date) }}: {{ number(point.value) }} L/100km</title></circle> }
           </svg>
-          <div class="flex justify-between gap-1 text-[11px] text-[#b5cbe2]">@for (point of trendPoints(); track point.id) { <span>{{ shortDate(point.date) }}</span> }</div>
+          <div class="ml-[20%] flex justify-between gap-1 text-[11px] text-[#b5cbe2]">@for (point of trendPoints(); track point.id) { <span>{{ shortDate(point.date) }}</span> }</div>
+          <p class="mt-1 text-center text-[11px] text-[#b5cbe2]">Month</p>
           <p class="mt-2 text-right text-xs text-[#b5cbe2]">Last {{ trendPoints().length }} refuel{{ trendPoints().length === 1 ? '' : 's' }}</p>
         } @else { <p class="mt-4 text-sm text-[#b5cbe2]">A range is needed to show consumption.</p> }
       </section>
 
       <section class="rounded-2xl border border-[#32658c] bg-gradient-to-br from-[#153b5c] to-[#0d2d4c] p-4" aria-label="Monthly spend">
         <div class="flex items-start justify-between gap-2"><div><h2 class="text-base font-bold">Monthly Spend</h2><p class="mt-1 text-xl font-bold">{{ money(latestMonth()?.value ?? null) }}</p><p class="text-xs text-[#b5cbe2]">Latest recorded month</p></div>@if (spendChange() !== null) { <span class="rounded-full border px-2 py-1 text-xs" [class]="spendChange()! <= 0 ? 'border-emerald-400/50 text-emerald-300' : 'border-[#5a89b5] text-[#b5cbe2]'">{{ spendChange()! > 0 ? '+' : '' }}{{ number(spendChange(), 0) }}% vs previous month</span> }</div>
-        <div class="mt-4 flex h-28 items-end justify-around gap-2 border-b border-[#456987]">@for (month of monthlySpend(); track month.month) { <div class="flex h-full flex-1 items-end justify-center" [title]="month.month + ': ' + money(month.value)"><div class="w-full max-w-9 rounded-t bg-gradient-to-t from-[#2875b2] to-[#41c9ff]" [style.height]="barHeight(month.value)"></div></div> }</div>
-        <div class="mt-1 flex justify-around gap-2 text-[11px] text-[#b5cbe2]">@for (month of monthlySpend(); track month.month) { <span class="flex-1 text-center">{{ month.label }}</span> }</div>
+        <div class="mt-4 grid grid-cols-[3rem_1fr] gap-2"><div class="flex h-28 flex-col justify-between pb-[-1px] text-right text-[10px] text-[#b5cbe2]">@for (tick of monthlySpendAxis(); track tick.label) { <span>{{ tick.label }}</span> }</div><div class="flex h-28 items-end justify-around gap-2 border-b border-l border-[#456987] px-2">@for (month of monthlySpend(); track month.month) { <div class="flex h-full flex-1 items-end justify-center" [title]="month.month + ': ' + money(month.value)"><div class="w-full max-w-9 rounded-t bg-gradient-to-t from-[#2875b2] to-[#41c9ff]" [style.height]="barHeight(month.value)"></div></div> }</div></div>
+        <div class="ml-14 mt-1 flex justify-around gap-2 text-[11px] text-[#b5cbe2]">@for (month of monthlySpend(); track month.month) { <span class="flex-1 text-center">{{ month.label }}</span> }</div>
+        <p class="mt-1 text-center text-[11px] text-[#b5cbe2]">Month</p>
       </section>
 
       <section aria-label="Lifetime overview"><h2 class="mb-1 text-lg font-bold">Lifetime Overview</h2><p class="mb-3 text-sm text-[#b5cbe2]">All recorded refuels for this vehicle.</p><div class="grid grid-cols-2 gap-2">

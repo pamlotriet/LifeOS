@@ -1,8 +1,6 @@
 import { Routes } from '@angular/router';
 import { Home } from './shared/components/tab-pages/home/home';
-import { AddContent } from './shared/components/tab-pages/add-content/add-content';
 import { More } from './shared/components/tab-pages/more/more';
-import { Statistics } from './shared/components/tab-pages/statistics/statistics';
 import { authGuard } from './shared/guards/auth.guard';
 import { AddCar } from './pages/add-car/add-car';
 import { Vehicles } from './pages/vehicles/vehicles';
@@ -15,13 +13,14 @@ import { RefuelForm } from './pages/refuel-form/refuel-form';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'today/customise', loadComponent: () => import('./pages/today-customise/today-customise').then(m => m.TodayCustomise), canActivate: [authGuard] },
   {
     path: '',
     component: TabsShell,
     children: [
       { path: 'home', component: Home },
-      { path: 'stats', component: Statistics, canActivate: [authGuard] },
-      { path: 'add', component: AddContent, canActivate: [authGuard] },
+      { path: 'stats', loadComponent: () => import('./shared/components/tab-pages/statistics/statistics').then((m) => m.Statistics), canActivate: [authGuard] },
+      { path: 'today', loadComponent: () => import('./shared/components/tab-pages/today/today').then((m) => m.Today), canActivate: [authGuard] },
       { path: 'wheel', loadComponent: () => import('./shared/components/tab-pages/reading-wheel/reading-wheel').then((m) => m.ReadingWheel), canActivate: [authGuard] },
       { path: 'search', redirectTo: 'wheel' },
       { path: 'more', component: More, canActivate: [authGuard] },
