@@ -1,11 +1,31 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { RefuelStore } from '../../shared/state/refuels/refuel-store';
 import { RefuelInput } from '../../shared/state/refuels/refuel.model';
 import { AppSelect } from '../../shared/components/app-select/app-select';
 import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
+
+type DecimalInput = number | string | null;
+
+function parseDecimal(value: DecimalInput): number | null {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (value === null || value.trim() === '') return null;
+  const normalized = value.trim().replace(',', '.');
+  if (!/^\d+(?:\.\d+)?$/.test(normalized)) return null;
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function decimalMin(minimum: number, required = false): ValidatorFn {
+  return (control: AbstractControl<DecimalInput>): ValidationErrors | null => {
+    const empty = control.value === null || (typeof control.value === 'string' && control.value.trim() === '');
+    if (empty) return required ? { required: true } : null;
+    const value = parseDecimal(control.value);
+    return value !== null && value >= minimum ? null : { min: { min: minimum, actual: control.value } };
+  };
+}
 
 @Component({
   selector: 'app-refuel-form',
@@ -32,10 +52,10 @@ export class RefuelForm {
     pop: this.builder.nonNullable.control('', [Validators.required, Validators.pattern(/\S/)]),
     fuelType: this.builder.nonNullable.control('', Validators.required),
     areaTown: this.builder.nonNullable.control('', [Validators.required, Validators.pattern(/\S/)]),
-    odometer: this.builder.control<number | null>(null, [Validators.required, Validators.min(0)]),
-    qtyLiters: this.builder.control<number | null>(null, [Validators.required, Validators.min(0.001)]),
-    amountPaid: this.builder.control<number | null>(null, [Validators.required, Validators.min(0)]),
-    initialRangeKm: this.builder.control<number | null>(null, Validators.min(0.001)),
+    odometer: this.builder.control<DecimalInput>(null, decimalMin(0, true)),
+    qtyLiters: this.builder.control<DecimalInput>(null, decimalMin(0.001, true)),
+    amountPaid: this.builder.control<DecimalInput>(null, decimalMin(0, true)),
+    initialRangeKm: this.builder.control<DecimalInput>(null, decimalMin(0.001)),
   });
 
   readonly fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'ULP 93', 'ULP 95'];
@@ -71,25 +91,28 @@ export class RefuelForm {
 
   get pricePerLiter(): number | null {
     const { qtyLiters, amountPaid } = this.form.getRawValue();
-    return qtyLiters && amountPaid !== null ? amountPaid / qtyLiters : null;
+    const qty = parseDecimal(qtyLiters);
+    const amount = parseDecimal(amountPaid);
+    return qty && amount !== null ? amount / qty : null;
   }
 
   get previewRange(): number | null {
     const { vehicleId, odometer, initialRangeKm } = this.form.getRawValue();
-    if (odometer === null) return null;
+    const currentOdometer = parseDecimal(odometer);
+    if (currentOdometer === null) return null;
     const previous = this.refuels.entries()
-      .filter((entry) => entry.vehicleId === vehicleId && entry.id !== this.entryId && entry.odometer < odometer)
+      .filter((entry) => entry.vehicleId === vehicleId && entry.id !== this.entryId && entry.odometer < currentOdometer)
       .at(-1);
-    return previous ? odometer - previous.odometer : initialRangeKm;
+    return previous ? currentOdometer - previous.odometer : parseDecimal(initialRangeKm);
   }
 
   get previewKmPerLiter(): number | null {
-    const qty = this.form.controls.qtyLiters.value;
+    const qty = parseDecimal(this.form.controls.qtyLiters.value);
     return this.previewRange && qty ? this.previewRange / qty : null;
   }
 
   get previewLitersPer100Km(): number | null {
-    const qty = this.form.controls.qtyLiters.value;
+    const qty = parseDecimal(this.form.controls.qtyLiters.value);
     return this.previewRange && qty ? qty / this.previewRange * 100 : null;
   }
 
@@ -103,16 +126,19 @@ export class RefuelForm {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
     const value = this.form.getRawValue();
-    if (value.odometer === null || value.qtyLiters === null || value.amountPaid === null) return;
+    const odometer = parseDecimal(value.odometer);
+    const qtyLiters = parseDecimal(value.qtyLiters);
+    const amountPaid = parseDecimal(value.amountPaid);
+    if (odometer === null || qtyLiters === null || amountPaid === null) return;
     const input: RefuelInput = {
       dop: value.dop,
       pop: value.pop.trim(),
       fuelType: value.fuelType,
       areaTown: value.areaTown.trim(),
-      odometer: value.odometer,
-      qtyLiters: value.qtyLiters,
-      amountPaid: value.amountPaid,
-      initialRangeKm: value.initialRangeKm,
+      odometer,
+      qtyLiters,
+      amountPaid,
+      initialRangeKm: parseDecimal(value.initialRangeKm),
     };
     this.saving.set(true);
     this.error.set('');

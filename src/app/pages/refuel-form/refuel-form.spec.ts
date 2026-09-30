@@ -35,4 +35,18 @@ describe('RefuelForm', () => {
     expect(save).toHaveBeenCalledWith('car-1', expect.objectContaining({ qtyLiters: 40, initialRangeKm: 600 }), undefined);
     expect(navigate).toHaveBeenCalledWith('/fuel/history');
   });
+
+  it('accepts decimal commas and saves numeric values', async () => {
+    vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    fixture.componentInstance.form.patchValue({
+      dop: '2026-09-22', pop: 'Shell', fuelType: 'Petrol', areaTown: 'Sandton',
+      odometer: '13600,5', qtyLiters: '24,54', amountPaid: '600,25', initialRangeKm: '510,2',
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(save).toHaveBeenCalledWith('car-1', expect.objectContaining({
+      odometer: 13600.5, qtyLiters: 24.54, amountPaid: 600.25, initialRangeKm: 510.2,
+    }), undefined);
+  });
 });
