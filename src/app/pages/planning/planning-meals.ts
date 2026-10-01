@@ -1,3 +1,4 @@
+import { PLANNING_ICONS } from './planning-icons';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -8,6 +9,7 @@ import { PlanningStore } from '../../shared/state/planning/planning-store';
 
 @Component({ selector: 'app-planning-meals', imports: [IonContent, IonIcon, FormsModule, PageHeader], templateUrl: './planning-meals.html', styleUrl: './planning.css' })
 export class PlanningMeals {
+  readonly icons = PLANNING_ICONS;
   private readonly route = inject(ActivatedRoute);
   readonly store = inject(PlanningStore); readonly tab = signal<'meals'|'groceries'>(this.route.snapshot.fragment === 'groceries' ? 'groceries' : 'meals'); readonly week = week(); readonly mealTitle = signal(''); readonly mealDetail = signal(''); readonly selectedDate = signal(this.week[0].iso); readonly groceryName = signal(''); readonly grocerySection = signal('Produce');
   readonly groceriesBySection = computed(() => {

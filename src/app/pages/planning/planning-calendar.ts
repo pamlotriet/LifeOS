@@ -1,3 +1,4 @@
+import { PLANNING_ICONS } from './planning-icons';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -6,6 +7,7 @@ import { PlanningStore } from '../../shared/state/planning/planning-store';
 
 @Component({ selector: 'app-planning-calendar', imports: [IonContent, IonIcon, RouterLink, PageHeader], templateUrl: './planning-calendar.html', styleUrl: './planning.css' })
 export class PlanningCalendar {
+  readonly icons = PLANNING_ICONS;
   readonly store = inject(PlanningStore); private readonly route = inject(ActivatedRoute); readonly month = signal(this.initialMonth()); readonly selected = signal(this.route.snapshot.queryParamMap.get('date') ?? iso(new Date()));
   readonly monthLabel = computed(() => this.month().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
   readonly cells = computed(() => { const d = this.month(); const offset = d.getDay(); const count = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); return [...Array(offset).fill(null), ...Array.from({ length: count }, (_, i) => iso(new Date(d.getFullYear(), d.getMonth(), i + 1)))]; });

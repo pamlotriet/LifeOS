@@ -1,3 +1,4 @@
+import { PLANNING_ICONS } from './planning-icons';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -6,6 +7,7 @@ import { PlanningStore } from '../../shared/state/planning/planning-store';
 
 @Component({ selector: 'app-planning', imports: [IonContent, IonIcon, RouterLink, PageHeader], templateUrl: './planning.html', styleUrl: './planning.css' })
 export class Planning {
+  readonly icons = PLANNING_ICONS;
   readonly store = inject(PlanningStore); readonly today = iso(new Date());
   readonly dateLabel = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date());
   readonly week = Array.from({ length: 7 }, (_, index) => { const date = new Date(); date.setDate(date.getDate() - date.getDay() + 1 + index); return { iso: iso(date), day: date.toLocaleDateString('en-US', { weekday: 'short' }).slice(0, 2), number: date.getDate() }; });

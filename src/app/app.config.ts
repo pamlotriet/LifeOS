@@ -52,6 +52,9 @@ import {
   sparklesOutline,
   optionsOutline,
   shuffle,
+  trashOutline,
+  restaurant,
+  cart,
 } from 'ionicons/icons';
 import { routes } from './app.routes';
 
@@ -105,6 +108,9 @@ addIcons({
   sparklesOutline,
   optionsOutline,
   shuffle,
+  trashOutline,
+  restaurant,
+  cart,
 });
 
 export const appConfig: ApplicationConfig = {

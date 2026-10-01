@@ -1,3 +1,4 @@
+import { PLANNING_ICONS } from './planning-icons';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -9,6 +10,7 @@ import { PlanningStore } from '../../shared/state/planning/planning-store';
 
 @Component({ selector: 'app-planning-reminders', imports: [IonContent, IonIcon, FormsModule, AppDatePicker, AppSelect, PageHeader], templateUrl: './planning-reminders.html', styleUrl: './planning.css' })
 export class PlanningReminders {
+  readonly icons = PLANNING_ICONS;
   readonly store = inject(PlanningStore); readonly category = signal('All'); readonly showForm = signal(false); readonly saving = signal(false); readonly title = signal(''); readonly date = signal(today()); readonly time = signal('09:00'); readonly newCategory = signal('Personal');
   readonly categories = ['All', 'Personal', 'Bills', 'Health', 'Work', 'Family']; readonly categoryOptions = this.categories.slice(1).map((x) => ({ value: x, label: x }));
   readonly filtered = computed(() => this.store.sortedReminders().filter((item) => this.category() === 'All' || item.category === this.category()));

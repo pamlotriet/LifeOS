@@ -23,12 +23,17 @@ export class BudgetInsights {
   readonly average = computed(() => this.periods().reduce((sum, x) => sum + Math.round(x.expenses * 100), 0) / 400);
   readonly change = computed(() => { const periods = this.periods(); const previous = periods[2].expenses; return previous > 0 ? Math.round((periods[3].expenses - previous) / previous * 100) : null; });
   readonly hasHistory = computed(() => this.periods().some(x => x.income || x.expenses));
+  private readonly axisNumber = new Intl.NumberFormat('en-ZA', { notation: 'compact', maximumFractionDigits: 1 });
+  private readonly amountTicks = {
+    color: '#bed0e7', font: { size: 11 }, maxTicksLimit: 5, maxRotation: 0,
+    callback: (value: string | number) => `R ${this.axisNumber.format(Number(value))}`,
+  };
   private readonly options: ChartOptions<'bar'> = {
     responsive: true, maintainAspectRatio: false, animation: false,
     plugins: { legend: { labels: { color: '#c7dbef', usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 8 } }, tooltip: { callbacks: { label: context => `${context.dataset.label}: ${money(Number(context.raw))}` } } },
-    scales: { x: { grid: { display: false }, ticks: { color: '#bed0e7' }, border: { display: false } }, y: { beginAtZero: true, grid: { color: '#16405b66' }, ticks: { color: '#bed0e7' }, border: { display: false } } },
+    scales: { x: { grid: { display: false }, ticks: { color: '#bed0e7' }, border: { display: false } }, y: { beginAtZero: true, grid: { color: '#16405b66' }, ticks: this.amountTicks, border: { display: false } } },
   };
-  readonly horizontal = computed<ChartConfiguration>(() => ({ type: 'bar', data: { labels: this.breakdown().map(x => x.name), datasets: [{ label: this.tab() === 'income' ? 'Income' : 'Spending', data: this.breakdown().map(x => x.amount), backgroundColor: this.breakdown().map(x => x.colour), borderRadius: 5, maxBarThickness: 18 }] }, options: { ...this.options, indexAxis: 'y', plugins: { ...this.options.plugins, legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { color: '#94b7d3' }, grid: { color: '#16405b66' } }, y: { ticks: { color: '#e4edff' }, grid: { display: false }, border: { display: false } } } } }));
+  readonly horizontal = computed<ChartConfiguration>(() => ({ type: 'bar', data: { labels: this.breakdown().map(x => x.name), datasets: [{ label: this.tab() === 'income' ? 'Income' : 'Spending', data: this.breakdown().map(x => x.amount), backgroundColor: this.breakdown().map(x => x.colour), borderRadius: 5, maxBarThickness: 18 }] }, options: { ...this.options, indexAxis: 'y', plugins: { ...this.options.plugins, legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: this.amountTicks, grid: { color: '#16405b66' } }, y: { ticks: { color: '#e4edff', font: { size: 11 } }, grid: { display: false }, border: { display: false } } } } }));
   readonly comparison = computed<ChartConfiguration>(() => ({ type: 'bar', data: { labels: this.periods().map(x => x.label), datasets: [{ label: 'Income', data: this.periods().map(x => x.income), backgroundColor: '#35dba4', borderRadius: 4, maxBarThickness: 22 }, { label: 'Expenses', data: this.periods().map(x => x.expenses), backgroundColor: '#ff608b', borderRadius: 4, maxBarThickness: 22 }] }, options: this.options }));
   setMonth(value: string): void { if (/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) this.store.month.set(value); }
 }

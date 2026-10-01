@@ -11,3 +11,15 @@
 .planner-empty { margin-top:1rem; padding:1rem; text-align:center; color:var(--text-secondary); font-size:.85rem; }.planner-error{margin-top:1rem;border:1px solid #fb7185;border-radius:1rem;padding:1rem;color:#fb7185}
 .field { display:flex; flex-direction:column; gap:.35rem; }.field > span{font-size:.75rem;font-weight:700}.control{min-height:3rem;width:100%;border:1px solid var(--border);border-radius:1rem;background:color-mix(in srgb,var(--card) 88%,var(--lifeos-blue) 12%);padding:.7rem .9rem;color:var(--foreground);outline:none}.control:focus{border-color:var(--lifeos-cyan)}textarea.control{min-height:6rem;resize:vertical}.primary-button{display:flex;min-height:3.2rem;width:100%;align-items:center;justify-content:center;gap:.5rem;border-radius:1.1rem;background:linear-gradient(90deg,var(--lifeos-cyan),var(--lifeos-blue),var(--lifeos-violet));color:#061b31;font-weight:800}.secondary-button{min-height:3rem;border:1px solid var(--border);border-radius:1rem;padding:.6rem 1rem;color:var(--foreground)}
 :host-context(.dark) .planner-page{color:#f8fafc}:host-context(.dark) .planner-card{background:rgb(10 42 69 / 82%);border-color:#285f87}:host-context(.dark) .planner-muted,:host-context(.dark) .planner-row small,:host-context(.dark) .planner-tile small{color:#abc1d9}:host-context(.dark) .planner-row,:host-context(.dark) .planner-tile,:host-context(.dark) .control{background:#103552;border-color:#2d5d80;color:#f8fafc}:host-context(.dark) .planner-action{color:#f8fafc}
+/* Grid gaps also space custom date and select elements consistently. */
+.planner-form { display:grid; gap:16px; padding:20px; }
+.planner-form > * { min-width:0; margin-block:0; }
+.planner-form > h2 { margin:0 0 4px; font-size:1.15rem; line-height:1.4; }
+.planner-form app-date-picker,.planner-form app-select { display:block; min-width:0; }
+.planner-form .control { box-sizing:border-box; }
+.planner-form-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; padding-top:8px; }
+.reminder-filters { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin:0 0 18px; }
+.planner-section-title { margin:24px 0 12px; font-size:1.1rem; line-height:1.4; font-weight:700; }
+.planner-card > .planner-empty { margin:0; padding:24px 16px; }
+.planner-row > span { min-width:0; }.planner-row > span > strong,.planner-row > span > small { display:block; overflow-wrap:anywhere; }.planner-row > span > small { margin-top:4px; }
+@media (max-width:480px) { .planner-form { padding:16px; gap:14px; } }

@@ -1,0 +1,21 @@
+:host { display:block; }
+.transaction-entry { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--border); }
+.transaction-entry:last-child { border-bottom:0; }
+.transaction-entry .transaction-row { display:flex; align-items:center; flex:1; min-width:0; min-height:48px; gap:12px; padding:0; border:0; }
+.transaction-entry .row-copy { min-width:0; }.transaction-entry .amount { margin-left:auto; flex-shrink:0; }
+.transaction-delete { display:inline-flex; align-items:center; justify-content:center; gap:7px; flex-shrink:0; min-height:42px; padding:9px 12px; border:1px solid #ec82984d; border-radius:12px; color:#bb3657; background:#ec82980a; font-size:.75rem; font-weight:600; }
+.transaction-delete ion-icon { font-size:17px; }.transaction-delete:hover { background:#ec829820; }
+.transaction-confirm { margin:0; padding:20px; border-bottom:1px solid var(--border); background:var(--surface-secondary); }
+.confirm-heading { display:flex; align-items:center; gap:10px; }.confirm-heading ion-icon { flex-shrink:0; font-size:20px; color:#ed93a7; }.confirm-heading strong { font-size:.95rem; overflow-wrap:anywhere; }
+.transaction-confirm p { margin:10px 0 0; max-width:60ch; font-size:.8rem; color:var(--text-secondary); line-height:1.6; }
+.transaction-confirm p.negative { color:var(--destructive); }
+.confirm-actions { display:flex; justify-content:flex-end; flex-wrap:wrap; gap:10px; margin-top:18px; }
+.confirm-actions button { min-height:44px; padding:10px 16px; border-radius:12px; font-size:.8rem; font-weight:600; }
+:host-context(.dark) .transaction-delete { color:#f4b1c0; }:host-context(.dark) .transaction-confirm { background:#0c293f; }
+:host-context(.dark) .confirm-actions .danger-button { background:#73324a; border-color:#b65d79; color:#ffe3eb; }
+@media (max-width:520px) {
+  .transaction-entry { gap:10px; padding:12px; }.transaction-entry .transaction-row { gap:9px; flex-wrap:wrap; }
+  .transaction-entry .row-copy { flex-basis:calc(100% - 50px); }.transaction-entry .amount { margin-left:47px; }
+  .transaction-delete { width:42px; padding:8px; }.transaction-delete span { display:none; }
+  .transaction-confirm { padding:16px; }.confirm-actions { display:grid; grid-template-columns:1fr 1fr; }.confirm-actions button { padding-inline:8px; }
+}

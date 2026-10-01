@@ -77,7 +77,7 @@
               </section>
               <section class="payment-section"><h3>Payment history</h3>
                 @for (item of row.history; track item.id) {
-                  <div class="payment-row"><div class="row-copy"><strong>{{ money(item.amount) }}</strong><small>{{ date(item.date) }} � {{ item.paymentMethod }}</small><small>{{ item.title }}</small>@if (item.notes) { <p class="payment-notes">{{ item.notes }}</p> }</div><div class="payment-actions"><button class="text-link" type="button" [disabled]="busy()" (click)="editPayment(row.debt.id, 'paid', item)">Edit</button><button class="text-link" type="button" [disabled]="busy()" (click)="confirmDelete(item)">Delete</button></div></div>
+                  <div class="payment-row"><div class="row-copy"><strong>{{ money(item.amount) }}</strong><small>{{ date(item.date) }} &middot; {{ item.paymentMethod }}</small><small>{{ item.title }}</small>@if (item.notes) { <p class="payment-notes">{{ item.notes }}</p> }</div><div class="payment-actions"><button class="text-link" type="button" [disabled]="busy()" (click)="editPayment(row.debt.id, 'paid', item)">Edit</button><button class="text-link" type="button" [disabled]="busy()" (click)="confirmDelete(item)">Delete</button></div></div>
                 } @empty { <p class="muted help-text">No payments recorded yet. You can add payments from earlier months.</p> }
               </section>
             }
