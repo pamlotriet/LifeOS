@@ -1,0 +1,28 @@
+:host { display:block; }
+.tags-page { max-width:720px; margin:0 auto; padding:18px 20px 40px; color:#f5f8fc; }
+.tag-tabs { display:flex; gap:28px; border-bottom:1px solid #ffffff18; margin-bottom:28px; }
+.tag-tabs button { min-height:46px; padding:0 4px 12px; border-bottom:2px solid transparent; color:#92abc2; font-weight:600; font-size:.9rem; }
+.tag-tabs button.active { color:#d7f7fc; border-bottom-color:#73d6e3; }
+.tags-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; }
+.tags-eyebrow { color:#79b9c9!important; text-transform:uppercase; letter-spacing:.13em; font-size:.62rem!important; margin:0 0 8px!important; }
+.tags-heading h1 { margin:0; font-size:1.6rem; font-weight:700; letter-spacing:-.03em; }
+.tags-heading p { margin:7px 0 0; color:#a8bfd2; font-size:.82rem; line-height:1.5; }
+.new-tag { display:flex; align-items:center; justify-content:center; gap:6px; flex-shrink:0; min-height:44px; padding:10px 15px; border:1px solid #6497a9; border-radius:12px; background:#b5e3e9; color:#0b3042; font-size:.82rem; font-weight:700; }.new-tag ion-icon { font-size:18px; }
+.tag-search { display:flex; align-items:center; gap:10px; padding:0 14px; min-height:46px; border:1px solid #35536b; border-radius:12px; background:#102b43b3; color:#8ca9c0; }
+.tag-search input { width:100%; min-width:0; padding:10px 0; outline:none; background:transparent; color:#eaf2f8; font-size:.9rem; }.tag-search input::placeholder { color:#8ca9c0; }.tag-search:focus-within { border-color:#83cbd9; }
+.tags-list-heading { display:flex; justify-content:space-between; gap:12px; margin:22px 0 12px; color:#8faac0; font-size:.72rem; }
+.tag-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.tag-card { display:flex; flex-direction:column; align-items:flex-start; min-width:0; padding:16px; border:1px solid #35536b; border-radius:16px; background:linear-gradient(145deg,#16344be6,#102a41e6); text-align:left; transition:background .15s,border-color .15s; }
+.tag-card:hover { background:#1b3d54; border-color:#60869c; }.tag-card:active { background:#20465c; }
+.tag-card-top { display:flex; width:100%; align-items:center; justify-content:space-between; gap:8px; margin-bottom:18px; }
+.tag-mark { display:grid; place-items:center; width:32px; height:32px; border-radius:10px; color:var(--tag-color); background:color-mix(in srgb,var(--tag-color) 14%,transparent); }.tag-mark ion-icon { font-size:17px; }
+.tag-edit { font-size:.65rem; color:#94b2c9; }.tag-edit span { margin-left:3px; }
+.tag-card strong { color:#f3f7fb; font-size:.9rem; font-weight:600; overflow-wrap:anywhere; }.tag-book-count { margin-top:5px; color:#9ab5c9; font-size:.75rem; }
+.tags-empty { grid-column:1/-1; padding:30px 16px; text-align:center; color:#a8bfd2; font-size:.9rem; }.tags-empty button { margin-top:12px; color:#b5e3e9; text-decoration:underline; }
+.tag-delete { display:block; margin-top:20px; color:#f8a9b6; min-height:44px; font-size:.8rem; }
+button:disabled { opacity:.55; cursor:wait; }button:focus-visible { outline:2px solid #95dce7; outline-offset:3px; }
+@media (max-width:540px) { .tag-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.tags-page { padding-inline:16px; }.tags-heading h1 { font-size:1.35rem; }.tags-heading { align-items:flex-start; }.tag-card { padding:14px; } }
+@media (max-width:340px) { .tags-heading { flex-wrap:wrap; }.tag-edit { display:none; } }
+.tag-delete { display:inline-flex; align-items:center; justify-content:center; gap:9px; padding:10px 15px; border:1px solid #f48da54d; border-radius:12px; background:#f48da50a; color:#f6b6c3; font-weight:600; transition:background .15s,border-color .15s; }
+.tag-delete ion-icon { font-size:18px; }.tag-delete:hover { background:#f48da51a; border-color:#f48da58c; }
+.tag-delete-confirm { display:inline-flex; align-items:center; justify-content:center; min-height:46px; border:1px solid #ee8a9e; border-radius:12px; background:#b94765; color:#fff; font-weight:650; box-shadow:0 4px 12px #0002; }.tag-delete-confirm:hover { background:#cb526f; }

@@ -82,7 +82,9 @@ service cloud.firestore {
       function validTransaction() {
         let d = request.resource.data;
         return d.keys().hasAll(['amount', 'type', 'categoryId', 'title', 'date', 'paymentMethod', 'notes', 'receiptUrl', 'receiptPath'])
-          && d.keys().hasOnly(['amount', 'type', 'categoryId', 'title', 'date', 'paymentMethod', 'notes', 'receiptUrl', 'receiptPath', 'debtId'])
+          && d.keys().hasOnly(['amount', 'type', 'categoryId', 'title', 'date', 'paymentMethod', 'notes', 'receiptUrl', 'receiptPath', 'debtId', 'paymentStatus'])
+          && (!('paymentStatus' in d) || d.paymentStatus in ['paid', 'planned'])
+          && (!('paymentStatus' in d) || d.paymentStatus != 'planned' || (d.type == 'expense' && 'debtId' in d && d.debtId != ''))
           && d.amount is number && d.amount > 0 && d.amount <= 999999999
           && d.type in ['expense', 'income', 'transfer']
           && d.categoryId is string && d.categoryId.size() > 0 && d.categoryId.size() <= 128

@@ -80,7 +80,7 @@ export class BudgetService {
 
   async saveDebt(input: BudgetDebtInput, id?: string): Promise<BudgetDebt> {
     if (!input.name.trim() || input.name.length > 80) throw new Error('Enter a debt name of up to 80 characters.');
-    if (!['credit-card', 'loan', 'other'].includes(input.type) || input.openingBalance < 0 || input.annualInterestRate < 0 || input.annualInterestRate > 100) throw new Error('Enter valid debt details.');
+    if (!['credit-card', 'loan', 'other'].includes(input.type) || !Number.isFinite(input.openingBalance) || input.openingBalance < 0 || !Number.isFinite(input.annualInterestRate) || input.annualInterestRate < 0 || input.annualInterestRate > 100 || (input.openingOverride != null && (!Number.isFinite(input.openingOverride) || input.openingOverride < 0))) throw new Error('Enter valid debt details.');
     const { uid, token } = await this.auth.getSession();
     const record: BudgetDebt = { ...input, name: input.name.trim(), id: id ?? crypto.randomUUID() };
     await this.firestore.updateDocument(`budgets/${uid}/debts/${encodeURIComponent(record.id)}`, fields(record), token);

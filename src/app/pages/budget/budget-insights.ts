@@ -7,7 +7,7 @@ import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { money, summary, total } from '../../shared/state/budget/budget.model';
 import { BudgetChart } from './budget-ui';
 
-@Component({ selector: 'app-budget-insights', imports: [FormsModule, RouterLink, IonContent, IonIcon, BudgetChart], templateUrl: './budget-insights.html', styleUrl: './budget.css' })
+@Component({ selector: 'app-budget-insights', imports: [FormsModule, RouterLink, IonContent, IonIcon, BudgetChart], templateUrl: './budget-insights.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetInsights {
   readonly store = inject(BudgetStore); readonly tab = signal('spending'); readonly money = money;
   readonly breakdown = computed(() => {

@@ -23,7 +23,7 @@ export class BudgetChart implements AfterViewInit, OnChanges, OnDestroy {
   }
 }
 
-@Component({ selector: 'app-budget-summary', imports: [IonIcon], styleUrl: './budget.css', template: `
+@Component({ selector: 'app-budget-summary', imports: [IonIcon], styleUrls: ['./budget.css', './budget-layout.css'], template: `
   <div class="summary-grid">
     @for (card of cards(); track card.label) {
       <div class="panel summary-card"><span class="category-icon" [style.background]="card.colour"><ion-icon [name]="card.icon" aria-hidden="true" /></span><div><span class="muted">{{ card.label }}</span><strong>{{ money(card.amount) }}</strong></div></div>
@@ -44,7 +44,7 @@ export class BudgetSummary {
   }
 }
 
-@Component({ selector: 'app-budget-transactions', imports: [RouterLink, IonIcon], styleUrl: './budget.css', template: `
+@Component({ selector: 'app-budget-transactions', imports: [RouterLink, IonIcon], styleUrls: ['./budget.css', './budget-layout.css'], template: `
   <div class="transaction-list">
     @for (item of transactions; track item.id) {
       <a class="transaction-row" [routerLink]="['/budget/transactions', item.id, 'edit']">

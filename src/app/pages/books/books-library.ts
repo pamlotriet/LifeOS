@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent, IonIcon, IonModal } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
 import { BookRecord, BOOK_CATEGORIES, BOOK_FORMATS } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
@@ -10,8 +10,9 @@ import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
 @Component({
   selector: 'app-books-library',
-  imports: [IonContent, IonIcon, PageHeader, RouterLink, AppSkeleton],
+  imports: [IonContent, IonIcon, IonModal, PageHeader, RouterLink, AppSkeleton],
   templateUrl: './books-library.html',
+  styleUrl: './books-library.css',
 })
 export class BooksLibrary {
   readonly store = inject(BookStore);
@@ -65,6 +66,56 @@ export class BooksLibrary {
     () => this.store.books().filter((book) => book.status === 'Reading').length,
   );
   readonly currentlyReading = computed(() => this.store.sortedBooks().filter((book) => book.status === 'Reading'));
+  readonly progressBook = signal<BookRecord | null>(null);
+  readonly progressMode = signal<'pages' | 'percent'>('pages');
+  readonly progressInput = signal('');
+  readonly progressSaving = signal(false);
+  readonly progressError = signal('');
+  readonly progressNotice = signal('');
+
+  openProgress(book: BookRecord): void {
+    this.progressBook.set(book);
+    this.progressMode.set(book.pageCount > 0 ? 'pages' : 'percent');
+    this.progressInput.set(String(book.pageCount > 0 ? book.pageProgress : book.progress));
+    this.progressError.set(''); this.progressNotice.set('');
+  }
+  changeProgressMode(mode: 'pages' | 'percent'): void {
+    const book = this.progressBook();
+    if (!book || mode === this.progressMode() || (mode === 'pages' && !book.pageCount)) return;
+    const value = Number(this.progressInput());
+    this.progressInput.set(this.progressInput().trim() && Number.isFinite(value)
+      ? String(Math.round(mode === 'pages' ? value / 100 * book.pageCount : value / book.pageCount * 100)) : '');
+    this.progressMode.set(mode); this.progressError.set('');
+  }
+  closeProgress(): void { if (!this.progressSaving()) this.progressBook.set(null); }
+  async saveProgress(finished = false): Promise<void> {
+    const selected = this.progressBook();
+    if (!selected || this.progressSaving()) return;
+    const book = this.store.books().find(item => item.id === selected.id);
+    if (!book) { this.progressError.set('This book is no longer in your library.'); return; }
+    const max = this.progressMode() === 'pages' ? book.pageCount : 100;
+    const value = Number(this.progressInput());
+    if (!finished && (!this.progressInput().trim() || !Number.isInteger(value) || value < 0 || value > max)) {
+      this.progressError.set(`Enter a whole number between 0 and ${max}.`); return;
+    }
+    this.progressSaving.set(true); this.progressError.set('');
+    try {
+      if (finished) {
+        const now = new Date();
+        const finishDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        const { id, ...input } = book;
+        await this.store.saveBook({ ...input, progress: 100, pageProgress: book.pageCount || 0, status: 'Finished', finishDate, yearRead: now.getFullYear() }, id);
+      } else if (book.pageCount > 0) {
+        const page = this.progressMode() === 'pages' ? value : Math.round(value / 100 * book.pageCount);
+        await this.store.setReadingPosition(book.id, page, book.pageCount);
+      } else {
+        await this.store.setReadingProgress(book.id, value);
+      }
+      this.progressNotice.set(finished ? `Finished ${book.title}. Your reading goal has been updated.` : `Progress saved for ${book.title}.`);
+      this.progressBook.set(null);
+    } catch (error) { this.progressError.set(error instanceof Error ? error.message : 'Could not save progress. Please try again.'); }
+    finally { this.progressSaving.set(false); }
+  }
 
   constructor() {
     void this.loadGoal();
@@ -125,13 +176,7 @@ export class BooksLibrary {
       .filter((tag) => ids.has(tag.id))
       .map((tag) => tag.name);
   }
-  async updateProgress(book: BookRecord, value: number): Promise<void> {
-    await this.store.setReadingProgress(book.id, value);
-  }
-  async updatePageProgress(book: BookRecord, value: number): Promise<void> {
-    await this.store.setReadingPosition(book.id, value, book.pageCount);
-  }
   pagePercent(book: BookRecord): number {
-    return book.pageCount ? Math.round((book.pageProgress / book.pageCount) * 100) : 0;
+    return Math.max(0, Math.min(100, book.pageCount ? Math.round((book.pageProgress / book.pageCount) * 100) : book.progress));
   }
 }

@@ -5,9 +5,10 @@ import { Capacitor } from '@capacitor/core';
 import { AuthService } from './shared/state/authentication/authentication.service';
 import { RefreshCoordinator } from './shared/state/refresh/refresh-coordinator.service';
 import { ThemeService } from './shared/state/theme/theme.service';
+import { ClearZeroOnFocus } from './shared/directives/clear-zero-on-focus';
 
 @Component({
-  imports: [IonApp, IonRouterOutlet],
+  imports: [IonApp, IonRouterOutlet, ClearZeroOnFocus],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

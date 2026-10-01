@@ -54,4 +54,12 @@ describe('BudgetService', () => {
     await expect(service().removeReceipt('users/other/budget/t1/receipt-1')).rejects.toThrow('Invalid receipt path');
     expect(photos.deletePhoto).not.toHaveBeenCalled();
   });
+  it('persists planned status and updates the same payment when completed', async () => {
+    const planned = { ...input, debtId: 'loan', paymentStatus: 'planned' as const, date: '2099-01-01' };
+    await service().saveTransaction(planned);
+    expect(firestore.createDocument).toHaveBeenCalledWith('budgets/owner/transactions', expect.any(String), expect.objectContaining({ paymentStatus: { stringValue: 'planned' }, debtId: { stringValue: 'loan' } }), 'token');
+    await service().saveTransaction({ ...planned, paymentStatus: 'paid', date: '2020-01-01' }, 'payment-1');
+    expect(firestore.updateDocument).toHaveBeenCalledWith('budgets/owner/transactions/payment-1', expect.objectContaining({ paymentStatus: { stringValue: 'paid' } }), 'token');
+    expect(firestore.createDocument).toHaveBeenCalledTimes(1);
+  });
 });

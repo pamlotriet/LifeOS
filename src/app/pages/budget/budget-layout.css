@@ -1,0 +1,13 @@
+/* Shared budget panels need their own spacing; the shell only supplies a border. */
+.plan-panel,.debt-panel,.budget-content-card { padding:20px; margin-bottom:18px; }
+.plan-panel>.muted,.debt-panel>.muted { margin:0 0 16px; font-size:.85rem; line-height:1.6; }
+.editor>h2 { margin-bottom:20px; }
+.form-fields { border:0; padding:0; margin:0; min-width:0; }
+.field-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.field { min-width:0; }.field input,.field select,.field textarea { box-sizing:border-box; }
+.help-text { font-size:.8rem; line-height:1.6; margin:0 0 16px; }
+.toolbar { flex-wrap:wrap; margin-top:16px; }
+.page-header h1 { min-width:0; }.page-header>.icon-button { flex-shrink:0; }
+
+@media (max-width:520px) { .field-grid { grid-template-columns:1fr; gap:0; } .plan-panel,.debt-panel,.budget-content-card { padding:16px; } }
+:host-context(.dark) .error,:host-context(.dark) .danger-button { color:#fecdd3; background:#3b2035; border-color:#a44768; }

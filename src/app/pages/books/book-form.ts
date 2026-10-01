@@ -92,6 +92,7 @@ export class BookForm {
     if ((!title.trim() || !author.trim()) && !isbn.trim()) return;
     const version = ++this.coverLookupVersion;
     this.lookingUpCover.set(true);
+    this.form.controls.coverUrl.setValue('');
     const cover = await this.covers.find(title, author, isbn);
     if (version !== this.coverLookupVersion) return;
     this.form.controls.coverUrl.setValue(cover ?? '');
@@ -110,6 +111,9 @@ export class BookForm {
       if (!book || !book.title || !book.author) {
         throw new Error(`No book details were found for ISBN ${isbn}. You can still enter it manually.`);
       }
+      // An earlier title lookup must not overwrite the scanned edition's cover.
+      ++this.coverLookupVersion;
+      this.lookingUpCover.set(false);
       this.form.patchValue({
         title: book.title,
         author: book.author,
@@ -142,15 +146,21 @@ export class BookForm {
     else void this.router.navigateByUrl('/books');
   }
   nextStep(): void {
-    for (const key of ['title', 'author', 'category'] as const) this.form.controls[key].markAsTouched();
-    if (this.form.controls.title.invalid || this.form.controls.author.invalid || this.form.controls.category.invalid) {
-      this.error.set('Enter a title, author and main category.'); return;
-    }
-    if (!this.copies().length) { this.error.set('Add at least one copy.'); return; }
-    if (this.hasPageFormat() && Number(this.form.controls.pageCount.value) < 1) {
-      this.error.set('Enter the number of pages for this book.'); return;
-    }
+    if (!this.validateBasics()) return;
     this.error.set(''); this.step.set(2);
+  }
+  private validateBasics(): boolean {
+    for (const key of ['title', 'author', 'category'] as const) this.form.controls[key].markAsTouched();
+    if ((['title', 'author', 'category'] as const).some(key => !this.form.controls[key].value.trim())) {
+      this.error.set('Enter a title, author and main category.'); return false;
+    }
+    if (!this.copies().length) { this.error.set('Add at least one copy.'); return false; }
+    // Validate here so a hidden page input cannot leave an audiobook invalid.
+    const pages = Number(this.form.controls.pageCount.value);
+    if (this.hasPageFormat() && (!Number.isFinite(pages) || pages < 1)) {
+      this.error.set('Enter the number of pages for this book.'); return false;
+    }
+    return true;
   }
   async toggleFlag(field: 'favourite' | 'wouldRecommend' | 'reread'): Promise<void> {
     const book = this.book();
@@ -174,11 +184,12 @@ export class BookForm {
   }
 
   async save(): Promise<void> {
-    if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set('Enter a title, author and main category.'); return; }
-    if (!this.copies().length) { this.error.set('Add at least one copy.'); return; }
+    if (!this.validateBasics()) { this.step.set(1); return; }
+    if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set('Check the book details. The series book number must be at least 1.'); return; }
     if (this.saving()) return;
     this.saving.set(true); this.error.set('');
     try {
+      if (this.lookingUpCover()) await this.lookupCover();
       const value = this.form.getRawValue();
       const pageCount = this.hasPageFormat() ? Math.max(0, Number(value.pageCount)) : 0;
       const pageProgress = pageCount ? Math.min(pageCount, Math.max(0, Number(value.pageProgress))) : 0;

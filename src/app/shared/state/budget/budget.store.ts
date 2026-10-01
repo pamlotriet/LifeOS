@@ -15,7 +15,7 @@ export class BudgetStore {
   readonly debts = signal<BudgetDebt[]>([]);
   readonly activeCategories = computed(() => this.categories().filter(x => !x.deleted).sort((a, b) => a.order - b.order || a.name.localeCompare(b.name)));
   readonly month = signal(localDate().slice(0, 7));
-  readonly monthly = computed(() => this.transactions().filter(x => x.date.startsWith(this.month())).sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title)));
+  readonly monthly = computed(() => this.transactions().filter(x => x.paymentStatus !== 'planned' && x.date.startsWith(this.month())).sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title)));
   readonly loading = signal(false);
   readonly error = signal('');
   readonly notice = signal('');
@@ -54,6 +54,7 @@ export class BudgetStore {
     if (this.loading() || this.error()) throw new Error('Wait for your budget to load, or retry loading it first.');
     const category = this.activeCategories().find(x => x.id === input.categoryId);
     if (!category || !compatibleCategory(input.type, category.type)) throw new Error('Choose a category for this transaction type.');
+    if (input.debtId && !this.debts().some(debt => debt.id === input.debtId)) throw new Error('Choose an existing debt account.');
     const uid = this.auth.userId();
     const old = this.transactions().find(x => x.id === id);
     const saved = await this.service.saveTransaction(input, id, receipt);
@@ -90,7 +91,11 @@ export class BudgetStore {
     this.plans.update(items => [...items.filter(item => item.id !== id), saved]);
   }
   async saveDebt(input: BudgetDebtInput, id?: string): Promise<void> {
+    if (this.loading() || this.error()) throw new Error('Load your budget before changing debts.');
+    const uid = this.auth.userId();
     const saved = await this.service.saveDebt(input, id);
+    if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget to continue.');
+    ++this.generation;
     this.debts.update(items => [...items.filter(item => item.id !== saved.id), saved]);
   }
   async deleteDebt(id: string): Promise<void> {

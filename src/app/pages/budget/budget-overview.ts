@@ -8,7 +8,7 @@ import { debtSummary, money, summary, total } from '../../shared/state/budget/bu
 import { BudgetChart, BudgetSummary, BudgetTransactions } from './budget-ui';
 import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-budget-overview', imports: [IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrl: './budget.css' })
+@Component({ selector: 'app-budget-overview', imports: [IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetOverview {
   readonly store = inject(BudgetStore);
   readonly monthlyView = !!inject(ActivatedRoute).snapshot.data['monthly'];
@@ -22,7 +22,7 @@ export class BudgetOverview {
     return { ...category, planned, actual };
   }));
   readonly plannedTotal = computed(() => this.planned().reduce((sum, item) => sum + item.planned, 0));
-  readonly debtCards = computed(() => this.store.debts().map(debt => ({ debt, ...debtSummary(debt, this.store.monthly()) })));
+  readonly debtCards = computed(() => this.store.debts().map(debt => ({ debt, ...debtSummary(debt, this.store.transactions(), this.store.month()) })));
   readonly filtered = computed(() => this.store.monthly().filter(x => !this.selectedDate() || x.date === this.selectedDate()));
   readonly spending = computed(() => {
     const items = this.store.monthly().filter(x => x.type === 'expense');

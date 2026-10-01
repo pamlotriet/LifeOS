@@ -3,6 +3,7 @@ import { FirestoreDocument, FirestoreService, FirestoreValue } from '../../../co
 import { AuthService } from '../authentication/authentication.service';
 import { OpenLibraryCoverService } from './open-library-cover.service';
 import { BookInput, BookRecord, BookTag, BookTagType } from './book.model';
+import { DEFAULT_GENRE_TAGS, GENRE_SEED_ID } from './default-genre-tags';
 
 const text = (value: string): FirestoreValue => ({ stringValue: value });
 const strings = (values: string[]): FirestoreValue => ({ arrayValue: { values: values.map(text) } });
@@ -35,9 +36,14 @@ export class BookService {
     };
     const path = `users/${uid}/books`;
     const previous = id ? await this.getBook(id) : null;
-    book.coverUrl = previous && previous.title === book.title && previous.author === book.author && previous.coverUrl
-      ? previous.coverUrl
-      : await this.covers.find(book.title, book.author, book.isbn) ?? '';
+    const sameEdition = previous && previous.title === book.title && previous.author === book.author
+      && previous.isbn === book.isbn;
+    // Keep the preview chosen in the form, unless it is an old cover carried
+    // over while changing the book's identity or ISBN.
+    const selectedCover = input.coverUrl && (!previous || sameEdition || input.coverUrl !== previous.coverUrl)
+      ? input.coverUrl : '';
+    book.coverUrl = selectedCover || (sameEdition ? previous.coverUrl : '')
+      || await this.covers.find(book.title, book.author, book.isbn) || '';
     if (id) await this.firestore.updateDocument(`${path}/${encodeURIComponent(id)}`, this.toBookFields(book), token);
     else await this.firestore.createDocument(path, book.id, this.toBookFields(book), token);
     return book;
@@ -68,7 +74,20 @@ export class BookService {
 
   async listTags(): Promise<BookTag[]> {
     const { uid, token } = await this.auth.getSession();
-    return (await this.firestore.listDocuments(`users/${uid}/bookTags`, token)).map((doc) => this.fromTag(doc));
+    const path = `users/${uid}/bookTags`;
+    const docs = await this.firestore.listDocuments(path, token);
+    const tags = docs.filter(doc => doc.name.split('/').at(-1) !== GENRE_SEED_ID).map(doc => this.fromTag(doc));
+    if (docs.some(doc => doc.name.split('/').at(-1) === GENRE_SEED_ID)) return tags;
+    const names = new Set(tags.filter(tag => tag.type === 'genre').map(tag => tag.name.trim().toLowerCase()));
+    const additions = DEFAULT_GENRE_TAGS.filter(tag => !names.has(tag.name.toLowerCase()) && !tags.some(existing => existing.id === tag.id));
+    // Seed once so edited or deleted starter tags stay edited or deleted.
+    await this.firestore.commitWrites([
+      ...additions.map(tag => ({ update: { name: this.firestore.documentName(`${path}/${tag.id}`), fields: {
+        name: text(tag.name), type: text(tag.type), color: text(tag.color),
+      } } })),
+      { update: { name: this.firestore.documentName(`${path}/${GENRE_SEED_ID}`), fields: { seeded: { booleanValue: true } } } },
+    ], token);
+    return [...tags, ...additions];
   }
 
   async saveTag(input: Pick<BookTag, 'name' | 'type' | 'color'>, id?: string): Promise<BookTag> {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, summary, total, TransactionInput, validateTransaction } from './budget.model';
+import { BudgetDebt, BudgetTransaction, compatibleCategory, debtSummary, DEFAULT_CATEGORIES, summary, total, TransactionInput, validateTransaction } from './budget.model';
 
 const transaction = (amount: number, type: BudgetTransaction['type'], categoryId: string): BudgetTransaction => ({ id: crypto.randomUUID(), amount, type, categoryId, title: 'Test', date: '2026-09-01', paymentMethod: 'Card', notes: '', receiptUrl: '', receiptPath: '' });
 describe('Budget calculations', () => {
@@ -33,5 +33,34 @@ describe('Budget validation', () => {
     expect(() => validateTransaction({ ...input, date: '2028-02-29' })).not.toThrow();
     expect(() => validateTransaction({ ...input, title: '  ' })).toThrow(/title/);
     expect(() => validateTransaction({ ...input, categoryId: '' })).toThrow(/category/);
+  });
+});
+
+describe('Debt payments', () => {
+  const debt: BudgetDebt = { id: 'loan', name: 'Oom Martin', type: 'loan', openingBalance: 170000, annualInterestRate: 0, openingOverride: null };
+  const payment = (amount: number, date: string, paymentStatus?: 'paid' | 'planned'): BudgetTransaction => ({ ...transaction(amount, 'expense', 'other'), debtId: debt.id, date, paymentStatus });
+  it('carries past payments forward and separates future plans from the actual balance', () => {
+    const items = [payment(10000, '2026-08-01'), payment(5000, '2026-09-02', 'paid'), payment(2000, '2026-10-10', 'planned')];
+    expect(debtSummary(debt, items, '2026-09')).toMatchObject({ opening: 160000, paid: 15000, monthPaid: 5000, closing: 155000, planned: 2000, projected: 153000 });
+    expect(summary(items, DEFAULT_CATEGORIES).expenses).toBe(15000);
+  });
+  it('does not reduce a historical balance with later paid entries or another debt', () => {
+    const items = [payment(1000, '2026-10-02', 'paid'), { ...payment(500, '2026-08-01'), debtId: 'other' }];
+    expect(debtSummary(debt, items, '2026-09').closing).toBe(170000);
+  });
+  it('counts a planned payment once after it is marked paid', () => {
+    const item = payment(500, '2026-09-01', 'planned');
+    expect(debtSummary(debt, [item], '2026-09').closing).toBe(170000);
+    expect(debtSummary(debt, [{ ...item, paymentStatus: 'paid' }], '2026-09')).toMatchObject({ closing: 169500, planned: 0, paid: 500 });
+  });
+  it('calculates current-month credit interest after previous payments and clamps overpayment', () => {
+    expect(debtSummary({ ...debt, type: 'credit-card', annualInterestRate: 12 }, [payment(10000, '2026-08-01')], '2026-09').interest).toBe(1600);
+    expect(debtSummary(debt, [payment(200000, '2026-09-01')], '2026-09').closing).toBe(0);
+  });
+  it('allows past payments and future plans but rejects future completed payments', () => {
+    expect(() => validateTransaction(payment(500, '2020-01-01', 'paid'))).not.toThrow();
+    expect(() => validateTransaction(payment(500, '2099-01-01', 'planned'))).not.toThrow();
+    expect(() => validateTransaction(payment(500, '2099-01-01', 'paid'))).toThrow(/planned/);
+    expect(() => validateTransaction({ ...payment(500, '2099-01-01', 'planned'), debtId: '' })).toThrow(/debt/);
   });
 });

@@ -5,7 +5,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { BudgetCategory, CATEGORY_COLOURS, CATEGORY_ICONS, CATEGORY_TYPES, CategoryType, money, total } from '../../shared/state/budget/budget.model';
 
-@Component({ selector: 'app-budget-categories', imports: [FormsModule, RouterLink, IonContent, IonIcon], templateUrl: './budget-categories.html', styleUrl: './budget.css' })
+@Component({ selector: 'app-budget-categories', imports: [FormsModule, RouterLink, IonContent, IonIcon], templateUrl: './budget-categories.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetCategories {
   readonly store = inject(BudgetStore);
   readonly tab = signal<CategoryType>('expense');

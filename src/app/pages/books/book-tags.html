@@ -1,84 +1,26 @@
 <ion-header app-page-header title="Manage Tags" backUrl="/books"></ion-header>
-<ion-content class="[--background:transparent] [--color:#fff]"
-  ><main class="mx-auto max-w-xl px-4 pb-8 pt-4 text-white">
-    <div class="grid grid-cols-2 gap-1 rounded-full border border-[#315b7e] bg-[#102e4a] p-1">
-      <button
-        type="button"
-        (click)="type.set('mood')"
-        class="rounded-full py-2 text-sm"
-        [class]="
-          type() === 'mood'
-            ? 'bg-gradient-to-r from-cyan-400 to-blue-500 font-bold text-[#062642]'
-            : 'text-[#b5cbe2]'
-        "
-      >
-        Mood Tags</button
-      ><button
-        type="button"
-        (click)="type.set('genre')"
-        class="rounded-full py-2 text-sm"
-        [class]="
-          type() === 'genre'
-            ? 'bg-gradient-to-r from-cyan-400 to-blue-500 font-bold text-[#062642]'
-            : 'text-[#b5cbe2]'
-        "
-      >
-        Genre Tags
-      </button>
-    </div>
-    <header class="my-4 flex items-center justify-between gap-3">
-      <div>
-        <h2 class="text-lg font-bold">{{ type() === 'mood' ? 'Mood Tags' : 'Genre Tags' }}</h2>
-        <p class="text-xs text-[#b5cbe2]">
-          {{ type() === 'mood' ? 'How a book made you feel.' : 'What kind of story is it?' }}
-        </p>
-      </div>
-      <button
-        type="button"
-        (click)="openNew()"
-        class="rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-2 text-sm font-semibold text-[#062642]"
-      >
-        + New Tag
-      </button>
+<ion-content class="[--background:transparent] [--color:#fff]">
+  <main class="tags-page">
+    <nav class="tag-tabs" aria-label="Tag type">
+      <button type="button" [class.active]="type() === 'mood'" [attr.aria-pressed]="type() === 'mood'" (click)="type.set('mood')">Moods</button>
+      <button type="button" [class.active]="type() === 'genre'" [attr.aria-pressed]="type() === 'genre'" (click)="type.set('genre')">Genres</button>
+    </nav>
+    <header class="tags-heading">
+      <div><p class="tags-eyebrow">Make your library yours</p><h1>{{ type() === 'mood' ? 'Reading moods' : 'Your genres' }}</h1><p>{{ type() === 'mood' ? 'The feelings that stay after the last page.' : 'A place for every kind of story.' }}</p></div>
+      <button type="button" class="new-tag" (click)="openNew()" [disabled]="store.loading() || !!store.error()"><ion-icon name="add" aria-hidden="true" /> New tag</button>
     </header>
-    @if (store.loading()) {
-      <app-skeleton variant="list" [count]="4" />
-    } @else {
-      <div class="flex flex-col gap-1.5">
+    <label class="tag-search"><ion-icon name="search" aria-hidden="true" /><input type="search" aria-label="Search tags" placeholder="Find a tag..." [value]="search()" (input)="search.set($any($event.target).value)" /></label>
+    @if (store.loading()) { <app-skeleton variant="grid" [count]="6" /> }
+    @else if (store.error()) { <p role="alert" class="tags-empty">{{ store.error() }} <button type="button" (click)="store.reload()">Retry</button></p> }
+    @else {
+      <div class="tags-list-heading"><span>{{ visible().length }} {{ visible().length === 1 ? 'tag' : 'tags' }}</span><span>Select a tag to edit</span></div>
+      <div class="tag-grid">
         @for (tag of visible(); track tag.id) {
-          <div
-            class="flex min-h-12 items-center gap-2 rounded-xl border border-[#315b7e] bg-[#123451] px-3"
-          >
-            <span class="h-4 w-4 rounded-full" [style.background]="tag.color"></span
-            ><span
-              class="rounded-full border px-2 py-1 text-xs"
-              [style.border-color]="tag.color"
-              [style.color]="tag.color"
-              >{{ tag.name }}</span
-            ><span class="ml-auto text-xs text-[#b5cbe2]">{{ count(tag) }} books</span
-            ><button
-              type="button"
-              (click)="openEdit(tag)"
-              [attr.aria-label]="'Edit ' + tag.name"
-              class="px-1 text-cyan-200"
-            >
-              <ion-icon name="settings"></ion-icon></button
-            ><button
-              type="button"
-              (click)="deleting.set(tag); error.set('')"
-              [attr.aria-label]="'Delete ' + tag.name"
-              class="px-1 text-rose-300"
-            >
-              ×
-            </button>
-          </div>
-        } @empty {
-          <p
-            class="rounded-xl border border-[#315b7e] bg-[#123451] p-5 text-center text-sm text-[#b5cbe2]"
-          >
-            No {{ type() }} tags yet.
-          </p>
-        }
+          <button type="button" class="tag-card" (click)="openEdit(tag)" [attr.aria-label]="'Edit ' + tag.name + ', ' + count(tag) + (count(tag) === 1 ? ' book' : ' books')" [style.--tag-color]="tag.color">
+            <span class="tag-card-top"><span class="tag-mark"><ion-icon [name]="type() === 'mood' ? 'heart-outline' : 'book-outline'" aria-hidden="true" /></span><span class="tag-edit">Edit <span aria-hidden="true">↗</span></span></span>
+            <strong>{{ tag.name }}</strong><span class="tag-book-count">{{ count(tag) }} {{ count(tag) === 1 ? 'book' : 'books' }}</span>
+          </button>
+        } @empty { <div class="tags-empty"><p>{{ search() ? 'No tags match your search.' : 'Your collection starts with a tag.' }}</p><button type="button" (click)="search() ? search.set('') : openNew()">{{ search() ? 'Clear search' : 'Create your first tag' }}</button></div> }
       </div>
     }
     @if (formOpen()) {
@@ -96,7 +38,7 @@
               class="mt-1 block w-full rounded-xl border border-[#315b7e] bg-[#123451] p-3 text-base text-white"
           /></label>
           <p class="mt-3 text-xs">Color *</p>
-          <div class="mt-2 flex gap-2">
+          <div class="mt-2 flex flex-wrap gap-2">
             @for (option of colors; track option) {
               <button
                 type="button"
@@ -112,10 +54,11 @@
           @if (error()) {
             <p role="alert" class="mt-3 text-sm text-rose-300">{{ error() }}</p>
           }
+          @if (editing(); as tag) { <button type="button" class="tag-delete" [disabled]="busy()" (click)="formOpen.set(false); deleting.set(tag); error.set('')"><ion-icon name="trash-outline" aria-hidden="true" /><span>Delete tag</span></button> }
           <div class="mt-5 grid grid-cols-2 gap-2">
             <button
               type="button"
-              (click)="formOpen.set(false)"
+              (click)="formOpen.set(false)" [disabled]="busy()"
               class="rounded-xl border border-[#507399] py-3"
             >
               Cancel</button
@@ -149,7 +92,7 @@
           <div class="mt-5 grid grid-cols-2 gap-2">
             <button
               type="button"
-              (click)="deleting.set(null)"
+              (click)="deleting.set(null)" [disabled]="busy()"
               class="rounded-xl border border-[#507399] py-3"
             >
               Cancel</button
@@ -157,7 +100,7 @@
               type="button"
               (click)="remove()"
               [disabled]="busy()"
-              class="rounded-xl bg-rose-500 py-3 font-semibold"
+              class="tag-delete-confirm"
             >
               Delete
             </button>

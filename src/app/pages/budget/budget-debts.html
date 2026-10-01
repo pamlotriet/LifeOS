@@ -1,1 +1,89 @@
-<ion-content><main class="budget-page"><header class="page-header"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><h1 class="compact-title">Debt &amp; credit</h1><button class="primary-button" type="button" (click)="edit()">Add</button></header><p class="status">Credit-card closing balances include monthly interest. Log an expense against a debt account to record a payment.</p>@for (row of rows(); track row.debt.id) { <article class="panel debt-card"><div><h2>{{ row.debt.name }}</h2><p class="muted">Opening {{ money(row.opening) }} · Interest {{ money(row.interest) }} · Payments {{ money(row.paid) }}</p><strong>{{ money(row.closing) }} left</strong></div><button class="text-link" (click)="edit(row.debt.id)">Edit</button></article> } @empty { <p class="panel empty-state">No debt accounts yet.</p> } @if (editing()) { <section class="panel editor"><h2>{{ editing() === 'new' ? 'Add debt account' : 'Edit debt account' }}</h2><label class="field"><span>Name</span><input [(ngModel)]="model.name" placeholder="e.g. Visa card" /></label><label class="field"><span>Type</span><select class="lifeos-select" [(ngModel)]="model.type"><option value="credit-card">Credit card</option><option value="loan">Loan</option><option value="other">Other</option></select></label><label class="field"><span>Opening balance</span><input type="number" min="0" [(ngModel)]="model.openingBalance" /></label><label class="field"><span>Annual interest rate (%)</span><input type="number" min="0" max="100" step="0.01" [(ngModel)]="model.annualInterestRate" /></label><label class="field"><span>Adjust this month’s opening balance</span><input type="number" min="0" placeholder="Use calculated opening" [ngModel]="model.openingOverride" (ngModelChange)="model.openingOverride = $event === '' ? null : $event" /></label><div class="form-actions"><button class="secondary-button" (click)="editing.set(null)">Cancel</button><button class="primary-button" (click)="save()">Save</button></div></section> }</main></ion-content>
+<ion-content>
+  <main class="budget-page">
+    <header class="page-header">
+      <a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a>
+      <h1 class="compact-title">Debt &amp; credit</h1>
+      <button class="primary-button" type="button" (click)="edit()" [disabled]="busy() || store.loading() || !!store.error()">Add debt</button>
+    </header>
+    @if (store.loading()) { <p class="status" role="status">Loading debts and payments...</p> }
+    @if (store.error()) { <p class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></p> }
+    @if (error()) { <p class="status error" role="alert">{{ error() }}</p> }
+    @if (!store.loading() && !store.error()) {
+      <section class="debt-summary" aria-label="Debt totals">
+        <div class="panel"><span>Remaining balance</span><strong>{{ money(totals().remaining) }}</strong></div>
+        <div class="panel"><span>Payments made</span><strong class="positive">{{ money(totals().paid) }}</strong></div>
+        <div class="panel"><span>Payments planned</span><strong>{{ money(totals().planned) }}</strong></div>
+      </section>
+      <p class="status">Record payments you've already made or plan your next ones. Planned payments only reduce your debt and budget balance once you mark them paid.</p>
+
+      @if (editing()) {
+        <form class="panel editor" (ngSubmit)="save()">
+          <h2>{{ editing() === 'new' ? 'Add debt account' : 'Edit debt account' }}</h2>
+          <fieldset [disabled]="busy()" class="form-fields">
+            <label class="field"><span>Name</span><input name="name" required maxlength="80" [(ngModel)]="model.name" placeholder="e.g. Oom Martin" /></label>
+            <label class="field"><span>Type</span><select class="lifeos-select" name="type" [(ngModel)]="model.type"><option value="credit-card">Credit card</option><option value="loan">Loan</option><option value="other">Other</option></select></label>
+            <div class="field-grid">
+              <label class="field"><span>Starting balance (R)</span><input name="opening" type="number" min="0" step="0.01" required [(ngModel)]="model.openingBalance" /></label>
+              <label class="field"><span>Annual interest rate (%)</span><input name="rate" type="number" min="0" max="100" step="0.01" required [(ngModel)]="model.annualInterestRate" /></label>
+            </div>
+            <p class="muted help-text">Use the balance before the payments you will enter, so they are not deducted twice.</p>
+            <label class="field"><span>Adjusted starting balance (optional)</span><input name="override" type="number" min="0" step="0.01" placeholder="Use starting balance" [(ngModel)]="model.openingOverride" /></label>
+            <div class="form-actions"><button type="button" class="secondary-button" (click)="editing.set(null)">Cancel</button><button type="submit" class="primary-button">{{ busy() ? 'Saving...' : 'Save debt' }}</button></div>
+          </fieldset>
+        </form>
+      }
+      @if (paymentDebt()) {
+        <form class="panel editor payment-editor" (ngSubmit)="savePayment()">
+          <h2>{{ paymentId() ? 'Edit payment' : 'Add payment' }}</h2>
+          <fieldset [disabled]="busy()" class="form-fields">
+            <div class="segments" aria-label="Payment status">
+              <button type="button" [class.active]="payment.paymentStatus === 'paid'" [attr.aria-pressed]="payment.paymentStatus === 'paid'" (click)="payment.paymentStatus = 'paid'">Already paid</button>
+              <button type="button" [class.active]="payment.paymentStatus === 'planned'" [attr.aria-pressed]="payment.paymentStatus === 'planned'" (click)="payment.paymentStatus = 'planned'">Planned</button>
+            </div>
+            <div class="field-grid">
+              <label class="field"><span>Amount (R)</span><input name="amount" type="number" inputmode="decimal" min="0.01" max="999999999" step="0.01" required [(ngModel)]="payment.amount" /></label>
+              <div class="field"><span>{{ payment.paymentStatus === 'planned' ? 'Planned date' : 'Date paid' }}</span><app-date-picker name="date" ariaLabel="Payment date" [(ngModel)]="payment.date" /></div>
+            </div>
+            <label class="field"><span>Description</span><input name="title" required maxlength="120" [(ngModel)]="payment.title" /></label>
+            <div class="field-grid">
+              <label class="field"><span>Budget category</span><select class="lifeos-select" name="category" required [(ngModel)]="payment.categoryId">@for (category of categories(); track category.id) { <option [value]="category.id">{{ category.name }}</option> }</select></label>
+              <label class="field"><span>Payment method</span><select class="lifeos-select" name="method" [(ngModel)]="payment.paymentMethod">@for (method of ['Card', 'Cash', 'Bank transfer', 'Debit order', 'Other']; track method) { <option>{{ method }}</option> }</select></label>
+            </div>
+            <label class="field"><span>Notes (optional)</span><textarea name="notes" maxlength="2000" [(ngModel)]="payment.notes"></textarea></label>
+            <p class="muted help-text">{{ payment.paymentStatus === 'planned' ? 'This stays in your payment plan until you mark it paid.' : 'This appears once as an expense in the month it was paid.' }}</p>
+            <div class="form-actions"><button type="button" class="secondary-button" (click)="paymentDebt.set(null)">Cancel</button><button type="submit" class="primary-button">{{ busy() ? 'Saving...' : payment.paymentStatus === 'planned' ? 'Save planned payment' : 'Save payment' }}</button></div>
+          </fieldset>
+        </form>
+      }
+      @if (deleting(); as item) {
+        <section class="status" role="alert">
+          <p>Delete {{ money(item.amount) }} for {{ item.title }}? Paid entries will also be removed from budget expenses.</p>
+          <div class="form-actions"><button class="secondary-button" [disabled]="busy()" (click)="deleting.set(null)">Keep payment</button><button class="secondary-button danger-button" [disabled]="busy()" (click)="removePayment()">Delete payment</button></div>
+        </section>
+      }
+      <div class="debt-list">
+        @for (row of rows(); track row.debt.id) {
+          <article class="panel debt-card">
+            <div class="debt-card-heading"><div><p class="eyebrow">{{ row.debt.type === 'credit-card' ? 'Credit card' : row.debt.type === 'loan' ? 'Loan' : 'Other debt' }}</p><h2>{{ row.debt.name }}</h2></div><button type="button" class="secondary-button" [disabled]="busy()" (click)="edit(row.debt.id)">Edit debt</button></div>
+            <div class="debt-balance"><span class="muted">Remaining balance</span><strong>{{ money(row.closing) }}</strong></div>
+            <dl class="debt-metrics"><div><dt>Paid so far</dt><dd class="positive">{{ money(row.paid) }}</dd></div><div><dt>Planned</dt><dd>{{ money(row.planned) }}</dd></div><div><dt>After planned payments</dt><dd>{{ money(row.projected) }}</dd></div></dl>
+            @if (row.debt.type === 'credit-card') { <p class="muted help-text">Includes {{ money(row.interest) }} estimated interest for this month. Prior interest and lender fees are not calculated.</p> }
+            <div class="debt-actions"><button class="primary-button" type="button" [disabled]="busy()" (click)="editPayment(row.debt.id, 'paid')">Record payment</button><button class="secondary-button" type="button" [disabled]="busy()" (click)="editPayment(row.debt.id, 'planned')">Plan payment</button><button class="text-link" type="button" [attr.aria-expanded]="expanded() === row.debt.id" (click)="expanded.set(expanded() === row.debt.id ? null : row.debt.id)">{{ expanded() === row.debt.id ? 'Hide payments' : 'View payments' }} ({{ row.history.length + row.upcoming.length }})</button></div>
+            @if (expanded() === row.debt.id) {
+              <section class="payment-section"><h3>Planned payments</h3>
+                @for (item of row.upcoming; track item.id) {
+                  <div class="payment-row"><div class="row-copy"><strong>{{ money(item.amount) }}</strong><small>{{ date(item.date) }} <span class="payment-badge" [class.overdue]="item.date < today">{{ item.date < today ? 'Overdue' : 'Planned' }}</span></small><small>{{ item.title }}</small>@if (item.notes) { <p class="payment-notes">{{ item.notes }}</p> }</div><div class="payment-actions"><button type="button" class="secondary-button" [disabled]="busy()" (click)="editPayment(row.debt.id, 'paid', item)">Mark paid</button><button class="text-link" type="button" [disabled]="busy()" (click)="editPayment(row.debt.id, 'planned', item)">Edit</button><button class="text-link" type="button" [disabled]="busy()" (click)="confirmDelete(item)">Delete</button></div></div>
+                } @empty { <p class="muted help-text">No planned payments. Add one with its expected date and amount.</p> }
+              </section>
+              <section class="payment-section"><h3>Payment history</h3>
+                @for (item of row.history; track item.id) {
+                  <div class="payment-row"><div class="row-copy"><strong>{{ money(item.amount) }}</strong><small>{{ date(item.date) }} � {{ item.paymentMethod }}</small><small>{{ item.title }}</small>@if (item.notes) { <p class="payment-notes">{{ item.notes }}</p> }</div><div class="payment-actions"><button class="text-link" type="button" [disabled]="busy()" (click)="editPayment(row.debt.id, 'paid', item)">Edit</button><button class="text-link" type="button" [disabled]="busy()" (click)="confirmDelete(item)">Delete</button></div></div>
+                } @empty { <p class="muted help-text">No payments recorded yet. You can add payments from earlier months.</p> }
+              </section>
+            }
+          </article>
+        } @empty { <section class="panel empty-state"><ion-icon name="wallet" /><h2>No debts yet</h2><p>Add a debt, then record past payments and plan future ones.</p></section> }
+      </div>
+    }
+  </main>
+</ion-content>

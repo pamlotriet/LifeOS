@@ -7,7 +7,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { compatibleCategory, localDate, TransactionInput, TransactionType } from '../../shared/state/budget/budget.model';
 
-@Component({ selector: 'app-budget-transaction-form', imports: [IonContent, IonIcon, FormsModule, RouterLink], templateUrl: './budget-transaction-form.html', styleUrl: './budget.css' })
+@Component({ selector: 'app-budget-transaction-form', imports: [IonContent, IonIcon, FormsModule, RouterLink], templateUrl: './budget-transaction-form.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetTransactionForm {
   readonly store = inject(BudgetStore);
   private readonly router = inject(Router);
@@ -34,7 +34,7 @@ export class BudgetTransactionForm {
       this.type.set('expense'); this.localReceipt.set(''); this.error.set(''); this.confirmDelete.set(false);
     }
   }
-  changeType(type: TransactionType): void { this.type.set(type); this.model.type = type; if (!this.categories().some(x => x.id === this.model.categoryId)) this.model.categoryId = this.categories()[0]?.id ?? ''; }
+  changeType(type: TransactionType): void { this.type.set(type); this.model.type = type; if (type !== 'expense') { this.model.debtId = ''; this.model.paymentStatus = 'paid'; } if (!this.categories().some(x => x.id === this.model.categoryId)) this.model.categoryId = this.categories()[0]?.id ?? ''; }
   async pickNative(camera: boolean): Promise<void> {
     this.error.set('');
     try {
@@ -58,9 +58,10 @@ export class BudgetTransactionForm {
     if (this.busy()) return;
     this.busy.set(true); this.error.set('');
     try {
-      await this.store.saveTransaction({ ...this.model, type: this.type(), amount: Number(this.model.amount) }, this.id ?? undefined, this.localReceipt() || undefined);
+      const paymentStatus = this.model.debtId ? this.model.paymentStatus : 'paid';
+      await this.store.saveTransaction({ ...this.model, paymentStatus, type: this.type(), amount: Number(this.model.amount) }, this.id ?? undefined, this.localReceipt() || undefined);
       this.store.month.set(this.model.date.slice(0, 7));
-      await this.router.navigateByUrl('/budget/month', { replaceUrl: true });
+      await this.router.navigateByUrl(paymentStatus === 'planned' ? '/budget/debts' : '/budget/month', { replaceUrl: true });
     } catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not save transaction.'); }
     finally { this.busy.set(false); }
   }
