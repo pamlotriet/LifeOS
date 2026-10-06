@@ -3,10 +3,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
-import { Camera, MediaTypeSelection } from '@capacitor/camera';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
 import { saRegistrationValidator } from '../../shared/validators/sa-registration.validator';
 import { AppSelect } from '../../shared/components/app-select/app-select';
+import { pickImage } from '../../shared/utils/pick-image';
 @Component({
   imports: [IonIcon, ReactiveFormsModule, AppSelect],
   selector: 'app-add-car',
@@ -133,22 +133,5 @@ export class AddCar {
       this.deleting.set(false);
     }
   }
-
-  pickMedia = async () => {
-    try {
-      const { results } = await Camera.chooseFromGallery({
-        mediaType: MediaTypeSelection.Photo,
-        allowMultipleSelection: false,
-      });
-
-      const selectedPhoto = results[0];
-      if (selectedPhoto?.webPath) {
-        this.vehicleForm.controls.photoUrl.setValue(selectedPhoto.webPath);
-      }
-    } catch (e) {
-      const error = e as any;
-      const message = error.code ? `[${error.code}] ${error.message}` : error.message;
-      console.error('chooseFromGallery failed:', message);
-    }
-  };
+  async pickMedia(): Promise<void> { try { const photo = await pickImage(); if (photo) this.vehicleForm.controls.photoUrl.setValue(photo); } catch { this.saveError.set('Could not read the photo.'); } }
 }

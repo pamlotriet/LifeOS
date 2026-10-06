@@ -23,10 +23,6 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              },
-              {
-                "glob": "**/*",
-                "input": "src/app/assets"
               }
             ],
             "styles": ["src/styles.css"],
@@ -48,7 +44,8 @@
                   "maximumError": "11kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,

@@ -1,8 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Camera, MediaTypeSelection } from '@capacitor/camera';
-import { Capacitor } from '@capacitor/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { compatibleCategory, localDate, TransactionInput, TransactionType } from '../../shared/state/budget/budget.model';
@@ -14,7 +12,6 @@ export class BudgetTransactionForm {
   readonly id = inject(ActivatedRoute).snapshot.paramMap.get('id');
   readonly busy = signal(false); readonly error = signal(''); readonly loaded = signal(false);
   readonly confirmDelete = signal(false); readonly localReceipt = signal('');
-  readonly native = Capacitor.isNativePlatform();
   readonly type = signal<TransactionType>('expense');
   readonly types: TransactionType[] = ['expense', 'income', 'transfer'];
   readonly categories = computed(() => this.store.activeCategories().filter(x => compatibleCategory(this.type(), x.type)));
@@ -35,13 +32,6 @@ export class BudgetTransactionForm {
     }
   }
   changeType(type: TransactionType): void { this.type.set(type); this.model.type = type; if (type !== 'expense') { this.model.debtId = ''; this.model.paymentStatus = 'paid'; } if (!this.categories().some(x => x.id === this.model.categoryId)) this.model.categoryId = this.categories()[0]?.id ?? ''; }
-  async pickNative(camera: boolean): Promise<void> {
-    this.error.set('');
-    try {
-      const result = camera ? await Camera.takePhoto({ quality: 85 }) : (await Camera.chooseFromGallery({ mediaType: MediaTypeSelection.Photo, allowMultipleSelection: false })).results[0];
-      if (result?.webPath) this.localReceipt.set(result.webPath);
-    } catch (error) { if (!/cancel/i.test(String(error))) this.error.set('Could not open your photos or camera. Check permission and try again.'); }
-  }
   async pickFile(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];

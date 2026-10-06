@@ -30,12 +30,28 @@
 .home-action { color: var(--home-text); transition: transform 150ms ease; }
 .home-action-icon { display: grid; width: 3rem; height: 3rem; place-items: center; border: 1px solid rgb(255 255 255 / 58%); border-radius: 999px; color: #082238; background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 58%, white), var(--accent)); box-shadow: 0 0 23px color-mix(in srgb, var(--accent) 48%, transparent), inset 0 1px 2px rgb(255 255 255 / 72%); }
 .home-action-icon ion-icon { font-size: 1.4rem; }
-.home-card { min-height: 6.5rem; padding: 0.8rem; gap: 0.5rem; }
+.home-card { min-height: 7rem; padding: 1rem 0.85rem; gap: 0.65rem; border-radius: 1.35rem; }
+.home-card > span:nth-child(2) { flex: 1; }
+.home-card .home-muted { font-size: 0.8rem; }
 .home-card-icon { width: 2.4rem; height: 2.4rem; }
 .home-card-icon ion-icon { font-size: 1.25rem; }
 .home-card-title { font-size: 1rem; line-height: 1.3; overflow-wrap: normal; word-break: normal; }
 .home-card-icon { position: relative; z-index: 2; box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 52%, transparent), inset 0 1px 1px rgb(255 255 255 / 55%); }
-.home-card-wave { position: absolute; right: -8%; bottom: -3.8rem; width: 112%; height: 6.5rem; border-top: 1px solid color-mix(in srgb, var(--accent) 82%, transparent); border-radius: 48% 55% 0 0; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 28%, transparent), transparent 68%); transform: rotate(-4deg); pointer-events: none; }
+.home-card-wave { position: absolute; right: -8%; bottom: -5rem; width: 112%; height: 6.5rem; opacity: 0.55; border-top: 1px solid color-mix(in srgb, var(--accent) 82%, transparent); border-radius: 48% 55% 0 0; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 28%, transparent), transparent 68%); transform: rotate(-4deg); pointer-events: none; }
+.home-action { min-height: 5rem; border-radius: 1rem; padding-block: 0.35rem; }
+.home-action:focus-visible, .home-card:focus-visible { outline: 2px solid var(--lifeos-cyan); outline-offset: 4px; }
+
+@media (min-width: 768px) {
+  .home-page { max-width: 64rem; padding: 2rem 2rem 3rem; }
+  .home-header { margin-bottom: 2rem; }
+  .home-areas { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .home-card { min-height: 8rem; padding: 1.25rem; }
+  .home-card.col-span-2 { grid-column: span 3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-card, .home-action { transition: none; }
+}
 
 [data-accent='rose'] { --accent: #fb7185; }
 [data-accent='emerald'] { --accent: #34d399; }

@@ -21,8 +21,7 @@
         <section class="panel receipt-panel"><h2><ion-icon name="camera-outline" aria-hidden="true" /> Receipt photo</h2><p class="muted">Optional · up to 5 MB</p>
           @if (localReceipt() || model.receiptUrl) { <img [src]="localReceipt() || model.receiptUrl" alt="Transaction receipt" /> }
           <div class="receipt-actions">
-            @if (native) { <button class="secondary-button" type="button" (click)="pickNative(true)">Take photo</button><button class="secondary-button" type="button" (click)="pickNative(false)">Choose photo</button> }
-            @else { <button class="secondary-button" type="button" (click)="receiptCamera.click()">Take photo</button><button class="secondary-button" type="button" (click)="receiptFile.click()">Choose photo</button><input #receiptCamera hidden type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" capture="environment" (change)="pickFile($event)" /><input #receiptFile hidden type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" (change)="pickFile($event)" /> }
+            <button class="secondary-button" type="button" (click)="receiptCamera.click()">Take photo</button><button class="secondary-button" type="button" (click)="receiptFile.click()">Choose photo</button><input #receiptCamera hidden type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" capture="environment" (change)="pickFile($event)" /><input #receiptFile hidden type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" (change)="pickFile($event)" />
             @if (localReceipt() || model.receiptUrl) { <button class="text-link" type="button" (click)="removeReceipt()">Remove photo</button> }
           </div>
         </section>

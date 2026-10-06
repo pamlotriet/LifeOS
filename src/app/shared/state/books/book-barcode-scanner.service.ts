@@ -1,11 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
-import {
-  CapacitorBarcodeScanner,
-  CapacitorBarcodeScannerCameraDirection,
-  CapacitorBarcodeScannerScanOrientation,
-  CapacitorBarcodeScannerTypeHint,
-} from '@capacitor/barcode-scanner';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 
 export function cleanScannedIsbn(value: string): string | null {
@@ -17,32 +10,7 @@ export function cleanScannedIsbn(value: string): string | null {
 
 @Injectable({ providedIn: 'root' })
 export class BookBarcodeScannerService {
-  async scan(): Promise<string> {
-    if (Capacitor.isNativePlatform() && !Capacitor.isPluginAvailable('CapacitorBarcodeScanner')) {
-      return this.scanWithWebCamera();
-    }
-    let result: Awaited<ReturnType<typeof CapacitorBarcodeScanner.scanBarcode>>;
-    try {
-      result = await CapacitorBarcodeScanner.scanBarcode({
-        hint: CapacitorBarcodeScannerTypeHint.EAN_13,
-        scanInstructions: 'Place the ISBN barcode inside the frame',
-        scanButton: false,
-        cameraDirection: CapacitorBarcodeScannerCameraDirection.BACK,
-        scanOrientation: CapacitorBarcodeScannerScanOrientation.ADAPTIVE,
-        cancelButtonAccessibilityLabel: 'Cancel ISBN scan',
-        web: { showCameraSelection: true, scannerFPS: 15 },
-      });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (/not implemented|unimplemented/i.test(message)) {
-        return this.scanWithWebCamera();
-      }
-      throw error;
-    }
-    const isbn = cleanScannedIsbn(result.ScanResult ?? '');
-    if (!isbn) throw new Error('That barcode is not a valid ISBN-13. Scan the barcode beginning with 978 or 979.');
-    return isbn;
-  }
+  scan(): Promise<string> { return this.scanWithWebCamera(); }
 
   private async scanWithWebCamera(): Promise<string> {
     if (typeof document === 'undefined' || typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {

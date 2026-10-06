@@ -2,36 +2,26 @@ import { inject, Injectable } from '@angular/core';
 import { FirestoreDocument, FirestoreService, FirestoreValue } from '../../../core/firebase/firestore.service';
 import { AuthService } from '../authentication/authentication.service';
 import { EncryptedPayload, PasswordInput, PasswordRecord } from './password.model';
-import { BiometricVaultService } from './biometric-vault.service';
 import { VaultCryptoService } from './vault-crypto.service';
 const text = (value: string): FirestoreValue => ({ stringValue: value });
 
 @Injectable({ providedIn: 'root' })
 export class PasswordVaultService {
-  private readonly auth = inject(AuthService); private readonly firestore = inject(FirestoreService); readonly crypto = inject(VaultCryptoService); readonly biometric = inject(BiometricVaultService);
-  async exists(): Promise<boolean> { const { uid, token } = await this.auth.getSession(); const exists = !!await this.firestore.tryGetDocument(`users/${uid}/vault/settings`, token); await this.biometric.refresh(uid); return exists; }
-  async create(passphrase: string, enableBiometric = false): Promise<void> {
+  private readonly auth = inject(AuthService); private readonly firestore = inject(FirestoreService); readonly crypto = inject(VaultCryptoService);
+  async exists(): Promise<boolean> { const { uid, token } = await this.auth.getSession(); const exists = !!await this.firestore.tryGetDocument(`users/${uid}/vault/settings`, token); return exists; }
+  async create(passphrase: string): Promise<void> {
     if (passphrase.length < 12) throw new Error('Use a master password with at least 12 characters.');
     const { uid, token } = await this.auth.getSession(); const salt = this.crypto.randomSalt(); const rawKey = await this.crypto.deriveBytes(passphrase, salt); const key = await this.crypto.importKey(rawKey);
     const verifier = await this.crypto.encrypt({ marker: 'lifeos-vault-v1' }, `vault:${uid}`, key);
     await this.firestore.createDocument(`users/${uid}/vault`, 'settings', { salt: text(salt), verifierIv: text(verifier.iv), verifierCipher: text(verifier.cipherText), version: { integerValue: '1' } }, token);
     this.crypto.setKey(key);
-    if (enableBiometric) await this.biometric.enable(uid, this.crypto.encodeKey(rawKey));
   }
-  async unlock(passphrase: string, enableBiometric = false): Promise<void> {
+  async unlock(passphrase: string): Promise<void> {
     const { uid, token } = await this.auth.getSession(); const doc = await this.firestore.getDocument(`users/${uid}/vault/settings`, token); const f = doc.fields ?? {};
     const rawKey = await this.crypto.deriveBytes(passphrase, f['salt']?.stringValue ?? ''); const key = await this.crypto.importKey(rawKey);
     await this.verifyKey(key, uid, f, 'Incorrect master password.');
     this.crypto.setKey(key);
-    if (enableBiometric) await this.biometric.enable(uid, this.crypto.encodeKey(rawKey));
   }
-  async unlockWithBiometrics(): Promise<void> {
-    const { uid, token } = await this.auth.getSession(); const doc = await this.firestore.getDocument(`users/${uid}/vault/settings`, token); const f = doc.fields ?? {};
-    const encodedKey = await this.biometric.unlock(uid); const key = await this.crypto.importKey(this.crypto.decodeKey(encodedKey));
-    await this.verifyKey(key, uid, f, 'The biometric vault key is no longer valid. Use your master password.');
-    this.crypto.setKey(key);
-  }
-  async disableBiometrics(): Promise<void> { const { uid } = await this.auth.getSession(); await this.biometric.disable(uid); }
   async list(): Promise<PasswordRecord[]> { const { uid, token } = await this.auth.getSession(); const docs = await this.firestore.listDocuments(`users/${uid}/passwords`, token); return Promise.all(docs.map((doc) => this.decryptDocument(doc, uid))); }
   async get(id: string): Promise<PasswordRecord> { const { uid, token } = await this.auth.getSession(); return this.decryptDocument(await this.firestore.getDocument(`users/${uid}/passwords/${encodeURIComponent(id)}`, token), uid); }
   async save(input: PasswordInput, id?: string): Promise<PasswordRecord> {

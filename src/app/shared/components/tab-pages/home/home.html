@@ -1,6 +1,6 @@
 <ion-content class="[--background:transparent]">
   <main class="home-page mx-auto min-h-full max-w-2xl px-5 pb-10 pt-4">
-    <header class="mb-5 px-1">
+    <header class="home-header mb-5 px-1">
       <p class="home-muted text-sm tracking-wide">{{ today }}</p>
       <h1 class="mt-1 text-[clamp(1.75rem,7vw,2.5rem)] font-bold leading-tight tracking-tight">{{ greeting }}!</h1>
       <p class="home-muted mt-1 text-sm tracking-wide">Small steps make a big life.</p>
@@ -21,7 +21,7 @@
       </div>
     </section>
 
-    <section aria-label="Life areas" class="relative z-10 grid grid-cols-2 gap-3">
+    <section aria-label="Life areas" class="home-areas relative z-10 grid grid-cols-2 gap-3">
       @for (item of items; track item.id) {
         <a [routerLink]="item.route ?? null" class="home-card relative flex items-center overflow-hidden rounded-[1.7rem] no-underline active:scale-[.98]" [class.col-span-2]="item.title === 'Vehicles'" [attr.data-accent]="item.accent">
           <span class="home-card-icon flex shrink-0 items-center justify-center rounded-full" [class]="item.iconBackground"><ion-icon [name]="item.icon" [class]="item.iconColor" aria-hidden="true"></ion-icon></span>

@@ -1,7 +1,6 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, effect, inject, signal, untracked } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular';
-import { Capacitor } from '@capacitor/core';
 import { AuthService } from './shared/state/authentication/authentication.service';
 import { RefreshCoordinator } from './shared/state/refresh/refresh-coordinator.service';
 import { ThemeService } from './shared/state/theme/theme.service';
@@ -14,35 +13,15 @@ import { ClearZeroOnFocus } from './shared/directives/clear-zero-on-focus';
   templateUrl: './app.html',
 })
 export class App {
-  private readonly document = inject(DOCUMENT);
- 
   readonly refreshCoordinator = inject(RefreshCoordinator);
   readonly theme = inject(ThemeService);
-  readonly nativePlatform = Capacitor.isNativePlatform();
-  readonly androidPlatform = Capacitor.getPlatform() === 'android';
   readonly paletteToggle = signal(false);
   readonly signInError = signal('');
   readonly signingIn = signal(false);
-  readonly biometricFailures = signal(0);
   readonly pullDistance = signal(0);
   private touchStart: number | null = null;
 
   authService = inject(AuthService);
-
-  constructor() {
-    if (this.androidPlatform) this.document.documentElement.classList.add('platform-android-native');
-    effect(() => {
-      const ready = this.authService.authReady();
-      const enrolled = this.authService.biometric.enrolled();
-      const authenticated = this.authService.isAuthenticated();
-      const failures = this.biometricFailures();
-      untracked(() => {
-        if (ready && enrolled && !authenticated && failures === 0 && !this.signingIn()) {
-          queueMicrotask(() => void this.authenticateWithBiometrics());
-        }
-      });
-    });
-  }
 
   ngOnInit() {
     this.paletteToggle.set(this.theme.dark());
@@ -63,8 +42,10 @@ export class App {
 
   onTouchStart(event: TouchEvent): void {
     if (!this.authService.isAuthenticated() || this.refreshCoordinator.refreshing()) return;
-    const content = event.composedPath().find((element) =>
-      element instanceof HTMLElement && element.tagName === 'ION-CONTENT') as HTMLElement | undefined;
+    const content = event
+      .composedPath()
+      .find((element) => element instanceof HTMLElement && element.tagName === 'ION-CONTENT') as
+      HTMLElement | undefined;
     if (!content) return;
     const scroll = content.shadowRoot?.querySelector<HTMLElement>('.inner-scroll');
     if ((scroll?.scrollTop ?? 0) <= 2) this.touchStart = event.touches[0]?.clientY ?? null;
@@ -100,21 +81,6 @@ export class App {
           ? 'Could not set up your account. Please try again.'
           : 'Could not sign in with Google. Please try again.',
       );
-    } finally {
-      this.signingIn.set(false);
-    }
-  }
-
-  async authenticateWithBiometrics(): Promise<void> {
-    if (this.signingIn()) return;
-    this.signInError.set('');
-    this.signingIn.set(true);
-    try {
-      await this.authService.unlockWithBiometrics();
-      this.biometricFailures.set(0);
-    } catch (error) {
-      this.biometricFailures.update((count) => Math.min(3, count + 1));
-      this.signInError.set(error instanceof Error ? error.message : 'Could not unlock LifeOS.');
     } finally {
       this.signingIn.set(false);
     }

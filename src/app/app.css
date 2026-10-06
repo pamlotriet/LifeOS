@@ -74,12 +74,6 @@
 .button-chevron { width: 18px; height: 18px; flex-shrink: 0; margin-left: auto; fill: none; stroke: currentColor; stroke-width: 2; }
 .google-button .button-chevron { color: #30357f; }
 .login-button > span { flex: 1; }
-.login-divider { display: flex; align-items: center; gap: 14px; margin: 14px 12px; color: #8c9dd4; font-size: 13px; }
-.login-divider::before, .login-divider::after { content: ''; height: 1px; background: #4763a866; flex: 1; }
-.biometric-button { min-height: 53px; color: #f9faff; border: 1px solid #576dc4; background: linear-gradient(110deg, #234b8655, #08235177, #343c8255); }
-.face-mark { width: 31px; height: 31px; margin-left: 21%; fill: none; stroke: #6de6ff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 5px #009dff66); }
-.biometric-button > span { flex: initial; }
-.biometric-button .button-chevron { color: #94a6e4; }
 .login-security { display: flex; margin-top: 22px; text-align: left; color: #b0c2ee; }
 .login-security > div { display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1; font-size: 11px; line-height: 1.4; }
 .login-security > div + div { border-left: 1px solid #4962a566; }
