@@ -1,3 +1,4 @@
+import { BudgetNumber } from '../../shared/directives/budget-number';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -5,11 +6,12 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { compatibleCategory, localDate, TransactionInput, TransactionType } from '../../shared/state/budget/budget.model';
 
-@Component({ selector: 'app-budget-transaction-form', imports: [IonContent, IonIcon, FormsModule, RouterLink], templateUrl: './budget-transaction-form.html', styleUrls: ['./budget.css', './budget-layout.css'] })
+@Component({ selector: 'app-budget-transaction-form', imports: [BudgetNumber, IonContent, IonIcon, FormsModule, RouterLink], templateUrl: './budget-transaction-form.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetTransactionForm {
   readonly store = inject(BudgetStore);
   private readonly router = inject(Router);
-  readonly id = inject(ActivatedRoute).snapshot.paramMap.get('id');
+  private readonly route = inject(ActivatedRoute);
+  readonly id = this.route.snapshot.paramMap.get('id');
   readonly busy = signal(false); readonly error = signal(''); readonly loaded = signal(false);
   readonly confirmDelete = signal(false); readonly localReceipt = signal('');
   readonly type = signal<TransactionType>('expense');
@@ -22,13 +24,20 @@ export class BudgetTransactionForm {
       if (this.id && !this.loaded() && !this.store.loading() && !this.store.error()) {
         const item = transactions.find(x => x.id === this.id);
         if (item) { const { id, ...input } = item; this.model = { ...input }; this.type.set(item.type); this.loaded.set(true); }
+      } else if (!this.id && !this.store.loading()) {
+        const categories = this.categories();
+        if (!categories.some(category => category.id === this.model.categoryId)) this.model.categoryId = categories[0]?.id ?? '';
       }
     });
   }
   ionViewWillEnter(): void {
     if (!this.id) {
-      this.model = { amount: null as unknown as number, type: 'expense', categoryId: this.store.activeCategories().find(x => x.type === 'expense')?.id ?? '', title: '', date: localDate(), paymentMethod: 'Card', notes: '', receiptUrl: '', receiptPath: '', debtId: '' };
-      this.type.set('expense'); this.localReceipt.set(''); this.error.set(''); this.confirmDelete.set(false);
+      const requested = this.route.snapshot.queryParamMap.get('type');
+      const type: TransactionType = requested === 'income' || requested === 'transfer' ? requested : 'expense';
+      const today = localDate();
+      const date = today.startsWith(this.store.month()) ? today : `${this.store.month()}-01`;
+      this.model = { amount: null as unknown as number, type, categoryId: this.store.activeCategories().find(x => compatibleCategory(type, x.type))?.id ?? '', title: '', date, paymentMethod: type === 'income' ? 'Bank transfer' : 'Card', notes: '', receiptUrl: '', receiptPath: '', debtId: '' };
+      this.type.set(type); this.localReceipt.set(''); this.error.set(''); this.confirmDelete.set(false);
     }
   }
   changeType(type: TransactionType): void { this.type.set(type); this.model.type = type; if (type !== 'expense') { this.model.debtId = ''; this.model.paymentStatus = 'paid'; } if (!this.categories().some(x => x.id === this.model.categoryId)) this.model.categoryId = this.categories()[0]?.id ?? ''; }

@@ -35,7 +35,9 @@ describe('Category changes', () => {
   it('allows an unused category to change type but preserves expense plans', async () => {
     const {store,category}=setup(); store.transactions.set([]);
     store.plans.set([{id:'plan',month:'2026-10',categoryId:'food',amount:100}]);
-    await expect(store.saveCategory({...category,type:'savings'})).rejects.toThrow('expense plans');
+    await expect(store.saveCategory({...category,type:'income'})).rejects.toThrow('planned items');
+    await store.saveCategory({...category,type:'savings'});
+    expect(store.categories()[0].type).toBe('savings');
     store.plans.set([]);
     await store.saveCategory({...category,type:'income'});
     expect(store.categories()[0].type).toBe('income');

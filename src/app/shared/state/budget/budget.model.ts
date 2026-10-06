@@ -1,5 +1,6 @@
 export type TransactionType = 'expense' | 'income' | 'transfer';
 export type CategoryType = 'expense' | 'income' | 'bills' | 'savings';
+export function supportsPlan(type: CategoryType): boolean { return type === 'expense' || type === 'bills' || type === 'savings'; }
 export interface BudgetCategory {
   id: string;
   name: string;

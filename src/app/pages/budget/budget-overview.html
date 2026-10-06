@@ -9,6 +9,10 @@
     @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
     @if (store.notice()) { <p class="status" role="status">{{ store.notice() }}</p> }
     @if (!store.loading() && !store.error()) {
+      <div class="form-actions mb-4" aria-label="Add budget transactions">
+        <a class="primary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'income' }"><ion-icon name="cash" /> Add income</a>
+        <a class="secondary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'expense' }">Add expense</a>
+      </div>
       @if (monthlyView) {
         <nav class="segments" aria-label="Monthly views"><button [class.active]="tab() === 'overview'" (click)="tab.set('overview')">Overview</button><button [class.active]="tab() === 'transactions'" (click)="tab.set('transactions')">Transactions</button><a routerLink="/budget/planned">Planned</a><a routerLink="/budget/categories">Categories</a></nav>
         <section class="calendar" aria-label="Filter transactions by date">

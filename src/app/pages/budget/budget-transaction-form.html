@@ -9,7 +9,7 @@
       <fieldset [disabled]="busy()" style="border:0;padding:0;margin:0;min-width:0">
         <div class="segments" aria-label="Transaction type">@for (item of types; track item) { <button type="button" [class.active]="type() === item" [class.expense]="item === 'expense'" [attr.aria-pressed]="type() === item" (click)="changeType(item)">{{ item === 'expense' ? 'Expense' : item === 'income' ? 'Income' : 'Transfer' }}</button> }</div>
         @if (type() === 'transfer') { <p class="status">Transfers move money into savings. They reduce your remaining balance and are excluded from expenses.</p> }
-        <label class="field"><span>Amount (R) <em>*</em></span><input name="amount" type="number" inputmode="decimal" min="0.01" max="999999999" step="0.01" required placeholder="0.00" [(ngModel)]="model.amount" /></label>
+        <label class="field"><span>Amount (R) <em>*</em></span><input name="amount" type="text" appBudgetNumber inputmode="decimal" min="0.01" max="999999999" step="0.01" required placeholder="0.00" [(ngModel)]="model.amount" /></label>
         <label class="field"><span>Date <em>*</em></span><input name="date" type="date" required [(ngModel)]="model.date" /></label>
         <label class="field"><span>Category <em>*</em></span><select class="lifeos-select" name="category" required [(ngModel)]="model.categoryId"><option value="" disabled>Choose a category</option>@for (category of categories(); track category.id) { <option [value]="category.id">{{ category.name }}{{ category.type === 'bills' ? ' (Bill)' : '' }}</option> }</select></label>
         @if (!categories().length) { <p class="status">Create a category before saving. <a class="text-link" routerLink="/budget/categories">Manage categories</a></p> }

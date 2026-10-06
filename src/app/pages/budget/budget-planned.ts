@@ -1,16 +1,24 @@
+import { BudgetNumber, parseBudgetNumber } from '../../shared/directives/budget-number';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
-import { BudgetPlan, categoryPlanItems, debtPlanId, money, total } from '../../shared/state/budget/budget.model';
+import { BudgetPlan, categoryPlanItems, compatibleCategory, debtPlanId, money, supportsPlan, total } from '../../shared/state/budget/budget.model';
 import { BudgetTransactions } from './budget-ui';
 
-@Component({ selector: 'app-budget-planned', imports: [IonContent, IonIcon, FormsModule, RouterLink, BudgetTransactions], templateUrl: './budget-planned.html', styleUrls: ['./budget.css', './budget-layout.css'] })
+@Component({ selector: 'app-budget-planned', imports: [BudgetNumber, IonContent, IonIcon, FormsModule, RouterLink, BudgetTransactions], templateUrl: './budget-planned.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetPlanned {
   readonly store = inject(BudgetStore);
   readonly money = money;
+  readonly parseNumber = (value: string): number => parseBudgetNumber(value) ?? NaN;
   readonly selectedDate = signal('');
+  readonly monthLabel = computed(() => new Date(`${this.store.month()}-01T12:00:00`).toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' }));
+  shiftMonth(delta: number): void {
+    const date = new Date(`${this.store.month()}-01T12:00:00`);
+    date.setMonth(date.getMonth() + delta);
+    this.setMonth(`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`);
+  }
   readonly pending = computed(() => this.store.transactions().filter(item => item.paymentStatus === 'planned' && item.date.startsWith(this.store.month())).sort((a,b) => a.date.localeCompare(b.date)));
   readonly debtPlanError = signal('');
   readonly savingDebtPlan = signal(false);
@@ -20,9 +28,9 @@ export class BudgetPlanned {
     const transaction = this.store.transactions().find(item => item.id === debtPlanId(this.store.month(), debt.id));
     return { ...debt, planned: transaction?.amount ?? 0, paid: !!transaction && transaction.paymentStatus !== 'planned', actual: total(this.store.monthly().filter(item => item.type === 'expense' && item.debtId === debt.id)) };
   }));
-  readonly planned = computed(() => this.store.activeCategories().filter(category => category.type === 'expense' || category.type === 'bills').map(category => {
+  readonly planned = computed(() => this.store.activeCategories().filter(category => supportsPlan(category.type)).map(category => {
     const plan = categoryPlanItems(this.store.plans(), this.store.month(), category.id);
-    const actual = total(this.store.monthly().filter(item => item.type === 'expense' && item.categoryId === category.id));
+    const actual = total(this.store.monthly().filter(item => compatibleCategory(item.type, category.type) && item.categoryId === category.id));
     return { ...category, planned: plan.amount, items: plan.items, actual };
   }));
   readonly plannedTotal = computed(() => this.planned().reduce((sum, item) => sum + item.planned, 0) + this.debtPlans().reduce((sum, item) => sum + item.planned, 0));

@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal, untracked } from '@angula
 import { AuthService } from '../authentication/authentication.service';
 import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
 import { BudgetService } from './budget.service';
-import { BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, debtPlanId, localDate, TransactionInput } from './budget.model';
+import { BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, debtPlanId, localDate, supportsPlan, TransactionInput } from './budget.model';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetStore {
@@ -78,7 +78,7 @@ export class BudgetStore {
     const existing = this.categories().find(x => x.id === category.id);
     if (existing && existing.type !== category.type) {
       if (this.transactions().some(item => item.categoryId === category.id && !compatibleCategory(item.type, category.type))) throw new Error('This type does not match the existing transactions. Move those transactions to another category first. Expense and Bills can be switched without moving expense transactions.');
-      if (!['expense', 'bills'].includes(category.type) && this.plans().some(plan => plan.categoryId === category.id)) throw new Error('This category has expense plans. Remove its planned items before changing it to Income or Savings.');
+      if (!supportsPlan(category.type) && this.plans().some(plan => plan.categoryId === category.id)) throw new Error('This category has planned items. Remove them before changing it to Income.');
     }
     if (!category.deleted && this.activeCategories().some(x => x.id !== category.id && x.type === category.type && x.name.toLowerCase() === category.name.trim().toLowerCase())) throw new Error('A category with that name already exists.');
     const uid = this.auth.userId();
@@ -95,7 +95,7 @@ export class BudgetStore {
   }
   async savePlanItem(month: string, categoryId: string, name: string, amount: number, id: string = crypto.randomUUID()): Promise<void> {
     if (this.loading() || this.error()) throw new Error('Load your budget before changing planned items.');
-    if (!this.activeCategories().some(category => category.id === categoryId && ['expense', 'bills'].includes(category.type))) throw new Error('Choose an expense category.');
+    if (!this.activeCategories().some(category => category.id === categoryId && supportsPlan(category.type))) throw new Error('Choose an expense, bills or savings category.');
     const uid = this.auth.userId();
     const saved = await this.service.savePlan({ id, month, categoryId, name, amount });
     if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget to continue.');

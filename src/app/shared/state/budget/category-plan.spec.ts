@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { categoryPlanItems } from './budget.model';
+import { categoryPlanItems, compatibleCategory, supportsPlan } from './budget.model';
 
 describe('Category planned items', () => {
+  it('includes monthly savings plans and counts savings as transfers', () => {
+    expect(supportsPlan('savings')).toBe(true);
+    expect(supportsPlan('income')).toBe(false);
+    expect(compatibleCategory('transfer', 'savings')).toBe(true);
+    expect(compatibleCategory('expense', 'savings')).toBe(false);
+    const plans = [{ id: 'saving', month: '2026-10', categoryId: 'savings', name: 'Emergency fund', amount: 500 }];
+    expect(categoryPlanItems(plans, '2026-10', 'savings').amount).toBe(500);
+    expect(categoryPlanItems(plans, '2026-11', 'savings').amount).toBe(0);
+  });
   it('sums named items and filters by category and month', () => {
     const result = categoryPlanItems([
       { id:'a', month:'2026-10', categoryId:'subscriptions', name:'Netflix', amount:90 },

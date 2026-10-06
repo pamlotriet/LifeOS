@@ -1,12 +1,16 @@
 <ion-content><main class="budget-page">
   <header class="page-header"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><h1 class="compact-title">Planned transactions</h1></header>
-  <label class="field"><span>Budget month</span><input type="month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" aria-label="Planned transactions month" /></label>
+  <nav class="planned-month-nav" aria-label="Planned transactions month">
+    <button type="button" class="icon-button" aria-label="Previous month" (click)="shiftMonth(-1)"><ion-icon name="chevron-back" /></button>
+    <div aria-live="polite"><small>Budget month</small><strong>{{ monthLabel() }}</strong></div>
+    <button type="button" class="icon-button" aria-label="Next month" (click)="shiftMonth(1)"><ion-icon name="chevron-forward" /></button>
+  </nav>
   @if (store.loading()) { <p class="status" role="status">Loading planned transactions...</p> }
   @else if (store.error()) { <p class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></p> }
   @else {
         <section class="panel plan-panel" aria-labelledby="plan-title">
-          <div class="section-heading"><div><p class="eyebrow">Plan versus actual</p><h2 id="plan-title">Expense plan</h2></div><strong>{{ money(plannedTotal()) }}</strong></div>
-          <p class="muted">Only actual expenses reduce your income balance. Set a planned amount to see what you expect to spend.</p>
+          <div class="section-heading"><div><p class="eyebrow">Plan versus actual</p><h2 id="plan-title">Expense &amp; savings plan</h2></div><strong>{{ money(plannedTotal()) }}</strong></div>
+          <p class="muted">Plan expenses and savings for the selected month. Only recorded expenses and savings transfers reduce your remaining balance.</p>
           @if (planItemError()) { <p class="status error" role="alert">{{ planItemError() }}</p> }
           @for (item of planned(); track item.id) {
             <section class="category-plan" [attr.aria-label]="item.name + ' planned items'">
@@ -14,7 +18,7 @@
               @for (entry of item.items; track entry.id) {
                 <div class="plan-item-row">
                   <input type="text" maxlength="80" [attr.aria-label]="'Item name in ' + item.name" [ngModel]="entry.name || 'Existing plan'" [disabled]="savingPlanItem()" (change)="saveItem(item.id, $any($event.target).value, entry.amount, entry.id)" />
-                  <input type="number" inputmode="decimal" min="0" max="999999999" step="0.01" [attr.aria-label]="'Planned amount for ' + (entry.name || 'Existing plan')" [ngModel]="entry.amount" [disabled]="savingPlanItem()" (change)="saveItem(item.id, entry.name || 'Existing plan', $any($event.target).valueAsNumber, entry.id)" />
+                  <input type="text" appBudgetNumber inputmode="decimal" min="0" max="999999999" step="0.01" [attr.aria-label]="'Planned amount for ' + (entry.name || 'Existing plan')" [ngModel]="entry.amount" [disabled]="savingPlanItem()" (change)="saveItem(item.id, entry.name || 'Existing plan', parseNumber($any($event.target).value), entry.id)" />
                   <button type="button" class="text-link" [disabled]="savingPlanItem()" [attr.aria-label]="'Remove ' + (entry.name || 'Existing plan')" (click)="removeItem(entry)"><ion-icon name="trash-outline" /></button>
                 </div>
               }
@@ -28,7 +32,7 @@
             <div class="plan-row">
               <span class="category-icon bg-[var(--secondary)] text-[var(--primary)]"><ion-icon [name]="item.type === 'credit-card' ? 'card-outline' : 'cash'" /></span>
               <span class="row-copy"><strong>{{ item.name }}</strong><small>Actual {{ money(item.actual) }} @if (item.paid) { · Paid }</small></span>
-              <label><span>{{ item.paid ? 'Recorded' : 'Planned' }}</span><input type="number" inputmode="decimal" min="0" step="0.01" [attr.aria-label]="'Planned payment for ' + item.name" [disabled]="savingDebtPlan() || item.paid" [ngModel]="item.planned" (change)="saveDebtPlan(item.id, $any($event.target).valueAsNumber)" /></label>
+              <label><span>{{ item.paid ? 'Recorded' : 'Planned' }}</span><input type="text" appBudgetNumber inputmode="decimal" min="0" step="0.01" [attr.aria-label]="'Planned payment for ' + item.name" [disabled]="savingDebtPlan() || item.paid" [ngModel]="item.planned" (change)="saveDebtPlan(item.id, parseNumber($any($event.target).value))" /></label>
             </div>
           } @empty { <p class="muted">Add named accounts such as Flixprime or Oom Martin in Manage debts to plan their payments here.</p> }
         </section>

@@ -1,3 +1,4 @@
+import { BudgetNumber } from '../../shared/directives/budget-number';
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -6,7 +7,7 @@ import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-
 import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { BudgetDebtInput, BudgetTransaction, debtSummary, localDate, money, TransactionInput } from '../../shared/state/budget/budget.model';
 
-@Component({ selector: 'app-budget-debts', imports: [FormsModule, RouterLink, IonContent, IonIcon, AppDatePicker], templateUrl: './budget-debts.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-debts.css'] })
+@Component({ selector: 'app-budget-debts', imports: [BudgetNumber, FormsModule, RouterLink, IonContent, IonIcon, AppDatePicker], templateUrl: './budget-debts.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-debts.css'] })
 export class BudgetDebts {
   @ViewChild(IonContent) private content?: IonContent;
   readonly store = inject(BudgetStore);

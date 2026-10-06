@@ -17,3 +17,10 @@
 .plan-item-row button { min-width:36px; min-height:44px; justify-content:center; }
 .plan-add-item { min-height:44px; margin-left:12px; }
 .category-plan { padding-bottom:8px; }
+.planned-month-nav { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:16px 0; padding:12px; border:1px solid var(--border); border-radius:14px; background:var(--card); }
+.planned-month-nav > div { display:grid; min-width:0; gap:3px; text-align:center; }
+.planned-month-nav strong { font-size:1rem; overflow-wrap:anywhere; }
+.planned-month-nav .icon-button { flex-shrink:0; }
+.segments[aria-label='Monthly views'] { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; }
+.segments[aria-label='Monthly views'] > :is(button,a) { display:flex; align-items:center; justify-content:center; min-width:0; min-height:44px; margin:0; padding:8px 3px; border:0; border-radius:10px; color:var(--text-secondary); font:inherit; font-size:clamp(.65rem,2.6vw,.85rem); font-weight:600; line-height:1.2; text-align:center; text-decoration:none; background:transparent; }
+.segments[aria-label='Monthly views'] > button.active { color:var(--primary-foreground); background:var(--primary); }
