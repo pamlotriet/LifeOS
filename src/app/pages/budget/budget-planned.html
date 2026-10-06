@@ -1,4 +1,5 @@
 <ion-content><main class="budget-page">
+  <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
   <header class="page-header"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><h1 class="compact-title">Planned transactions</h1></header>
   <nav class="planned-month-nav" aria-label="Planned transactions month">
     <button type="button" class="icon-button" aria-label="Previous month" (click)="shiftMonth(-1)"><ion-icon name="chevron-back" /></button>

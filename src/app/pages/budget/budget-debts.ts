@@ -23,7 +23,7 @@ export class BudgetDebts {
   readonly categories = computed(() => this.store.activeCategories().filter(c => c.type === 'expense' || c.type === 'bills'));
   readonly rows = computed(() => this.store.debts().map(debt => {
     const payments = this.store.transactions().filter(p => p.debtId === debt.id && p.type === 'expense');
-    return { debt, ...debtSummary(debt, payments),
+    return { debt, ...debtSummary(debt, payments, this.store.month(), this.store.cycleStartDay()),
       history: payments.filter(p => p.paymentStatus !== 'planned').sort((a, b) => b.date.localeCompare(a.date)),
       upcoming: payments.filter(p => p.paymentStatus === 'planned').sort((a, b) => a.date.localeCompare(b.date)) };
   }));

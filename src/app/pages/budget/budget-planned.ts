@@ -19,7 +19,7 @@ export class BudgetPlanned {
     date.setMonth(date.getMonth() + delta);
     this.setMonth(`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`);
   }
-  readonly pending = computed(() => this.store.transactions().filter(item => item.paymentStatus === 'planned' && item.date.startsWith(this.store.month())).sort((a,b) => a.date.localeCompare(b.date)));
+  readonly pending = computed(() => this.store.transactions().filter(item => item.paymentStatus === 'planned' && this.store.inMonth(item.date)).sort((a,b) => a.date.localeCompare(b.date)));
   readonly debtPlanError = signal('');
   readonly savingDebtPlan = signal(false);
   readonly savingPlanItem = signal(false);

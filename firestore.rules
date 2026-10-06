@@ -115,6 +115,13 @@ service cloud.firestore {
         allow read, delete: if owns(userId);
         allow create, update: if owns(userId) && validCategory();
       }
+      match /settings/cycle {
+        allow read: if owns(userId);
+        allow create, update: if owns(userId)
+          && request.resource.data.keys().hasOnly(['startDay'])
+          && request.resource.data.startDay is int
+          && request.resource.data.startDay >= 1 && request.resource.data.startDay <= 31;
+      }
       match /plans/{planId} {
         allow read, delete: if owns(userId);
         allow create, update: if owns(userId)

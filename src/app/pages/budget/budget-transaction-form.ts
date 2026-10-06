@@ -35,7 +35,7 @@ export class BudgetTransactionForm {
       const requested = this.route.snapshot.queryParamMap.get('type');
       const type: TransactionType = requested === 'income' || requested === 'transfer' ? requested : 'expense';
       const today = localDate();
-      const date = today.startsWith(this.store.month()) ? today : `${this.store.month()}-01`;
+      const date = this.store.inMonth(today) ? today : this.store.cycle().start;
       this.model = { amount: null as unknown as number, type, categoryId: this.store.activeCategories().find(x => compatibleCategory(type, x.type))?.id ?? '', title: '', date, paymentMethod: type === 'income' ? 'Bank transfer' : 'Card', notes: '', receiptUrl: '', receiptPath: '', debtId: '' };
       this.type.set(type); this.localReceipt.set(''); this.error.set(''); this.confirmDelete.set(false);
     }
@@ -59,7 +59,7 @@ export class BudgetTransactionForm {
     try {
       const paymentStatus = this.model.debtId ? this.model.paymentStatus : 'paid';
       await this.store.saveTransaction({ ...this.model, paymentStatus, type: this.type(), amount: Number(this.model.amount) }, this.id ?? undefined, this.localReceipt() || undefined);
-      this.store.month.set(this.model.date.slice(0, 7));
+      this.store.month.set(this.store.monthForDate(this.model.date));
       await this.router.navigateByUrl(paymentStatus === 'planned' ? '/budget/debts' : '/budget/month', { replaceUrl: true });
     } catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not save transaction.'); }
     finally { this.busy.set(false); }

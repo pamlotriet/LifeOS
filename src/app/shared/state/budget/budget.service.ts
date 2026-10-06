@@ -17,15 +17,22 @@ export class BudgetService {
   private readonly firestore = inject(FirestoreService);
   private readonly photos = inject(StoragePhotoService);
 
-  async load(): Promise<{ transactions: BudgetTransaction[]; categories: BudgetCategory[]; plans: BudgetPlan[]; debts: BudgetDebt[] }> {
+  async load(): Promise<{ transactions: BudgetTransaction[]; categories: BudgetCategory[]; plans: BudgetPlan[]; debts: BudgetDebt[]; cycleStartDay: number }> {
     const { uid, token } = await this.auth.getSession();
-    const [transactions, categories, plans, debts] = await Promise.all([
+    const [transactions, categories, plans, debts, cycle] = await Promise.all([
       this.firestore.listDocuments(`budgets/${uid}/transactions`, token),
       this.firestore.listDocuments(`budgets/${uid}/categories`, token),
       this.firestore.listDocuments(`budgets/${uid}/plans`, token),
       this.firestore.listDocuments(`budgets/${uid}/debts`, token),
+      this.firestore.tryGetDocument(`budgets/${uid}/settings/cycle`, token),
     ]);
-    return { transactions: transactions.map(x => decode<BudgetTransaction>(x)), categories: categories.map(x => decode<BudgetCategory>(x)), plans: plans.map(x => decode<BudgetPlan>(x)), debts: debts.map(x => { const debt = decode<BudgetDebt>(x); return { ...debt, openingOverride: debt.openingOverride ?? null }; }) };
+    const cycleStartDay = cycle ? Number(decode<{ startDay: number }>(cycle).startDay) : 1;
+    return { cycleStartDay, transactions: transactions.map(x => decode<BudgetTransaction>(x)), categories: categories.map(x => decode<BudgetCategory>(x)), plans: plans.map(x => decode<BudgetPlan>(x)), debts: debts.map(x => { const debt = decode<BudgetDebt>(x); return { ...debt, openingOverride: debt.openingOverride ?? null }; }) };
+  }
+  async saveCycleStartDay(startDay: number): Promise<void> {
+    if (!Number.isInteger(startDay) || startDay < 1 || startDay > 31) throw new Error('Choose a start day from 1 to 31.');
+    const { uid, token } = await this.auth.getSession();
+    await this.firestore.updateDocument(`budgets/${uid}/settings/cycle`, { startDay: { integerValue: String(startDay) } }, token);
   }
 
   async saveTransaction(input: TransactionInput, id?: string, localReceipt?: string): Promise<BudgetTransaction> {

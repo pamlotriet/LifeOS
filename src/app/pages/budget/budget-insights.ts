@@ -18,7 +18,7 @@ export class BudgetInsights {
   readonly periods = computed(() => Array.from({ length: 4 }, (_, index) => {
     const date = new Date(`${this.store.month()}-01T12:00:00`); date.setMonth(date.getMonth() - 3 + index);
     const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    return { month, label: date.toLocaleDateString('en-ZA', { month: 'short' }), ...summary(this.store.transactions().filter(x => x.date.startsWith(month)), this.store.categories()) };
+    return { month, label: date.toLocaleDateString('en-ZA', { month: 'short' }), ...summary(this.store.transactions().filter(x => this.store.inMonth(x.date, month)), this.store.categories()) };
   }));
   readonly average = computed(() => this.periods().reduce((sum, x) => sum + Math.round(x.expenses * 100), 0) / 400);
   readonly change = computed(() => { const periods = this.periods(); const previous = periods[2].expenses; return previous > 0 ? Math.round((periods[3].expenses - previous) / previous * 100) : null; });

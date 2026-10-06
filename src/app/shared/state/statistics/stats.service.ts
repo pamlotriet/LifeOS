@@ -2,7 +2,7 @@ import { inject, Injectable, Injector } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
 import { BookStore } from '../books/book-store';
 import { BudgetStore } from '../budget/budget.store';
-import { money, summary } from '../budget/budget.model';
+import { localDate, money, summary } from '../budget/budget.model';
 import { PlanningStore } from '../planning/planning-store';
 import { RecipeStore } from '../recipes/recipe-store';
 import { RefuelStore } from '../refuels/refuel-store';
@@ -295,15 +295,15 @@ export class StatsService {
     };
   }
   private budgetStats(range: StatsRange): StatsDashboard {
-    const allowed = new Set(statsMonths(range));
+    const allowed = new Set(statsMonths(range, new Date(this.budget.monthForDate(localDate()) + '-01T12:00:00')));
     const items =
       range === 'All'
         ? this.budget.transactions()
-        : this.budget.transactions().filter((x) => allowed.has(x.date.slice(0, 7)));
+        : this.budget.transactions().filter((x) => allowed.has(this.budget.monthForDate(x.date)));
     const values = summary(items, this.budget.categories());
-    const debt = debtStats(this.budget.debts(), this.budget.transactions(), statsMonths(range), range === 'All');
-    const grouped = statsMonths(range).map((month) => {
-      const part = items.filter((x) => x.date.startsWith(month));
+    const debt = debtStats(this.budget.debts(), this.budget.transactions(), statsMonths(range, new Date(this.budget.monthForDate(localDate()) + '-01T12:00:00')), range === 'All', localDate(), this.budget.cycleStartDay());
+    const grouped = statsMonths(range, new Date(this.budget.monthForDate(localDate()) + '-01T12:00:00')).map((month) => {
+      const part = items.filter((x) => this.budget.inMonth(x.date, month));
       const value = summary(part, this.budget.categories());
       return { month, income: value.income, expenses: value.expenses, remaining: value.remaining };
     });
@@ -335,7 +335,7 @@ export class StatsService {
         },
         repayments: {
           type: 'bar',
-          data: { labels: labels(statsMonths(range)), datasets: [{ label: 'Paid', data: debt.monthly, backgroundColor: '#438c75', borderRadius: 5 }] },
+          data: { labels: labels(statsMonths(range, new Date(this.budget.monthForDate(localDate()) + '-01T12:00:00'))), datasets: [{ label: 'Paid', data: debt.monthly, backgroundColor: '#438c75', borderRadius: 5 }] },
           options: chartOptions(true),
         },
       },

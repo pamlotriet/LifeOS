@@ -1,3 +1,4 @@
+import { cycleStart, inCycle } from './budget-cycle';
 export type TransactionType = 'expense' | 'income' | 'transfer';
 export type CategoryType = 'expense' | 'income' | 'bills' | 'savings';
 export function supportsPlan(type: CategoryType): boolean { return type === 'expense' || type === 'bills' || type === 'savings'; }
@@ -77,13 +78,13 @@ export function summary(items: BudgetTransaction[], categories: BudgetCategory[]
   const savings = total(items.filter(x => x.type === 'transfer' && categories.find(c => c.id === x.categoryId)?.type === 'savings'));
   return { income, expenses, bills, savings, remaining: Math.round((income - expenses - savings) * 100) / 100 };
 }
-export function debtSummary(debt: BudgetDebt, payments: BudgetTransaction[], month = localDate().slice(0, 7)) {
+export function debtSummary(debt: BudgetDebt, payments: BudgetTransaction[], month = localDate().slice(0, 7), startDay = 1) {
   const linked = payments.filter(item => item.type === 'expense' && item.debtId === debt.id);
   const starting = debt.openingOverride ?? debt.openingBalance;
-  const previousPaid = total(linked.filter(item => item.date.slice(0, 7) < month));
+  const previousPaid = total(linked.filter(item => item.date < cycleStart(month, startDay)));
   const opening = Math.max(0, Math.round((starting - previousPaid) * 100) / 100);
   const interest = debt.type === 'credit-card' ? Math.round(opening * debt.annualInterestRate / 1200 * 100) / 100 : 0;
-  const monthPaid = total(linked.filter(item => item.date.startsWith(month)));
+  const monthPaid = total(linked.filter(item => inCycle(item.date, month, startDay)));
   const paid = Math.round((previousPaid + monthPaid) * 100) / 100;
   const planned = linked.filter(item => item.paymentStatus === 'planned').reduce((sum, item) => sum + Math.round(item.amount * 100), 0) / 100;
   const closing = Math.max(0, Math.round((opening + interest - monthPaid) * 100) / 100);

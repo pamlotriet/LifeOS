@@ -1,5 +1,6 @@
 <ion-content>
   <main class="budget-page">
+  <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
     <header class="page-header budget-overview-header">
       @if (monthlyView) { <a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a> } @else { <a class="icon-button" routerLink="/home" aria-label="Back to Home"><ion-icon name="chevron-back" /></a> }
       @if (monthlyView) { <label class="budget-month-picker"><input type="month" aria-label="Budget month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></label> } @else { <div><h1>Budget</h1><a class="budget-month-link" routerLink="/budget/month">{{ monthLabel() }} <ion-icon name="chevron-down-outline" /></a></div> }
@@ -9,6 +10,9 @@
     @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
     @if (store.notice()) { <p class="status" role="status">{{ store.notice() }}</p> }
     @if (!store.loading() && !store.error()) {
+      <label class="field"><span>Budget cycle starts on</span><select class="lifeos-select" [value]="store.cycleStartDay()" [disabled]="savingCycle()" (change)="saveCycle($any($event.target).value)">@for (day of cycleDays; track day) { <option [value]="day">Day {{ day }}{{ day === 1 ? ' (calendar month)' : '' }}</option> }</select></label>
+      <p class="muted text-sm">A cycle starting after day 1 is named for its ending month. Short months use their last day. Changing this setting regroups existing transactions; their dates and saved planning months stay unchanged.</p>
+      @if(cycleError()) { <p class="status error" role="alert">{{ cycleError() }}</p> }
       <div class="form-actions mb-4" aria-label="Add budget transactions">
         <a class="primary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'income' }"><ion-icon name="cash" /> Add income</a>
         <a class="secondary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'expense' }">Add expense</a>
@@ -19,7 +23,7 @@
           <div class="calendar-grid">
             @for (day of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']; track day) { <span>{{ day }}</span> }
             @for (day of days(); track $index) {
-              @if (day) { <button type="button" [class.selected]="selectedDate() === dayDate(day)" [class.has-data]="hasTransactions(day)" [attr.aria-label]="dayDate(day)" [attr.aria-pressed]="selectedDate() === dayDate(day)" (click)="selectDay(day)">{{ day }}</button> } @else { <span></span> }
+              @if (day) { <button type="button" [class.selected]="selectedDate() === day.date" [class.has-data]="hasTransactions(day.date)" [attr.aria-label]="day.date" [attr.aria-pressed]="selectedDate() === day.date" (click)="selectDay(day.date)">{{ day.label }}</button> } @else { <span></span> }
             }
           </div>
           @if (selectedDate()) { <button class="text-link" (click)="selectedDate.set('')">Show all dates</button> }

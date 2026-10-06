@@ -1,4 +1,5 @@
 <ion-content><main class="budget-page">
+  <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
   <header class="page-header"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><h1 class="compact-title">Categories</h1><button class="primary-button" aria-label="Add category" [disabled]="busy() || store.loading() || !!store.error()" (click)="open()"><ion-icon name="add" /></button></header>
   <div class="month-nav"><span class="muted">Totals for</span><input type="month" aria-label="Category totals month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></div>
   <nav class="segments" aria-label="Category types">@for (type of types; track type) { <button [class.active]="tab() === type" [attr.aria-pressed]="tab() === type" (click)="tab.set(type)">{{ label(type) }}</button> }</nav>

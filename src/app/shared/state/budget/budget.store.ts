@@ -2,6 +2,7 @@ import { computed, effect, inject, Injectable, signal, untracked } from '@angula
 import { AuthService } from '../authentication/authentication.service';
 import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
 import { BudgetService } from './budget.service';
+import { cycleBounds, cycleMonth, cycleStart, inCycle } from './budget-cycle';
 import { BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, debtPlanId, localDate, supportsPlan, TransactionInput } from './budget.model';
 
 @Injectable({ providedIn: 'root' })
@@ -15,7 +16,12 @@ export class BudgetStore {
   readonly debts = signal<BudgetDebt[]>([]);
   readonly activeCategories = computed(() => this.categories().filter(x => !x.deleted).sort((a, b) => a.order - b.order || a.name.localeCompare(b.name)));
   readonly month = signal(localDate().slice(0, 7));
-  readonly monthly = computed(() => this.transactions().filter(x => x.paymentStatus !== 'planned' && x.date.startsWith(this.month())).sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title)));
+  readonly cycleStartDay = signal(1);
+  readonly cycle = computed(() => cycleBounds(this.month(), this.cycleStartDay()));
+  readonly cycleLabel = computed(() => `${this.cycle().start} – ${this.cycle().end}`);
+  inMonth(date: string, month = this.month()): boolean { return inCycle(date, month, this.cycleStartDay()); }
+  monthForDate(date: string): string { return cycleMonth(date, this.cycleStartDay()); }
+  readonly monthly = computed(() => this.transactions().filter(x => x.paymentStatus !== 'planned' && this.inMonth(x.date)).sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title)));
   readonly loading = signal(false);
   readonly error = signal('');
   readonly notice = signal('');
@@ -29,6 +35,7 @@ export class BudgetStore {
         this.categories.set(DEFAULT_CATEGORIES.map(x => ({ ...x })));
         this.plans.set([]); this.debts.set([]);
         this.month.set(localDate().slice(0, 7));
+        this.cycleStartDay.set(1);
         this.error.set(''); this.notice.set(''); this.loading.set(false);
         if (uid) void this.reload();
       });
@@ -43,6 +50,9 @@ export class BudgetStore {
       this.transactions.set(data.transactions);
       this.plans.set(data.plans);
       this.debts.set(data.debts);
+      const startDay = Number.isInteger(data.cycleStartDay) && data.cycleStartDay >= 1 && data.cycleStartDay <= 31 ? data.cycleStartDay : 1;
+      if (startDay !== this.cycleStartDay()) this.month.set(cycleMonth(localDate(), startDay));
+      this.cycleStartDay.set(startDay);
       const categories = new Map(DEFAULT_CATEGORIES.map(x => [x.id, { ...x }]));
       data.categories.forEach(x => categories.set(x.id, x));
       this.categories.set([...categories.values()]);
@@ -93,6 +103,15 @@ export class BudgetStore {
     const saved = await this.service.savePlan({ id, month, categoryId, amount });
     this.plans.update(items => [...items.filter(item => item.id !== id), saved]);
   }
+  async setCycleStartDay(day: number): Promise<void> {
+    if (this.loading() || this.error()) throw new Error('Load your budget before changing its cycle.');
+    const uid = this.auth.userId();
+    await this.service.saveCycleStartDay(day);
+    if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget.');
+    ++this.generation;
+    this.cycleStartDay.set(day);
+    this.month.set(cycleMonth(localDate(), day));
+  }
   async savePlanItem(month: string, categoryId: string, name: string, amount: number, id: string = crypto.randomUUID()): Promise<void> {
     if (this.loading() || this.error()) throw new Error('Load your budget before changing planned items.');
     if (!this.activeCategories().some(category => category.id === categoryId && supportsPlan(category.type))) throw new Error('Choose an expense, bills or savings category.');
@@ -136,7 +155,7 @@ export class BudgetStore {
     if (!category) throw new Error('Add an expense category before planning debt payments.');
     await this.saveTransaction({
       amount, type: 'expense', categoryId: existing?.categoryId ?? category.id,
-      title: existing?.title ?? `Payment to ${debt.name}`, date: existing?.date ?? `${month}-01`,
+      title: existing?.title ?? `Payment to ${debt.name}`, date: existing?.date ?? cycleStart(month, this.cycleStartDay()),
       paymentMethod: existing?.paymentMethod ?? 'Bank transfer', notes: existing?.notes ?? '',
       receiptUrl: existing?.receiptUrl ?? '', receiptPath: existing?.receiptPath ?? '', debtId,
       paymentStatus: 'planned',

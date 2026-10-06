@@ -15,8 +15,18 @@ export class BudgetOverview {
   readonly selectedDate = signal('');
   readonly tab = signal('overview');
   readonly money = money;
+  readonly cycleDays = Array.from({length:31}, (_,i)=>i+1);
+  readonly savingCycle = signal(false);
+  readonly cycleError = signal('');
+  async saveCycle(day: string): Promise<void> {
+    if(this.savingCycle()) return;
+    this.savingCycle.set(true); this.cycleError.set('');
+    try { await this.store.setCycleStartDay(Number(day)); this.selectedDate.set(''); }
+    catch(error) { this.cycleError.set(error instanceof Error ? error.message : 'Could not save cycle.'); }
+    finally { this.savingCycle.set(false); }
+  }
   readonly totals = computed(() => summary(this.store.monthly(), this.store.categories()));
-  readonly debtCards = computed(() => this.store.debts().map(debt => ({ debt, ...debtSummary(debt, this.store.transactions(), this.store.month()) })));
+  readonly debtCards = computed(() => this.store.debts().map(debt => ({ debt, ...debtSummary(debt, this.store.transactions(), this.store.month(), this.store.cycleStartDay()) })));
   readonly filtered = computed(() => this.store.monthly().filter(x => !this.selectedDate() || x.date === this.selectedDate()));
   readonly spending = computed(() => {
     const items = this.store.monthly().filter(x => x.type === 'expense');
@@ -28,15 +38,20 @@ export class BudgetOverview {
     options: { responsive: true, maintainAspectRatio: false, animation: false, cutout: '72%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: context => `${context.label}: ${money(Number(context.raw))}` } } } },
   }));
   readonly days = computed(() => {
-    const [year, month] = this.store.month().split('-').map(Number);
-    const offset = (new Date(year, month - 1, 1).getDay() + 6) % 7;
-    return [...Array.from({ length: offset }, () => 0), ...Array.from({ length: new Date(year, month, 0).getDate() }, (_, i) => i + 1)];
+    const start = new Date(this.store.cycle().start + 'T12:00:00');
+    const days: Array<{ date: string; label: string } | null> = Array.from({ length: (start.getDay()+6)%7 }, () => null);
+    while (true) {
+      const date = start.getFullYear()+'-'+String(start.getMonth()+1).padStart(2,'0')+'-'+String(start.getDate()).padStart(2,'0');
+      if (date >= this.store.cycle().endExclusive) break;
+      days.push({ date, label: start.getDate() === 1 ? start.toLocaleDateString('en-ZA', {day:'numeric',month:'short'}) : String(start.getDate()) });
+      start.setDate(start.getDate()+1);
+    }
+    return days;
   });
   readonly monthLabel = computed(() => new Date(`${this.store.month()}-01T12:00:00`).toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' }));
   setMonth(value: string): void { if (/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) { this.store.month.set(value); this.selectedDate.set(''); } }
   shiftMonth(delta: number): void { const date = new Date(`${this.store.month()}-01T12:00:00`); date.setMonth(date.getMonth() + delta); this.setMonth(`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`); }
-  dayDate(day: number): string { return `${this.store.month()}-${String(day).padStart(2, '0')}`; }
-  hasTransactions(day: number): boolean { return this.store.monthly().some(x => x.date === this.dayDate(day)); }
-  selectDay(day: number): void { const date = this.dayDate(day); this.selectedDate.set(this.selectedDate() === date ? '' : date); }
+  hasTransactions(date: string): boolean { return this.store.monthly().some(x => x.date === date); }
+  selectDay(date: string): void { this.selectedDate.set(this.selectedDate() === date ? '' : date); }
   ratio(value: number): number { return Math.min(100, value / Math.max(this.totals().income, this.totals().expenses, 1) * 100); }
 }
