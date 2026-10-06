@@ -9,6 +9,7 @@ import { RefuelStore } from '../refuels/refuel-store';
 import { refuelAverages } from '../refuels/refuel.model';
 import { VehicleStore } from '../vehicles/vehicle-store';
 import { statsMonths, sumByMonth } from './stats.calculations';
+import { debtStats } from './debt-stats';
 
 export type StatsModule = 'fuel' | 'books' | 'budget' | 'planning' | 'recipes' | 'vehicles';
 export type StatsRange = '3M' | '6M' | '1Y' | 'All';
@@ -24,6 +25,7 @@ export interface StatsKpi {
   accent: string;
 }
 export interface StatsDashboard {
+  debt?: { kpis: StatsKpi[]; balances: ChartConfiguration; repayments: ChartConfiguration; empty: boolean };
   kpis: StatsKpi[];
   primary: ChartConfiguration;
   secondary: ChartConfiguration;
@@ -299,13 +301,14 @@ export class StatsService {
         ? this.budget.transactions()
         : this.budget.transactions().filter((x) => allowed.has(x.date.slice(0, 7)));
     const values = summary(items, this.budget.categories());
+    const debt = debtStats(this.budget.debts(), this.budget.transactions(), statsMonths(range), range === 'All');
     const grouped = statsMonths(range).map((month) => {
       const part = items.filter((x) => x.date.startsWith(month));
       const value = summary(part, this.budget.categories());
       return { month, income: value.income, expenses: value.expenses, remaining: value.remaining };
     });
     return {
-      empty: !items.length,
+      empty: !items.length && !this.budget.debts().length,
       emptyTitle: 'No budget data yet',
       emptyMessage: 'Add income or expenses to see financial trends.',
       action: '/budget/transactions/add',
@@ -315,6 +318,27 @@ export class StatsService {
         this.kpi('Left over', money(values.remaining), 'card-outline', '#2497ff'),
         this.kpi('Savings', money(values.savings), 'lock-closed', '#8c4bff'),
       ],
+      debt: {
+        empty: !this.budget.debts().length,
+        kpis: [
+          this.kpi('Total outstanding', money(debt.outstanding), 'wallet', '#4774b6'),
+          this.kpi('Credit cards', money(debt.credit), 'card-outline', '#7093c4'),
+          this.kpi('Loans', money(debt.loans), 'cash', '#8a7ca8'),
+          this.kpi('Other debt', money(debt.other), 'document-text', '#617085'),
+          this.kpi('Paid in selected period', money(debt.repaid), 'checkmark', '#438c75'),
+          this.kpi('Planned payments', money(debt.planned), 'calendar', '#bd934d'),
+        ],
+        balances: {
+          type: 'bar',
+          data: { labels: debt.rows.map(row => row.name), datasets: [{ label: 'Outstanding', data: debt.rows.map(row => row.closing), backgroundColor: '#7093c4', borderRadius: 5 }] },
+          options: chartOptions(true),
+        },
+        repayments: {
+          type: 'bar',
+          data: { labels: labels(statsMonths(range)), datasets: [{ label: 'Paid', data: debt.monthly, backgroundColor: '#438c75', borderRadius: 5 }] },
+          options: chartOptions(true),
+        },
+      },
       primaryTitle: 'Income vs expenses',
       secondaryTitle: 'Left over trend',
       primary: {

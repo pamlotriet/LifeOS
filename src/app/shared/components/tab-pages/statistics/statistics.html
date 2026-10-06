@@ -107,6 +107,28 @@
           </div>
           <app-budget-chart [config]="data.secondary" [height]="230" [label]="data.secondaryTitle" />
         </section>
+        @if (data.debt; as debt) {
+          <section class="stats-chart-card" aria-labelledby="debt-stats-title">
+            <div class="chart-heading">
+              <div><h2 id="debt-stats-title">Credit, loans &amp; debt</h2><p>Current balances · repayments follow the selected time range</p></div>
+              <a routerLink="/budget/debts">Manage debts</a>
+            </div>
+            @if (debt.empty) {
+              <p class="stats-message">Add a credit card, loan or other debt account to see its statistics.</p>
+            } @else {
+              <div class="kpi-grid" aria-label="Debt statistics">
+                @for (item of debt.kpis; track item.label) {
+                  <article class="kpi-card"><span [style.background]="item.accent"><ion-icon [name]="item.icon"></ion-icon></span><div><small>{{ item.label }}</small><strong>{{ item.value }}</strong></div></article>
+                }
+              </div>
+              <h3 class="mt-5 mb-3">Outstanding by account</h3>
+              <app-budget-chart [config]="debt.balances" [height]="230" label="Outstanding debt by account" />
+              <h3 class="mt-5 mb-3">Monthly repayments @if (range() === 'All') { · latest 24 months }</h3>
+              <app-budget-chart [config]="debt.repayments" [height]="230" label="Monthly debt repayments" />
+              <p class="mt-4 text-sm text-[var(--text-secondary)]">Balances use the same calculation as Budget debts, including estimated credit-card interest for this month. Planned payments do not reduce outstanding balances or count as paid.</p>
+            }
+          </section>
+        }
         <section class="stats-insight">
           <ion-icon name="bulb-outline"></ion-icon>
           <div>

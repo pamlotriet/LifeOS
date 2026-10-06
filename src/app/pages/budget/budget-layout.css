@@ -11,3 +11,9 @@
 
 @media (max-width:520px) { .field-grid { grid-template-columns:1fr; gap:0; } .plan-panel,.debt-panel,.budget-content-card { padding:16px; } }
 :host-context(.dark) .error,:host-context(.dark) .danger-button { color:#fecdd3; background:#3b2035; border-color:#a44768; }
+.plan-category-total { display:grid; gap:3px; margin-left:auto; text-align:right; }
+.plan-item-row { display:grid; grid-template-columns:minmax(0,1fr) 92px 36px; gap:8px; align-items:center; padding:6px 0 6px 12px; }
+.plan-item-row input { width:100%; min-width:0; min-height:44px; padding:8px; border:1px solid var(--border); border-radius:8px; color:var(--foreground); background:var(--surface-secondary); }
+.plan-item-row button { min-width:36px; min-height:44px; justify-content:center; }
+.plan-add-item { min-height:44px; margin-left:12px; }
+.category-plan { padding-bottom:8px; }

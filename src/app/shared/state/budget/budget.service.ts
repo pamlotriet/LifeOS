@@ -72,10 +72,15 @@ export class BudgetService {
   }
 
   async savePlan(plan: BudgetPlan): Promise<BudgetPlan> {
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(plan.month) || !Number.isFinite(plan.amount) || plan.amount < 0 || plan.amount > 999999999 || (plan.name !== undefined && (!plan.name.trim() || plan.name.trim().length > 80))) throw new Error('Enter an item name and a valid planned amount.');
     const { uid, token } = await this.auth.getSession();
-    const record = { ...plan, amount: Math.max(0, Math.round(plan.amount * 100) / 100) };
+    const record = { ...plan, ...(plan.name !== undefined ? { name: plan.name.trim() } : {}), amount: Math.round(plan.amount * 100) / 100 };
     await this.firestore.updateDocument(`budgets/${uid}/plans/${encodeURIComponent(record.id)}`, fields(record), token);
     return record;
+  }
+  async deletePlan(id: string): Promise<void> {
+    const { uid, token } = await this.auth.getSession();
+    await this.firestore.deleteDocument(`budgets/${uid}/plans`, id, token);
   }
 
   async saveDebt(input: BudgetDebtInput, id?: string): Promise<BudgetDebt> {

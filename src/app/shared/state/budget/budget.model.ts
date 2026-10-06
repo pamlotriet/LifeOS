@@ -24,7 +24,11 @@ export interface BudgetTransaction {
   paymentStatus?: 'paid' | 'planned';
 }
 export type TransactionInput = Omit<BudgetTransaction, 'id'>;
-export interface BudgetPlan { id: string; month: string; categoryId: string; amount: number; }
+export interface BudgetPlan { id: string; month: string; categoryId: string; amount: number; name?: string; }
+export function categoryPlanItems(plans: BudgetPlan[], month: string, categoryId: string) {
+  const items = plans.filter(plan => plan.month === month && plan.categoryId === categoryId);
+  return { items, amount: items.reduce((sum, item) => sum + Math.round(item.amount * 100), 0) / 100 };
+}
 export interface BudgetDebt {
   id: string;
   name: string;
@@ -34,6 +38,7 @@ export interface BudgetDebt {
   openingOverride: number | null;
 }
 export type BudgetDebtInput = Omit<BudgetDebt, 'id'>;
+export function debtPlanId(month: string, debtId: string): string { return `debt-plan-${month}-${debtId}`; }
 export const CATEGORY_TYPES: CategoryType[] = ['expense', 'income', 'bills', 'savings'];
 export const CATEGORY_ICONS = ['restaurant-outline', 'home', 'car', 'wallet', 'heart', 'document-text', 'book', 'cash', 'card-outline', 'people', 'flash', 'disc'];
 export const CATEGORY_COLOURS = ['#ff608b', '#00b6ee', '#ff9b58', '#a56aef', '#12c9c1', '#768bad', '#35dba4', '#536dfe'];

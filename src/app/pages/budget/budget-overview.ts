@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { ChartConfiguration } from 'chart.js';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
-import { debtSummary, money, summary, total } from '../../shared/state/budget/budget.model';
+import { BudgetPlan, categoryPlanItems, debtPlanId, debtSummary, money, summary, total } from '../../shared/state/budget/budget.model';
 import { BudgetChart, BudgetSummary, BudgetTransactions } from './budget-ui';
 import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
@@ -15,13 +15,21 @@ export class BudgetOverview {
   readonly selectedDate = signal('');
   readonly tab = signal('overview');
   readonly money = money;
+  readonly debtPlanError = signal('');
+  readonly savingDebtPlan = signal(false);
+  readonly savingPlanItem = signal(false);
+  readonly planItemError = signal('');
+  readonly debtPlans = computed(() => this.store.debts().map(debt => {
+    const transaction = this.store.transactions().find(item => item.id === debtPlanId(this.store.month(), debt.id));
+    return { ...debt, planned: transaction?.amount ?? 0, paid: !!transaction && transaction.paymentStatus !== 'planned', actual: total(this.store.monthly().filter(item => item.type === 'expense' && item.debtId === debt.id)) };
+  }));
   readonly totals = computed(() => summary(this.store.monthly(), this.store.categories()));
   readonly planned = computed(() => this.store.activeCategories().filter(category => category.type === 'expense' || category.type === 'bills').map(category => {
-    const planned = this.store.plans().find(plan => plan.month === this.store.month() && plan.categoryId === category.id)?.amount ?? 0;
+    const plan = categoryPlanItems(this.store.plans(), this.store.month(), category.id);
     const actual = total(this.store.monthly().filter(item => item.type === 'expense' && item.categoryId === category.id));
-    return { ...category, planned, actual };
+    return { ...category, planned: plan.amount, items: plan.items, actual };
   }));
-  readonly plannedTotal = computed(() => this.planned().reduce((sum, item) => sum + item.planned, 0));
+  readonly plannedTotal = computed(() => this.planned().reduce((sum, item) => sum + item.planned, 0) + this.debtPlans().reduce((sum, item) => sum + item.planned, 0));
   readonly debtCards = computed(() => this.store.debts().map(debt => ({ debt, ...debtSummary(debt, this.store.transactions(), this.store.month()) })));
   readonly filtered = computed(() => this.store.monthly().filter(x => !this.selectedDate() || x.date === this.selectedDate()));
   readonly spending = computed(() => {
@@ -46,4 +54,25 @@ export class BudgetOverview {
   selectDay(day: number): void { const date = this.dayDate(day); this.selectedDate.set(this.selectedDate() === date ? '' : date); }
   ratio(value: number): number { return Math.min(100, value / Math.max(this.totals().income, this.totals().expenses, 1) * 100); }
   async savePlan(categoryId: string, amount: number): Promise<void> { await this.store.savePlan(this.store.month(), categoryId, Number(amount) || 0); }
+  async saveItem(categoryId: string, name: string, amount: number, id?: string): Promise<void> {
+    if (this.savingPlanItem()) return;
+    this.savingPlanItem.set(true); this.planItemError.set('');
+    try { await this.store.savePlanItem(this.store.month(), categoryId, name, amount, id); }
+    catch (error) { this.planItemError.set(error instanceof Error ? error.message : 'Could not save planned item.'); }
+    finally { this.savingPlanItem.set(false); }
+  }
+  async removeItem(item: BudgetPlan): Promise<void> {
+    if (this.savingPlanItem()) return;
+    this.savingPlanItem.set(true); this.planItemError.set('');
+    try { await this.store.deletePlanItem(item.id); }
+    catch (error) { this.planItemError.set(error instanceof Error ? error.message : 'Could not remove planned item.'); }
+    finally { this.savingPlanItem.set(false); }
+  }
+  async saveDebtPlan(debtId: string, amount: number): Promise<void> {
+    if (this.savingDebtPlan()) return;
+    this.savingDebtPlan.set(true); this.debtPlanError.set('');
+    try { await this.store.saveDebtPlan(this.store.month(), debtId, amount); }
+    catch (error) { this.debtPlanError.set(error instanceof Error ? error.message : 'Could not save the debt payment.'); }
+    finally { this.savingDebtPlan.set(false); }
+  }
 }

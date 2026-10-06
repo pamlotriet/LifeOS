@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal, untracked } from '@angula
 import { AuthService } from '../authentication/authentication.service';
 import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
 import { BudgetService } from './budget.service';
-import { BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, localDate, TransactionInput } from './budget.model';
+import { BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, debtPlanId, localDate, TransactionInput } from './budget.model';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetStore {
@@ -90,6 +90,23 @@ export class BudgetStore {
     const saved = await this.service.savePlan({ id, month, categoryId, amount });
     this.plans.update(items => [...items.filter(item => item.id !== id), saved]);
   }
+  async savePlanItem(month: string, categoryId: string, name: string, amount: number, id: string = crypto.randomUUID()): Promise<void> {
+    if (this.loading() || this.error()) throw new Error('Load your budget before changing planned items.');
+    if (!this.activeCategories().some(category => category.id === categoryId && ['expense', 'bills'].includes(category.type))) throw new Error('Choose an expense category.');
+    const uid = this.auth.userId();
+    const saved = await this.service.savePlan({ id, month, categoryId, name, amount });
+    if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget to continue.');
+    ++this.generation;
+    this.plans.update(items => [...items.filter(item => item.id !== id), saved]);
+  }
+  async deletePlanItem(id: string): Promise<void> {
+    if (this.loading() || this.error()) throw new Error('Load your budget before changing planned items.');
+    const uid = this.auth.userId();
+    await this.service.deletePlan(id);
+    if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget to continue.');
+    ++this.generation;
+    this.plans.update(items => items.filter(item => item.id !== id));
+  }
   async saveDebt(input: BudgetDebtInput, id?: string): Promise<void> {
     if (this.loading() || this.error()) throw new Error('Load your budget before changing debts.');
     const uid = this.auth.userId();
@@ -97,6 +114,30 @@ export class BudgetStore {
     if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget to continue.');
     ++this.generation;
     this.debts.update(items => [...items.filter(item => item.id !== saved.id), saved]);
+  }
+  async saveDebtPlan(month: string, debtId: string, amount: number): Promise<void> {
+    if (this.loading() || this.error()) throw new Error('Load your budget before changing debt payments.');
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month) || !Number.isFinite(amount) || amount < 0 || amount > 999999999) throw new Error('Enter a valid planned payment amount.');
+    const debt = this.debts().find(item => item.id === debtId);
+    if (!debt) throw new Error('Choose an existing debt account.');
+    const id = debtPlanId(month, debtId);
+    const existing = this.transactions().find(item => item.id === id);
+    if (existing && existing.paymentStatus !== 'planned') throw new Error('This payment is already paid. Edit it in the debt payment history.');
+    if (amount === 0) {
+      if (existing) await this.deleteTransaction(existing);
+      return;
+    }
+    const category = this.activeCategories().find(item => item.type === 'expense' && /debt|loan|credit/i.test(item.name))
+      ?? this.activeCategories().find(item => item.type === 'expense' && item.id === 'other')
+      ?? this.activeCategories().find(item => item.type === 'expense');
+    if (!category) throw new Error('Add an expense category before planning debt payments.');
+    await this.saveTransaction({
+      amount, type: 'expense', categoryId: existing?.categoryId ?? category.id,
+      title: existing?.title ?? `Payment to ${debt.name}`, date: existing?.date ?? `${month}-01`,
+      paymentMethod: existing?.paymentMethod ?? 'Bank transfer', notes: existing?.notes ?? '',
+      receiptUrl: existing?.receiptUrl ?? '', receiptPath: existing?.receiptPath ?? '', debtId,
+      paymentStatus: 'planned',
+    }, id);
   }
   async deleteDebt(id: string): Promise<void> {
     await this.service.deleteDebt(id);

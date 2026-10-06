@@ -28,9 +28,30 @@
         <section class="panel plan-panel" aria-labelledby="plan-title">
           <div class="section-heading"><div><p class="eyebrow">Plan versus actual</p><h2 id="plan-title">Expense plan</h2></div><strong>{{ money(plannedTotal()) }}</strong></div>
           <p class="muted">Only actual expenses reduce your income balance. Set a planned amount to see what you expect to spend.</p>
+          @if (planItemError()) { <p class="status error" role="alert">{{ planItemError() }}</p> }
           @for (item of planned(); track item.id) {
-            <div class="plan-row"><span class="category-icon" [style.background]="item.colour"><ion-icon [name]="item.icon" /></span><span class="row-copy"><strong>{{ item.name }}</strong><small>Actual {{ money(item.actual) }}</small></span><label><span>Planned</span><input type="number" inputmode="decimal" min="0" step="0.01" [ngModel]="item.planned" (change)="savePlan(item.id, $any($event.target).valueAsNumber)" /></label></div>
+            <section class="category-plan" [attr.aria-label]="item.name + ' planned items'">
+              <div class="plan-row"><span class="category-icon" [style.background]="item.colour"><ion-icon [name]="item.icon" /></span><span class="row-copy"><strong>{{ item.name }}</strong><small>Actual {{ money(item.actual) }}</small></span><span class="plan-category-total"><small>Planned total</small><strong>{{ money(item.planned) }}</strong></span></div>
+              @for (entry of item.items; track entry.id) {
+                <div class="plan-item-row">
+                  <input type="text" maxlength="80" [attr.aria-label]="'Item name in ' + item.name" [ngModel]="entry.name || 'Existing plan'" [disabled]="savingPlanItem()" (change)="saveItem(item.id, $any($event.target).value, entry.amount, entry.id)" />
+                  <input type="number" inputmode="decimal" min="0" max="999999999" step="0.01" [attr.aria-label]="'Planned amount for ' + (entry.name || 'Existing plan')" [ngModel]="entry.amount" [disabled]="savingPlanItem()" (change)="saveItem(item.id, entry.name || 'Existing plan', $any($event.target).valueAsNumber, entry.id)" />
+                  <button type="button" class="text-link" [disabled]="savingPlanItem()" [attr.aria-label]="'Remove ' + (entry.name || 'Existing plan')" (click)="removeItem(entry)"><ion-icon name="trash-outline" /></button>
+                </div>
+              }
+              <button type="button" class="text-link plan-add-item" [disabled]="savingPlanItem()" (click)="saveItem(item.id, 'New item', 0)"><ion-icon name="add" /> Add item</button>
+            </section>
           }
+          <div class="section-heading mt-4"><h3>Debt payments</h3><a class="text-link" routerLink="/budget/debts">Manage debts</a></div>
+          <p class="muted">Enter each account's planned payment. A linked transaction is saved automatically; mark it paid in Manage debts. These amounts are added to the category plans above.</p>
+          @if (debtPlanError()) { <p class="status error" role="alert">{{ debtPlanError() }}</p> }
+          @for (item of debtPlans(); track item.id) {
+            <div class="plan-row">
+              <span class="category-icon bg-[var(--secondary)] text-[var(--primary)]"><ion-icon [name]="item.type === 'credit-card' ? 'card-outline' : 'cash'" /></span>
+              <span class="row-copy"><strong>{{ item.name }}</strong><small>Actual {{ money(item.actual) }} @if (item.paid) { · Paid }</small></span>
+              <label><span>{{ item.paid ? 'Recorded' : 'Planned' }}</span><input type="number" inputmode="decimal" min="0" step="0.01" [attr.aria-label]="'Planned payment for ' + item.name" [disabled]="savingDebtPlan() || item.paid" [ngModel]="item.planned" (change)="saveDebtPlan(item.id, $any($event.target).valueAsNumber)" /></label>
+            </div>
+          } @empty { <p class="muted">Add named accounts such as Flixprime or Oom Martin in Manage debts to plan their payments here.</p> }
         </section>
         <section class="panel debt-panel" aria-labelledby="debt-title">
           <div class="section-heading"><div><p class="eyebrow">Debt snapshot</p><h2 id="debt-title">Debt &amp; credit</h2></div><a routerLink="/budget/debts" class="text-link">Manage</a></div>

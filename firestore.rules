@@ -118,7 +118,8 @@ service cloud.firestore {
       match /plans/{planId} {
         allow read, delete: if owns(userId);
         allow create, update: if owns(userId)
-          && request.resource.data.keys().hasOnly(['month', 'categoryId', 'amount'])
+          && request.resource.data.keys().hasOnly(['month', 'categoryId', 'amount', 'name'])
+          && (!('name' in request.resource.data) || (request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 80))
           && request.resource.data.month is string && request.resource.data.month.matches('[0-9]{4}-[0-9]{2}')
           && request.resource.data.categoryId is string && request.resource.data.categoryId.size() > 0
           && request.resource.data.amount is number && request.resource.data.amount >= 0;
