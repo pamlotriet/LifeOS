@@ -10,7 +10,7 @@
     @if (store.notice()) { <p class="status" role="status">{{ store.notice() }}</p> }
     @if (!store.loading() && !store.error()) {
       @if (monthlyView) {
-        <nav class="segments" aria-label="Monthly views"><button [class.active]="tab() === 'overview'" (click)="tab.set('overview')">Overview</button><button [class.active]="tab() === 'transactions'" (click)="tab.set('transactions')">Transactions</button><a routerLink="/budget/categories">Categories</a></nav>
+        <nav class="segments" aria-label="Monthly views"><button [class.active]="tab() === 'overview'" (click)="tab.set('overview')">Overview</button><button [class.active]="tab() === 'transactions'" (click)="tab.set('transactions')">Transactions</button><a routerLink="/budget/planned">Planned</a><a routerLink="/budget/categories">Categories</a></nav>
         <section class="calendar" aria-label="Filter transactions by date">
           <div class="calendar-grid">
             @for (day of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']; track day) { <span>{{ day }}</span> }
@@ -25,34 +25,7 @@
           <div class="balance-values"><div><span>Total Income</span><strong>{{ money(totals().income) }}</strong></div><div><span>Total Expenses</span><strong>{{ money(totals().expenses) }}</strong></div><div><span>Remaining</span><strong [class.negative]="totals().remaining < 0">{{ money(totals().remaining) }}</strong></div></div>
           <div class="balance-bars"><div><div class="track"><span style="background:#59dfb7" [style.width.%]="ratio(totals().income)"></span></div><small>Income</small></div><div><div class="track"><span style="background:#ff608b" [style.width.%]="ratio(totals().expenses)"></span></div><small>Expenses · includes bills</small></div></div>
         </section>
-        <section class="panel plan-panel" aria-labelledby="plan-title">
-          <div class="section-heading"><div><p class="eyebrow">Plan versus actual</p><h2 id="plan-title">Expense plan</h2></div><strong>{{ money(plannedTotal()) }}</strong></div>
-          <p class="muted">Only actual expenses reduce your income balance. Set a planned amount to see what you expect to spend.</p>
-          @if (planItemError()) { <p class="status error" role="alert">{{ planItemError() }}</p> }
-          @for (item of planned(); track item.id) {
-            <section class="category-plan" [attr.aria-label]="item.name + ' planned items'">
-              <div class="plan-row"><span class="category-icon" [style.background]="item.colour"><ion-icon [name]="item.icon" /></span><span class="row-copy"><strong>{{ item.name }}</strong><small>Actual {{ money(item.actual) }}</small></span><span class="plan-category-total"><small>Planned total</small><strong>{{ money(item.planned) }}</strong></span></div>
-              @for (entry of item.items; track entry.id) {
-                <div class="plan-item-row">
-                  <input type="text" maxlength="80" [attr.aria-label]="'Item name in ' + item.name" [ngModel]="entry.name || 'Existing plan'" [disabled]="savingPlanItem()" (change)="saveItem(item.id, $any($event.target).value, entry.amount, entry.id)" />
-                  <input type="number" inputmode="decimal" min="0" max="999999999" step="0.01" [attr.aria-label]="'Planned amount for ' + (entry.name || 'Existing plan')" [ngModel]="entry.amount" [disabled]="savingPlanItem()" (change)="saveItem(item.id, entry.name || 'Existing plan', $any($event.target).valueAsNumber, entry.id)" />
-                  <button type="button" class="text-link" [disabled]="savingPlanItem()" [attr.aria-label]="'Remove ' + (entry.name || 'Existing plan')" (click)="removeItem(entry)"><ion-icon name="trash-outline" /></button>
-                </div>
-              }
-              <button type="button" class="text-link plan-add-item" [disabled]="savingPlanItem()" (click)="saveItem(item.id, 'New item', 0)"><ion-icon name="add" /> Add item</button>
-            </section>
-          }
-          <div class="section-heading mt-4"><h3>Debt payments</h3><a class="text-link" routerLink="/budget/debts">Manage debts</a></div>
-          <p class="muted">Enter each account's planned payment. A linked transaction is saved automatically; mark it paid in Manage debts. These amounts are added to the category plans above.</p>
-          @if (debtPlanError()) { <p class="status error" role="alert">{{ debtPlanError() }}</p> }
-          @for (item of debtPlans(); track item.id) {
-            <div class="plan-row">
-              <span class="category-icon bg-[var(--secondary)] text-[var(--primary)]"><ion-icon [name]="item.type === 'credit-card' ? 'card-outline' : 'cash'" /></span>
-              <span class="row-copy"><strong>{{ item.name }}</strong><small>Actual {{ money(item.actual) }} @if (item.paid) { · Paid }</small></span>
-              <label><span>{{ item.paid ? 'Recorded' : 'Planned' }}</span><input type="number" inputmode="decimal" min="0" step="0.01" [attr.aria-label]="'Planned payment for ' + item.name" [disabled]="savingDebtPlan() || item.paid" [ngModel]="item.planned" (change)="saveDebtPlan(item.id, $any($event.target).valueAsNumber)" /></label>
-            </div>
-          } @empty { <p class="muted">Add named accounts such as Flixprime or Oom Martin in Manage debts to plan their payments here.</p> }
-        </section>
+        <a class="secondary-button flex items-center justify-between mt-4" routerLink="/budget/planned"><span>Planned transactions</span><ion-icon name="chevron-forward" /></a>
         <section class="panel debt-panel" aria-labelledby="debt-title">
           <div class="section-heading"><div><p class="eyebrow">Debt snapshot</p><h2 id="debt-title">Debt &amp; credit</h2></div><a routerLink="/budget/debts" class="text-link">Manage</a></div>
           @for (card of debtCards(); track card.debt.id) { <div class="debt-row"><span><strong>{{ card.debt.name }}</strong><small>{{ card.debt.type === 'credit-card' ? 'Credit card' : card.debt.type }}</small></span><span><small>Opening {{ money(card.opening) }} · Interest {{ money(card.interest) }}</small><strong>{{ money(card.closing) }} left</strong></span></div> } @empty { <p class="muted">Add loans or credit cards to track total debt, payments, and calculated closing balances.</p> }

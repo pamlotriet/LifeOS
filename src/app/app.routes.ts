@@ -46,6 +46,7 @@ export const routes: Routes = [
   { path: 'budget/month', loadComponent: () => import('./pages/budget/budget-overview').then(m => m.BudgetOverview), data: { monthly: true }, canActivate: [authGuard] },
   { path: 'budget/transactions/add', loadComponent: () => import('./pages/budget/budget-transaction-form').then(m => m.BudgetTransactionForm), canActivate: [authGuard] },
   { path: 'budget/transactions/:id/edit', loadComponent: () => import('./pages/budget/budget-transaction-form').then(m => m.BudgetTransactionForm), canActivate: [authGuard] },
+  { path: 'budget/planned', loadComponent: () => import('./pages/budget/budget-planned').then(m => m.BudgetPlanned), canActivate: [authGuard] },
   { path: 'budget/categories', loadComponent: () => import('./pages/budget/budget-categories').then(m => m.BudgetCategories), canActivate: [authGuard] },
   { path: 'budget/debts', loadComponent: () => import('./pages/budget/budget-debts').then(m => m.BudgetDebts), canActivate: [authGuard] },
   { path: 'budget/insights', loadComponent: () => import('./pages/budget/budget-insights').then(m => m.BudgetInsights), canActivate: [authGuard] },
