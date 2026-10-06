@@ -18,7 +18,7 @@
           <label class="field"><span>Custom colour</span><input type="color" name="colour" [(ngModel)]="model.colour" /></label>
           <div class="form-actions"><button type="button" class="secondary-button" (click)="editor.set(null)">Cancel</button><button class="primary-button" type="submit">{{ busy() ? 'Saving...' : 'Save category' }}</button></div>
           @if (!isNew()) { <button type="button" class="text-link negative" (click)="confirming.set(true)">Delete category</button> }
-          @if (confirming()) { <div class="status error"><p>Delete {{ model.name }}? Categories with transactions must be emptied first.</p><div class="form-actions"><button type="button" class="secondary-button" (click)="confirming.set(false)">Keep it</button><button type="button" class="secondary-button danger-button" (click)="remove()">Delete</button></div></div> }
+          @if (confirming()) { <div class="status error"><p>Delete {{ model.name }}? It will be hidden from category lists and new transactions. Existing transactions and planned items are preserved.</p><div class="form-actions"><button type="button" class="secondary-button" (click)="confirming.set(false)">Keep it</button><button type="button" class="secondary-button danger-button" (click)="remove()">Delete</button></div></div> }
         </fieldset></form>
       </section>
     } @else {
