@@ -25,7 +25,7 @@ export interface StatsKpi {
   accent: string;
 }
 export interface StatsDashboard {
-  debt?: { kpis: StatsKpi[]; balances: ChartConfiguration; repayments: ChartConfiguration; empty: boolean };
+  debt?: { kpis: StatsKpi[]; balances: ChartConfiguration; repayments: ChartConfiguration; empty: boolean; cycleLabel: string };
   kpis: StatsKpi[];
   primary: ChartConfiguration;
   secondary: ChartConfiguration;
@@ -295,14 +295,15 @@ export class StatsService {
     };
   }
   private budgetStats(range: StatsRange): StatsDashboard {
-    const allowed = new Set(statsMonths(range, new Date(this.budget.monthForDate(localDate()) + '-01T12:00:00')));
+    const months = statsMonths(range, new Date(this.budget.month() + '-01T12:00:00'));
+    const allowed = new Set(months);
     const items =
       range === 'All'
         ? this.budget.transactions()
         : this.budget.transactions().filter((x) => allowed.has(this.budget.monthForDate(x.date)));
     const values = summary(items, this.budget.categories());
-    const debt = debtStats(this.budget.debts(), this.budget.transactions(), statsMonths(range, new Date(this.budget.monthForDate(localDate()) + '-01T12:00:00')), range === 'All', localDate(), this.budget.cycleStartDay());
-    const grouped = statsMonths(range, new Date(this.budget.monthForDate(localDate()) + '-01T12:00:00')).map((month) => {
+    const debt = debtStats(this.budget.debts(), this.budget.transactions(), months, range === 'All', localDate(), this.budget.cycleStartDay(), this.budget.month());
+    const grouped = months.map((month) => {
       const part = items.filter((x) => this.budget.inMonth(x.date, month));
       const value = summary(part, this.budget.categories());
       return { month, income: value.income, expenses: value.expenses, remaining: value.remaining };
@@ -319,10 +320,14 @@ export class StatsService {
         this.kpi('Savings', money(values.savings), 'lock-closed', '#8c4bff'),
       ],
       debt: {
+        cycleLabel: this.budget.cycleLabel(),
         empty: !this.budget.debts().length,
         kpis: [
           this.kpi('Total outstanding', money(debt.outstanding), 'wallet', '#4774b6'),
-          this.kpi('Credit cards', money(debt.credit), 'card-outline', '#7093c4'),
+          this.kpi('Credit opening', money(debt.creditOpening), 'card-outline', '#7093c4'),
+          this.kpi('Credit payments this cycle', money(debt.creditPaid), 'checkmark', '#438c75'),
+          this.kpi('Estimated credit interest', money(debt.creditInterest), 'document-text', '#617085'),
+          this.kpi('Credit remaining', money(debt.credit), 'card-outline', '#7093c4'),
           this.kpi('Loans', money(debt.loans), 'cash', '#8a7ca8'),
           this.kpi('Other debt', money(debt.other), 'document-text', '#617085'),
           this.kpi('Paid in selected period', money(debt.repaid), 'checkmark', '#438c75'),
@@ -335,7 +340,7 @@ export class StatsService {
         },
         repayments: {
           type: 'bar',
-          data: { labels: labels(statsMonths(range, new Date(this.budget.monthForDate(localDate()) + '-01T12:00:00'))), datasets: [{ label: 'Paid', data: debt.monthly, backgroundColor: '#438c75', borderRadius: 5 }] },
+          data: { labels: labels(months), datasets: [{ label: 'Paid', data: debt.monthly, backgroundColor: '#438c75', borderRadius: 5 }] },
           options: chartOptions(true),
         },
       },

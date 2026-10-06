@@ -57,6 +57,18 @@ describe('Debt payments', () => {
     expect(debtSummary({ ...debt, type: 'credit-card', annualInterestRate: 12 }, [payment(10000, '2026-08-01')], '2026-09').interest).toBe(1600);
     expect(debtSummary(debt, [payment(200000, '2026-09-01')], '2026-09').closing).toBe(0);
   });
+  it('restores a deleted credit payment and recalculates interest for prior-cycle payments', () => {
+    const card = { ...debt, type: 'credit-card' as const, openingBalance: 1000, annualInterestRate: 12 };
+    const prior = payment(100, '2026-09-27', 'paid');
+    const current = payment(200, '2026-09-28', 'paid');
+    const before = debtSummary(card, [prior, current], '2026-10', 28);
+    const afterCurrentDeletion = debtSummary(card, [prior], '2026-10', 28);
+    expect(before).toMatchObject({ opening: 900, interest: 9, closing: 709 });
+    expect(afterCurrentDeletion.closing).toBe(909);
+    const afterPriorDeletion = debtSummary(card, [current], '2026-10', 28);
+    expect(afterPriorDeletion).toMatchObject({ opening: 1000, interest: 10, closing: 810 });
+    expect(debtSummary(card, [], '2026-10', 28).closing).toBe(1010);
+  });
   it('allows past payments and future plans but rejects future completed payments', () => {
     expect(() => validateTransaction(payment(500, '2020-01-01', 'paid'))).not.toThrow();
     expect(() => validateTransaction(payment(500, '2099-01-01', 'planned'))).not.toThrow();

@@ -15,16 +15,6 @@ export class BudgetOverview {
   readonly selectedDate = signal('');
   readonly tab = signal('overview');
   readonly money = money;
-  readonly cycleDays = Array.from({length:31}, (_,i)=>i+1);
-  readonly savingCycle = signal(false);
-  readonly cycleError = signal('');
-  async saveCycle(day: string): Promise<void> {
-    if(this.savingCycle()) return;
-    this.savingCycle.set(true); this.cycleError.set('');
-    try { await this.store.setCycleStartDay(Number(day)); this.selectedDate.set(''); }
-    catch(error) { this.cycleError.set(error instanceof Error ? error.message : 'Could not save cycle.'); }
-    finally { this.savingCycle.set(false); }
-  }
   readonly totals = computed(() => summary(this.store.monthly(), this.store.categories()));
   readonly debtCards = computed(() => this.store.debts().map(debt => ({ debt, ...debtSummary(debt, this.store.transactions(), this.store.month(), this.store.cycleStartDay()) })));
   readonly filtered = computed(() => this.store.monthly().filter(x => !this.selectedDate() || x.date === this.selectedDate()));

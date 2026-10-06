@@ -3,6 +3,16 @@ import { BudgetDebt, BudgetTransaction } from '../budget/budget.model';
 import { debtStats } from './debt-stats';
 
 describe('Debt statistics', () => {
+  it('shows the 64944 credit opening separately and restores deleted repayments', () => {
+    const card: BudgetDebt = { id: 'credit', name: 'Credit', type: 'credit-card', openingBalance: 64944, annualInterestRate: 12, openingOverride: null };
+    const transaction = payment('paid', 'credit', 1000, '2026-09-28');
+    const before = debtStats([card], [transaction], ['2026-10'], false, '2026-10-06', 28, '2026-10');
+    expect(before).toMatchObject({ creditOpening: 64944, creditPaid: 1000, creditInterest: 649.44, credit: 64593.44 });
+    const after = debtStats([card], [], ['2026-10'], false, '2026-10-06', 28, '2026-10');
+    expect(after).toMatchObject({ creditOpening: 64944, creditPaid: 0, credit: 65593.44 });
+    const previousCycle = debtStats([card], [transaction], ['2026-09'], false, '2026-10-06', 28, '2026-09');
+    expect(previousCycle.creditPaid).toBe(0);
+  });
   const debts: BudgetDebt[] = [
     { id: 'credit', name: 'Card', type: 'credit-card', openingBalance: 1000, annualInterestRate: 12, openingOverride: null },
     { id: 'loan', name: 'Loan', type: 'loan', openingBalance: 2000, annualInterestRate: 0, openingOverride: null },
