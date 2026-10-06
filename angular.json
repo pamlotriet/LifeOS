@@ -25,7 +25,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"],
+            "styles": ["src/styles.css", "src/professional.css"],
             "security": {
               "allowedHosts": []
             }
@@ -63,6 +63,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "hmr": false
+          },
           "configurations": {
             "production": {
               "buildTarget": "lifeos:build:production"

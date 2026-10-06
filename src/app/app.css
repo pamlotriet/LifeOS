@@ -1,19 +1,13 @@
 .lifeos-app {
-  background:
-    url('/assets/login-waves.svg') center / cover no-repeat,
-    radial-gradient(ellipse at 0 22%, rgb(0 157 255 / 34%), transparent 42%),
-    radial-gradient(ellipse at 100% 72%, rgb(100 40 255 / 30%), transparent 44%),
-    linear-gradient(160deg, #071d39 0%, #06172d 48%, #101943 100%);
+  background: var(--background);
 }
 .lifeos-app .app-route-outlet { background: transparent; }
 
 .login-page {
   height: 100%;
   overflow-y: auto;
-  color: #f9faff;
-  background: url('/assets/login-waves.svg') center / 100% 100% no-repeat,
-    radial-gradient(ellipse at 0 40%, #00307566, transparent 55%),
-    radial-gradient(ellipse at 100% 85%, #1819ac66, transparent 45%), #020d2b;
+  color: var(--text-secondary);
+  background: var(--background);
   font-family: var(--font-sans);
   color-scheme: dark;
 }
@@ -37,7 +31,7 @@
 }
 .login-brand h1 { margin: 0; font-size: clamp(48px, 12.5vw, 64px); font-weight: 750; line-height: 1.12; letter-spacing: -3px; }
 .login-brand h1 span { background: linear-gradient(125deg, #00f1eb 10%, #0078ff 45%, #630aff 72%, #ee40f0); background-clip: text; color: transparent; }
-.login-brand p { margin: 5px 0 0; color: #c0cdf5; font-size: clamp(16px, 4.1vw, 21px); letter-spacing: -.5px; }
+.login-brand p { margin: 5px 0 0; color: var(--text-secondary); font-size: clamp(16px, 4.1vw, 21px); letter-spacing: -.5px; }
 .login-card {
   position: relative;
   padding: 24px 20px;
@@ -50,7 +44,7 @@
 }
 .login-card::before { content: ''; position: absolute; top: -1px; left: 15%; right: 15%; height: 1px; background: linear-gradient(90deg, transparent, #00dbff, transparent); box-shadow: 0 0 12px #00baff; }
 .login-card h2 { margin: 0; font-size: clamp(20px, 4.6vw, 24px); font-weight: 600; letter-spacing: -.5px; }
-.login-subtitle { margin: 4px 0 18px; color: #91a8db; font-size: 17px; }
+.login-subtitle { margin: 4px 0 18px; color: var(--text-secondary); font-size: 17px; }
 .login-button {
   display: flex;
   align-items: center;
@@ -67,19 +61,19 @@
   transition: filter .2s, transform .2s;
 }
 .login-button:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
-.login-button:focus-visible { outline: 3px solid #8ffaff; outline-offset: 5px; }
+.login-button:focus-visible { outline: 3px solid var(--text-secondary); outline-offset: 5px; }
 .login-button:disabled { opacity: .65; cursor: wait; }
-.google-button { color: #060a2c; border: 1px solid #fff; background: linear-gradient(120deg, #f6fbff, #dfedff 55%, #ecddff); box-shadow: -5px 0 18px #00bfff80, 5px 0 18px #8000ff90, inset 0 0 12px #fff; }
+.google-button { color: var(--card); border: 1px solid #fff; background: linear-gradient(120deg, var(--text-secondary), var(--text-secondary) 55%, #ecddff); box-shadow: -5px 0 18px #00bfff80, 5px 0 18px #8000ff90, inset 0 0 12px #fff; }
 .google-mark { width: 30px; height: 30px; flex-shrink: 0; }
 .button-chevron { width: 18px; height: 18px; flex-shrink: 0; margin-left: auto; fill: none; stroke: currentColor; stroke-width: 2; }
-.google-button .button-chevron { color: #30357f; }
+.google-button .button-chevron { color: var(--border); }
 .login-button > span { flex: 1; }
-.login-security { display: flex; margin-top: 22px; text-align: left; color: #b0c2ee; }
+.login-security { display: flex; margin-top: 22px; text-align: left; color: var(--text-secondary); }
 .login-security > div { display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1; font-size: 11px; line-height: 1.4; }
 .login-security > div + div { border-left: 1px solid #4962a566; }
 .login-security svg { width: 23px; height: 23px; flex-shrink: 0; fill: none; stroke: #51caff; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(2px 0 3px #5845ff); }
 .login-security > div:nth-child(2) { color: #61d8ff; }
-.login-footer { margin-top: 15px; text-align: center; color: #9bafe0; font-size: 12px; line-height: 1.7; }
+.login-footer { margin-top: 15px; text-align: center; color: var(--text-secondary); font-size: 12px; line-height: 1.7; }
 .login-error, .login-notice { margin: 16px 0 0; padding: 10px; border-radius: 10px; font-size: 13px; line-height: 1.5; }
 .login-error { color: #ffe3e9; background: #671e4266; border: 1px solid #e787a666; }
 .login-notice { color: #ffe7bb; background: #66471766; border: 1px solid #cda15c66; }
@@ -97,3 +91,16 @@
   .face-mark { margin-left: 13%; }
   .login-security > div { gap: 5px; font-size: 10px; }
 }
+
+
+.lifeos-app, .login-page { background: var(--background); color: var(--foreground); }
+.login-logo { width: 80px; filter: none; }
+.login-brand h1 { font-size: 42px; letter-spacing: -1.5px; }
+.login-brand h1 span { background: none; color: var(--primary); }
+.login-brand p, .login-subtitle, .login-footer, .login-security { color: var(--text-secondary); }
+.login-card { border-color: var(--border); border-radius: 16px; background: var(--card); box-shadow: 0 8px 32px rgb(0 0 0 / 6%); backdrop-filter: none; }
+.login-card::before { display: none; }
+.google-button { color: var(--foreground); background: var(--card); border-color: var(--border); box-shadow: none; }
+.google-button .button-chevron, .login-security > div:nth-child(2) { color: var(--text-secondary); }
+.login-security svg { stroke: var(--primary); filter: none; }
+.login-security > div + div { border-color: var(--border); }

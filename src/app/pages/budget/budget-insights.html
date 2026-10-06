@@ -16,7 +16,7 @@
       @else { <p class="empty-state">Your monthly comparison will appear when you record income or expenses.</p> }
       <details><summary>View monthly amounts</summary><table class="data-table"><thead><tr><th scope="col">Month</th><th scope="col">Income</th><th scope="col">Expenses</th></tr></thead><tbody>@for (period of periods(); track period.month) { <tr><th scope="row">{{ period.month }}</th><td>{{ money(period.income) }}</td><td>{{ money(period.expenses) }}</td></tr> }</tbody></table></details>
     </section>
-    <section class="panel average-card"><span class="category-icon" style="background:#094577"><ion-icon name="wallet" /></span><div class="row-copy"><small>Average Monthly Spending</small><strong>{{ money(average()) }}</strong></div>@if (change() !== null) { <span [class.negative]="change()! > 0" [class.positive]="change()! <= 0">{{ change()! > 0 ? '↑' : change()! < 0 ? '↓' : '' }} {{ change()! < 0 ? -change()! : change() }}%</span> }</section>
+    <section class="panel average-card"><span class="category-icon" style="background:var(--border)"><ion-icon name="wallet" /></span><div class="row-copy"><small>Average Monthly Spending</small><strong>{{ money(average()) }}</strong></div>@if (change() !== null) { <span [class.negative]="change()! > 0" [class.positive]="change()! <= 0">{{ change()! > 0 ? '↑' : change()! < 0 ? '↓' : '' }} {{ change()! < 0 ? -change()! : change() }}%</span> }</section>
     <p class="muted" style="font-size:12px;margin-top:12px">Average across the four months shown, including months with no recorded spending. Percentage compares the selected month's spending with the previous month. Bills are included in expenses; savings transfers are excluded.</p>
   }
 </main></ion-content>

@@ -65,8 +65,8 @@ header > span,
 .family-primary {
   margin-top: 1.25rem;
   width: 100%;
-  background: linear-gradient(90deg, var(--lifeos-cyan), var(--lifeos-blue));
-  color: #06243b;
+  background: var(--card);
+  color: var(--card);
 }
 .family-secondary {
   border: 1px solid color-mix(in srgb, var(--lifeos-blue) 55%, var(--border));
@@ -97,7 +97,7 @@ header > span,
   height: 3rem;
   place-items: center;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--lifeos-blue), var(--lifeos-violet));
+  background: var(--card);
   color: white;
   font-weight: 800;
 }
@@ -190,15 +190,15 @@ header > span,
   }
 }
 :host-context(.dark) .family-page {
-  color: #f8fafc;
+  color: var(--text-secondary);
 }
 :host-context(.dark) .family-card {
-  background: #0d304d;
-  border-color: #2d5d80;
+  background: var(--card);
+  border-color: var(--border);
 }
 :host-context(.dark) .family-input {
-  background: #103552;
-  border-color: #2d5d80;
+  background: var(--card);
+  border-color: var(--border);
   color: white;
 }
 :host-context(.dark) .family-secondary {

@@ -32,9 +32,7 @@
   border-radius: 20px;
   color: var(--foreground);
   background: var(--card);
-  box-shadow:
-    0 0 22px color-mix(in srgb, var(--lifeos-cyan) 20%, transparent),
-    0 8px 20px rgb(34 79 121 / 10%);
+  box-shadow: none;
   text-align: left;
 }
 .module-trigger ion-icon:first-child {
@@ -54,7 +52,7 @@
   border: 1px solid var(--border);
   border-radius: 20px;
   background: var(--card);
-  box-shadow: 0 18px 34px rgb(10 31 53 / 22%);
+  box-shadow: none;
 }
 .module-options button {
   display: flex;
@@ -114,7 +112,7 @@
   border: 1px solid var(--border);
   border-radius: 20px;
   background: var(--card);
-  box-shadow: 0 10px 24px rgb(34 79 121 / 9%);
+  box-shadow: none;
 }
 .kpi-card > span {
   display: grid;
@@ -147,7 +145,7 @@
   border: 1px solid var(--border);
   border-radius: 22px;
   background: var(--card);
-  box-shadow: 0 10px 24px rgb(34 79 121 / 9%);
+  box-shadow: none;
 }
 .chart-heading {
   display: flex;
@@ -178,11 +176,7 @@
   background: transparent;
   font-size: 0.72rem;
 }
-.chart-heading button.active {
-  color: #fff;
-  background: linear-gradient(135deg, var(--lifeos-cyan), var(--lifeos-blue));
-  box-shadow: 0 4px 10px rgb(36 151 255 / 25%);
-}
+.chart-heading button.active { color:var(--primary-foreground); background:var(--primary); box-shadow:none; }
 .stats-insight {
   display: flex;
   align-items: start;
@@ -191,7 +185,7 @@
   margin-top: 16px;
   border: 1px solid color-mix(in srgb, var(--lifeos-cyan) 45%, var(--border));
   border-radius: 22px;
-  background: linear-gradient(135deg, var(--surface-soft-cyan), var(--surface-soft-purple));
+  background: var(--card);
 }
 .stats-insight > ion-icon {
   flex-shrink: 0;
@@ -230,7 +224,7 @@
   padding: 0 16px;
   border-radius: 14px;
   color: #fff;
-  background: linear-gradient(135deg, var(--lifeos-cyan), var(--lifeos-blue));
+  background: var(--card);
   font-weight: 700;
   text-decoration: none;
 }
@@ -254,12 +248,7 @@
 .stats-skeleton i {
   height: 92px;
   border-radius: 20px;
-  background: linear-gradient(
-    90deg,
-    var(--surface-secondary),
-    var(--card),
-    var(--surface-secondary)
-  );
+  background: var(--card);
   background-size: 200% 100%;
   animation: stats-shimmer 1.4s infinite;
 }
@@ -295,13 +284,13 @@
 :host-context(.dark) .stats-chart-card,
 :host-context(.dark) .stats-empty,
 :host-context(.dark) .vehicle-filter select {
-  border-color: #2d5d80;
-  color: #f8fafc;
-  background: #103552;
+  border-color: var(--border);
+  color: var(--text-secondary);
+  background: var(--card);
 }
 :host-context(.dark) .stats-insight {
-  background: linear-gradient(135deg, #123e5c, #173a63);
+  background: var(--card);
 }
 :host-context(.dark) .chart-heading nav {
-  background: #0d2d49;
+  background: var(--card);
 }

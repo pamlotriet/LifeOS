@@ -11,7 +11,7 @@
 .transaction-confirm p.negative { color:var(--destructive); }
 .confirm-actions { display:flex; justify-content:flex-end; flex-wrap:wrap; gap:10px; margin-top:18px; }
 .confirm-actions button { min-height:44px; padding:10px 16px; border-radius:12px; font-size:.8rem; font-weight:600; }
-:host-context(.dark) .transaction-delete { color:#f4b1c0; }:host-context(.dark) .transaction-confirm { background:#0c293f; }
+:host-context(.dark) .transaction-delete { color:#f4b1c0; }:host-context(.dark) .transaction-confirm { background:var(--card); }
 :host-context(.dark) .confirm-actions .danger-button { background:#73324a; border-color:#b65d79; color:#ffe3eb; }
 @media (max-width:520px) {
   .transaction-entry { gap:10px; padding:12px; }.transaction-entry .transaction-row { gap:9px; flex-wrap:wrap; }

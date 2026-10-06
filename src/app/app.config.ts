@@ -56,6 +56,10 @@ import {
   trashOutline,
   restaurant,
   cart,
+  moon,
+  timer,
+  phonePortrait,
+  shieldCheckmark,
 } from 'ionicons/icons';
 import { routes } from './app.routes';
 
@@ -112,6 +116,10 @@ addIcons({
   trashOutline,
   restaurant,
   cart,
+  moon,
+  timer,
+  phonePortrait,
+  shieldCheckmark,
 });
 
 export const appConfig: ApplicationConfig = {

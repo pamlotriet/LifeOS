@@ -1,0 +1,126 @@
+/* Shared neutral palette for every LifeOS area. */
+:root {
+  --background: #f5f6f8;
+  --foreground: #202b3c;
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: #345fa8;
+  --primary-foreground: #ffffff;
+  --secondary: #e9eef5;
+  --secondary-foreground: var(--foreground);
+  --muted: #eef1f5;
+  --muted-foreground: #617085;
+  --accent: #e9eef5;
+  --accent-foreground: var(--primary);
+  --border: #dce2e9;
+  --input: var(--border);
+  --ring: #345fa8;
+  --success: #27835c;
+  --warning: #a86b16;
+  --destructive: #c64747;
+  --info: var(--primary);
+  --chart-1: #4774b6;
+  --chart-2: #7093c4;
+  --chart-3: #8a7ca8;
+  --chart-4: #438c75;
+  --chart-5: #bd934d;
+}
+
+:root.dark {
+  --background: #151b24;
+  --foreground: #e5eaf1;
+  --card: #1e2733;
+  --primary: #91b4ed;
+  --primary-foreground: #172338;
+  --secondary: #293545;
+  --muted: #263140;
+  --muted-foreground: #a4b0c0;
+  --accent: #293545;
+  --border: #364252;
+  --ring: #91b4ed;
+  --success: #79b99a;
+  --warning: #d4b275;
+  --destructive: #e89393;
+}
+
+:root, :root.dark {
+  --radius: 0.75rem;
+  --lifeos-cyan: var(--primary);
+  --lifeos-blue: var(--primary);
+  --lifeos-indigo: var(--primary);
+  --lifeos-violet: #8a7ca8;
+  --lifeos-magenta: #a17d94;
+  --surface-secondary: var(--muted);
+  --surface-elevated: var(--card);
+  --surface-soft-blue: var(--secondary);
+  --surface-soft-purple: var(--secondary);
+  --surface-soft-cyan: var(--secondary);
+  --text-secondary: var(--muted-foreground);
+  --text-muted: var(--muted-foreground);
+  --dashboard-background: var(--background);
+  --dashboard-card: var(--card);
+  --dashboard-card-hover: var(--muted);
+  --dashboard-border: var(--border);
+  --nav-background: var(--card);
+  --nav-active: var(--primary);
+  --nav-active-foreground: var(--primary-foreground);
+  --nav-inactive: var(--muted-foreground);
+  --ion-background-color: var(--background);
+  --ion-text-color: var(--foreground);
+  --ion-card-background: var(--card);
+  --ion-toolbar-background: var(--background);
+  --ion-toolbar-color: var(--foreground);
+  --ion-item-background: var(--card);
+  --ion-color-primary: var(--primary);
+  --ion-color-primary-contrast: var(--primary-foreground);
+  --ion-color-secondary: var(--primary);
+  --ion-color-tertiary: var(--lifeos-violet);
+  --action-gradient-start: var(--primary);
+  --action-gradient-middle: var(--primary);
+  --action-gradient-end: var(--primary);
+}
+
+html, body { background: var(--background); }
+ion-app.lifeos-app { background: var(--background) !important; }
+ion-content {
+  --background: var(--background) !important;
+  --color: var(--foreground);
+  background: var(--background) !important;
+  background-image: none !important;
+}
+ion-content::part(background),
+ion-app.lifeos-app,
+.app-route-outlet,
+.login-page {
+  background: var(--background) !important;
+  background-image: none !important;
+}
+
+/* Standardise legacy utility-based screens without affecting semantic status colors. */
+[class~='text-white'] { color: var(--foreground); }
+[class*='text-cyan-'], [class*='text-sky-'], [class*='text-blue-'] { color: var(--primary); }
+[class*='bg-cyan-'], [class*='bg-sky-'], [class*='bg-blue-'],
+[class*='bg-violet-'], [class*='bg-purple-'], [class*='bg-fuchsia-'] { background-color: var(--secondary); }
+[class*='border-cyan-'], [class*='border-blue-'] { border-color: var(--primary); }
+[class*='bg-gradient-'] { background-image: none; background-color: var(--secondary); }
+button[class*='bg-gradient-'], a[class*='bg-gradient-'] { background: var(--primary); color: var(--primary-foreground); }
+[class*='shadow-cyan-'], [class*='shadow-blue-'], [class*='shadow-violet-'] { box-shadow: none; }
+[class*='rounded-3xl'] { border-radius: 1rem; }
+
+.lifeos-select, app-select [aria-haspopup='listbox'] {
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
+  background: var(--card) !important;
+  box-shadow: none;
+}
+.lifeos-select { appearance: auto; padding-right: 12px; }
+.lifeos-select option { color: var(--foreground); background: var(--card); }
+app-select [role='listbox'] { background: var(--card) !important; border-color: var(--border) !important; box-shadow: 0 8px 24px rgb(0 0 0 / 12%) !important; }
+.lifeos-select:focus, app-select [aria-haspopup='listbox']:focus-visible { border-color: var(--ring) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 18%, transparent); }
+.lifeos-gradient, .lifeos-action-button { background: var(--primary); color: var(--primary-foreground); box-shadow: none; }
+.lifeos-gradient-text { background: none; color: var(--primary); }
+.lifeos-glow, .dark .lifeos-glow, .dark .lifeos-action-button { box-shadow: none; }
+ion-tab-button.lifeos-tab-button ion-icon { font-size: 24px; }
+ion-tab-button.lifeos-tab-button ion-label { font-size: 0.72rem; font-weight: 600; }

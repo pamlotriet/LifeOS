@@ -23,6 +23,9 @@ export class ThemeService {
   }
 
   private apply(enabled: boolean): void {
-    if (typeof document !== 'undefined') document.documentElement.classList.toggle('dark', enabled);
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.toggle('dark', enabled);
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', enabled ? '#151b24' : '#f5f6f8');
+    }
   }
 }

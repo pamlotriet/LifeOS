@@ -33,3 +33,5 @@
   .debt-actions .text-link { margin-left:0; }.debt-row { align-items:flex-start; gap:12px; }
   .debt-row>span { min-width:0; overflow-wrap:anywhere; }
 }
+
+.primary-button { background: var(--primary); color: var(--primary-foreground); box-shadow: none; }

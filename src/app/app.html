@@ -1,7 +1,7 @@
 <ion-app
   appClearZeroOnFocus
   ngSkipHydration
-  class="lifeos-app bg-[#0b2034]"
+  class="lifeos-app bg-[var(--card)]"
   (touchstart)="onTouchStart($event)"
   (touchmove)="onTouchMove($event)"
   (touchend)="onTouchEnd()"
@@ -9,14 +9,14 @@
 >
   @if (authService.isAuthenticated() && (pullDistance() || refreshCoordinator.refreshing())) {
     <div class="pointer-events-none fixed inset-x-0 top-[env(safe-area-inset-top)] z-[100] flex justify-center">
-      <div class="mt-2 flex min-h-9 items-center gap-2 rounded-full border border-cyan-300/50 bg-[#0d2d49]/95 px-4 py-2 text-xs font-semibold text-cyan-100 shadow-[0_5px_20px_rgba(0,0,0,0.35)] backdrop-blur" [style.transform]="'translateY(' + pullIndicatorOffset() + 'px)'">
+      <div class="mt-2 flex min-h-9 items-center gap-2 rounded-full border border-cyan-300/50 bg-[var(--card)]/95 px-4 py-2 text-xs font-semibold text-cyan-100 shadow-[0_5px_20px_rgba(0,0,0,0.35)] backdrop-blur" [style.transform]="'translateY(' + pullIndicatorOffset() + 'px)'">
         <span class="h-3.5 w-3.5 rounded-full border-2 border-cyan-300 border-t-transparent" [class.animate-spin]="refreshCoordinator.refreshing()"></span>
         {{ refreshCoordinator.refreshing() ? 'Refreshing...' : pullDistance() >= 58 ? 'Release to refresh' : 'Pull to refresh' }}
       </div>
     </div>
   }
   @if (!authService.authReady()) {
-    <img src="/assets/splash.png" alt="HomeImage" class="w-full h-full object-cover" />
+    <div class="grid h-full place-items-center text-[var(--text-secondary)]" role="status">Loading LifeOS...</div>
   } @else if (authService.isAuthenticated()) {
     <ion-router-outlet
       class="app-route-outlet"
@@ -27,7 +27,7 @@
     <main class="login-page">
       <div class="login-content">
         <header class="login-brand">
-          <img class="login-logo" src="/assets/lifeos-mark.svg" alt="" />
+          <img class="login-logo" src="/icons/lifeos-192.png" alt="" />
           <h1>Life<span>OS</span></h1>
           <p>Organize your life beautifully.</p>
         </header>

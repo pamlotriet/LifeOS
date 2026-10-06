@@ -1,15 +1,15 @@
 <div class="mx-auto flex w-full max-w-md flex-col gap-3 pb-8 text-white">
   <header class="mb-1">
     <h1 class="text-2xl font-bold tracking-tight">Fuel Insights</h1>
-    <p class="mt-1 text-sm text-[#b5cbe2]">Track patterns and trends for your vehicle.</p>
+    <p class="mt-1 text-sm text-[var(--text-secondary)]">Track patterns and trends for your vehicle.</p>
   </header>
 
   @if (vehicles.loading()) {
-    <p class="rounded-2xl border border-[#315b7e] bg-[#112e4b] p-5 text-sm text-[#b5cbe2]">
+    <p class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 text-sm text-[var(--text-secondary)]">
       Loading vehicles...
     </p>
   } @else if (vehicles.error()) {
-    <div role="alert" class="rounded-2xl border border-rose-400/50 bg-[#2b2037] p-4 text-sm">
+    <div role="alert" class="rounded-2xl border border-rose-400/50 bg-[var(--card)] p-4 text-sm">
       {{ vehicles.error() }}
       <button type="button" (click)="vehicles.reload()" class="ml-2 text-cyan-300 underline">
         Retry
@@ -17,7 +17,7 @@
     </div>
   } @else if (!refuels.vehicleOptions().length) {
     <p
-      class="rounded-2xl border border-[#315b7e] bg-[#112e4b] p-6 text-center text-sm text-[#b5cbe2]"
+      class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 text-center text-sm text-[var(--text-secondary)]"
     >
       Add a vehicle to see its fuel insights.
     </p>
@@ -29,7 +29,7 @@
         aria-controls="insights-vehicle-options"
         [attr.aria-expanded]="vehicleDropdownOpen()"
         (click)="vehicleDropdownOpen.set(!vehicleDropdownOpen())"
-        class="flex min-h-16 w-full items-center gap-3 rounded-2xl border border-[#32658c] bg-gradient-to-r from-[#153b5c] to-[#0d2d4c] p-3 text-left text-white outline-none focus-visible:border-cyan-300"
+        class="flex min-h-16 w-full items-center gap-3 rounded-2xl border border-[var(--border)] bg-gradient-to-r from-[var(--card)] to-[var(--card)] p-3 text-left text-white outline-none focus-visible:border-cyan-300"
       >
         @if (refuels.selectedVehicle()?.image) {
           <img
@@ -38,7 +38,7 @@
             class="h-12 w-16 shrink-0 rounded-xl object-cover"
           />
         } @else {
-          <span class="grid h-12 w-16 shrink-0 place-items-center rounded-xl bg-[#204765]"
+          <span class="grid h-12 w-16 shrink-0 place-items-center rounded-xl bg-[var(--card)]"
             ><ion-icon
               name="car-sport-outline"
               class="text-3xl text-cyan-300"
@@ -50,28 +50,28 @@
           ><span class="block truncate text-base font-bold">{{
             refuels.selectedVehicle()?.name || 'Select vehicle'
           }}</span
-          ><span class="block truncate text-xs text-[#b5cbe2]"
+          ><span class="block truncate text-xs text-[var(--text-secondary)]"
             >{{ refuels.selectedVehicle()?.description }} ·
             {{ refuels.selectedVehicle()?.registration }}</span
           ></span
         >
         <ion-icon
           name="chevron-down-outline"
-          class="shrink-0 text-[#b5cbe2]"
+          class="shrink-0 text-[var(--text-secondary)]"
           aria-hidden="true"
         ></ion-icon>
       </button>
       @if (vehicleDropdownOpen()) {
         <div
           id="insights-vehicle-options"
-          class="absolute top-full left-0 z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-xl border border-[#315b7e] bg-[#123451] p-1 shadow-[0_14px_32px_rgba(0,0,0,0.35)]"
+          class="absolute top-full left-0 z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--card)] p-1 shadow-[0_14px_32px_rgba(0,0,0,0.35)]"
         >
           @for (vehicle of refuels.vehicleOptions(); track vehicle.id) {
             <button
               type="button"
               (click)="selectVehicle(vehicle.id)"
               [attr.aria-current]="refuels.selectedVehicleId() === vehicle.id ? 'true' : null"
-              class="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-white hover:bg-[#1c486a] focus-visible:bg-[#1c486a]"
+              class="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-white hover:bg-[var(--card)] focus-visible:bg-[var(--card)]"
             >
               @if (vehicle.image) {
                 <img
@@ -80,7 +80,7 @@
                   class="h-10 w-14 shrink-0 rounded-lg object-cover"
                 />
               } @else {
-                <span class="grid h-10 w-14 shrink-0 place-items-center rounded-lg bg-[#204765]"
+                <span class="grid h-10 w-14 shrink-0 place-items-center rounded-lg bg-[var(--card)]"
                   ><ion-icon
                     name="car-sport-outline"
                     class="text-xl text-cyan-300"
@@ -90,7 +90,7 @@
               }
               <span class="min-w-0 flex-1"
                 ><span class="block truncate text-sm font-semibold">{{ vehicle.name }}</span
-                ><span class="block truncate text-xs text-[#b5cbe2]"
+                ><span class="block truncate text-xs text-[var(--text-secondary)]"
                   >{{ vehicle.description }} · {{ vehicle.registration }}</span
                 ></span
               >
@@ -104,11 +104,11 @@
     </div>
 
     @if (refuels.loading()) {
-      <p class="rounded-2xl border border-[#315b7e] bg-[#112e4b] p-5 text-sm text-[#b5cbe2]">
+      <p class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 text-sm text-[var(--text-secondary)]">
         Loading insights...
       </p>
     } @else if (refuels.error()) {
-      <div role="alert" class="rounded-2xl border border-rose-400/50 bg-[#2b2037] p-4 text-sm">
+      <div role="alert" class="rounded-2xl border border-rose-400/50 bg-[var(--card)] p-4 text-sm">
         {{ refuels.error() }}
         <button type="button" (click)="refuels.reload()" class="ml-2 text-cyan-300 underline">
           Retry
@@ -116,7 +116,7 @@
       </div>
     } @else if (!refuels.entries().length) {
       <p
-        class="rounded-2xl border border-[#315b7e] bg-[#112e4b] p-6 text-center text-sm text-[#b5cbe2]"
+        class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 text-center text-sm text-[var(--text-secondary)]"
       >
         No refuels yet for this vehicle. Insights will appear after a refuel is logged.
       </p>
@@ -124,7 +124,7 @@
       @let averages = refuels.averages();
       <section aria-label="Fuel averages" class="grid grid-cols-2 gap-2">
         <div
-          class="flex min-h-20 items-center gap-3 rounded-2xl border border-[#32658c] bg-gradient-to-br from-[#153b5c] to-[#0d2d4c] p-3"
+          class="flex min-h-20 items-center gap-3 rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--card)] p-3"
         >
           <ion-icon
             name="pricetag-outline"
@@ -132,12 +132,12 @@
             aria-hidden="true"
           ></ion-icon>
           <div class="min-w-0">
-            <p class="text-xs text-[#b5cbe2]">Avg Price</p>
+            <p class="text-xs text-[var(--text-secondary)]">Avg Price</p>
             <p class="text-base font-bold">{{ money(averages.randPerLiter) }}/L</p>
           </div>
         </div>
         <div
-          class="flex min-h-20 items-center gap-3 rounded-2xl border border-[#32658c] bg-gradient-to-br from-[#153b5c] to-[#0d2d4c] p-3"
+          class="flex min-h-20 items-center gap-3 rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--card)] p-3"
         >
           <ion-icon
             name="speedometer-outline"
@@ -145,12 +145,12 @@
             aria-hidden="true"
           ></ion-icon>
           <div class="min-w-0">
-            <p class="text-xs text-[#b5cbe2]">Avg Economy</p>
+            <p class="text-xs text-[var(--text-secondary)]">Avg Economy</p>
             <p class="text-base font-bold">{{ number(averages.kmPerLiter) }} km/L</p>
           </div>
         </div>
         <div
-          class="flex min-h-20 items-center gap-3 rounded-2xl border border-[#32658c] bg-gradient-to-br from-[#153b5c] to-[#0d2d4c] p-3"
+          class="flex min-h-20 items-center gap-3 rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--card)] p-3"
         >
           <ion-icon
             name="battery-charging-outline"
@@ -158,12 +158,12 @@
             aria-hidden="true"
           ></ion-icon>
           <div class="min-w-0">
-            <p class="text-xs text-[#b5cbe2]">Avg Consumption</p>
+            <p class="text-xs text-[var(--text-secondary)]">Avg Consumption</p>
             <p class="text-base font-bold">{{ number(averages.litersPer100Km) }} L/100km</p>
           </div>
         </div>
         <div
-          class="flex min-h-20 items-center gap-3 rounded-2xl border border-[#32658c] bg-gradient-to-br from-[#153b5c] to-[#0d2d4c] p-3"
+          class="flex min-h-20 items-center gap-3 rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--card)] p-3"
         >
           <ion-icon
             name="stats-chart-outline"
@@ -171,20 +171,20 @@
             aria-hidden="true"
           ></ion-icon>
           <div class="min-w-0">
-            <p class="text-xs text-[#b5cbe2]">Avg Range</p>
+            <p class="text-xs text-[var(--text-secondary)]">Avg Range</p>
             <p class="text-base font-bold">{{ number(lifetime().lifetimeAverageRangeKm, 0) }} km</p>
           </div>
         </div>
       </section>
 
       <section
-        class="rounded-2xl border border-[#32658c] bg-gradient-to-br from-[#153b5c] to-[#0d2d4c] p-4"
+        class="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--card)] p-4"
         aria-label="Consumption trend"
       >
         <div class="flex items-start justify-between gap-2">
           <div>
             <h2 class="text-base font-bold">Consumption Trend</h2>
-            <p class="text-xs text-[#b5cbe2]">Litres per 100 km (lower is better)</p>
+            <p class="text-xs text-[var(--text-secondary)]">Litres per 100 km (lower is better)</p>
           </div>
           @if (trendDirection()) {
             <span
@@ -192,7 +192,7 @@
               [class]="
                 trendDirection() === 'Improving'
                   ? 'border-emerald-400/50 text-emerald-300'
-                  : 'border-[#5a89b5] text-[#b5cbe2]'
+                  : 'border-[#5a89b5] text-[var(--text-secondary)]'
               "
               >{{ trendDirection() }}</span
             >
@@ -209,11 +209,11 @@
             <path
               d="M22 12H108 M22 31H108 M22 50H108 M22 69H108 M22 88H108 M22 10V90 M22 88H110"
               fill="none"
-              stroke="#456987"
+              stroke="var(--border)"
               stroke-width="0.35"
             />
             @for (tick of trendAxis(); track tick.y) {
-              <text x="18" [attr.y]="tick.y + 2" text-anchor="end" fill="#b5cbe2" font-size="6">
+              <text x="18" [attr.y]="tick.y + 2" text-anchor="end" fill="var(--text-secondary)" font-size="6">
                 {{ number(tick.value) }}
               </text>
             }
@@ -232,29 +232,29 @@
               </circle>
             }
           </svg>
-          <div class="ml-[20%] flex justify-between gap-1 text-[11px] text-[#b5cbe2]">
+          <div class="ml-[20%] flex justify-between gap-1 text-[11px] text-[var(--text-secondary)]">
             @for (point of trendPoints(); track point.id) {
               <span>{{ shortDate(point.date) }}</span>
             }
           </div>
-          <p class="mt-1 text-center text-[11px] text-[#b5cbe2]">Month</p>
-          <p class="mt-2 text-right text-xs text-[#b5cbe2]">
+          <p class="mt-1 text-center text-[11px] text-[var(--text-secondary)]">Month</p>
+          <p class="mt-2 text-right text-xs text-[var(--text-secondary)]">
             Last {{ trendPoints().length }} refuel{{ trendPoints().length === 1 ? '' : 's' }}
           </p>
         } @else {
-          <p class="mt-4 text-sm text-[#b5cbe2]">A range is needed to show consumption.</p>
+          <p class="mt-4 text-sm text-[var(--text-secondary)]">A range is needed to show consumption.</p>
         }
       </section>
 
       <section
-        class="rounded-2xl border border-[#32658c] bg-gradient-to-br from-[#153b5c] to-[#0d2d4c] p-4"
+        class="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--card)] p-4"
         aria-label="Monthly spend"
       >
         <div class="flex items-start justify-between gap-2">
           <div>
             <h2 class="text-base font-bold">Monthly Spend</h2>
             <p class="mt-1 text-xl font-bold">{{ money(latestMonth()?.value ?? null) }}</p>
-            <p class="text-xs text-[#b5cbe2]">Latest recorded month</p>
+            <p class="text-xs text-[var(--text-secondary)]">Latest recorded month</p>
           </div>
           @if (spendChange() !== null) {
             <span
@@ -262,7 +262,7 @@
               [class]="
                 spendChange()! <= 0
                   ? 'border-emerald-400/50 text-emerald-300'
-                  : 'border-[#5a89b5] text-[#b5cbe2]'
+                  : 'border-[#5a89b5] text-[var(--text-secondary)]'
               "
               >{{ spendChange()! > 0 ? '+' : '' }}{{ number(spendChange(), 0) }}% vs previous
               month</span
@@ -271,14 +271,14 @@
         </div>
         <div class="mt-4 grid grid-cols-[3rem_1fr] gap-2">
           <div
-            class="flex h-28 flex-col justify-between pb-[-1px] text-right text-[10px] text-[#b5cbe2]"
+            class="flex h-28 flex-col justify-between pb-[-1px] text-right text-[10px] text-[var(--text-secondary)]"
           >
             @for (tick of monthlySpendAxis(); track tick.label) {
               <span>{{ tick.label }}</span>
             }
           </div>
           <div
-            class="flex h-28 items-end justify-around gap-2 border-b border-l border-[#456987] px-2"
+            class="flex h-28 items-end justify-around gap-2 border-b border-l border-[var(--border)] px-2"
           >
             @for (month of monthlySpend(); track month.month) {
               <div
@@ -293,36 +293,36 @@
             }
           </div>
         </div>
-        <div class="ml-14 mt-1 flex justify-around gap-2 text-[11px] text-[#b5cbe2]">
+        <div class="ml-14 mt-1 flex justify-around gap-2 text-[11px] text-[var(--text-secondary)]">
           @for (month of monthlySpend(); track month.month) {
             <span class="flex-1 text-center">{{ month.label }}</span>
           }
         </div>
-        <p class="mt-1 text-center text-[11px] text-[#b5cbe2]">Month</p>
+        <p class="mt-1 text-center text-[11px] text-[var(--text-secondary)]">Month</p>
       </section>
 
       <section aria-label="Lifetime overview">
         <h2 class="mb-1 text-lg font-bold">Lifetime Overview</h2>
-        <p class="mb-3 text-sm text-[#b5cbe2]">All recorded refuels for this vehicle.</p>
+        <p class="mb-3 text-sm text-[var(--text-secondary)]">All recorded refuels for this vehicle.</p>
         <div class="grid grid-cols-2 gap-2">
-          <div class="rounded-2xl border border-[#32658c] bg-[#143856] p-3">
-            <p class="text-xs text-[#b5cbe2]">Lifetime spend</p>
+          <div class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
+            <p class="text-xs text-[var(--text-secondary)]">Lifetime spend</p>
             <p class="text-lg font-bold">{{ money(lifetime().lifetimeTotalSpent) }}</p>
           </div>
-          <div class="rounded-2xl border border-[#32658c] bg-[#143856] p-3">
-            <p class="text-xs text-[#b5cbe2]">Lifetime range logged</p>
+          <div class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
+            <p class="text-xs text-[var(--text-secondary)]">Lifetime range logged</p>
             <p class="text-lg font-bold">{{ number(lifetime().lifetimeTotalRangeKm, 0) }} km</p>
           </div>
-          <div class="rounded-2xl border border-[#32658c] bg-[#143856] p-3">
-            <p class="text-xs text-[#b5cbe2]">Total litres refuelled</p>
+          <div class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
+            <p class="text-xs text-[var(--text-secondary)]">Total litres refuelled</p>
             <p class="text-lg font-bold">{{ number(lifetime().lifetimeTotalLitres) }} L</p>
           </div>
-          <div class="rounded-2xl border border-[#32658c] bg-[#143856] p-3">
-            <p class="text-xs text-[#b5cbe2]">Total refuels</p>
+          <div class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
+            <p class="text-xs text-[var(--text-secondary)]">Total refuels</p>
             <p class="text-lg font-bold">{{ lifetime().lifetimeRefuelCount }}</p>
           </div>
-          <div class="col-span-2 rounded-2xl border border-[#32658c] bg-[#143856] p-3">
-            <p class="text-xs text-[#b5cbe2]">Avg monthly spend (months with refuels)</p>
+          <div class="col-span-2 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
+            <p class="text-xs text-[var(--text-secondary)]">Avg monthly spend (months with refuels)</p>
             <p class="text-lg font-bold">{{ money(lifetime().lifetimeAverageMonthlySpend) }}</p>
           </div>
         </div>
@@ -332,7 +332,7 @@
         <h2 class="mb-2 text-lg font-bold">Quick insights</h2>
         @if (bestTank(); as best) {
           <div
-            class="mb-2 flex items-center gap-3 rounded-2xl border border-[#32658c] bg-[#143856] p-3"
+            class="mb-2 flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3"
           >
             <ion-icon
               name="speedometer-outline"
@@ -341,14 +341,14 @@
             ></ion-icon>
             <div>
               <p class="text-sm font-bold">Best tank</p>
-              <p class="text-xs text-[#b5cbe2]">
+              <p class="text-xs text-[var(--text-secondary)]">
                 {{ number(best.kmPerLiter) }} km/L on {{ date(best.dop) }}
               </p>
             </div>
           </div>
         }
         @if (highestPrice(); as highest) {
-          <div class="flex items-center gap-3 rounded-2xl border border-[#32658c] bg-[#143856] p-3">
+          <div class="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
             <ion-icon
               name="pricetag-outline"
               class="text-2xl text-cyan-300"
@@ -356,7 +356,7 @@
             ></ion-icon>
             <div>
               <p class="text-sm font-bold">Highest fuel price</p>
-              <p class="text-xs text-[#b5cbe2]">
+              <p class="text-xs text-[var(--text-secondary)]">
                 {{ money(highest.randPerLiter) }}/L at {{ highest.pop }} · {{ highest.areaTown }}
               </p>
             </div>
