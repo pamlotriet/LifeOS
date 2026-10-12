@@ -1,0 +1,20 @@
+:host { display: block; }
+.books-placeholder { display: block; border-radius: 8px; background: linear-gradient(90deg, var(--secondary) 25%, var(--border) 50%, var(--secondary) 75%); background-size: 200% 100%; animation: books-shimmer 1.4s linear infinite; }
+.books-loading-line { width: 75%; height: 14px; }
+.books-loading-line.short { width: 50%; height: 11px; }
+.books-loading-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.books-loading-toolbar > span { display: grid; flex: 1; gap: 8px; }
+.books-loading-toggle { width: 120px; height: 36px; }
+.books-loading-covers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 12px; }
+.books-loading-cover { width: 100%; aspect-ratio: 2 / 3; }
+.books-loading-book { display: grid; align-content: start; gap: 8px; }
+.books-loading-status { width: 60%; height: 20px; border-radius: 20px; }
+.books-loading-list { display: grid; gap: 8px; }
+.books-loading-row { display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid var(--border); border-radius: 16px; background: var(--card); }
+.books-loading-row > i { width: 44px; height: 64px; flex-shrink: 0; }
+.books-loading-row > span { display: grid; flex: 1; gap: 8px; }
+.books-loading-tag { display: grid; gap: 10px; padding: 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--card); }
+.books-loading-tag-icon { width: 32px; height: 32px; margin-bottom: 8px; }
+@media (min-width: 640px) { .books-loading-covers { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@keyframes books-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .books-placeholder { animation: none; } }

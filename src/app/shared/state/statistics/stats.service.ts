@@ -3,15 +3,13 @@ import { ChartConfiguration } from 'chart.js';
 import { BookStore } from '../books/book-store';
 import { BudgetStore } from '../budget/budget.store';
 import { localDate, money, summary } from '../budget/budget.model';
-import { PlanningStore } from '../planning/planning-store';
-import { RecipeStore } from '../recipes/recipe-store';
 import { RefuelStore } from '../refuels/refuel-store';
 import { refuelAverages } from '../refuels/refuel.model';
 import { VehicleStore } from '../vehicles/vehicle-store';
 import { statsMonths, sumByMonth } from './stats.calculations';
 import { debtStats } from './debt-stats';
 
-export type StatsModule = 'fuel' | 'books' | 'budget' | 'planning' | 'recipes' | 'vehicles';
+export type StatsModule = 'fuel' | 'books' | 'budget';
 export type StatsRange = '3M' | '6M' | '1Y' | 'All';
 export interface StatsModuleOption {
   id: StatsModule;
@@ -42,9 +40,6 @@ export const STATS_MODULES: StatsModuleOption[] = [
   { id: 'fuel', label: 'Fuel', icon: 'car-sport-outline' },
   { id: 'books', label: 'Books', icon: 'book' },
   { id: 'budget', label: 'Budget', icon: 'wallet' },
-  { id: 'planning', label: 'Planning', icon: 'calendar' },
-  { id: 'recipes', label: 'Recipes', icon: 'restaurant-outline' },
-  { id: 'vehicles', label: 'Vehicles', icon: 'car' },
 ];
 
 const chartOptions = (currency = false): ChartConfiguration['options'] => ({
@@ -113,8 +108,6 @@ export class StatsService {
   private get refuels(): RefuelStore { return this.injector.get(RefuelStore); }
   private get books(): BookStore { return this.injector.get(BookStore); }
   private get budget(): BudgetStore { return this.injector.get(BudgetStore); }
-  private get planning(): PlanningStore { return this.injector.get(PlanningStore); }
-  private get recipes(): RecipeStore { return this.injector.get(RecipeStore); }
   private get vehicles(): VehicleStore { return this.injector.get(VehicleStore); }
 
   dashboard(module: StatsModule, range: StatsRange): StatsDashboard {
@@ -125,12 +118,6 @@ export class StatsService {
         return this.bookStats(range);
       case 'budget':
         return this.budgetStats(range);
-      case 'planning':
-        return this.planningStats(range);
-      case 'recipes':
-        return this.recipeStats(range);
-      case 'vehicles':
-        return this.vehicleStats(range);
     }
   }
   loading(module: StatsModule): boolean {
@@ -138,36 +125,21 @@ export class StatsService {
       ? this.refuels.loading() || this.vehicles.loading()
       : module === 'books'
         ? this.books.loading()
-        : module === 'budget'
-          ? this.budget.loading()
-          : module === 'planning'
-            ? this.planning.loading()
-            : module === 'recipes'
-              ? this.recipes.loading()
-              : this.vehicles.loading();
+        : this.budget.loading();
   }
   error(module: StatsModule): string {
     return module === 'fuel'
       ? this.refuels.error() || this.vehicles.error()
       : module === 'books'
         ? this.books.error()
-        : module === 'budget'
-          ? this.budget.error()
-          : module === 'planning'
-            ? this.planning.error()
-            : module === 'recipes'
-              ? this.recipes.error()
-              : this.vehicles.error();
+        : this.budget.error();
   }
   reload(module: StatsModule): void {
     if (module === 'fuel') {
       void this.vehicles.reload();
       void this.refuels.reload();
     } else if (module === 'books') void this.books.reload();
-    else if (module === 'budget') void this.budget.reload();
-    else if (module === 'planning') void this.planning.reload();
-    else if (module === 'recipes') void this.recipes.reload();
-    else void this.vehicles.reload();
+    else void this.budget.reload();
   }
   /** Refuels depend on the vehicle-selection signal, so only reload after it exists. */
   ensureFuelLoaded(): void { void this.refuels.reload(); }
@@ -385,135 +357,6 @@ export class StatsService {
         options: chartOptions(true),
       },
       insight: `Savings transfers are excluded from expenses to avoid double-counting.`,
-    };
-  }
-  private planningStats(range: StatsRange): StatsDashboard {
-    const current = new Date();
-    const month = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
-    const events = this.planning.events();
-    const reminders = this.planning.reminders();
-    const categories = this.count(events, (x) => x.category);
-    return {
-      empty: !events.length && !reminders.length && !this.planning.meals().length,
-      emptyTitle: 'No planning stats yet',
-      emptyMessage: 'Add events, reminders, or meals to see your planning activity.',
-      action: '/planning',
-      kpis: [
-        this.kpi(
-          'Events this month',
-          String(events.filter((x) => x.date.startsWith(month)).length),
-          'calendar',
-          '#2497ff',
-        ),
-        this.kpi(
-          'Completed reminders',
-          String(reminders.filter((x) => x.completed).length),
-          'checkmark',
-          '#20b875',
-        ),
-        this.kpi(
-          'Pending reminders',
-          String(reminders.filter((x) => !x.completed).length),
-          'notifications',
-          '#efa62b',
-        ),
-        this.kpi(
-          'Dinner plans',
-          String(this.planning.meals().filter((x) => x.date.startsWith(month)).length),
-          'restaurant-outline',
-          '#c23cff',
-        ),
-      ],
-      primaryTitle: 'Events per month',
-      secondaryTitle: 'Events by category',
-      primary: this.monthBars(
-        events.map((x) => x.date),
-        'Events',
-        false,
-      ),
-      secondary: categoryChart('Events', categories),
-      insight: `${reminders.filter((x) => x.completed).length} of ${reminders.length} reminders are complete.`,
-    };
-  }
-  private recipeStats(range: StatsRange): StatsDashboard {
-    const recipes = this.recipes.recipes();
-    const categories = this.count(recipes, (x) => x.category);
-    const favourite = recipes.filter((x) => x.favourite);
-    const average = recipes.length
-      ? recipes.reduce((sum, x) => sum + x.cookTime, 0) / recipes.length
-      : 0;
-    return {
-      empty: !recipes.length,
-      emptyTitle: 'No recipe stats yet',
-      emptyMessage: 'Add recipes to build your cooking library.',
-      action: '/recipes/add',
-      kpis: [
-        this.kpi('Total recipes', String(recipes.length), 'restaurant-outline', '#efa62b'),
-        this.kpi('Favourites', String(favourite.length), 'heart', '#ef4f5f'),
-        this.kpi(
-          'Average cook time',
-          recipes.length ? `${Math.round(average)} min` : '—',
-          'flash',
-          '#2497ff',
-        ),
-        this.kpi(
-          'Dinner recipes',
-          String(recipes.filter((x) => x.category === 'Dinner').length),
-          'restaurant-outline',
-          '#20b875',
-        ),
-      ],
-      primaryTitle: 'Recipes by category',
-      secondaryTitle: 'Recipes added over time',
-      primary: categoryChart('Recipes', categories),
-      secondary: this.monthBars(
-        recipes.map((x) => x.createdAt.slice(0, 10)),
-        'Recipes added',
-        false,
-      ),
-      insight: favourite.length
-        ? `${favourite.length} recipe${favourite.length === 1 ? '' : 's'} marked as favourites.`
-        : 'Mark favourites to surface your go-to recipes.',
-    };
-  }
-  private vehicleStats(range: StatsRange): StatsDashboard {
-    const vehicles = this.vehicles.vehicles();
-    return {
-      empty: !vehicles.length,
-      emptyTitle: 'No vehicles yet',
-      emptyMessage: 'Add a vehicle to track its fuel use and maintenance.',
-      action: '/fuel/vehicles',
-      kpis: [
-        this.kpi('Total vehicles', String(vehicles.length), 'car', '#2497ff'),
-        this.kpi('Active vehicles', String(vehicles.length), 'car-sport-outline', '#20b875'),
-        this.kpi(
-          'Selected vehicle',
-          this.refuels.selectedVehicle()?.name ?? '—',
-          'speedometer-outline',
-          '#14ddea',
-        ),
-        this.kpi(
-          'Selected fuel spend',
-          money(refuelAverages(this.refuels.entries()).totalSpent),
-          'cash',
-          '#8c4bff',
-        ),
-      ],
-      primaryTitle: 'Vehicles by fuel type',
-      secondaryTitle: 'Selected vehicle spend',
-      primary: categoryChart(
-        'Vehicles',
-        this.count(vehicles, (x) => x.description.split(' · ').at(-1) ?? 'Other'),
-      ),
-      secondary: this.monthBars(
-        this.refuels.entries().map((x) => x.dop),
-        'Refuels',
-        false,
-      ),
-      insight:
-        vehicles.length > 1
-          ? 'Choose a vehicle in Fuel to compare its refuelling activity.'
-          : 'Add another vehicle to compare vehicle activity.',
     };
   }
   private kpi(label: string, value: string, icon: string, accent: string): StatsKpi {

@@ -1,5 +1,7 @@
 <div class="mx-auto flex w-full max-w-md flex-col gap-3 pb-8 text-white">
   <header><h1 class="text-2xl font-bold">Refuel History</h1><p class="mt-1 text-sm text-[var(--text-secondary)]">View and manage your refuelling records.</p></header>
+  @if (vehicles.loading() || refuels.loading()) { <div class="flex flex-col gap-3" role="status" aria-label="Loading fuel content"><app-skeleton variant="form" [count]="2" /><app-skeleton variant="list" [count]="5" /></div> } @else {
+
 
   @if (refuels.vehicleOptions().length) {
     <div class="text-xs text-[var(--text-secondary)]">Vehicle
@@ -47,5 +49,6 @@
         <button type="button" (click)="nextPage()" [disabled]="currentPage() === totalPages()" class="min-h-10 rounded-lg border border-[var(--border)] px-3 text-sm font-semibold text-cyan-200 disabled:cursor-not-allowed disabled:opacity-40">Next</button>
       </nav>
     }
+  }
   }
 </div>

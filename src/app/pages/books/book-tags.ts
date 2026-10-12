@@ -3,9 +3,8 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
 import { BookTag, BookTagType } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
-import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-book-tags', imports: [IonContent, IonIcon, PageHeader, AppSkeleton], templateUrl: './book-tags.html', styleUrl: './book-tags.css' })
+@Component({ selector: 'app-book-tags', imports: [IonContent, IonIcon, PageHeader], templateUrl: './book-tags.html', styleUrls: ['./book-tags.css', './books-loading.css'] })
 export class BookTags {
   readonly store = inject(BookStore);
   readonly type = signal<BookTagType>('mood');

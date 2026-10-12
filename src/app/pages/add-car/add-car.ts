@@ -7,8 +7,9 @@ import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
 import { saRegistrationValidator } from '../../shared/validators/sa-registration.validator';
 import { AppSelect } from '../../shared/components/app-select/app-select';
 import { pickImage } from '../../shared/utils/pick-image';
+import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 @Component({
-  imports: [IonIcon, ReactiveFormsModule, AppSelect],
+  imports: [IonIcon, ReactiveFormsModule, AppSelect, AppSkeleton],
   selector: 'app-add-car',
   styleUrl: './add-car.css',
   templateUrl: './add-car.html',

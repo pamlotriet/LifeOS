@@ -1,3 +1,4 @@
+@if (loadingVehicle()) { <div class="mx-auto w-full max-w-md" role="status" aria-label="Loading form"><app-skeleton variant="form" [count]="8" /></div> } @else {
 <form [formGroup]="vehicleForm" (ngSubmit)="submit()" class="mx-auto flex w-full max-w-md flex-col gap-5 pb-6 text-white">
   <div class="flex items-center justify-between gap-3">
     <h1 class="text-xl font-bold tracking-tight">{{ editId ? 'Update Vehicle' : 'Add Vehicle' }}</h1>
@@ -107,3 +108,4 @@
     <button type="button" (click)="cancel()" [disabled]="saving() || deleting()" class="min-h-11 w-full rounded-full border border-[var(--text-secondary)] bg-[var(--card)] text-sm font-semibold text-[var(--text-secondary)] disabled:opacity-60">Cancel</button>
   </div>
 </form>
+}

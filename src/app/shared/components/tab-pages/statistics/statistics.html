@@ -32,7 +32,7 @@
         }
       </div>
       @if (
-        (selected() === 'fuel' || selected() === 'vehicles') && service.vehicleOptions().length > 1
+        selected() === 'fuel' && service.vehicleOptions().length > 1
       ) {
         <label class="vehicle-filter"
           ><span>Vehicle</span

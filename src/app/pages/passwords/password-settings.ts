@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
@@ -7,7 +8,7 @@ import { ThemeService } from '../../shared/state/theme/theme.service';
 
 @Component({
   selector: 'app-password-settings',
-  imports: [IonContent, IonIcon, PageHeader],
+  imports: [FormsModule, IonContent, IonIcon, PageHeader],
   templateUrl: './password-settings.html',
 })
 export class PasswordSettings {
@@ -18,7 +19,7 @@ export class PasswordSettings {
   readonly savingCycle = signal(false);
   readonly cycleMessage = signal('');
   readonly cycleError = signal('');
-  async saveCycle(value: string): Promise<void> {
+  async saveCycle(value: number): Promise<void> {
     if (this.savingCycle()) return;
     this.savingCycle.set(true); this.cycleMessage.set(''); this.cycleError.set('');
     try { await this.budget.setCycleStartDay(Number(value)); this.cycleMessage.set('Budget cycle saved to your account.'); }

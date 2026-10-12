@@ -33,6 +33,7 @@ export class BooksLibrary {
   readonly goalSaving = signal(false);
   readonly goalError = signal('');
   readonly goalLoading = signal(true);
+  readonly loading = computed(() => this.store.loading() || this.goalLoading());
   readonly filtered = computed(() => {
     const query = this.search().toLowerCase().trim();
     return this.store

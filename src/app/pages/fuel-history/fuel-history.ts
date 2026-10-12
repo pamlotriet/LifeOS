@@ -2,17 +2,20 @@ import { Component, computed, effect, inject, signal, untracked } from '@angular
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { RefuelStore } from '../../shared/state/refuels/refuel-store';
+import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
+import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 import { AppSelect } from '../../shared/components/app-select/app-select';
 import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
 
 @Component({
-  imports: [IonIcon, RouterLink, AppSelect, AppDatePicker],
+  imports: [IonIcon, RouterLink, AppSelect, AppDatePicker, AppSkeleton],
   selector: 'app-fuel-history',
   styleUrl: './fuel-history.css',
   templateUrl: './fuel-history.html',
 })
 export class FuelHistory {
   readonly refuels = inject(RefuelStore);
+  readonly vehicles = inject(VehicleStore);
   readonly selectedDate = signal('');
   readonly page = signal(1);
   readonly pageSize = 5;

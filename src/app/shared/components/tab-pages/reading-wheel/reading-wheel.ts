@@ -3,12 +3,13 @@ import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { BookRecord } from '../../../state/books/book.model';
 import { BookStore } from '../../../state/books/book-store';
+import { AppSkeleton } from '../../app-skeleton/app-skeleton';
 
 const COLORS = ['#2477c6', '#7437d0', '#1aa89f', '#edae28', '#e45a53', '#b12e83', '#8b58e9', '#12649f'];
 
 @Component({
   selector: 'app-reading-wheel',
-  imports: [IonContent, IonIcon, RouterLink],
+  imports: [IonContent, IonIcon, RouterLink, AppSkeleton],
   templateUrl: './reading-wheel.html',
   styleUrl: './reading-wheel.css',
 })
@@ -16,6 +17,7 @@ export class ReadingWheel {
   readonly store = inject(BookStore);
   readonly mode = signal<'wheel' | 'manage' | 'result'>('wheel');
   readonly busy = signal(false);
+  readonly savingMessage = signal('');
   readonly spinning = signal(false);
   readonly error = signal('');
   readonly winner = signal<BookRecord | null>(null);
@@ -45,30 +47,44 @@ export class ReadingWheel {
     if (!this.spinning()) this.spinBooks.set(this.wheelCandidates().slice(0, 8));
   }
 
-  showManage(): void { this.mode.set('manage'); this.error.set(''); }
-  showWheel(): void { this.mode.set('wheel'); this.error.set(''); this.syncWheel(); }
-  shuffle(): void { if (this.spinning()) return; this.spinBooks.set([...this.wheelCandidates()].sort(() => Math.random() - .5).slice(0, 8)); }
+  showManage(): void { if (this.busy() || this.spinning()) return; this.mode.set('manage'); this.error.set(''); }
+  showWheel(): void { if (this.busy() || this.spinning()) return; this.mode.set('wheel'); this.error.set(''); this.syncWheel(); }
+  shuffle(): void { if (this.spinning() || this.busy() || this.store.loading()) return; this.spinBooks.set([...this.wheelCandidates()].sort(() => Math.random() - .5).slice(0, 8)); }
 
   async setSelected(book: BookRecord, selected: boolean): Promise<void> {
-    if (this.busy()) return;
+    if (this.busy() || this.spinning() || this.store.loading()) return;
     this.busy.set(true); this.error.set('');
+    this.savingMessage.set(`${selected ? 'Adding' : 'Removing'} ${book.title} ${selected ? 'to' : 'from'} the wheel...`);
     try { await this.store.setWheelSelected(book.id, selected); this.syncWheel(); }
     catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not update the wheel.'); }
-    finally { this.busy.set(false); }
+    finally { this.busy.set(false); this.savingMessage.set(''); }
   }
 
   async selectAll(): Promise<void> {
-    if (this.busy()) return;
+    await this.setAllSelected(true);
+  }
+
+  async deselectAll(): Promise<void> {
+    await this.setAllSelected(false);
+  }
+
+  private async setAllSelected(selected: boolean): Promise<void> {
+    if (this.busy() || this.spinning() || this.store.loading()) return;
+    const books = this.eligible().filter(book => book.wheelSelected !== selected);
+    if (!books.length) return;
     this.busy.set(true); this.error.set('');
     try {
-      for (const book of this.eligible().filter((item) => !item.wheelSelected)) await this.store.setWheelSelected(book.id, true);
+      for (const [index, book] of books.entries()) {
+        this.savingMessage.set(`${selected ? 'Adding' : 'Removing'} books ${selected ? 'to' : 'from'} the wheel: ${index + 1} of ${books.length}...`);
+        await this.store.setWheelSelected(book.id, selected);
+      }
       this.syncWheel();
     } catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not update every book.'); }
-    finally { this.busy.set(false); }
+    finally { this.syncWheel(); this.busy.set(false); this.savingMessage.set(''); }
   }
 
   async spin(): Promise<void> {
-    if (this.spinning()) return;
+    if (this.spinning() || this.busy() || this.store.loading()) return;
     const books = this.wheelCandidates().slice(0, 8);
     if (!books.length) { this.showManage(); return; }
     this.spinBooks.set(books);

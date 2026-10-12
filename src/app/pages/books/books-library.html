@@ -1,6 +1,6 @@
 <ion-header app-page-header title="Books"></ion-header>
 <ion-content class="[--background:transparent] [--color:#fff]">
-  <main class="mx-auto flex max-w-2xl flex-col gap-4 px-4 pb-8 pt-3 text-white">
+  <main class="mx-auto flex max-w-2xl flex-col gap-4 px-4 pb-8 pt-3 text-white" [attr.aria-busy]="loading()">
     <header class="flex items-end justify-between gap-3">
       <div>
         <p class="text-xs font-semibold uppercase tracking-[0.23em] text-cyan-300">
@@ -17,6 +17,22 @@
       ></a>
     </header>
 
+    @if (loading()) {
+      <div class="books-loading" role="status" aria-label="Loading your library and reading goal">
+        <span class="sr-only">Loading your library and reading goal...</span>
+        <div class="books-skeleton-totals" aria-hidden="true">
+          @for (item of [1, 2, 3]; track item) { <div><i class="books-placeholder books-placeholder-number"></i><i class="books-placeholder books-placeholder-label"></i></div> }
+        </div>
+        <div class="reading-section books-skeleton-reading" aria-hidden="true">
+          <i class="books-placeholder books-placeholder-heading"></i>
+          @for (item of [1, 2]; track item) {
+            <div class="books-skeleton-book"><i class="books-placeholder books-placeholder-cover"></i><div><i class="books-placeholder books-placeholder-heading"></i><i class="books-placeholder books-placeholder-label"></i><i class="books-placeholder books-placeholder-track"></i><i class="books-placeholder books-placeholder-button"></i></div></div>
+          }
+        </div>
+        <div class="books-skeleton-navigation" aria-hidden="true">@for (item of [1, 2]; track item) { <div><i class="books-placeholder books-placeholder-number"></i><i class="books-placeholder books-placeholder-label"></i></div> }</div>
+        <div class="books-skeleton-goal" aria-hidden="true"><i class="books-placeholder books-placeholder-heading"></i><div><i class="books-placeholder books-placeholder-ring"></i><span><i class="books-placeholder books-placeholder-heading"></i><i class="books-placeholder books-placeholder-label"></i></span></div></div>
+      </div>
+    } @else {
     <section
       aria-label="Library totals"
       class="grid grid-cols-3 divide-x divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-[var(--card)] py-3 text-center"
@@ -151,6 +167,7 @@
       }
     </section>
 
+    }
   </main>
 
   @if (goalEditing()) {

@@ -1,6 +1,6 @@
 <ion-header app-page-header title="Manage Tags" backUrl="/books"></ion-header>
 <ion-content class="[--background:transparent] [--color:#fff]">
-  <main class="tags-page">
+  <main class="tags-page" [attr.aria-busy]="store.loading()">
     <nav class="tag-tabs" aria-label="Tag type">
       <button type="button" [class.active]="type() === 'mood'" [attr.aria-pressed]="type() === 'mood'" (click)="type.set('mood')">Moods</button>
       <button type="button" [class.active]="type() === 'genre'" [attr.aria-pressed]="type() === 'genre'" (click)="type.set('genre')">Genres</button>
@@ -10,7 +10,13 @@
       <button type="button" class="new-tag" (click)="openNew()" [disabled]="store.loading() || !!store.error()"><ion-icon name="add" aria-hidden="true" /> New tag</button>
     </header>
     <label class="tag-search"><ion-icon name="search" aria-hidden="true" /><input type="search" aria-label="Search tags" placeholder="Find a tag..." [value]="search()" (input)="search.set($any($event.target).value)" /></label>
-    @if (store.loading()) { <app-skeleton variant="grid" [count]="6" /> }
+    @if (store.loading()) {
+      <div role="status" aria-label="Loading tags and book counts">
+        <span class="sr-only">Loading tags and book counts...</span>
+        <div class="tags-list-heading" aria-hidden="true"><i class="books-placeholder books-loading-line short"></i></div>
+        <div class="tag-grid" aria-hidden="true">@for (item of [1, 2, 3, 4, 5, 6]; track item) { <div class="books-loading-tag"><i class="books-placeholder books-loading-tag-icon"></i><i class="books-placeholder books-loading-line"></i><i class="books-placeholder books-loading-line short"></i></div> }</div>
+      </div>
+    }
     @else if (store.error()) { <p role="alert" class="tags-empty">{{ store.error() }} <button type="button" (click)="store.reload()">Retry</button></p> }
     @else {
       <div class="tags-list-heading"><span>{{ visible().length }} {{ visible().length === 1 ? 'tag' : 'tags' }}</span><span>Select a tag to edit</span></div>

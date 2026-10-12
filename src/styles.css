@@ -592,7 +592,8 @@ html.ios ion-tab-bar.lifeos-tab-bar {
 ion-content,
 ion-content.ion-padding {
   --padding-top: 20px;
-  --padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+  /* Keep the last content clear of the 64px bottom navigation and device inset. */
+  --padding-bottom: calc(64px + 24px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Shared vertical rhythm without reducing the width available to mobile text. */

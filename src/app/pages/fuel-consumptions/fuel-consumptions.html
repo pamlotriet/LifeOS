@@ -3,6 +3,8 @@
     <h1 class="text-2xl font-bold tracking-tight">Fuel</h1>
     <p class="mt-1 text-sm text-[var(--text-secondary)]">Track your fuel costs and efficiency.</p>
   </header>
+  @if (vehicles.loading() || refuels.loading()) { <div class="flex flex-col gap-3" role="status" aria-label="Loading fuel content"><app-skeleton variant="list" [count]="1" /><app-skeleton variant="cards" [count]="4" /><app-skeleton variant="list" [count]="2" /></div> } @else {
+
 
   @if (vehicles.loading()) {
     <app-skeleton variant="cards" [count]="2" />
@@ -104,5 +106,6 @@
         }
       </section>
     }
+  }
   }
 </div>

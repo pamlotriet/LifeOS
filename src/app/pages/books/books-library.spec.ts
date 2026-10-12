@@ -10,16 +10,40 @@ import { RefreshCoordinator } from '../../shared/state/refresh/refresh-coordinat
 describe('Reading progress editor', () => {
   const book = { id: 'book-1', title: 'Test Book', status: 'Reading', pageCount: 657, pageProgress: 266, progress: 40 } as BookRecord;
   const books = signal([book]);
+  const loading = signal(false);
+  const getGoal = vi.fn();
   const setReadingPosition = vi.fn();
   const setReadingProgress = vi.fn();
   const saveBook = vi.fn();
   const create = () => runInInjectionContext(Injector.create({ providers: [
-    { provide: BookStore, useValue: { books, sortedBooks: books, setReadingPosition, setReadingProgress, saveBook } },
-    { provide: ReadingGoalService, useValue: { get: vi.fn().mockResolvedValue(null) } },
+    { provide: BookStore, useValue: { books, sortedBooks: books, loading, setReadingPosition, setReadingProgress, saveBook } },
+    { provide: ReadingGoalService, useValue: { get: getGoal } },
     { provide: RefreshCoordinator, useValue: { register: () => () => {} } },
     { provide: DestroyRef, useValue: { onDestroy: vi.fn() } },
   ] }), () => new BooksLibrary());
-  beforeEach(() => { vi.resetAllMocks(); books.set([book]); });
+  beforeEach(() => { vi.resetAllMocks(); books.set([book]); loading.set(false); getGoal.mockResolvedValue(null); });
+  it('waits for the reading goal after the library finishes loading', async () => {
+    let resolveGoal!: (goal: number) => void;
+    getGoal.mockReturnValue(new Promise<number>(resolve => { resolveGoal = resolve; }));
+    loading.set(true);
+    const page = create();
+    expect(page.loading()).toBe(true);
+    loading.set(false);
+    expect(page.loading()).toBe(true);
+    resolveGoal(12);
+    await Promise.resolve();
+    expect(page.loading()).toBe(false);
+    expect(page.goal()).toBe(12);
+  });
+  it('waits for the library after the reading goal finishes loading', async () => {
+    loading.set(true);
+    const page = create();
+    await Promise.resolve();
+    expect(page.goalLoading()).toBe(false);
+    expect(page.loading()).toBe(true);
+    loading.set(false);
+    expect(page.loading()).toBe(false);
+  });
   it('only saves edited pages when confirmed', async () => {
     const page = create(); page.openProgress(book); page.progressInput.set('300');
     expect(setReadingPosition).not.toHaveBeenCalled();

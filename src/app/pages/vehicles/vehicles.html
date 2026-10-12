@@ -3,12 +3,7 @@
     <h1 class="text-xl font-bold tracking-tight">My Vehicles</h1>
   </div>
 
-  @if (loading()) {
-    <p
-      class="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 py-6 text-center text-sm text-[var(--text-secondary)]"
-    >
-      Loading vehicles…
-    </p>
+  @if (loading()) { <div role="status" aria-label="Loading vehicles"><app-skeleton variant="list" [count]="3" /></div>
   } @else if (error()) {
     <div
       role="alert"

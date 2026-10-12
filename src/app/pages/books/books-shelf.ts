@@ -4,12 +4,12 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
 import { BOOK_FORMATS } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
-import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
 @Component({
   selector: 'app-books-shelf',
-  imports: [IonContent, IonIcon, PageHeader, RouterLink, AppSkeleton],
+  imports: [IonContent, IonIcon, PageHeader, RouterLink],
   templateUrl: './books-shelf.html',
+  styleUrl: './books-loading.css',
 })
 export class BooksShelf {
   readonly store = inject(BookStore);

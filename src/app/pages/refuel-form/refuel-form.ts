@@ -6,6 +6,8 @@ import { RefuelStore } from '../../shared/state/refuels/refuel-store';
 import { RefuelInput } from '../../shared/state/refuels/refuel.model';
 import { AppSelect } from '../../shared/components/app-select/app-select';
 import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
+import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
+import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
 type DecimalInput = number | string | null;
 
@@ -29,7 +31,7 @@ function decimalMin(minimum: number, required = false): ValidatorFn {
 
 @Component({
   selector: 'app-refuel-form',
-  imports: [ReactiveFormsModule, IonIcon, AppSelect, AppDatePicker],
+  imports: [ReactiveFormsModule, IonIcon, AppSelect, AppDatePicker, AppSkeleton],
   templateUrl: './refuel-form.html',
 })
 export class RefuelForm {
@@ -40,6 +42,8 @@ export class RefuelForm {
   readonly entryId = this.route.snapshot.paramMap.get('id');
   readonly routeVehicleId = this.route.snapshot.paramMap.get('vehicleId');
   readonly loading = signal(!!this.entryId);
+  readonly vehicles = inject(VehicleStore);
+  readonly contentLoading = computed(() => this.loading() || this.vehicles.loading() || this.refuels.loading());
   readonly saving = signal(false);
   readonly deleting = signal(false);
   readonly confirmDelete = signal(false);
@@ -121,7 +125,7 @@ export class RefuelForm {
   }
 
   async submit(): Promise<void> {
-    if (this.saving() || this.deleting() || this.loading()) return;
+    if (this.saving() || this.deleting() || this.contentLoading()) return;
     this.attempted.set(true);
     this.form.markAllAsTouched();
     if (this.form.invalid) return;

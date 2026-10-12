@@ -3,6 +3,8 @@
     <h1 class="text-2xl font-bold tracking-tight">Fuel Insights</h1>
     <p class="mt-1 text-sm text-[var(--text-secondary)]">Track patterns and trends for your vehicle.</p>
   </header>
+  @if (vehicles.loading() || refuels.loading()) { <div class="flex flex-col gap-3" role="status" aria-label="Loading fuel content"><app-skeleton variant="list" [count]="1" /><app-skeleton variant="cards" [count]="4" /><app-skeleton variant="chart" /><app-skeleton variant="chart" /></div> } @else {
+
 
   @if (vehicles.loading()) {
     <p class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 text-sm text-[var(--text-secondary)]">
@@ -364,5 +366,6 @@
         }
       </section>
     }
+  }
   }
 </div>
