@@ -23,6 +23,7 @@ export interface BookRecord {
   publicationDate: string;
   status: BookStatus;
   progress: number;
+  progressMode?: 'pages' | 'percent';
   pageCount: number;
   pageProgress: number;
   rating: number;
@@ -43,3 +44,5 @@ export interface BookRecord {
 }
 
 export type BookInput = Omit<BookRecord, 'id'>;
+
+export function bookProgressMode(book: Pick<BookRecord,'progressMode'|'pageCount'>): 'pages'|'percent' {return book.progressMode==='percent'||!book.pageCount?'percent':'pages';}

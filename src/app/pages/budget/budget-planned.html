@@ -1,6 +1,6 @@
 <ion-content><main class="budget-page budget-planning-page">
   <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
-  <header class="page-header planning-header"><div class="planning-title"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><div><p class="eyebrow">Budget / Planning</p><h1>Plan your month</h1><p class="muted">Give every rand a purpose.</p></div></div><a class="secondary-button" routerLink="/budget">Budget overview</a></header>
+  <header class="page-header planning-header"><div class="planning-title"><app-back-button fallback="/budget" /><div><p class="eyebrow">Budget / Planning</p><h1>Plan your month</h1><p class="muted">Give every rand a purpose.</p></div></div><a class="secondary-button" routerLink="/budget">Budget overview</a></header>
   <app-budget-nav />
   <div class="planning-toolbar"><nav class="planned-month-nav" aria-label="Planned transactions month">
     <button type="button" class="icon-button" aria-label="Previous month" (click)="shiftMonth(-1)"><ion-icon name="chevron-back" /></button>

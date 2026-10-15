@@ -81,15 +81,16 @@ export class BookStore {
     const uid = this.auth.userId();
     if (!uid) throw new Error('Sign in to update reading progress.');
     const value = Math.max(0, Math.min(100, Math.round(progress)));
-    await this.service.setReadingProgress(id, value);
-    if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book, progress: value } : book));
+    const pageCount=this.books().find(book=>book.id===id)?.pageCount??0;
+    await this.service.setReadingProgress(id, value, pageCount);
+    if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book, progress: value,progressMode:'percent',pageProgress:Math.round(value/100*book.pageCount) } : book));
   }
   async setReadingPosition(id: string, pageProgress: number, pageCount: number): Promise<void> {
     const uid = this.auth.userId();
     if (!uid) throw new Error('Sign in to update reading progress.');
     const pages = Math.max(0, Math.round(pageCount)); const position = Math.max(0, Math.min(pages, Math.round(pageProgress)));
     await this.service.setReadingPosition(id, position, pages);
-    if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book, pageProgress: position, progress: pages ? Math.round(position / pages * 100) : 0 } : book));
+    if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book,progressMode:'pages', pageProgress: position, progress: pages ? Math.round(position / pages * 100) : 0 } : book));
   }
 
   async saveTag(input: Pick<BookTag, 'name' | 'type' | 'color'>, id?: string): Promise<void> {

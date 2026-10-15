@@ -67,7 +67,7 @@
         </section>
       } @else {
         @if (selected() === 'budget') {
-          <div class="budget-report-toolbar"><div><h2>Budget report</h2><p>Cycles ending {{ service.budgetReportCycle() }} ? {{ range() === 'All' ? 'All recorded totals; charts show latest 24 cycles' : 'Last ' + range() + ' of recorded activity' }}</p></div><nav aria-label="Budget report period">@for (item of ranges; track item) {<button type="button" [class.active]="range() === item" [attr.aria-pressed]="range() === item" (click)="range.set(item)">{{ item }}</button>}</nav></div>
+          <div class="budget-report-toolbar"><div><h2>Budget report</h2><p>Cycles ending {{ service.budgetReportCycle() }} &middot; {{ range() === 'All' ? 'All recorded totals; charts show latest 24 cycles' : range() === '1M' ? 'Selected budget cycle only' : 'Last ' + range() + ' of recorded activity' }}</p></div><nav aria-label="Budget report period">@for (item of ranges; track item) {<button type="button" [class.active]="range() === item" [attr.aria-pressed]="range() === item" (click)="range.set(item)">{{ item }}</button>}</nav></div>
           <app-budget-statistics [data]="data" />
         } @else {
         <section class="kpi-grid" aria-label="Key statistics">

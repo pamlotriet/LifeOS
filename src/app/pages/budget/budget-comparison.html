@@ -1,5 +1,5 @@
 <ion-content><main class="budget-page">
-  <header class="page-header"><div><p class="eyebrow">Budget comparison</p><h1>Planned vs actual</h1></div><a class="secondary-button" routerLink="/budget/planned">Edit planned amounts</a></header>
+  <header class="page-header"><app-back-button fallback="/budget" /><div><p class="eyebrow">Budget comparison</p><h1>Planned vs actual</h1></div><a class="secondary-button" routerLink="/budget/planned">Edit planned amounts</a></header>
   <app-budget-nav />
   <div class="month-nav"><label for="comparison-month">Budget month</label><div class="comparison-month-controls"><button type="button" class="icon-button" aria-label="Previous month" (click)="shiftMonth(-1)">&larr;</button><input id="comparison-month" type="month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /><button type="button" class="icon-button" aria-label="Next month" (click)="shiftMonth(1)">&rarr;</button></div></div>
   <p class="muted help-text">Cycle: {{ store.cycleLabel() }}. Compare category plans with recorded expenses. Scheduled debt payments are included in their expense category; savings transfers appear separately.</p>

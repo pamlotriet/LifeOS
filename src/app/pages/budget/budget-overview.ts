@@ -1,3 +1,4 @@
+import { BackButton } from '../../shared/components/back-button/back-button';
 import { budgetSnapshot, budgetSpending } from './budget-snapshot';
 import { BudgetNav } from './budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -10,7 +11,7 @@ import { money, summary, total } from '../../shared/state/budget/budget.model';
 import { BudgetChart, BudgetSummary, BudgetTransactions } from './budget-ui';
 import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-budget-overview', imports: [BudgetNav, IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-overview.css'] })
+@Component({ selector: 'app-budget-overview', imports: [BackButton, BudgetNav, IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-overview.css'] })
 export class BudgetOverview {
   readonly store = inject(BudgetStore);
   readonly monthlyView = !!inject(ActivatedRoute).snapshot.data['monthly'];

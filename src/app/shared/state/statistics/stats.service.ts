@@ -11,7 +11,7 @@ import { statsMonths, sumByMonth } from './stats.calculations';
 import { debtStats } from './debt-stats';
 
 export type StatsModule = 'fuel' | 'books' | 'budget';
-export type StatsRange = '3M' | '6M' | '1Y' | 'All';
+export type StatsRange = '1M' | '3M' | '6M' | '1Y' | 'All';
 export interface StatsModuleOption {
   id: StatsModule;
   label: string;

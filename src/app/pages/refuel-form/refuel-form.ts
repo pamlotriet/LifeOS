@@ -149,7 +149,7 @@ export class RefuelForm {
     try {
       await this.refuels.save(value.vehicleId, input, this.entryId ?? undefined);
       this.refuels.selectVehicle(value.vehicleId);
-      await this.router.navigateByUrl('/fuel/history');
+      await this.router.navigateByUrl('/fuel/history', { replaceUrl:true });
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not save the refuel.');
     } finally {
@@ -163,7 +163,7 @@ export class RefuelForm {
     this.error.set('');
     try {
       await this.refuels.delete(this.routeVehicleId, this.entryId);
-      await this.router.navigateByUrl('/fuel/history');
+      await this.router.navigateByUrl('/fuel/history', { replaceUrl:true });
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not delete the refuel.');
       this.confirmDelete.set(false);
@@ -173,6 +173,6 @@ export class RefuelForm {
   }
 
   cancel(): void {
-    void this.router.navigateByUrl(this.entryId ? '/fuel/history' : '/fuel');
+    void this.router.navigateByUrl(this.entryId ? '/fuel/history' : '/fuel', { replaceUrl:true });
   }
 }

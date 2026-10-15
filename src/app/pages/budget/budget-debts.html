@@ -1,7 +1,7 @@
 <ion-content>
   <main class="budget-page">
     <header class="page-header">
-      <a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a>
+      <app-back-button fallback="/budget" />
       <h1 class="compact-title">Manage debt</h1>
       <div class="debt-header-actions"><button class="secondary-button" type="button" (click)="exportPdf()" [disabled]="busy() || store.loading() || !!store.error() || !rows().length">Export PDF</button><button class="primary-button" type="button" (click)="edit()" [disabled]="busy() || store.loading() || !!store.error()">Add debt</button></div>
     </header>

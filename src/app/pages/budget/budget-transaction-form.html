@@ -1,5 +1,5 @@
 <ion-content><main class="budget-page">
-  <header class="page-header"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><h1 class="compact-title">{{ id ? 'Edit' : 'Add' }} Transaction</h1><button class="primary-button" type="submit" form="transaction-form" [disabled]="busy() || store.loading() || !!store.error() || (!!id && !loaded())">{{ busy() ? 'Saving...' : 'Save' }}</button></header>
+  <header class="page-header"><app-back-button fallback="/budget" /><h1 class="compact-title">{{ id ? 'Edit' : 'Add' }} Transaction</h1><button class="primary-button" type="submit" form="transaction-form" [disabled]="busy() || store.loading() || !!store.error() || (!!id && !loaded())">{{ busy() ? 'Saving...' : 'Save' }}</button></header>
   @if (store.loading()) { <p class="status" role="status">Loading your budget...</p> }
   @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
   @if (error()) { <p class="status error" role="alert">{{ error() }}</p> }

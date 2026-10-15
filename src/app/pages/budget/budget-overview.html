@@ -2,7 +2,7 @@
   <main class="budget-page budget-overview-page">
   <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
     <header class="page-header budget-overview-header">
-      @if (monthlyView) { <a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a> } @else { <a class="icon-button" routerLink="/home" aria-label="Back to Home"><ion-icon name="chevron-back" /></a> }
+      @if (monthlyView) { <app-back-button fallback="/budget" /> } @else { <app-back-button fallback="/home" /> }
       @if (monthlyView) { <label class="budget-month-picker"><input type="month" aria-label="Budget month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></label> } @else { <div><h1>Budget</h1><a class="budget-month-link" routerLink="/budget/month">{{ monthLabel() }} <ion-icon name="chevron-down-outline" /></a></div> }
       <a class="icon-button" [routerLink]="monthlyView ? '/budget/transactions/add' : '/budget/month'" [attr.aria-label]="monthlyView ? 'Add transaction' : 'Open monthly calendar'"><ion-icon [name]="monthlyView ? 'add' : 'calendar-outline'" /></a>
     </header>

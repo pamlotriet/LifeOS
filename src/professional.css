@@ -438,3 +438,7 @@ ion-app.lifeos-app :is(.primary-button,.button.primary,.lifeos-action-button,.bo
 ion-app.lifeos-app .books-shelf-page{max-width:1400px;width:100%;padding:24px 32px 48px;}
 @media(min-width:1000px){ion-app.lifeos-app .books-cover-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:28px 22px;}}
 @media(max-width:600px){ion-app.lifeos-app .books-shelf-page{padding:20px 16px 36px;}}
+ion-app.lifeos-app .wheel-back-control{min-height:44px;padding:9px 12px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--foreground);font-size:.8rem;}
+ion-app.lifeos-app ion-header[app-page-header]>div{height:64px;background:transparent;border:0;box-shadow:none;}
+ion-app.lifeos-app ion-header[app-page-header] h1{font-size:1rem;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+ion-app.lifeos-app .wheel-back-control{width:44px;justify-content:center;padding:9px;}

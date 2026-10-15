@@ -1,3 +1,4 @@
+import { BackButton } from '../../shared/components/back-button/back-button';
 import { GymExercisePicker } from './gym-exercise-picker';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +8,7 @@ import { GYM_DAYS, GymEntry, GymExercise, MUSCLE_GROUPS } from '../../shared/sta
 import { GymStore } from '../../shared/state/gym/gym.store';
 type WorkoutDraft = Omit<GymEntry,'id'|'sets'|'rest'> & { sets:number|null; rest:number|null };
 
-@Component({ selector:'app-gym',imports:[IonContent,IonModal,FormsModule,RouterLink,GymExercisePicker],templateUrl:'./gym.html',styleUrls:['./gym.css','./gym-workflow.css','./gym-popup.css'] })
+@Component({ selector:'app-gym',imports:[BackButton,IonContent,IonModal,FormsModule,RouterLink,GymExercisePicker],templateUrl:'./gym.html',styleUrls:['./gym.css','./gym-workflow.css','./gym-popup.css'] })
 export class Gym {
   readonly mobileSheet=signal(typeof window!=='undefined' && typeof window.matchMedia==='function' && window.matchMedia('(max-width:767px)').matches);
   constructor(){

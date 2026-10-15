@@ -52,9 +52,9 @@
               <div class="reading-details">
                 <a [routerLink]="['/books', book.id, 'edit']" class="reading-book-title">{{ book.title }}</a>
                 <p class="reading-author">{{ book.author }}</p>
-                <div class="reading-progress-copy"><span>{{ book.pageCount > 0 ? 'Page ' + book.pageProgress + ' of ' + book.pageCount : 'Reading progress' }}</span><strong>{{ pagePercent(book) }}%</strong></div>
+                <div class="reading-progress-copy"><span>{{ trackingMode(book)==='pages' && book.pageCount > 0 ? 'Page ' + book.pageProgress + ' of ' + book.pageCount : 'Reading progress' }}</span><strong>{{ pagePercent(book) }}%</strong></div>
                 <div class="reading-track" role="progressbar" [attr.aria-label]="'Progress for ' + book.title" [attr.aria-valuenow]="pagePercent(book)" aria-valuemin="0" aria-valuemax="100"><span [style.width.%]="pagePercent(book)"></span></div>
-                @if (book.pageCount > 0) { <p class="reading-remaining">{{ book.pageCount - book.pageProgress }} pages to go</p> }
+                @if (trackingMode(book)==='pages' && book.pageCount > 0) { <p class="reading-remaining">{{ book.pageCount - book.pageProgress }} pages to go</p> }
                 <button type="button" class="reading-update" (click)="openProgress(book)" [attr.aria-label]="'Update progress for ' + book.title"><ion-icon name="add" aria-hidden="true" /> Update progress</button>
               </div>
             </article>
@@ -137,7 +137,7 @@
             </div>
             <label class="progress-label" for="reading-position">{{ progressMode() === 'pages' ? 'What page are you on?' : 'How far have you read?' }}</label>
             <div class="progress-number"><input id="reading-position" type="number" inputmode="numeric" min="0" [max]="progressMode() === 'pages' ? book.pageCount : 100" step="1" required [value]="progressInput()" (input)="progressInput.set($any($event.target).value)" aria-describedby="progress-unit" /><span id="progress-unit">{{ progressMode() === 'pages' ? 'of ' + book.pageCount + ' pages' : 'percent' }}</span></div>
-            <p class="reading-remaining">Previously {{ book.pageCount > 0 ? 'page ' + book.pageProgress : book.progress + '%' }}. You can also correct an earlier entry.</p>
+            <p class="reading-remaining">Previously {{ trackingMode(book)==='pages' && book.pageCount > 0 ? 'page ' + book.pageProgress : book.progress + '%' }}. You can also correct an earlier entry.</p>
             @if (progressError()) { <p role="alert" class="progress-error">{{ progressError() }}</p> }
             <button class="reading-update progress-save" type="submit">{{ progressSaving() ? 'Saving...' : 'Save progress' }}</button>
             <button type="button" class="progress-finish" (click)="saveProgress(true)">Finish book · mark 100% and finished today</button>

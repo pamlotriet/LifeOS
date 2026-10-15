@@ -1,4 +1,5 @@
 import { DOCUMENT } from '@angular/common';
+import { AppNavigation } from './shared/state/app-navigation.service';
 import { AppUpdates } from './shared/state/app-updates.service';
 import { Component, inject, signal } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular';
@@ -14,6 +15,7 @@ import { ClearZeroOnFocus } from './shared/directives/clear-zero-on-focus';
   templateUrl: './app.html',
 })
 export class App {
+  private readonly navigation = inject(AppNavigation);
   readonly updates = inject(AppUpdates);
   readonly refreshCoordinator = inject(RefreshCoordinator);
   readonly theme = inject(ThemeService);

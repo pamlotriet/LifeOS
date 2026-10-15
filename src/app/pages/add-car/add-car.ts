@@ -107,7 +107,7 @@ export class AddCar {
       };
       if (this.editId) await this.vehicleStore.update(this.editId, changes);
       else await this.vehicleStore.add(changes);
-      await this.router.navigateByUrl('/fuel/vehicles');
+      await this.router.navigateByUrl('/fuel/vehicles', { replaceUrl:true });
     } catch (error) {
       console.error('Could not save vehicle', error);
       this.saveError.set(error instanceof Error ? error.message : 'Could not save vehicle. Please try again.');
@@ -117,7 +117,7 @@ export class AddCar {
   }
 
   cancel(): void {
-    void this.router.navigateByUrl('/fuel/vehicles');
+    void this.router.navigateByUrl('/fuel/vehicles', { replaceUrl:true });
   }
 
   async deleteVehicle(): Promise<void> {
@@ -127,7 +127,7 @@ export class AddCar {
     this.saveError.set('');
     try {
       await this.vehicleStore.delete(this.editId);
-      await this.router.navigateByUrl('/fuel/vehicles');
+      await this.router.navigateByUrl('/fuel/vehicles', { replaceUrl:true });
     } catch (error) {
       this.saveError.set(error instanceof Error ? error.message : 'Could not delete this vehicle.');
     } finally {

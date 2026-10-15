@@ -1,3 +1,4 @@
+import { BackButton } from '../../shared/components/back-button/back-button';
 import { BudgetNav } from './budget-nav';
 import { BudgetNumber, parseBudgetNumber } from '../../shared/directives/budget-number';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -8,7 +9,7 @@ import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { BudgetPlan, categoryPlanItems, compatibleCategory, debtPlanId, money, supportsPlan, total } from '../../shared/state/budget/budget.model';
 import { BudgetTransactions } from './budget-ui';
 
-@Component({ selector: 'app-budget-planned', imports: [BudgetNav, BudgetNumber, IonContent, IonIcon, FormsModule, RouterLink, BudgetTransactions], templateUrl: './budget-planned.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-planned.css'] })
+@Component({ selector: 'app-budget-planned', imports: [BackButton, BudgetNav, BudgetNumber, IonContent, IonIcon, FormsModule, RouterLink, BudgetTransactions], templateUrl: './budget-planned.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-planned.css'] })
 export class BudgetPlanned {
   readonly store = inject(BudgetStore);
   readonly money = money;

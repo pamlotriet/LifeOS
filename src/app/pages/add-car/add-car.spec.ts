@@ -47,7 +47,7 @@ describe('AddCar', () => {
     expect(addVehicle).toHaveBeenCalledWith(
       expect.objectContaining({ make: 'Toyota', model: 'Corolla', year: '2024', registration: 'CAA 123 456', odometer: 12500 }),
     );
-    expect(navigate).toHaveBeenCalledWith('/fuel/vehicles');
+    expect(navigate).toHaveBeenCalledWith('/fuel/vehicles', { replaceUrl:true });
   });
 
   it('stays on the form when Firebase cannot save the vehicle', async () => {

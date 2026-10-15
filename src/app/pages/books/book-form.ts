@@ -30,6 +30,8 @@ export class BookForm {
   readonly copies = signal<BookCopy[]>([{ id: crypto.randomUUID(), format: 'Paperback', label: '' }]);
   readonly moodTagIds = signal<string[]>([]);
   readonly genreTagIds = signal<string[]>([]);
+  readonly trackingMode = signal<'pages'|'percent'>('pages');
+  trackingByPages():boolean {return this.hasPageFormat() && this.trackingMode()==='pages';}
   readonly loading = signal(!!this.id);
   readonly saving = signal(false);
   readonly deleting = signal(false);
@@ -70,6 +72,7 @@ export class BookForm {
 
   private populate(book: BookRecord): void {
     this.form.patchValue(book);
+    this.trackingMode.set(book.progressMode ?? (book.pageCount>0?'pages':'percent'));
     this.isSeries.set(!!book.seriesName);
     this.copies.set(book.copies.map((copy) => ({ ...copy })));
     this.moodTagIds.set([...book.moodTagIds]);
@@ -160,7 +163,7 @@ export class BookForm {
     if (!this.copies().length) { this.error.set('Add at least one copy.'); return false; }
     // Validate here so a hidden page input cannot leave an audiobook invalid.
     const pages = Number(this.form.controls.pageCount.value);
-    if (this.hasPageFormat() && (!Number.isFinite(pages) || pages < 1)) {
+    if (this.trackingByPages() && (!Number.isInteger(pages) || pages < 1)) {
       this.error.set('Enter the number of pages for this book.'); return false;
     }
     return true;
@@ -194,11 +197,12 @@ export class BookForm {
     try {
       if (this.lookingUpCover()) await this.lookupCover();
       const value = this.form.getRawValue();
-      const pageCount = this.hasPageFormat() ? Math.max(0, Number(value.pageCount)) : 0;
-      const pageProgress = pageCount ? Math.min(pageCount, Math.max(0, Number(value.pageProgress))) : 0;
+      const pageCount = this.hasPageFormat() ? Math.max(0, Math.floor(Number(value.pageCount)||0)) : 0;
+      const pageProgress = pageCount ? this.trackingByPages() ? Math.min(pageCount, Math.max(0, Number(value.pageProgress))) : Math.round(Number(value.progress)/100*pageCount) : 0;
       const input: BookInput = {
         ...value, status: value.status as BookInput['status'],
-        progress: pageCount ? Math.round(pageProgress / pageCount * 100) : Number(value.progress),
+        progressMode: this.trackingByPages() ? 'pages' : 'percent',
+        progress: this.trackingByPages() && pageCount ? Math.round(pageProgress / pageCount * 100) : Number(value.progress),
         pageCount,
         pageProgress,
         rating: Number(value.rating), spiceRating: Number(value.spiceRating), seriesName: this.isSeries() ? value.seriesName.trim() : '',

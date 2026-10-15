@@ -55,9 +55,13 @@ describe('Reading progress editor', () => {
     const page = create(); page.openProgress(book); page.progressInput.set(value); await page.saveProgress();
     expect(setReadingPosition).not.toHaveBeenCalled(); expect(page.progressError()).not.toBe('');
   });
-  it('converts a percentage into pages for a print book', async () => {
+  it('saves the chosen percentage for a print book', async () => {
     const page = create(); page.openProgress(book); page.changeProgressMode('percent'); page.progressInput.set('50');
-    await page.saveProgress(); expect(setReadingPosition).toHaveBeenCalledWith(book.id, 329, 657);
+    await page.saveProgress(); expect(setReadingProgress).toHaveBeenCalledWith(book.id, 50);expect(setReadingPosition).not.toHaveBeenCalled();
+  });
+  it('opens mixed-format books in their saved tracking mode',()=>{
+    const mixed={...book,progressMode:'percent' as const,progress:55,pageProgress:361,copies:[{id:'a',format:'Audiobook' as const,label:''},{id:'p',format:'Kindle' as const,label:''}]};books.set([mixed]);
+    const page=create();page.openProgress(mixed);expect(page.progressMode()).toBe('percent');expect(page.progressInput()).toBe('55');page.changeProgressMode('pages');expect(page.progressInput()).toBe('361');
   });
   it('saves percentage progress when no page count is available', async () => {
     const audio = { ...book, pageCount: 0 }; books.set([audio]);

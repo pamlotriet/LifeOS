@@ -54,7 +54,7 @@ describe('RefuelForm', () => {
     });
     await fixture.componentInstance.submit();
     expect(save).toHaveBeenCalledWith('car-1', expect.objectContaining({ qtyLiters: 40, initialRangeKm: 600 }), undefined);
-    expect(navigate).toHaveBeenCalledWith('/fuel/history');
+    expect(navigate).toHaveBeenCalledWith('/fuel/history', { replaceUrl:true });
   });
 
   it('accepts decimal commas and saves numeric values', async () => {

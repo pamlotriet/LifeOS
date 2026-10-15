@@ -1,3 +1,4 @@
+import { BackButton } from '../../shared/components/back-button/back-button';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -7,7 +8,7 @@ import { categoryPlanItems, compatibleCategory, money } from '../../shared/state
 import { BudgetNav } from './budget-nav';
 import { compareBudgetCategories } from './budget-comparison.model';
 
-@Component({ selector: 'app-budget-comparison', imports: [FormsModule, RouterLink, IonContent, BudgetNav], templateUrl: './budget-comparison.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-comparison.css'] })
+@Component({ selector: 'app-budget-comparison', imports:[BackButton,FormsModule, RouterLink, IonContent, BudgetNav], templateUrl: './budget-comparison.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-comparison.css'] })
 export class BudgetComparison {
   readonly store = inject(BudgetStore);
   readonly money = money;

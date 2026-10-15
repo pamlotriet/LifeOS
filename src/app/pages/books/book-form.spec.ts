@@ -60,6 +60,14 @@ describe('BookForm', () => {
     expect(fixture.componentInstance.scanMessage()).toContain('missing author');
     expect(fixture.componentInstance.error()).toBe('');
   });
+  it('allows mixed audio and Kindle copies to track by percentage without pages',async()=>{
+    const p=fixture.componentInstance;p.form.patchValue({title:'Mixed',author:'Author',category:'Fantasy',progress:55});p.updateCopy(p.copies()[0].id,'format','Audiobook');p.addCopy();p.updateCopy(p.copies()[1].id,'format','Kindle');p.trackingMode.set('percent');
+    await p.save();expect(p.error()).toBe('');expect(saveBook).toHaveBeenCalledWith(expect.objectContaining({progressMode:'percent',pageCount:0,progress:55}),undefined);
+  });
+  it('keeps an optional print page count synchronized with percentage tracking',async()=>{
+    const p=fixture.componentInstance;p.form.patchValue({title:'Mixed',author:'Author',category:'Fantasy',progress:50,pageCount:657});p.addCopy();p.updateCopy(p.copies()[1].id,'format','Audiobook');p.trackingMode.set('percent');
+    await p.save();expect(saveBook).toHaveBeenCalledWith(expect.objectContaining({progressMode:'percent',pageProgress:329,progress:50,pageCount:657}),undefined);
+  });
   it('saves an audiobook without a page count', async () => {
     const component = fixture.componentInstance;
     component.form.patchValue({ title: 'Test Book', author: 'Author', category: 'Fantasy' });

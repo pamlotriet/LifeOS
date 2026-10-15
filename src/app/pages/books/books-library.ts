@@ -4,7 +4,7 @@ import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon, IonModal } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
-import { BookRecord, BOOK_CATEGORIES, BOOK_FORMATS } from '../../shared/state/books/book.model';
+import { bookProgressMode, BookRecord, BOOK_CATEGORIES, BOOK_FORMATS } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
 import { ReadingGoalService } from '../../shared/state/books/reading-goal.service';
 import { RefreshCoordinator } from '../../shared/state/refresh/refresh-coordinator.service';
@@ -76,10 +76,11 @@ export class BooksLibrary {
   readonly progressError = signal('');
   readonly progressNotice = signal('');
 
+  readonly trackingMode=bookProgressMode;
   openProgress(book: BookRecord): void {
     this.progressBook.set(book);
-    this.progressMode.set(book.pageCount > 0 ? 'pages' : 'percent');
-    this.progressInput.set(String(book.pageCount > 0 ? book.pageProgress : book.progress));
+    this.progressMode.set(bookProgressMode(book));
+    this.progressInput.set(String(bookProgressMode(book)==='pages' ? book.pageProgress : book.progress));
     this.progressError.set(''); this.progressNotice.set('');
   }
   changeProgressMode(mode: 'pages' | 'percent'): void {
@@ -107,8 +108,8 @@ export class BooksLibrary {
         const now = new Date();
         const finishDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         const { id, ...input } = book;
-        await this.store.saveBook({ ...input, progress: 100, pageProgress: book.pageCount || 0, status: 'Finished', finishDate, yearRead: now.getFullYear() }, id);
-      } else if (book.pageCount > 0) {
+        await this.store.saveBook({ ...input, progressMode:this.progressMode(), progress: 100, pageProgress: book.pageCount || 0, status: 'Finished', finishDate, yearRead: now.getFullYear() }, id);
+      } else if (this.progressMode()==='pages' && book.pageCount > 0) {
         const page = this.progressMode() === 'pages' ? value : Math.round(value / 100 * book.pageCount);
         await this.store.setReadingPosition(book.id, page, book.pageCount);
       } else {
@@ -181,6 +182,6 @@ export class BooksLibrary {
       .map((tag) => tag.name);
   }
   pagePercent(book: BookRecord): number {
-    return Math.max(0, Math.min(100, book.pageCount ? Math.round((book.pageProgress / book.pageCount) * 100) : book.progress));
+    return Math.max(0, Math.min(100, bookProgressMode(book)==='pages' && book.pageCount ? Math.round((book.pageProgress / book.pageCount) * 100) : book.progress));
   }
 }

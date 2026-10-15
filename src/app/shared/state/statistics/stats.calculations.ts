@@ -2,7 +2,7 @@ import { StatsRange } from './stats.service';
 
 /** Returns ISO year-month keys ending at the supplied date for predictable charts. */
 export function statsMonths(range: StatsRange, now = new Date()): string[] {
-  const count = range === '3M' ? 3 : range === '6M' ? 6 : range === '1Y' ? 12 : 24;
+  const count = range === '1M' ? 1 : range === '3M' ? 3 : range === '6M' ? 6 : range === '1Y' ? 12 : 24;
   return Array.from({ length: count }, (_, index) => {
     const date = new Date(now.getFullYear(), now.getMonth() - count + 1 + index, 1);
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;

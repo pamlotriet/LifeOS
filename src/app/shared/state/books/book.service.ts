@@ -59,9 +59,10 @@ export class BookService {
     await this.firestore.updateDocumentField(`users/${uid}/books`, id, 'wheelSelected', { booleanValue: selected }, token);
   }
 
-  async setReadingProgress(id: string, progress: number): Promise<void> {
+  async setReadingProgress(id: string, progress: number, pageCount = 0): Promise<void> {
     const { uid, token } = await this.auth.getSession();
-    await this.firestore.updateDocumentField(`users/${uid}/books`, id, 'progress', { integerValue: String(Math.max(0, Math.min(100, Math.round(progress)))) }, token);
+    const value=Math.max(0, Math.min(100, Math.round(progress)));
+    await this.firestore.updateDocument(`users/${uid}/books/${encodeURIComponent(id)}`, {progress:{integerValue:String(value)},progressMode:text('percent'),pageProgress:{integerValue:String(Math.round(value/100*pageCount))}}, token);
   }
 
   async setReadingPosition(id: string, pageProgress: number, pageCount: number): Promise<void> {
@@ -69,7 +70,7 @@ export class BookService {
     const pages = Math.max(0, Math.round(pageCount));
     const position = Math.max(0, Math.min(pages, Math.round(pageProgress)));
     const progress = pages ? Math.round(position / pages * 100) : 0;
-    await this.firestore.updateDocument(`users/${uid}/books/${encodeURIComponent(id)}`, { pageProgress: { integerValue: String(position) }, progress: { integerValue: String(progress) } }, token);
+    await this.firestore.updateDocument(`users/${uid}/books/${encodeURIComponent(id)}`, { progressMode:text('pages'), pageProgress: { integerValue: String(position) }, progress: { integerValue: String(progress) } }, token);
   }
 
   async listTags(): Promise<BookTag[]> {
@@ -121,7 +122,7 @@ export class BookService {
   private toBookFields(book: BookRecord): Record<string, FirestoreValue> {
     return {
       title: text(book.title), author: text(book.author), category: text(book.category), coverUrl: text(book.coverUrl), isbn: text(book.isbn),
-      publicationDate: text(book.publicationDate), status: text(book.status), progress: { integerValue: String(book.progress) }, pageCount: { integerValue: String(book.pageCount) }, pageProgress: { integerValue: String(book.pageProgress) }, rating: { integerValue: String(book.rating) },
+      progressMode:text(book.progressMode ?? (book.pageCount>0?'pages':'percent')), publicationDate: text(book.publicationDate), status: text(book.status), progress: { integerValue: String(book.progress) }, pageCount: { integerValue: String(book.pageCount) }, pageProgress: { integerValue: String(book.pageProgress) }, rating: { integerValue: String(book.rating) },
       spiceRating: { integerValue: String(book.spiceRating) },
       wheelSelected: { booleanValue: book.wheelSelected },
       favourite: { booleanValue: book.favourite }, wouldRecommend: { booleanValue: book.wouldRecommend },
@@ -143,6 +144,7 @@ export class BookService {
     return {
       id: doc.name.split('/').at(-1) ?? '', title: s('title'), author: s('author'), category: s('category'), isbn: s('isbn'),
       coverUrl: s('coverUrl'), publicationDate: s('publicationDate'), status: (s('status') || 'Not Started') as BookRecord['status'],
+      progressMode:s('progressMode')==='percent'?'percent':Number(f['pageCount']?.integerValue ?? 0)>0?'pages':'percent',
       rating: Number(f['rating']?.integerValue ?? 0), progress: Number(f['progress']?.integerValue ?? 0), pageCount: Number(f['pageCount']?.integerValue ?? 0), pageProgress: Number(f['pageProgress']?.integerValue ?? 0), spiceRating: Number(f['spiceRating']?.integerValue ?? 0),
       wheelSelected: f['wheelSelected']?.booleanValue ?? false, favourite: f['favourite']?.booleanValue ?? false,
       wouldRecommend: f['wouldRecommend']?.booleanValue ?? false, reread: f['reread']?.booleanValue ?? false,

@@ -1,3 +1,4 @@
+import { BackButton } from '../../shared/components/back-button/back-button';
 import { budgetInsights } from './budget-insights.model';
 import { BudgetNav } from './budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -9,7 +10,7 @@ import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { localDate, money, summary, total } from '../../shared/state/budget/budget.model';
 import { BudgetChart } from './budget-ui';
 
-@Component({ selector: 'app-budget-insights', imports: [BudgetNav, FormsModule, RouterLink, IonContent, IonIcon, BudgetChart], templateUrl: './budget-insights.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-insights.css'] })
+@Component({ selector: 'app-budget-insights', imports: [BackButton, BudgetNav, FormsModule, RouterLink, IonContent, IonIcon, BudgetChart], templateUrl: './budget-insights.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-insights.css'] })
 export class BudgetInsights {
   readonly store = inject(BudgetStore); readonly tab = signal('highlights'); readonly money = money;
   readonly highlights = computed(() => budgetInsights(this.store.transactions(), this.store.categories(), this.store.plans(), this.store.debts(), this.store.month(), this.store.cycleStartDay(), localDate()));

@@ -20,7 +20,7 @@ import {
 export class Statistics {
   readonly service = inject(StatsService);
   readonly modules = STATS_MODULES;
-  readonly ranges: StatsRange[] = ['3M', '6M', '1Y', 'All'];
+  readonly ranges: StatsRange[] = ['1M', '3M', '6M', '1Y', 'All'];
   readonly selected = signal<StatsModule>(this.restoreModule());
   readonly range = signal<StatsRange>('6M');
   readonly selectorOpen = signal(false);
