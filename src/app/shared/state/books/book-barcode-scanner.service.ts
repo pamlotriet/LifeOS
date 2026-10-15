@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { IsbnFrameDecoder } from './isbn-frame-decoder';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 
 export function cleanScannedIsbn(value: string): string | null {
@@ -22,9 +23,12 @@ export class BookBarcodeScannerService {
     overlay.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div><strong style="font-size:20px">Scan ISBN barcode</strong><p style="margin:4px 0 0;color:#b5cbe2;font-size:13px">Place the barcode beginning with 978 or 979 in view, including the blank space at both ends.</p></div><button type="button" data-cancel style="min-width:72px;min-height:44px;border:1px solid #4c789a;border-radius:999px;background:#123451;color:white">Cancel</button></div><div id="${id}" style="overflow:hidden;border:1px solid #35d6ed;border-radius:20px;background:#000"></div><p data-status style="text-align:center;color:#b5cbe2;font-size:13px;margin:16px 0 10px">Requesting camera access...</p><button type="button" data-photo disabled style="min-height:46px;border:1px solid #35d6ed;border-radius:14px;background:#123451;color:#bff7ff;font-weight:600">Scan from a photo</button><input data-file type="file" accept="image/*" capture="environment" hidden>`;
     document.body.appendChild(overlay);
     const scanner = new Html5Qrcode(id, { formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13], verbose: false });
+    let frameTimer: ReturnType<typeof setTimeout> | undefined;
+    const stopFrameDecoding = () => { clearTimeout(frameTimer); frameTimer = undefined; };
     let started = false;
     let starting = true;
     const finish = async (): Promise<void> => {
+      stopFrameDecoding();
       if (starting) return;
       if (started && scanner.isScanning) await scanner.stop().catch(() => undefined);
       try { scanner.clear(); } catch { /* Scanner may not have finished initialising. */ }
@@ -44,6 +48,7 @@ export class BookBarcodeScannerService {
       fileInput?.addEventListener('change', () => void (async () => {
         const file = fileInput.files?.[0]; if (!file || settled || starting) return;
         fileInput.value = '';
+        stopFrameDecoding();
         const status = overlay.querySelector<HTMLElement>('[data-status]');
         if (status) status.textContent = 'Reading barcode from photo...';
         try {
@@ -66,13 +71,40 @@ export class BookBarcodeScannerService {
         if (status) status.textContent = 'Hold the barcode steady with the entire barcode visible. Move farther away if it looks blurry.';
         started = true;
         await scanner.start(rearCamera.id, {
-          fps: 10,
+          fps: 5,
+          disableFlip: true,
           videoConstraints: {
             deviceId: { exact: rearCamera.id }, facingMode: { ideal: 'environment' },
             width: { ideal: 1920 }, height: { ideal: 1080 },
             advanced: [{ focusMode: 'continuous' } as MediaTrackConstraintSet],
           },
         }, (value) => { void accept(value); }, undefined);
+        if (!settled) {
+          const decoder = new IsbnFrameDecoder();
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d', { willReadFrequently: true });
+          const readFrame = () => {
+            if (settled || !scanner.isScanning) return;
+            const video = overlay.querySelector('video');
+            if (context && video && video.readyState >= 2 && video.videoWidth && video.videoHeight) {
+              // The built-in scanner uses the preview's CSS width (often only 390px).
+              // Preserve the camera's detail so narrow EAN bars remain distinguishable.
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+              try {
+                context.drawImage(video, 0, 0);
+                const image = context.getImageData(0, 0, canvas.width, canvas.height);
+                const value = decoder.decode(image.data, canvas.width, canvas.height);
+                if (value && cleanScannedIsbn(value)) { void accept(value); return; }
+                if (value && status) status.textContent = 'Barcode detected. Scan the book ISBN beginning with 978 or 979.';
+              } catch {
+                if (status) status.textContent = 'Could not read this frame. Hold the barcode steady, or scan from a photo.';
+              }
+            }
+            frameTimer = setTimeout(readFrame, 500);
+          };
+          frameTimer = setTimeout(readFrame, 0);
+        }
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         const status = overlay.querySelector<HTMLElement>('[data-status]');

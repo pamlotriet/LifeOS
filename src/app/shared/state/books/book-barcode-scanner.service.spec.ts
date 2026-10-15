@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Html5Qrcode } from 'html5-qrcode';
+import { IsbnFrameDecoder } from './isbn-frame-decoder';
 import { BookBarcodeScannerService, cleanScannedIsbn } from './book-barcode-scanner.service';
 
 describe('cleanScannedIsbn', () => {
@@ -33,6 +34,28 @@ describe('scanner recovery', () => {
     expect(document.querySelector('[data-status]')?.textContent).toContain('scan from a photo');
     document.querySelector<HTMLButtonElement>('[data-cancel]')!.click();
     await cancelled;
+    expect(document.querySelector('[data-photo]')).toBeNull();
+  });
+
+  it('reads full-resolution frames when the preview scanner finds nothing', async () => {
+    vi.stubGlobal('navigator', { mediaDevices: { getUserMedia: vi.fn() } });
+    vi.spyOn(Html5Qrcode, 'getCameras').mockResolvedValue([{ id: 'rear', label: 'Back Camera' }]);
+    vi.spyOn(Html5Qrcode.prototype, 'start').mockImplementation(async function (this: Html5Qrcode) {
+      this.isScanning = true;
+      const video = document.createElement('video');
+      Object.defineProperties(video, { videoWidth: { value: 1920 }, videoHeight: { value: 1080 }, readyState: { value: 4 } });
+      document.querySelector('[id^="isbn-scanner-"]')!.appendChild(video);
+      return null;
+    });
+    const getImageData = vi.fn().mockReturnValue({ data: new Uint8ClampedArray(4) });
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ drawImage: vi.fn(), getImageData } as unknown as CanvasRenderingContext2D);
+    const decode = vi.spyOn(IsbnFrameDecoder.prototype, 'decode').mockReturnValue('9780140328721');
+    const stop = vi.spyOn(Html5Qrcode.prototype, 'stop').mockResolvedValue();
+    vi.spyOn(Html5Qrcode.prototype, 'clear').mockImplementation(() => {});
+    await expect(new BookBarcodeScannerService().scan()).resolves.toBe('9780140328721');
+    expect(getImageData).toHaveBeenCalledWith(0, 0, 1920, 1080);
+    expect(decode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 1920, 1080);
+    expect(stop).toHaveBeenCalled();
     expect(document.querySelector('[data-photo]')).toBeNull();
   });
 
