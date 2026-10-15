@@ -103,7 +103,10 @@ export class BookBarcodeScannerService {
           const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d', { willReadFrequently: true });
           const readFrame = async () => {
-            if (settled || readingPhoto || !scanner.isScanning) return;
+            // start() can resolve before the video fires `playing` and the
+            // library sets isScanning (notably on Safari). Keep polling until
+            // frames arrive instead of permanently abandoning the scan loop.
+            if (settled || readingPhoto || !started) return;
             const video = overlay.querySelector('video');
             if (context && video && video.readyState >= 2 && video.videoWidth && video.videoHeight) {
               // The built-in scanner uses the preview's CSS width (often only 390px).
@@ -117,6 +120,7 @@ export class BookBarcodeScannerService {
                 if (settled || readingPhoto) return;
                 if (value && cleanScannedIsbn(value)) { void accept(value); return; }
                 if (value && status) status.textContent = 'Barcode detected. Scan the book ISBN beginning with 978 or 979.';
+                else if (status) status.textContent = 'Scanning for ISBN... Keep the entire barcode visible and hold steady.';
               } catch {
                 if (!settled && !readingPhoto && status) status.textContent = 'Barcode reader could not load or read the camera image. Check your connection and retry, or scan from a photo.';
               }

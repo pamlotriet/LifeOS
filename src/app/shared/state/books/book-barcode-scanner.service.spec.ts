@@ -81,6 +81,40 @@ describe('scanner recovery', () => {
     expect(document.querySelector('[data-photo]')).toBeNull();
   });
 
+  it('keeps trying when start resolves before the video becomes ready', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.stubGlobal('navigator', { mediaDevices: { getUserMedia: vi.fn() } });
+      vi.spyOn(Html5Qrcode, 'getCameras').mockResolvedValue([{ id: 'rear', label: 'Back Camera' }]);
+      let ready = false;
+      vi.spyOn(Html5Qrcode.prototype, 'start').mockImplementation(async function (this: Html5Qrcode) {
+        // Safari can show the preview after this promise resolves.
+        this.isScanning = false;
+        const video = document.createElement('video');
+        Object.defineProperties(video, {
+          videoWidth: { get: () => ready ? 1920 : 0 },
+          videoHeight: { get: () => ready ? 1080 : 0 },
+          readyState: { get: () => ready ? 4 : 0 },
+        });
+        document.querySelector('[id^="isbn-scanner-"]')!.appendChild(video);
+        return null;
+      });
+      vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+        drawImage: vi.fn(), getImageData: vi.fn().mockReturnValue({ data: new Uint8ClampedArray(4) }),
+      } as unknown as CanvasRenderingContext2D);
+      const decode = vi.spyOn(IsbnFrameDecoder.prototype, 'decode').mockResolvedValue('9780571376476');
+      vi.spyOn(Html5Qrcode.prototype, 'clear').mockImplementation(() => {});
+      const scan = new BookBarcodeScannerService().scan();
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(decode).not.toHaveBeenCalled();
+      ready = true;
+      await vi.advanceTimersByTimeAsync(500);
+      await expect(scan).resolves.toBe('9780571376476');
+      expect(decode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 1920, 1080);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally { vi.useRealTimers(); }
+  });
+
   it('stops the camera if cancelled while startup is pending', async () => {
     vi.stubGlobal('navigator', { mediaDevices: { getUserMedia: vi.fn() } });
     vi.spyOn(Html5Qrcode, 'getCameras').mockResolvedValue([{ id: 'rear', label: 'Back Camera' }]);
