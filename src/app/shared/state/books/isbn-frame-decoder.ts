@@ -1,36 +1,27 @@
-import { BarcodeFormat, BinaryBitmap, DecodeHintType, HybridBinarizer, MultiFormatReader, RGBLuminanceSource } from '@zxing/library';
+import { prepareZXingModule, readBarcodes, type ReadResult } from 'zxing-wasm/reader';
 
-/** Decode camera pixels without reducing them to the CSS preview dimensions. */
+// Serve the decoder with the app, including offline caching; no external CDN.
+prepareZXingModule({ overrides: {
+  locateFile: (path: string) => path.endsWith('.wasm') ? new URL('assets/barcode/zxing_reader.wasm', document.baseURI).href : path,
+} });
+
 export class IsbnFrameDecoder {
-  private readonly reader = new MultiFormatReader();
-  private readonly hints = new Map<DecodeHintType, unknown>([
-    [DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13]],
-    [DecodeHintType.TRY_HARDER, true],
-  ]);
-
-  decode(data: Uint8ClampedArray, width: number, height: number): string | null {
-    const pixels = new Uint8ClampedArray(width * height);
-    for (let i = 0; i < pixels.length; i++) {
-      const offset = i * 4;
-      pixels[i] = (data[offset] + 2 * data[offset + 1] + data[offset + 2]) / 4;
-    }
-    const result = this.read(pixels, width, height);
-    if (result) return result;
-    // ISBN bars may run horizontally when the phone or book is rotated.
-    const rotated = new Uint8ClampedArray(pixels.length);
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) rotated[x * height + height - y - 1] = pixels[y * width + x];
-    }
-    return this.read(rotated, height, width);
+  async decode(data: Uint8ClampedArray, width: number, height: number): Promise<string | null> {
+    return this.read({ data, width, height } as ImageData);
   }
 
-  private read(pixels: Uint8ClampedArray, width: number, height: number): string | null {
-    try {
-      return this.reader.decode(new BinaryBitmap(new HybridBinarizer(new RGBLuminanceSource(pixels, width, height))), this.hints).getText();
-    } catch {
-      return null;
-    } finally {
-      this.reader.reset();
-    }
+  async decodeFile(file: File): Promise<string | null> {
+    return this.read(new Uint8Array(await file.arrayBuffer()));
+  }
+
+  private async read(input: ImageData | Uint8Array): Promise<string | null> {
+    const results: ReadResult[] = await readBarcodes(input, {
+      // Bookshops can encode the ISBN in Code 128/39 rather than EAN-13.
+      // The caller still validates the ISBN prefix and checksum.
+      formats: ['AllLinear'], tryHarder: true, tryRotate: true, tryInvert: true,
+      tryDownscale: true, maxNumberOfSymbols: 8,
+    });
+    // A photo may include a price barcode next to the book ISBN.
+    return results.find(result => /^97[89]\d{10}$/.test(result.text))?.text ?? results[0]?.text ?? null;
   }
 }

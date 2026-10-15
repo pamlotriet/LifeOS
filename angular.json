@@ -21,6 +21,11 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
+                "glob": "zxing_reader.wasm",
+                "input": "node_modules/zxing-wasm/dist/reader",
+                "output": "/assets/barcode/"
+              },
+              {
                 "glob": "**/*",
                 "input": "public"
               }

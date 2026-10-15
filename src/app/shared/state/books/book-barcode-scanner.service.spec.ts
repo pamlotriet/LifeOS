@@ -6,6 +6,7 @@ import { BookBarcodeScannerService, cleanScannedIsbn } from './book-barcode-scan
 describe('cleanScannedIsbn', () => {
   it('accepts a valid ISBN-13 and removes separators', () => {
     expect(cleanScannedIsbn('978-0-14-032872-1')).toBe('9780140328721');
+    expect(cleanScannedIsbn('9780571376476')).toBe('9780571376476');
   });
 
   it('rejects non-book and invalid-checksum barcodes', () => {
@@ -37,6 +38,27 @@ describe('scanner recovery', () => {
     expect(document.querySelector('[data-photo]')).toBeNull();
   });
 
+  it('uses the new photo decoder and lets the same photo be retried', async () => {
+    vi.stubGlobal('navigator', { mediaDevices: { getUserMedia: vi.fn() } });
+    vi.spyOn(Html5Qrcode, 'getCameras').mockRejectedValue(new Error('Permission denied'));
+    vi.spyOn(Html5Qrcode.prototype, 'clear').mockImplementation(() => {});
+    const decode = vi.spyOn(IsbnFrameDecoder.prototype, 'decodeFile')
+      .mockResolvedValueOnce('6001234567892').mockResolvedValueOnce('9780140328721');
+    const oldDecoder = vi.spyOn(Html5Qrcode.prototype, 'scanFile');
+    const scan = new BookBarcodeScannerService().scan();
+    await vi.waitFor(() => expect(document.querySelector<HTMLButtonElement>('[data-photo]')?.disabled).toBe(false));
+    const input = document.querySelector<HTMLInputElement>('[data-file]')!;
+    const file = new File(['photo'], 'book.jpg', { type: 'image/jpeg' });
+    Object.defineProperty(input, 'files', { value: [file] });
+    input.dispatchEvent(new Event('change'));
+    await vi.waitFor(() => expect(document.querySelector('[data-status]')?.textContent).toContain('6001234567892'));
+    input.dispatchEvent(new Event('change'));
+    await expect(scan).resolves.toBe('9780140328721');
+    expect(decode).toHaveBeenCalledTimes(2);
+    expect(oldDecoder).not.toHaveBeenCalled();
+    expect(document.querySelector('[data-photo]')).toBeNull();
+  });
+
   it('reads full-resolution frames when the preview scanner finds nothing', async () => {
     vi.stubGlobal('navigator', { mediaDevices: { getUserMedia: vi.fn() } });
     vi.spyOn(Html5Qrcode, 'getCameras').mockResolvedValue([{ id: 'rear', label: 'Back Camera' }]);
@@ -49,7 +71,7 @@ describe('scanner recovery', () => {
     });
     const getImageData = vi.fn().mockReturnValue({ data: new Uint8ClampedArray(4) });
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ drawImage: vi.fn(), getImageData } as unknown as CanvasRenderingContext2D);
-    const decode = vi.spyOn(IsbnFrameDecoder.prototype, 'decode').mockReturnValue('9780140328721');
+    const decode = vi.spyOn(IsbnFrameDecoder.prototype, 'decode').mockResolvedValue('9780140328721');
     const stop = vi.spyOn(Html5Qrcode.prototype, 'stop').mockResolvedValue();
     vi.spyOn(Html5Qrcode.prototype, 'clear').mockImplementation(() => {});
     await expect(new BookBarcodeScannerService().scan()).resolves.toBe('9780140328721');

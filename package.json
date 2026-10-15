@@ -26,7 +26,6 @@
     "@angular/ssr": "^22.1.8",
     "@ionic/angular": "^9.0.3",
     "@spartan-ng/brain": "^1.4.1",
-    "@zxing/library": "^0.23.0",
     "chart.js": "^4.5.1",
     "express": "^5.1.0",
     "firebase": "^12.19.0",
@@ -35,7 +34,8 @@
     "jspdf-autotable": "^5.0.9",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "^0.16.3"
+    "zone.js": "^0.16.3",
+    "zxing-wasm": "^3.1.5"
   },
   "devDependencies": {
     "@angular/build": "^22.1.8",
