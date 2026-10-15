@@ -21,11 +21,12 @@ export const routes: Routes = [
       { path: 'today', loadComponent: () => import('./shared/components/tab-pages/today/today').then((m) => m.Today), canActivate: [authGuard] },
       { path: 'wheel', loadComponent: () => import('./shared/components/tab-pages/reading-wheel/reading-wheel').then((m) => m.ReadingWheel), canActivate: [authGuard] },
       { path: 'search', redirectTo: 'wheel' },
+    { path: 'gym', loadComponent: () => import('./pages/gym/gym').then(m => m.Gym), canActivate: [authGuard] },
       { path: 'more', component: More, canActivate: [authGuard] },
     ],
   },
   { path: 'budget', loadComponent: () => import('./pages/budget/budget-overview').then(m => m.BudgetOverview), canActivate: [authGuard] },
-  { path: 'gym', loadComponent: () => import('./pages/gym/gym').then(m => m.Gym), canActivate: [authGuard] },
+
   {
     path: 'fuel',
     component: Fuel,
