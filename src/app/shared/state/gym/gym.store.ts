@@ -43,6 +43,24 @@ export class GymStore {
   async removeEntry(id:string):Promise<void> {
     await this.mutate(()=>this.service.remove('gymPlan',id),()=>this.entries.update(items=>items.filter(e=>e.id!==id)));
   }
+  async copyDay(source:number,target:number):Promise<void> {
+    if(!Number.isInteger(target)||target<0||target>6||source===target)throw new Error('Choose a different workout day.');
+    const entries=this.entries().filter(e=>e.day===source).sort((a,b)=>a.order-b.order||a.id.localeCompare(b.id));
+    if(!entries.length)throw new Error('Add exercises before copying this day.');
+    if(entries.some(e=>!this.exercises().some(x=>x.id===e.exerciseId)))throw new Error('Remove unavailable exercises before copying this workout.');
+    const order=Math.max(0,...this.entries().filter(e=>e.day===target).map(e=>e.order))+1;
+    const copies=entries.map((e,i)=>({...e,id:crypto.randomUUID(),day:target,order:order+i}));
+    await this.mutate(()=>this.service.saveEntries(copies),saved=>this.entries.update(items=>[...items,...saved]));
+  }
+  async moveEntry(id:string,direction:-1|1):Promise<void> {
+    const entry=this.entries().find(e=>e.id===id);if(!entry)return;
+    const day=this.entries().filter(e=>e.day===entry.day).sort((a,b)=>a.order-b.order||a.id.localeCompare(b.id));
+    const index=day.findIndex(e=>e.id===id),next=index+direction;
+    if(next<0||next>=day.length)return;
+    [day[index],day[next]]=[day[next],day[index]];
+    const updates=day.map((e,i)=>({...e,order:i+1}));
+    await this.mutate(()=>this.service.saveEntries(updates),saved=>this.entries.update(items=>items.map(e=>saved.find(x=>x.id===e.id)??e)));
+  }
   async removeExercise(id:string):Promise<void> {
     if(this.entries().some(e=>e.exerciseId===id))throw new Error('Remove this exercise from your weekly plan before deleting it from the library.');
     await this.mutate(()=>this.service.remove('gymExercises',id),()=>this.exercises.update(items=>items.filter(e=>e.id!==id)));

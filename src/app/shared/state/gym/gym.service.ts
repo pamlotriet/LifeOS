@@ -27,6 +27,13 @@ export class GymService {
   async remove(collection:'gymExercises'|'gymPlan',id:string): Promise<void> {
     const {uid,token}=await this.auth.getSession();await this.firestore.deleteDocument(`users/${uid}/${collection}`,id,token);
   }
+  async saveEntries(entries:GymEntry[]):Promise<GymEntry[]> {
+    entries.forEach(validateGymEntry);
+    if(entries.length>400)throw new Error('This workout is too large to save together.');
+    const {uid,token}=await this.auth.getSession();
+    await this.firestore.commitWrites(entries.map(entry=>({update:{name:this.firestore.documentName(`users/${uid}/gymPlan/${entry.id}`),fields:fields(entry)}})),token);
+    return entries;
+  }
   private async save(collection:string,record:GymExercise|GymEntry):Promise<void> {
     const {uid,token}=await this.auth.getSession();await this.firestore.updateDocument(`users/${uid}/${collection}/${encodeURIComponent(record.id)}`,fields(record),token);
   }

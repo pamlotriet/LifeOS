@@ -6,13 +6,19 @@ import { GYM_DAYS, GymEntry, GymExercise, MUSCLE_GROUPS } from '../../shared/sta
 import { GymStore } from '../../shared/state/gym/gym.store';
 type WorkoutDraft = Omit<GymEntry,'id'|'sets'|'rest'> & { sets:number|null; rest:number|null };
 
-@Component({ selector:'app-gym',imports:[IonContent,FormsModule,RouterLink],templateUrl:'./gym.html',styleUrl:'./gym.css' })
+@Component({ selector:'app-gym',imports:[IonContent,FormsModule,RouterLink],templateUrl:'./gym.html',styleUrls:['./gym.css','./gym-workflow.css'] })
 export class Gym {
   @ViewChild(IonContent) private content?:IonContent;
   readonly store=inject(GymStore);
   readonly days=GYM_DAYS;
   readonly muscles=MUSCLE_GROUPS;
   readonly tab=signal<'week'|'library'>('week');
+  readonly today=(new Date().getDay()+6)%7;
+  readonly selectedDay=signal(this.today);
+  readonly allWeek=signal(false);
+  readonly visibleDays=computed(()=>this.allWeek()?this.week():this.week().filter(day=>day.day===this.selectedDay()));
+  readonly copySource=signal<number|null>(null);
+  copyTarget=(this.today+1)%7;
   readonly search=signal('');
   readonly muscle=signal('All');
   readonly exerciseEditor=signal<string|null>(null);
@@ -33,6 +39,7 @@ export class Gym {
   cancelExercise():void { this.exerciseEditor.set(null);if(this.createForDay()!==null)this.tab.set('week');this.createForDay.set(null); }
   editEntry(day:number,item?:GymEntry,exerciseId?:string):void {
     if(!this.store.exercises().length){this.editExercise(undefined,day);this.notice.set(`Create an exercise first, then set up your ${this.days[day]} workout.`);return;}
+    this.selectedDay.set(day);
     this.entry=item?{...item}:this.blankEntry(day);
     if(!item)this.chooseExercise(exerciseId??this.store.exercises()[0].id);
     this.entryEditor.set(item?.id??'new');this.exerciseEditor.set(null);this.tab.set('week');this.openEditor();
@@ -50,5 +57,13 @@ export class Gym {
   }
   async removeEntry(id:string):Promise<void> {this.error.set('');try{await this.store.removeEntry(id);this.notice.set('Removed from this workout day. The exercise is still in your library.');}catch(error){this.fail(error);}}
   async removeExercise():Promise<void> { const id=this.deleting();if(!id)return;this.error.set('');try{await this.store.removeExercise(id);this.deleting.set(null);this.notice.set('Exercise deleted.');}catch(error){this.fail(error);} }
+  showDay(day:number):void {this.selectedDay.set(day);this.allWeek.set(false);this.entryEditor.set(null);}
+  openCopy(day:number):void {this.copySource.set(day);this.copyTarget=(day+1)%7;this.error.set('');}
+  async copyDay():Promise<void> {
+    const source=this.copySource();if(source===null)return;
+    this.error.set('');
+    try{await this.store.copyDay(source,this.copyTarget);this.copySource.set(null);this.showDay(this.copyTarget);this.notice.set(`Copied ${this.days[source]} to ${this.days[this.copyTarget]}. Existing exercises were kept.`);}catch(error){this.fail(error);}
+  }
+  async moveEntry(id:string,direction:-1|1):Promise<void> {this.error.set('');try{await this.store.moveEntry(id,direction);}catch(error){this.fail(error);}}
   private fail(error:unknown):void {this.error.set(error instanceof Error?error.message:'Could not save your gym changes.');}
 }

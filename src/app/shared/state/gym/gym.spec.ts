@@ -31,11 +31,34 @@ describe('Gym persistence and validation',()=>{
   });
   function storeFixture() {
     const store=Object.create(GymStore.prototype) as GymStore;
-    const service={saveExercise:vi.fn(async(value:GymExercise)=>({...value,id:value.id??'new'})),saveEntry:vi.fn(async(value:GymEntry)=>({...value,id:value.id??'new'})),remove:vi.fn()};
+    const service={saveEntries:vi.fn(async(values:GymEntry[])=>values),saveExercise:vi.fn(async(value:GymExercise)=>({...value,id:value.id??'new'})),saveEntry:vi.fn(async(value:GymEntry)=>({...value,id:value.id??'new'})),remove:vi.fn()};
     const auth={userId:vi.fn(()=>'me')};
     Object.assign(store,{service,auth,version:0,exercises:signal([exercise]),entries:signal([entry]),loading:signal(false),saving:signal(false),error:signal('')});
     return {store,service,auth};
   }
+  it('copies a workout after existing target exercises without changing the source',async()=>{
+    const {store,service}=storeFixture();const target={...entry,id:'tuesday',day:1,order:8};store.entries.set([entry,target]);
+    await store.copyDay(0,1);const copies=store.entries().filter(e=>e.id!==target.id&&e.day===1);
+    expect(copies).toHaveLength(1);expect(copies[0]).toMatchObject({exerciseId:entry.exerciseId,sets:4,reps:'6',rest:120,weight:'20 kg',day:1,order:9});
+    expect(copies[0].id).not.toBe(entry.id);expect(store.entries()).toContainEqual(entry);expect(store.entries()).toContainEqual(target);
+    expect(service.saveEntries).toHaveBeenCalledOnce();
+  });
+  it('preserves the plan if a grouped copy or reorder fails',async()=>{
+    const {store,service}=storeFixture();service.saveEntries.mockRejectedValueOnce(new Error('Offline'));
+    await expect(store.copyDay(0,1)).rejects.toThrow('Offline');expect(store.entries()).toEqual([entry]);expect(store.saving()).toBe(false);
+    const second={...entry,id:'second',order:1};store.entries.set([entry,second]);service.saveEntries.mockRejectedValueOnce(new Error('Offline'));
+    await expect(store.moveEntry('second',-1)).rejects.toThrow('Offline');expect(store.entries()).toEqual([entry,second]);
+  });
+  it('reorders tied positions together while preserving prescriptions and other days',async()=>{
+    const {store}=storeFixture();const second={...entry,id:'second',order:1};const other={...entry,id:'other',day:2};store.entries.set([entry,second,other]);
+    await store.moveEntry('second',-1);expect(store.entries().find(e=>e.id==='second')?.order).toBe(1);expect(store.entries().find(e=>e.id==='monday')?.order).toBe(2);expect(store.entries()).toContainEqual(other);
+    await expect(store.copyDay(0,0)).rejects.toThrow('different');await expect(store.copyDay(6,2)).rejects.toThrow('Add exercises');
+  });
+  it('saves workout changes in a single Firestore commit',async()=>{
+    const commitWrites=vi.fn();const documentName=(path:string)=>'documents/'+path;
+    const service=runInInjectionContext(Injector.create({providers:[{provide:AuthService,useValue:{getSession:async()=>({uid:'me',token:'token'})}},{provide:FirestoreService,useValue:{commitWrites,documentName}}]}),()=>new GymService());
+    await service.saveEntries([entry,{...entry,id:'next',order:2}]);expect(commitWrites).toHaveBeenCalledOnce();expect(commitWrites.mock.calls[0][0]).toHaveLength(2);expect(commitWrites.mock.calls[0][0][0].update.fields).not.toHaveProperty('id');
+  });
   it('prevents deleting library exercises still used by the plan, but preserves the library when removing a workout',async()=>{
     const {store,service}=storeFixture();
     await expect(store.removeExercise('bench')).rejects.toThrow('weekly plan');

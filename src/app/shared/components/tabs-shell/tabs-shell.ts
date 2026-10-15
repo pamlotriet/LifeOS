@@ -34,12 +34,6 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
             <ion-label>Wheel</ion-label>
           </div>
         </ion-tab-button>
-        <ion-tab-button tab="gym" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">
-          <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <ion-icon size="large" name="barbell" class="mb-1"></ion-icon>
-            <ion-label>Gym</ion-label>
-          </div>
-        </ion-tab-button>
         <ion-tab-button tab="more" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
             <ion-icon size="large" name="ellipsis-vertical" class="mb-1"></ion-icon>
