@@ -8,7 +8,7 @@ import { GymExercise, GymEntry } from '../../shared/state/gym/gym.model';
 describe('Weekly gym planner',()=>{
   const exercise:GymExercise={id:'squat',name:'Squat',muscle:'Legs',equipment:'Barbell',notes:''};
   function fixture() {
-    const store={exercises:signal([exercise]),entries:signal<GymEntry[]>([]),saveEntry:vi.fn().mockResolvedValue(undefined),saveExercise:vi.fn().mockResolvedValue(undefined)};
+    const store={saving:signal(false),exercises:signal([exercise]),entries:signal<GymEntry[]>([]),saveEntry:vi.fn().mockResolvedValue(undefined),saveExercise:vi.fn().mockResolvedValue(undefined)};
     const page=runInInjectionContext(Injector.create({providers:[{provide:GymStore,useValue:store}]}),()=>new Gym());
     return {page,store};
   }
@@ -17,7 +17,7 @@ describe('Weekly gym planner',()=>{
     page.editEntry(2,undefined,'squat');expect(page.entry).toMatchObject({day:2,exerciseId:'squat',sets:null,reps:'',rest:null});
   });
   it('keeps the editor open when saving fails',async()=>{
-    const {page,store}=fixture();page.editEntry(1);page.entry={...page.entry,sets:3,reps:'10',rest:60};store.saveEntry.mockRejectedValueOnce(new Error('Offline'));
+    const {page,store}=fixture();page.editEntry(1,undefined,'squat');page.entry={...page.entry,sets:3,reps:'10',rest:60};store.saveEntry.mockRejectedValueOnce(new Error('Offline'));
     await page.saveEntry();expect(page.entryEditor()).toBe('new');expect(page.error()).toBe('Offline');
     await page.saveEntry();expect(page.entryEditor()).toBeNull();expect(store.saveEntry).toHaveBeenCalledWith(expect.objectContaining({day:1,exerciseId:'squat'}),undefined);
   });
