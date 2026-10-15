@@ -103,6 +103,7 @@ describe('scanner recovery', () => {
         drawImage: vi.fn(), getImageData: vi.fn().mockReturnValue({ data: new Uint8ClampedArray(4) }),
       } as unknown as CanvasRenderingContext2D);
       const decode = vi.spyOn(IsbnFrameDecoder.prototype, 'decode').mockResolvedValue('9780571376476');
+      const stop = vi.spyOn(Html5Qrcode.prototype, 'stop').mockResolvedValue();
       vi.spyOn(Html5Qrcode.prototype, 'clear').mockImplementation(() => {});
       const scan = new BookBarcodeScannerService().scan();
       await vi.advanceTimersByTimeAsync(1000);
@@ -111,6 +112,7 @@ describe('scanner recovery', () => {
       await vi.advanceTimersByTimeAsync(500);
       await expect(scan).resolves.toBe('9780571376476');
       expect(decode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 1920, 1080);
+      expect(stop).toHaveBeenCalled();
       expect(vi.getTimerCount()).toBe(0);
     } finally { vi.useRealTimers(); }
   });

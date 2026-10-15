@@ -36,7 +36,9 @@ export class BookBarcodeScannerService {
     const finish = async (): Promise<void> => {
       stopFrameDecoding();
       if (starting) return;
-      if (started && scanner.isScanning) await scanner.stop().catch(() => undefined);
+      if (started) {
+        try { await scanner.stop(); } catch { /* Camera may still be initialising. */ }
+      }
       try { scanner.clear(); } catch { /* Scanner may not have finished initialising. */ }
       overlay.remove();
     };
