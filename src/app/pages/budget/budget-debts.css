@@ -3,6 +3,8 @@
 .debt-summary span { display:block; font-size:.75rem; color:var(--text-secondary); }
 .debt-summary strong { display:block; margin-top:8px; font-size:1.15rem; overflow-wrap:anywhere; }
 .debt-list { display:grid; gap:18px; }
+.page-header { flex-wrap:wrap; }
+.debt-header-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
 .debt-card { padding:22px; }
 .debt-card-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .debt-card-heading h2 { margin-top:6px; font-size:1.15rem; overflow-wrap:anywhere; }

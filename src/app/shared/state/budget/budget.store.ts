@@ -129,6 +129,28 @@ export class BudgetStore {
     ++this.generation;
     this.plans.update(items => items.filter(item => item.id !== id));
   }
+  async copyPlansToNextMonth(month: string, categoryId?: string): Promise<{ copied: number; skipped: number; month: string }> {
+    if (this.loading() || this.error()) throw new Error('Load your budget before copying planned items.');
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) throw new Error('Choose a valid budget month.');
+    const date = new Date(`${month}-01T12:00:00`);
+    date.setMonth(date.getMonth() + 1);
+    const nextMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const categories = new Set(this.activeCategories().filter(category => supportsPlan(category.type)).map(category => category.id));
+    const source = this.plans().filter(plan => plan.month === month && categories.has(plan.categoryId) && (!categoryId || plan.categoryId === categoryId));
+    const uid = this.auth.userId();
+    let copied = 0, skipped = 0;
+    for (const plan of source) {
+      if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget to continue.');
+      // A stable destination ID makes retries safe without overwriting edited copies.
+      const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(plan.id));
+      const key = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+      const id = `${nextMonth}-copy-${key}`;
+      if (this.plans().some(item => item.id === id)) { skipped++; continue; }
+      await this.savePlanItem(nextMonth, plan.categoryId, plan.name || 'Existing plan', plan.amount, id);
+      copied++;
+    }
+    return { copied, skipped, month: nextMonth };
+  }
   async saveDebt(input: BudgetDebtInput, id?: string): Promise<void> {
     if (this.loading() || this.error()) throw new Error('Load your budget before changing debts.');
     const uid = this.auth.userId();

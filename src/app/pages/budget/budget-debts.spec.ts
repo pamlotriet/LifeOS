@@ -9,7 +9,7 @@ describe('Debt payment workflow', () => {
   const saveTransaction = vi.fn();
   const deleteTransaction = vi.fn();
   const planned: BudgetTransaction = { id: 'payment-1', amount: 500, type: 'expense', categoryId: 'other', title: 'Payment to Oom Martin', date: '2099-01-01', paymentMethod: 'Bank transfer', notes: 'First instalment', receiptUrl: '', receiptPath: '', debtId: 'loan', paymentStatus: 'planned' };
-  const store = { debts: signal([{ id: 'loan', name: 'Oom Martin', type: 'loan', openingBalance: 170000, annualInterestRate: 0, openingOverride: null }]), transactions: signal<BudgetTransaction[]>([]), activeCategories: signal(DEFAULT_CATEGORIES), saveTransaction, deleteTransaction };
+  const store = { month: signal('2026-10'), cycleStartDay: signal(1), debts: signal([{ id: 'loan', name: 'Oom Martin', type: 'loan', openingBalance: 170000, annualInterestRate: 0, openingOverride: null }]), transactions: signal<BudgetTransaction[]>([]), activeCategories: signal(DEFAULT_CATEGORIES), saveTransaction, deleteTransaction };
   const create = () => runInInjectionContext(Injector.create({ providers: [{ provide: BudgetStore, useValue: store }] }), () => new BudgetDebts());
   beforeEach(() => { vi.resetAllMocks(); store.transactions.set([]); saveTransaction.mockResolvedValue(undefined); });
   it('records a historical payment with the debt and original date', async () => {

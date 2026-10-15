@@ -21,6 +21,7 @@ export class Home {
   })();
 
   readonly items = [
+    { title: 'Gym', description: 'Exercises & weekly workouts', icon: 'barbell', iconBackground: 'bg-violet-500', iconColor: 'text-white', accent: 'violet', id: 7, route: '/gym' },
     { title: 'Fuel', description: 'Track fuel costs', icon: 'car', iconBackground: 'bg-gradient-to-br from-rose-400 to-orange-500', iconColor: 'text-white', accent: 'rose', id: 0, route: '/fuel' },
     { title: 'Budget', description: 'Manage money', icon: 'wallet', iconBackground: 'bg-gradient-to-br from-emerald-300 to-emerald-500', iconColor: 'text-slate-900', accent: 'emerald', id: 1, route: '/budget' },
     { title: 'Books', description: 'Read more', icon: 'book', iconBackground: 'bg-gradient-to-br from-violet-400 to-purple-600', iconColor: 'text-white', accent: 'violet', id: 2, route: '/books' },

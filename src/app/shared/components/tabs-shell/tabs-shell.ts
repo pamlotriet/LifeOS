@@ -7,6 +7,7 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
   template: `
     <ion-tabs>
       <ion-tab-bar slot="bottom" class="lifeos-tab-bar border-t border-[var(--border)] bg-[var(--nav-background)] [--background:var(--nav-background)] [--border:none]">
+        <div class="desktop-nav-brand"><img src="/icons/lifeos-192.png" alt="" /><span>LifeOS<small>Your everyday workspace</small></span></div>
         <ion-tab-button tab="home" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
             <ion-icon size="large" name="home" class="mb-1"></ion-icon>

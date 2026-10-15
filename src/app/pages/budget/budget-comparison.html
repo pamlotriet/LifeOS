@@ -1,0 +1,35 @@
+<ion-content><main class="budget-page">
+  <header class="page-header"><div><p class="eyebrow">Budget comparison</p><h1>Planned vs actual</h1></div><a class="secondary-button" routerLink="/budget/planned">Edit planned amounts</a></header>
+  <app-budget-nav />
+  <div class="month-nav"><label for="comparison-month">Budget month</label><div class="comparison-month-controls"><button type="button" class="icon-button" aria-label="Previous month" (click)="shiftMonth(-1)">&larr;</button><input id="comparison-month" type="month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /><button type="button" class="icon-button" aria-label="Next month" (click)="shiftMonth(1)">&rarr;</button></div></div>
+  <p class="muted help-text">Cycle: {{ store.cycleLabel() }}. Compare category plans with recorded expenses. Scheduled debt payments are included in their expense category; savings transfers appear separately.</p>
+  @if (store.loading()) { <p class="status" role="status">Loading category comparison...</p> }
+  @else if (store.error()) { <p class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></p> }
+  @else {
+    <section class="comparison-summary" aria-label="Expense comparison totals">
+      <div class="panel metric-plan"><small>Planned expenses &amp; bills</small><strong>{{ money(totals().planned) }}</strong><span>Your spending plan</span></div>
+      <div class="panel metric-spent"><small>Actually spent</small><strong>{{ money(totals().actual) }}</strong><span>Recorded expenses this cycle</span></div>
+      <div class="panel metric-left" [class.metric-over]="totals().actual > totals().planned"><small>{{ totals().actual > totals().planned ? 'Over total plan' : 'Left in total plan' }}</small><strong [class.negative]="totals().actual > totals().planned">{{ money(totals().actual > totals().planned ? totals().actual - totals().planned : totals().planned - totals().actual) }}</strong><span>{{ totals().actual > totals().planned ? 'Time to review your plan' : 'Room within your plan' }}</span></div>
+    </section>
+    <nav class="segments comparison-filters" aria-label="Filter category comparison">@for (option of [{id:'all',label:'All categories'}, {id:'over',label:'Over plan'}, {id:'unplanned',label:'Unplanned spending'}]; track option.id) { <button type="button" [class.active]="filter() === option.id" [attr.aria-pressed]="filter() === option.id" (click)="filter.set(option.id)">{{ option.label }}</button> }</nav>
+    <div class="comparison-tools"><label>Find a category<input type="search" placeholder="Search categories..." [ngModel]="search()" (ngModelChange)="search.set($event)" /></label><label>Sort by<select [ngModel]="sort()" (ngModelChange)="sort.set($event)"><option value="category">Category name</option><option value="spent">Highest actual amount</option><option value="difference">Lowest amount left</option></select></label></div>
+    <p class="muted help-text">Select a category to explore its planned items and recorded payments.</p>
+    @for (group of groups(); track group.title) {
+      <section class="panel comparison-panel"><h2>{{ group.title }}</h2>
+        @if (group.savings) { <p class="muted help-text">Actual amounts are transfers into savings, not spending.</p> }
+        <table><caption class="sr-only">{{ group.title }} planned and actual amounts</caption><thead><tr><th scope="col">Category</th><th scope="col">Planned</th><th scope="col">{{ group.savings ? 'Transferred' : 'Actual spent' }}</th><th scope="col">Difference</th><th scope="col">Status</th></tr></thead><tbody>
+          @for (row of group.rows; track row.id) {
+            <tr class="category-summary" [class.row-expanded]="expanded() === row.id" [style.--category-colour]="row.colour"><th scope="row"><button class="category-toggle" type="button" [attr.aria-expanded]="expanded() === row.id" [attr.aria-controls]="'category-detail-' + row.id" (click)="toggleCategory(row.id)"><span class="category-dot" aria-hidden="true"></span>{{ row.name }}<span class="expand-mark" aria-hidden="true">{{ expanded() === row.id ? '−' : '+' }}</span></button> @if (row.deleted) { <small>(archived)</small> }<div class="comparison-track" aria-hidden="true"><span [style.width.%]="row.usage" [class.exceeded]="row.difference < 0"></span></div></th>
+              <td data-label="Planned">{{ row.hasPlan ? money(row.planned) : 'No plan' }}</td><td [attr.data-label]="group.savings ? 'Transferred' : 'Actual spent'">{{ money(row.actual) }}</td>
+              <td data-label="Difference" [class.negative]="row.difference < 0">@if (row.difference < 0) { {{ money(-row.difference) }} over } @else if (row.hasPlan) { {{ money(row.difference) }} left } @else { &mdash; }</td>
+              <td data-label="Status"><span class="comparison-badge" [class.badge-over]="row.hasPlan && row.difference < 0" [class.badge-good]="row.hasPlan && row.difference >= 0" [class.badge-unplanned]="!row.hasPlan && row.actual > 0">{{ row.status }}</span></td></tr>
+            <tr class="category-detail-row" [hidden]="expanded() !== row.id"><td colspan="5" [id]="'category-detail-' + row.id"><div class="category-detail-grid">
+              <section><h3>Planned category items</h3>@for (entry of details().plans; track entry.id) { <div class="detail-line"><span>{{ entry.name || 'Existing plan' }}</span><strong>{{ money(entry.amount) }}</strong></div> } @empty { <p class="muted">No category items planned. Scheduled debt plans, when present, are included in the category total.</p> }<a class="text-link" routerLink="/budget/planned">Edit your plan &rarr;</a></section>
+              <section><h3>{{ group.savings ? 'Recorded transfers' : 'Recorded payments' }}</h3>@for (payment of details().payments; track payment.id) { <a class="detail-line detail-payment" [routerLink]="['/budget/transactions', payment.id, 'edit']"><span>{{ payment.title }}<small>{{ payment.date }}</small></span><strong>{{ money(payment.amount) }}</strong></a> } @empty { <p class="muted">No recorded payments for this category in the selected cycle.</p> }</section>
+            </div></td></tr>
+          } @empty { <tr><td colspan="5" class="empty-state">No categories match this filter.</td></tr> }
+        </tbody></table>
+      </section>
+    }
+  }
+</main></ion-content>

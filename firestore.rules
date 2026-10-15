@@ -33,6 +33,35 @@ service cloud.firestore {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
 
+      function validGymPrescription(d) {
+        return d.sets is number && d.sets >= 1 && d.sets <= 100 && d.sets % 1 == 0
+          && d.reps is string && d.reps.size() > 0 && d.reps.size() <= 80
+          && d.rest is number && d.rest >= 0 && d.rest <= 3600 && d.rest % 1 == 0
+          && d.notes is string && d.notes.size() <= 2000;
+      }
+      match /gymExercises/{exerciseId} {
+        allow read, delete: if owns(userId);
+        allow create, update: if owns(userId)
+          && request.resource.data.keys().hasAll(['name', 'muscle', 'equipment', 'sets', 'reps', 'rest', 'notes'])
+          && request.resource.data.keys().hasOnly(['name', 'muscle', 'equipment', 'sets', 'reps', 'rest', 'notes'])
+          && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 100
+          && request.resource.data.muscle in ['Full body', 'Chest', 'Back', 'Shoulders', 'Arms', 'Legs', 'Core', 'Cardio', 'Mobility', 'Other']
+          && request.resource.data.equipment is string && request.resource.data.equipment.size() <= 100
+          && validGymPrescription(request.resource.data);
+      }
+      match /gymPlan/{entryId} {
+        allow read, delete: if owns(userId);
+        allow create, update: if owns(userId)
+          && request.resource.data.keys().hasAll(['exerciseId', 'day', 'sets', 'reps', 'rest', 'weight', 'notes', 'order'])
+          && request.resource.data.keys().hasOnly(['exerciseId', 'day', 'sets', 'reps', 'rest', 'weight', 'notes', 'order'])
+          && request.resource.data.exerciseId is string && request.resource.data.exerciseId.size() > 0 && request.resource.data.exerciseId.size() <= 128
+          && exists(/databases/$(database)/documents/users/$(userId)/gymExercises/$(request.resource.data.exerciseId))
+          && request.resource.data.day is number && request.resource.data.day >= 0 && request.resource.data.day <= 6 && request.resource.data.day % 1 == 0
+          && request.resource.data.weight is string && request.resource.data.weight.size() <= 80
+          && request.resource.data.order is number && request.resource.data.order >= 0
+          && validGymPrescription(request.resource.data);
+      }
+
       match /bookTags/{tagId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }

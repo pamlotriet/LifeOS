@@ -1,6 +1,7 @@
-<ion-content><main class="budget-page">
+<ion-content><main class="budget-page budget-planning-page">
   <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
-  <header class="page-header"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><h1 class="compact-title">Planned transactions</h1></header>
+  <header class="page-header planning-header"><div class="planning-title"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><div><p class="eyebrow">Budget / Planning</p><h1>Plan your month</h1><p class="muted">Give every rand a purpose.</p></div></div><a class="secondary-button" routerLink="/budget">Budget overview</a></header>
+  <app-budget-nav />
   <nav class="planned-month-nav" aria-label="Planned transactions month">
     <button type="button" class="icon-button" aria-label="Previous month" (click)="shiftMonth(-1)"><ion-icon name="chevron-back" /></button>
     <div aria-live="polite"><small>Budget month</small><strong>{{ monthLabel() }}</strong></div>
@@ -9,23 +10,39 @@
   @if (store.loading()) { <p class="status" role="status">Loading planned transactions...</p> }
   @else if (store.error()) { <p class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></p> }
   @else {
+    <section class="panel plan-forecast" aria-labelledby="forecast-title">
+      <div class="section-heading"><div><p class="eyebrow">After your planned spending</p><h2 id="forecast-title">Predicted balance left</h2></div><strong class="forecast-amount" [class.negative]="predictedBalance() < 0" aria-live="polite">{{ money(predictedBalance()) }}</strong></div>
+      <div class="forecast-breakdown"><span>Recorded income <strong>{{ money(income()) }}</strong></span><span>Planned expenses, savings &amp; debt payments <strong>{{ money(plannedTotal()) }}</strong></span></div>
+      <p class="muted">Recorded income minus your planned values for this cycle. Actual spending is not deducted again.</p>
+      @if (!income()) { <p class="muted">Add income for this cycle to see how much your plan leaves available.</p> }
+      @if (predictedBalance() < 0) { <p class="negative">Your plan exceeds your recorded income by {{ money(-predictedBalance()) }}.</p> }
+    </section>
         <section class="panel plan-panel" aria-labelledby="plan-title">
           <div class="section-heading"><div><p class="eyebrow">Plan versus actual</p><h2 id="plan-title">Expense &amp; savings plan</h2></div><strong>{{ money(plannedTotal()) }}</strong></div>
           <p class="muted">Plan expenses and savings for the selected month. Only recorded expenses and savings transfers reduce your remaining balance.</p>
+          <div class="planning-actions"><button type="button" class="secondary-button" [disabled]="savingPlanItem() || !hasPlannedItems()" (click)="copyPlans()">{{ savingPlanItem() ? 'Saving changes…' : 'Copy all category plans to next month' }}</button><span class="muted">Changes save automatically</span></div>
+          <p class="muted">Copy item names and amounts into the next month. Existing plans are kept; items already copied are skipped.</p>
+          @if (copyNotice()) { <p class="status" role="status">{{ copyNotice() }}</p> }
           @if (planItemError()) { <p class="status error" role="alert">{{ planItemError() }}</p> }
+          <div class="planning-categories">
           @for (item of planned(); track item.id) {
             <section class="category-plan" [attr.aria-label]="item.name + ' planned items'">
               <div class="plan-row"><span class="category-icon" [style.background]="item.colour"><ion-icon [name]="item.icon" /></span><span class="row-copy"><strong>{{ item.name }}</strong><small>Actual {{ money(item.actual) }}</small></span><span class="plan-category-total"><small>Planned total</small><strong>{{ money(item.planned) }}</strong></span></div>
+              @if (item.items.length) { <div class="plan-column-labels" aria-hidden="true"><span>Payment / item</span><span>Amount (R)</span><span></span></div> }
               @for (entry of item.items; track entry.id) {
                 <div class="plan-item-row">
                   <input type="text" maxlength="80" [attr.aria-label]="'Item name in ' + item.name" [ngModel]="entry.name || 'Existing plan'" [disabled]="savingPlanItem()" (change)="saveItem(item.id, $any($event.target).value, entry.amount, entry.id)" />
                   <input type="text" appBudgetNumber inputmode="decimal" min="0" max="999999999" step="0.01" [attr.aria-label]="'Planned amount for ' + (entry.name || 'Existing plan')" [ngModel]="entry.amount" [disabled]="savingPlanItem()" (change)="saveItem(item.id, entry.name || 'Existing plan', parseNumber($any($event.target).value), entry.id)" />
                   <button type="button" class="text-link" [disabled]="savingPlanItem()" [attr.aria-label]="'Remove ' + (entry.name || 'Existing plan')" (click)="removeItem(entry)"><ion-icon name="trash-outline" /></button>
                 </div>
-              }
+              } @empty { <p class="category-empty">No items planned yet. Add your first payment below.</p> }
+              <div class="category-actions">
               <button type="button" class="text-link plan-add-item" [disabled]="savingPlanItem()" (click)="saveItem(item.id, 'New item', 0)"><ion-icon name="add" /> Add item</button>
+              <button type="button" class="text-link plan-add-item" [disabled]="savingPlanItem() || !item.items.length" (click)="copyPlans(item.id)" [attr.aria-label]="'Copy ' + item.name + ' planned items to next month'">Copy to next month</button>
+              </div>
             </section>
           }
+          </div>
           <div class="section-heading mt-4"><h3>Debt payments</h3><a class="text-link" routerLink="/budget/debts">Manage debts</a></div>
           <p class="muted">Enter each account's planned payment. A linked transaction is saved automatically; mark it paid in Manage debts. These amounts are added to the category plans above.</p>
           @if (debtPlanError()) { <p class="status error" role="alert">{{ debtPlanError() }}</p> }

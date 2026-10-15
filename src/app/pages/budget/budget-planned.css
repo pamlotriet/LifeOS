@@ -1,0 +1,40 @@
+.planning-title { display:flex; align-items:center; gap:16px; min-width:0; }
+.planning-title h1 { margin:4px 0; }
+.planning-title p { margin:0; }
+.planning-header { flex-wrap:wrap; gap:16px; margin-top:18px; }
+.planning-header > a { display:inline-flex; align-items:center; text-decoration:none; }
+.planning-header .icon-button { flex-shrink:0; }
+.planning-categories { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin-top:24px; }
+.category-plan { min-width:0; border:1px solid var(--border); border-radius:14px; padding:16px; background:var(--card); }
+.category-plan .plan-row { border:0; padding:0 0 16px; }
+.plan-category-total strong { font-size:1.1rem; font-variant-numeric:tabular-nums; }
+.plan-column-labels,.plan-item-row { display:grid; grid-template-columns:minmax(0,1fr) 112px 36px; gap:8px; padding-inline:0; }
+.plan-column-labels { color:var(--text-secondary); font-size:.72rem; padding-bottom:4px; }
+.plan-item-row input { background:var(--background); }
+.plan-item-row input:nth-child(2) { text-align:right; font-variant-numeric:tabular-nums; }
+.plan-item-row button:hover { color:var(--destructive); background:var(--muted); border-radius:8px; }
+.category-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; margin-top:12px; padding-top:10px; border-top:1px solid var(--border); }
+.category-actions .plan-add-item { margin:0; padding:8px; border-radius:8px; }
+.category-actions button:hover:not(:disabled) { background:var(--secondary); }
+.category-empty { margin:8px 0 20px; color:var(--text-secondary); font-size:.82rem; line-height:1.6; }
+.planning-actions { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:18px 0 12px; }
+.planning-actions > span { font-size:.75rem; }
+.plan-forecast { border-left:4px solid var(--primary); }
+.plan-forecast .section-heading { margin-top:0; }
+.plan-forecast .forecast-amount { font-size:clamp(1.8rem,3vw,2.6rem); letter-spacing:-.04em; font-variant-numeric:tabular-nums; }
+.plan-forecast > p { font-size:.82rem; line-height:1.6; }
+@media (min-width:1000px) {
+  .planning-categories { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; gap:20px; }
+  .planned-month-nav { max-width:360px; margin:0 0 24px auto; }
+  .forecast-breakdown { grid-template-columns:1fr 1fr; gap:32px; padding-top:18px; border-top:1px solid var(--border); }
+  .forecast-breakdown > span { flex-direction:column; }
+  .forecast-breakdown strong { color:var(--foreground); font-size:1.25rem; }
+  .plan-panel { padding:28px; }
+}
+@media (min-width:1600px) { .planning-categories { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width:420px) {
+  .planning-title { gap:10px; }
+  .planning-title h1 { font-size:1.5rem; }
+  .category-plan { padding:12px; }
+  .plan-column-labels,.plan-item-row { grid-template-columns:minmax(0,1fr) 88px 32px; gap:6px; }
+}

@@ -1,14 +1,15 @@
+import { BudgetNav } from './budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { ChartConfiguration } from 'chart.js';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
-import { debtSummary, money, summary, total } from '../../shared/state/budget/budget.model';
+import { money, summary, total } from '../../shared/state/budget/budget.model';
 import { BudgetChart, BudgetSummary, BudgetTransactions } from './budget-ui';
 import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-budget-overview', imports: [IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrls: ['./budget.css', './budget-layout.css'] })
+@Component({ selector: 'app-budget-overview', imports: [BudgetNav, IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetOverview {
   readonly store = inject(BudgetStore);
   readonly monthlyView = !!inject(ActivatedRoute).snapshot.data['monthly'];
@@ -16,7 +17,6 @@ export class BudgetOverview {
   readonly tab = signal('overview');
   readonly money = money;
   readonly totals = computed(() => summary(this.store.monthly(), this.store.categories()));
-  readonly debtCards = computed(() => this.store.debts().map(debt => ({ debt, ...debtSummary(debt, this.store.transactions(), this.store.month(), this.store.cycleStartDay()) })));
   readonly filtered = computed(() => this.store.monthly().filter(x => !this.selectedDate() || x.date === this.selectedDate()));
   readonly spending = computed(() => {
     const items = this.store.monthly().filter(x => x.type === 'expense');

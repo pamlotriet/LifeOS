@@ -2,19 +2,24 @@
   <main class="budget-page">
     <header class="page-header">
       <a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a>
-      <h1 class="compact-title">Debt &amp; credit</h1>
-      <button class="primary-button" type="button" (click)="edit()" [disabled]="busy() || store.loading() || !!store.error()">Add debt</button>
+      <h1 class="compact-title">Manage debt</h1>
+      <div class="debt-header-actions"><button class="secondary-button" type="button" (click)="exportPdf()" [disabled]="busy() || store.loading() || !!store.error() || !rows().length">Export PDF</button><button class="primary-button" type="button" (click)="edit()" [disabled]="busy() || store.loading() || !!store.error()">Add debt</button></div>
     </header>
-    @if (store.loading()) { <p class="status" role="status">Loading debts and payments...</p> }
-    @if (store.error()) { <p class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></p> }
-    @if (error()) { <p class="status error" role="alert">{{ error() }}</p> }
     @if (!store.loading() && !store.error()) {
       <section class="debt-summary" aria-label="Debt totals">
         <div class="panel"><span>Remaining balance</span><strong>{{ money(totals().remaining) }}</strong></div>
         <div class="panel"><span>Payments made</span><strong class="positive">{{ money(totals().paid) }}</strong></div>
         <div class="panel"><span>Payments planned</span><strong>{{ money(totals().planned) }}</strong></div>
       </section>
+    }
+    <app-budget-nav />
+    @if (store.loading()) { <p class="status" role="status">Loading debts and payments...</p> }
+    @if (store.error()) { <p class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></p> }
+    @if (error()) { <p class="status error" role="alert">{{ error() }}</p> }
+    @if (!store.loading() && !store.error()) {
+
       <p class="status">Record payments you've already made or plan your next ones. Planned payments only reduce your debt and budget balance once you mark them paid.</p>
+      <p class="muted help-text">Export PDF downloads a report with account balances, recorded payments through the selected budget cycle, and all planned payments.</p>
 
       @if (editing()) {
         <form class="panel editor" (ngSubmit)="save()">
@@ -64,7 +69,7 @@
       <div class="debt-list">
         @for (row of rows(); track row.debt.id) {
           <article class="panel debt-card">
-            <div class="debt-card-heading"><div><p class="eyebrow">{{ row.debt.type === 'credit-card' ? 'Credit card' : row.debt.type === 'loan' ? 'Loan' : 'Other debt' }}</p><h2>{{ row.debt.name }}</h2></div><button type="button" class="secondary-button" [disabled]="busy()" (click)="edit(row.debt.id)">Edit debt</button></div>
+            <div class="debt-card-heading"><div><p class="eyebrow">{{ row.debt.type === 'credit-card' ? 'Credit card' : row.debt.type === 'loan' ? 'Loan' : 'Other debt' }}</p><h2>{{ row.debt.name }}</h2></div><div class="debt-header-actions"><button type="button" class="secondary-button" [disabled]="busy()" (click)="exportPdf(row.debt.id)" [attr.aria-label]="'Export PDF for ' + row.debt.name">Export PDF</button><button type="button" class="secondary-button" [disabled]="busy()" (click)="edit(row.debt.id)">Edit debt</button></div></div>
             <div class="debt-balance"><span class="muted">Remaining balance</span><strong>{{ money(row.closing) }}</strong></div>
             <dl class="debt-metrics"><div><dt>Paid so far</dt><dd class="positive">{{ money(row.paid) }}</dd></div><div><dt>Planned</dt><dd>{{ money(row.planned) }}</dd></div><div><dt>After planned payments</dt><dd>{{ money(row.projected) }}</dd></div></dl>
             @if (row.debt.type === 'credit-card') { <p class="muted help-text">Includes {{ money(row.interest) }} estimated interest for this month. Prior interest and lender fees are not calculated.</p> }

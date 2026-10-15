@@ -1,3 +1,4 @@
+import { BudgetNav } from './budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -5,7 +6,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { BudgetCategory, CATEGORY_COLOURS, CATEGORY_ICONS, CATEGORY_TYPES, CategoryType, money, total } from '../../shared/state/budget/budget.model';
 
-@Component({ selector: 'app-budget-categories', imports: [FormsModule, RouterLink, IonContent, IonIcon], templateUrl: './budget-categories.html', styleUrls: ['./budget.css', './budget-layout.css'] })
+@Component({ selector: 'app-budget-categories', imports: [BudgetNav, FormsModule, RouterLink, IonContent, IonIcon], templateUrl: './budget-categories.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetCategories {
   readonly store = inject(BudgetStore);
   readonly tab = signal<CategoryType>('expense');

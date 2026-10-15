@@ -6,6 +6,7 @@
       @if (monthlyView) { <label class="budget-month-picker"><input type="month" aria-label="Budget month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></label> } @else { <div><h1>Budget</h1><a class="budget-month-link" routerLink="/budget/month">{{ monthLabel() }} <ion-icon name="chevron-down-outline" /></a></div> }
       <a class="icon-button" [routerLink]="monthlyView ? '/budget/transactions/add' : '/budget/month'" [attr.aria-label]="monthlyView ? 'Add transaction' : 'Open monthly calendar'"><ion-icon [name]="monthlyView ? 'add' : 'calendar-outline'" /></a>
     </header>
+    <app-budget-nav />
     @if (store.loading()) { <section class="budget-loading" aria-label="Loading your budget"><app-skeleton variant="cards" [count]="4" /><div class="panel mt-4 p-4"><app-skeleton variant="chart" /></div><div class="panel mt-4 p-4"><app-skeleton variant="list" [count]="4" /></div></section> }
     @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
     @if (store.notice()) { <p class="status" role="status">{{ store.notice() }}</p> }
@@ -14,8 +15,17 @@
         <a class="primary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'income' }"><ion-icon name="cash" /> Add income</a>
         <a class="secondary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'expense' }">Add expense</a>
       </div>
+      @if (!monthlyView || tab() === 'overview') {
+        <section aria-label="Budget statistics"><app-budget-summary [transactions]="store.monthly()" [categories]="store.categories()" /></section>
+      }
+      @if (!monthlyView) {
+        <section class="panel balance-panel" aria-label="Monthly balance">
+          <div class="balance-values"><div><span>Total Income</span><strong>{{ money(totals().income) }}</strong></div><div><span>Total Expenses</span><strong>{{ money(totals().expenses) }}</strong></div><div><span>Remaining</span><strong [class.negative]="totals().remaining < 0">{{ money(totals().remaining) }}</strong></div></div>
+          <div class="balance-bars"><div><div class="track"><span style="background:#59dfb7" [style.width.%]="ratio(totals().income)"></span></div><small>Income</small></div><div><div class="track"><span style="background:#ff608b" [style.width.%]="ratio(totals().expenses)"></span></div><small>Expenses · includes bills</small></div></div>
+        </section>
+      }
       @if (monthlyView) {
-        <nav class="segments" aria-label="Monthly views"><button [class.active]="tab() === 'overview'" (click)="tab.set('overview')">Overview</button><button [class.active]="tab() === 'transactions'" (click)="tab.set('transactions')">Transactions</button><a routerLink="/budget/planned">Planned</a><a routerLink="/budget/categories">Categories</a></nav>
+        <nav class="segments monthly-display" aria-label="Transaction display"><button type="button" [class.active]="tab() === 'overview'" [attr.aria-pressed]="tab() === 'overview'" (click)="tab.set('overview')">Summary &amp; transactions</button><button type="button" [class.active]="tab() === 'transactions'" [attr.aria-pressed]="tab() === 'transactions'" (click)="tab.set('transactions')">Transactions only</button></nav>
         <section class="calendar" aria-label="Filter transactions by date">
           <div class="calendar-grid">
             @for (day of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']; track day) { <span>{{ day }}</span> }
@@ -25,19 +35,8 @@
           </div>
           @if (selectedDate()) { <button class="text-link" (click)="selectedDate.set('')">Show all dates</button> }
         </section>
-      } @else {
-        <section class="panel balance-panel" aria-label="Monthly balance">
-          <div class="balance-values"><div><span>Total Income</span><strong>{{ money(totals().income) }}</strong></div><div><span>Total Expenses</span><strong>{{ money(totals().expenses) }}</strong></div><div><span>Remaining</span><strong [class.negative]="totals().remaining < 0">{{ money(totals().remaining) }}</strong></div></div>
-          <div class="balance-bars"><div><div class="track"><span style="background:#59dfb7" [style.width.%]="ratio(totals().income)"></span></div><small>Income</small></div><div><div class="track"><span style="background:#ff608b" [style.width.%]="ratio(totals().expenses)"></span></div><small>Expenses · includes bills</small></div></div>
-        </section>
-        <a class="secondary-button flex items-center justify-between mt-4" routerLink="/budget/planned"><span>Planned transactions</span><ion-icon name="chevron-forward" /></a>
-        <section class="panel debt-panel" aria-labelledby="debt-title">
-          <div class="section-heading"><div><p class="eyebrow">Debt snapshot</p><h2 id="debt-title">Debt &amp; credit</h2></div><a routerLink="/budget/debts" class="text-link">Manage</a></div>
-          @for (card of debtCards(); track card.debt.id) { <div class="debt-row"><span><strong>{{ card.debt.name }}</strong><small>{{ card.debt.type === 'credit-card' ? 'Credit card' : card.debt.type }}</small></span><span><small>Opening {{ money(card.opening) }} · Interest {{ money(card.interest) }}</small><strong>{{ money(card.closing) }} left</strong></span></div> } @empty { <p class="muted">Add loans or credit cards to track total debt, payments, and calculated closing balances.</p> }
-        </section>
       }
       @if (tab() === 'overview') {
-        <app-budget-summary [transactions]="store.monthly()" [categories]="store.categories()" />
         @if (!monthlyView) { <section class="panel budget-content-card">
           <div class="section-heading"><h2>Spending by Category</h2><a class="text-link" routerLink="/budget/insights">See all</a></div>
           @if (spending().length) {

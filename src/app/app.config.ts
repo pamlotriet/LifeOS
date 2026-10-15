@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { provideIonicAngular } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
+  barbell,
   home,
   settings,
   add,
@@ -64,6 +65,7 @@ import {
 import { routes } from './app.routes';
 
 addIcons({
+  barbell,
   home,
   settings,
   add,

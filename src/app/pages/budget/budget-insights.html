@@ -1,11 +1,24 @@
 <ion-content><main class="budget-page">
   <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
   <header class="page-header"><a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a><h1 class="compact-title">Insights</h1><span style="width:42px"></span></header>
+  <app-budget-nav />
   <div class="month-nav"><span class="muted">Report month</span><input type="month" aria-label="Report month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></div>
-  <nav class="segments" aria-label="Report type">@for (item of ['spending', 'income', 'trends']; track item) { <button [class.active]="tab() === item" [attr.aria-pressed]="tab() === item" (click)="tab.set(item)">{{ item === 'spending' ? 'Spending' : item === 'income' ? 'Income' : 'Trends' }}</button> }</nav>
+  <nav class="segments" aria-label="Report type">@for (item of ['highlights', 'spending', 'income', 'trends']; track item) { <button [class.active]="tab() === item" [attr.aria-pressed]="tab() === item" (click)="tab.set(item)">{{ item === 'highlights' ? 'For you' : item === 'spending' ? 'Spending' : item === 'income' ? 'Income' : 'Trends' }}</button> }</nav>
   @if (store.loading()) { <p class="status" role="status">Loading insights...</p> }
   @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
   @if (!store.loading() && !store.error()) {
+    @if (tab() === 'highlights') {
+      <div class="insights-intro"><h2>Your budget, explained</h2><p class="muted">Practical insights calculated from your recorded figures and plans. Update transactions to keep these accurate.</p></div>
+      <section class="insight-grid" aria-label="Personal budget insights">
+        @for (item of highlights(); track item.id) {
+          <article class="panel insight-card" [class.insight-attention]="item.tone === 'attention'" [class.insight-good]="item.tone === 'good'">
+            <span class="insight-status">{{ item.tone === 'attention' ? 'Worth reviewing' : item.tone === 'good' ? 'Looking ahead' : 'Your figures' }}</span>
+            <h3>{{ item.title }}</h3><strong class="insight-value">{{ item.value }}</strong><p>{{ item.detail }}</p>
+            <a class="secondary-button" [routerLink]="item.route" [queryParams]="item.id === 'income' ? { type: 'income' } : {}">{{ item.action }} <ion-icon name="chevron-forward" aria-hidden="true" /></a>
+          </article>
+        }
+      </section>
+    } @else {
     @if (tab() !== 'trends') {
       <section class="panel chart-panel"><h2>{{ tab() === 'income' ? 'Monthly Income' : 'Monthly Spending' }}</h2>
         @if (breakdown().length) { <app-budget-chart [config]="horizontal()" label="Monthly category amounts; full values in the table below" /><table class="data-table"><thead><tr><th scope="col">Category</th><th scope="col">Amount</th></tr></thead><tbody>@for (item of breakdown(); track item.id) { <tr><td><span class="swatch" [style.background]="item.colour" style="display:inline-block;margin-right:6px"></span>{{ item.name }}</td><td>{{ money(item.amount) }}</td></tr> }</tbody></table> }
@@ -19,5 +32,6 @@
     </section>
     <section class="panel average-card"><span class="category-icon" style="background:var(--border)"><ion-icon name="wallet" /></span><div class="row-copy"><small>Average Monthly Spending</small><strong>{{ money(average()) }}</strong></div>@if (change() !== null) { <span [class.negative]="change()! > 0" [class.positive]="change()! <= 0">{{ change()! > 0 ? '↑' : change()! < 0 ? '↓' : '' }} {{ change()! < 0 ? -change()! : change() }}%</span> }</section>
     <p class="muted" style="font-size:12px;margin-top:12px">Average across the four months shown, including months with no recorded spending. Percentage compares the selected month's spending with the previous month. Bills are included in expenses; savings transfers are excluded.</p>
+    }
   }
 </main></ion-content>

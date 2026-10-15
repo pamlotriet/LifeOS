@@ -7,6 +7,7 @@
 .field { min-width:0; }.field input,.field select,.field textarea { box-sizing:border-box; }
 .help-text { font-size:.8rem; line-height:1.6; margin:0 0 16px; }
 .toolbar { flex-wrap:wrap; margin-top:16px; }
+.monthly-display button.active { color:var(--primary-foreground); background:var(--primary); }
 .page-header h1 { min-width:0; }.page-header>.icon-button { flex-shrink:0; }
 
 @media (max-width:520px) { .field-grid { grid-template-columns:1fr; gap:0; } .plan-panel,.debt-panel,.budget-content-card { padding:16px; } }
@@ -17,6 +18,12 @@
 .plan-item-row button { min-width:36px; min-height:44px; justify-content:center; }
 .plan-add-item { min-height:44px; margin-left:12px; }
 .category-plan { padding-bottom:8px; }
+.plan-forecast { padding:20px; margin-bottom:20px; }
+.plan-forecast .section-heading { flex-wrap:wrap; gap:12px; }
+.forecast-amount { font-size:1.7rem; color:var(--success); overflow-wrap:anywhere; }
+.forecast-amount.negative { color:var(--destructive); }
+.forecast-breakdown { display:grid; gap:10px; margin:18px 0; }
+.forecast-breakdown > span { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; color:var(--text-secondary); }
 .planned-month-nav { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:16px 0; padding:12px; border:1px solid var(--border); border-radius:14px; background:var(--card); }
 .planned-month-nav > div { display:grid; min-width:0; gap:3px; text-align:center; }
 .planned-month-nav strong { font-size:1rem; overflow-wrap:anywhere; }

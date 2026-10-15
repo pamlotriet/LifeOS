@@ -124,3 +124,98 @@ app-select [role='listbox'] { background: var(--card) !important; border-color: 
 .lifeos-glow, .dark .lifeos-glow, .dark .lifeos-action-button { box-shadow: none; }
 ion-tab-button.lifeos-tab-button ion-icon { font-size: 24px; }
 ion-tab-button.lifeos-tab-button ion-label { font-size: 0.72rem; font-weight: 600; }
+
+/* Larger viewports use the full workspace, with persistent desktop navigation. */
+.desktop-nav-brand { display:none; }
+@media (min-width: 768px) {
+  .desktop-nav-brand { display:flex; flex-shrink:0; align-items:center; gap:10px; padding:8px 6px 28px; color:var(--foreground); text-align:left; }
+  .desktop-nav-brand img { width:36px; height:36px; border-radius:10px; }
+  .desktop-nav-brand > span { font-size:1.3rem; font-weight:750; letter-spacing:-.04em; }
+  .desktop-nav-brand small { display:block; margin-top:3px; color:var(--text-secondary); font-size:.65rem; font-weight:400; letter-spacing:0; }
+  ion-app.lifeos-app .app-route-outlet ion-content main,
+  ion-app.lifeos-app ion-content .mx-auto.max-w-md {
+    width: 100%;
+    max-width: none;
+  }
+
+  ion-app.lifeos-app .app-route-outlet ion-content main {
+    padding-inline: clamp(24px, 3vw, 56px);
+  }
+
+  ion-app.lifeos-app ion-content {
+    --padding-bottom: 32px;
+  }
+
+  ion-app.lifeos-app app-tabs-shell ion-tabs {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  ion-app.lifeos-app app-tabs-shell ion-tabs > .tabs-inner {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  ion-app.lifeos-app app-tabs-shell ion-tab-bar.lifeos-tab-bar {
+    grid-column: 1;
+    grid-row: 1;
+    width: 200px;
+    min-height: 0;
+    overflow-y: auto;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    height: 100%;
+    padding: 24px 12px;
+    border-top: 0;
+    border-right: 1px solid var(--border);
+  }
+
+  app-tabs-shell ion-tab-button.lifeos-tab-button {
+    flex: 0 0 64px;
+    width: 100%;
+    max-width: none;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+
+  app-tabs-shell ion-tab-button.lifeos-tab-button.tab-selected {
+    background: var(--secondary) !important;
+    --background: var(--secondary) !important;
+  }
+
+  app-tabs-shell ion-tab-button.lifeos-tab-button > div {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 14px;
+    padding-inline: 12px;
+  }
+
+  app-tabs-shell ion-tab-button.lifeos-tab-button ion-icon,
+  app-tabs-shell ion-tab-button.lifeos-tab-button > div > div {
+    margin-bottom: 0;
+  }
+
+  app-tabs-shell ion-tab-button.lifeos-tab-button ion-label {
+    font-size: 0.9rem;
+  }
+
+  ion-app.lifeos-app ion-content main { padding-top:28px; }
+  ion-app.lifeos-app :is(button,a,input,select,textarea):focus-visible { outline:2px solid var(--ring); outline-offset:3px; }
+  ion-app.lifeos-app :is(.secondary-button,.icon-button):hover:not(:disabled) { background:var(--secondary); border-color:var(--primary); }
+  ion-app.lifeos-app .primary-button { background:var(--primary); color:var(--primary-foreground); }
+  ion-app.lifeos-app .primary-button:hover:not(:disabled) { filter:brightness(.94); }
+  ion-app.lifeos-app .panel { border-radius:16px; }
+  ion-app.lifeos-app .home-card:hover { border-color:var(--primary); box-shadow:0 4px 16px rgb(0 0 0 / 7%); }
+  ion-app.lifeos-app .home-action:hover { background:var(--secondary); }
+  ion-app.lifeos-app .home-card.col-span-2 { grid-column:span 1; }
+  ion-app.lifeos-app :is(.amount,.summary-card strong,.balance-values strong) { font-variant-numeric:tabular-nums; }
+  ion-app.lifeos-app .transaction-row:hover { background:var(--muted); }
+}
+
+@media (min-width:1440px) {
+  ion-app.lifeos-app .home-areas { grid-template-columns:repeat(4,minmax(0,1fr)); }
+}
