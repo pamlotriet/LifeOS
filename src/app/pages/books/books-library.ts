@@ -1,3 +1,5 @@
+import { addIcons } from 'ionicons';
+import { library, pricetags } from 'ionicons/icons';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon, IonModal } from '@ionic/angular';
@@ -12,7 +14,7 @@ import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
   selector: 'app-books-library',
   imports: [IonContent, IonIcon, IonModal, PageHeader, RouterLink, AppSkeleton],
   templateUrl: './books-library.html',
-  styleUrl: './books-library.css',
+  styleUrls: ['./books-library.css','./books-layout.css'],
 })
 export class BooksLibrary {
   readonly store = inject(BookStore);
@@ -119,6 +121,7 @@ export class BooksLibrary {
   }
 
   constructor() {
+    addIcons({library,pricetags});
     void this.loadGoal();
     const unregister = this.refreshCoordinator.register(() => this.loadGoal());
     this.destroyRef.onDestroy(unregister);

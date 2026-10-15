@@ -431,3 +431,10 @@ ion-modal.gym-editor-modal::part(content){overflow:hidden;box-shadow:0 -12px 48p
   ion-modal.gym-editor-modal::part(content){border-radius:32px 32px 0 0;border-top:1px solid color-mix(in srgb,var(--foreground) 12%,var(--border));}
   ion-modal.gym-editor-modal::part(handle){width:38px;height:4px;border-radius:99px;background:color-mix(in srgb,var(--text-secondary) 55%,transparent);}
 }
+/* Separate readable accent text from subdued filled actions. */
+:root{--action-background:#436985;--action-foreground:#fff;--button-gradient:linear-gradient(#436985,#436985);}
+:root.dark{--primary:#a0b7c8;--ring:#789bb7;--secondary:#263b49;--action-background:#436985;--action-foreground:#fff;--button-gradient:linear-gradient(#436985,#436985);}
+ion-app.lifeos-app :is(.primary-button,.button.primary,.lifeos-action-button,.books-primary,.login-button,.stats-primary,.app-update-banner button),ion-app.lifeos-app :is(button,a)[class*='bg-gradient-']{background:var(--action-background)!important;color:var(--action-foreground)!important;border-color:transparent;box-shadow:none;}
+ion-app.lifeos-app .books-shelf-page{max-width:1400px;width:100%;padding:24px 32px 48px;}
+@media(min-width:1000px){ion-app.lifeos-app .books-cover-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:28px 22px;}}
+@media(max-width:600px){ion-app.lifeos-app .books-shelf-page{padding:20px 16px 36px;}}
