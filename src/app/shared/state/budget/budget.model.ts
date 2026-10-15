@@ -75,7 +75,7 @@ export function summary(items: BudgetTransaction[], categories: BudgetCategory[]
   const income = total(items.filter(x => x.type === 'income'));
   const expenses = total(items.filter(x => x.type === 'expense'));
   const bills = total(items.filter(x => x.type === 'expense' && categories.find(c => c.id === x.categoryId)?.type === 'bills'));
-  const savings = total(items.filter(x => x.type === 'transfer' && categories.find(c => c.id === x.categoryId)?.type === 'savings'));
+  const savings = total(items.filter(x => x.type === 'transfer'));
   return { income, expenses, bills, savings, remaining: Math.round((income - expenses - savings) * 100) / 100 };
 }
 export function debtSummary(debt: BudgetDebt, payments: BudgetTransaction[], month = localDate().slice(0, 7), startDay = 1) {

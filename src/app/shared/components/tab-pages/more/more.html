@@ -41,6 +41,10 @@
         <ion-icon name="chevron-forward" class="text-xl text-[var(--text-secondary)]"></ion-icon>
       </a>
     </section>
+    @if (updates.enabled) {
+      <button type="button" class="mt-5 flex min-h-12 w-full items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--primary)]" [disabled]="updates.checking()" (click)="updates.available() ? updates.refresh() : updates.check()">{{ updates.available() ? 'Refresh to update LifeOS' : updates.checking() ? 'Checking for updates...' : 'Check for app updates' }}</button>
+      @if (updates.message()) { <p class="mt-2 text-center text-sm text-[var(--text-secondary)]" role="status">{{ updates.message() }}</p> }
+    }
     <button
       type="button"
       (click)="logout()"

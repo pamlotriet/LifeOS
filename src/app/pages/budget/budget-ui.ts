@@ -3,7 +3,7 @@ import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { ArcElement, BarController, BarElement, CategoryScale, Chart, ChartConfiguration, DoughnutController, Filler, Legend, LineController, LineElement, LinearScale, PointElement, Tooltip } from 'chart.js';
-import { BudgetCategory, BudgetTransaction, money, summary } from '../../shared/state/budget/budget.model';
+import { BudgetCategory, BudgetTransaction, money } from '../../shared/state/budget/budget.model';
 
 Chart.register(ArcElement, BarController, BarElement, CategoryScale, DoughnutController, Filler, Legend, LineController, LineElement, LinearScale, PointElement, Tooltip);
 
@@ -24,26 +24,7 @@ export class BudgetChart implements AfterViewInit, OnChanges, OnDestroy {
   }
 }
 
-@Component({ selector: 'app-budget-summary', imports: [IonIcon], styleUrls: ['./budget.css', './budget-layout.css'], template: `
-  <div class="summary-grid">
-    @for (card of cards(); track card.label) {
-      <div class="panel summary-card"><span class="category-icon" [style.background]="card.colour"><ion-icon [name]="card.icon" aria-hidden="true" /></span><div><span class="muted">{{ card.label }}</span><strong>{{ money(card.amount) }}</strong></div></div>
-    }
-  </div>` })
-export class BudgetSummary {
-  @Input() transactions: BudgetTransaction[] = [];
-  @Input() categories: BudgetCategory[] = [];
-  readonly money = money;
-  cards() {
-    const values = summary(this.transactions, this.categories);
-    return [
-      { label: 'Income', amount: values.income, colour: '#05a99c', icon: 'cash' },
-      { label: 'Expenses', amount: values.expenses, colour: '#f55386', icon: 'wallet' },
-      { label: 'Bills', amount: values.bills, colour: '#008fea', icon: 'document-text' },
-      { label: 'Savings', amount: values.savings, colour: '#7451df', icon: 'home' },
-    ];
-  }
-}
+export { BudgetSummary } from './budget-summary';
 
 @Component({ selector: 'app-budget-transactions', imports: [RouterLink, IonIcon], styleUrls: ['./budget.css', './budget-layout.css', './budget-transactions.css'], template: `
   <div class="transaction-list">

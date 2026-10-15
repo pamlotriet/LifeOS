@@ -14,6 +14,8 @@ export class BudgetPlanned {
   readonly money = money;
   readonly parseNumber = (value: string): number => parseBudgetNumber(value) ?? NaN;
   readonly selectedDate = signal('');
+  readonly plannedOnly = signal(false);
+  readonly visibleCategories = computed(() => this.planned().filter(item => !this.plannedOnly() || item.items.length > 0));
   readonly monthLabel = computed(() => new Date(`${this.store.month()}-01T12:00:00`).toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' }));
   shiftMonth(delta: number): void {
     const date = new Date(`${this.store.month()}-01T12:00:00`);

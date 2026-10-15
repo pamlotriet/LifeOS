@@ -1,3 +1,4 @@
+import { budgetSnapshot, budgetSpending } from './budget-snapshot';
 import { BudgetNav } from './budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +10,7 @@ import { money, summary, total } from '../../shared/state/budget/budget.model';
 import { BudgetChart, BudgetSummary, BudgetTransactions } from './budget-ui';
 import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-budget-overview', imports: [BudgetNav, IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrls: ['./budget.css', './budget-layout.css'] })
+@Component({ selector: 'app-budget-overview', imports: [BudgetNav, IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-overview.css'] })
 export class BudgetOverview {
   readonly store = inject(BudgetStore);
   readonly monthlyView = !!inject(ActivatedRoute).snapshot.data['monthly'];
@@ -18,11 +19,8 @@ export class BudgetOverview {
   readonly money = money;
   readonly totals = computed(() => summary(this.store.monthly(), this.store.categories()));
   readonly filtered = computed(() => this.store.monthly().filter(x => !this.selectedDate() || x.date === this.selectedDate()));
-  readonly spending = computed(() => {
-    const items = this.store.monthly().filter(x => x.type === 'expense');
-    const sum = total(items);
-    return this.store.categories().map(c => ({ ...c, amount: total(items.filter(x => x.categoryId === c.id)) })).filter(x => x.amount > 0).sort((a, b) => b.amount - a.amount).map(x => ({ ...x, percent: sum ? Math.round(x.amount / sum * 100) : 0 }));
-  });
+  readonly snapshot = computed(() => budgetSnapshot(this.store.transactions(),this.store.categories(),this.store.plans(),this.store.month(),this.store.cycleStartDay()));
+  readonly spending = computed(() => budgetSpending(this.store.monthly(),this.store.categories()));
   readonly donut = computed<ChartConfiguration>(() => ({
     type: 'doughnut', data: { labels: this.spending().map(x => x.name), datasets: [{ data: this.spending().map(x => x.amount), backgroundColor: this.spending().map(x => x.colour), borderWidth: 0, hoverOffset: 5 }] },
     options: { responsive: true, maintainAspectRatio: false, animation: false, cutout: '72%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: context => `${context.label}: ${money(Number(context.raw))}` } } } },

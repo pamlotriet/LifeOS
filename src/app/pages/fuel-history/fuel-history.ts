@@ -3,12 +3,12 @@ import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { RefuelStore } from '../../shared/state/refuels/refuel-store';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
-import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
+import { FuelLoading } from '../fuel/fuel-loading';
 import { AppSelect } from '../../shared/components/app-select/app-select';
 import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
 
 @Component({
-  imports: [IonIcon, RouterLink, AppSelect, AppDatePicker, AppSkeleton],
+  imports: [IonIcon, RouterLink, AppSelect, AppDatePicker, FuelLoading],
   selector: 'app-fuel-history',
   styleUrl: './fuel-history.css',
   templateUrl: './fuel-history.html',

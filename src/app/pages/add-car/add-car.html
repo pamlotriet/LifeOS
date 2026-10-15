@@ -1,4 +1,4 @@
-@if (loadingVehicle()) { <div class="mx-auto w-full max-w-md" role="status" aria-label="Loading form"><app-skeleton variant="form" [count]="8" /></div> } @else {
+@if (loadingVehicle()) { <app-fuel-loading kind="vehicle-form" label="Loading vehicle details" /> } @else {
 <form [formGroup]="vehicleForm" (ngSubmit)="submit()" class="mx-auto flex w-full max-w-md flex-col gap-5 pb-6 text-white">
   <div class="flex items-center justify-between gap-3">
     <h1 class="text-xl font-bold tracking-tight">{{ editId ? 'Update Vehicle' : 'Add Vehicle' }}</h1>

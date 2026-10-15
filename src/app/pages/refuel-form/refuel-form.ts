@@ -7,7 +7,7 @@ import { RefuelInput } from '../../shared/state/refuels/refuel.model';
 import { AppSelect } from '../../shared/components/app-select/app-select';
 import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
-import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
+import { FuelLoading } from '../fuel/fuel-loading';
 
 type DecimalInput = number | string | null;
 
@@ -31,7 +31,7 @@ function decimalMin(minimum: number, required = false): ValidatorFn {
 
 @Component({
   selector: 'app-refuel-form',
-  imports: [ReactiveFormsModule, IonIcon, AppSelect, AppDatePicker, AppSkeleton],
+  imports: [ReactiveFormsModule, IonIcon, AppSelect, AppDatePicker, FuelLoading],
   templateUrl: './refuel-form.html',
 })
 export class RefuelForm {

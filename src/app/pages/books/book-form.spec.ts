@@ -47,6 +47,19 @@ describe('BookForm', () => {
     expect(saveBook).toHaveBeenCalledWith(expect.objectContaining({ title: 'Test Book', pageCount: 300 }), undefined);
   });
 
+  it('keeps a scanned ISBN when catalogue requests fail', async () => {
+    scan.mockResolvedValue('9780140328721');lookupByIsbn.mockRejectedValue(new Error('Book lookup could not be completed.'));
+    await fixture.componentInstance.scanBook();
+    expect(fixture.componentInstance.form.controls.isbn.value).toBe('9780140328721');
+    expect(fixture.componentInstance.error()).toContain('lookup could not be completed');
+  });
+  it('keeps partial scanned details and asks for the missing author', async () => {
+    scan.mockResolvedValue('9780140328721');lookupByIsbn.mockResolvedValue({title:'Matilda',author:'',category:'Other',publicationDate:'',coverUrl:''});
+    await fixture.componentInstance.scanBook();
+    expect(fixture.componentInstance.form.controls.title.value).toBe('Matilda');
+    expect(fixture.componentInstance.scanMessage()).toContain('missing author');
+    expect(fixture.componentInstance.error()).toBe('');
+  });
   it('saves an audiobook without a page count', async () => {
     const component = fixture.componentInstance;
     component.form.patchValue({ title: 'Test Book', author: 'Author', category: 'Fantasy' });

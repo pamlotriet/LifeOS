@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment';
 
 interface SearchDocument {
   title?: string;
@@ -99,58 +98,49 @@ export class OpenLibraryCoverService {
   }
 
   async lookupByIsbn(isbn: string): Promise<BookCatalogueResult | null> {
-    const cleanIsbn = this.cleanIsbn(isbn);
-    if (!cleanIsbn) return null;
-    const openLibrary = await this.lookupOpenLibraryByIsbn(cleanIsbn);
-    if (openLibrary) {
-      return { ...openLibrary, coverUrl: openLibrary.coverUrl || await this.searchByIsbn(cleanIsbn) || '' };
+    const clean = this.cleanIsbn(isbn);
+    if (!clean) return null;
+    let failed = false;
+    let partial: BookCatalogueResult | null = null;
+    for (const lookup of [() => this.lookupOpenLibraryByIsbn(clean), () => this.lookupOpenLibrarySearch(clean), () => this.lookupGoogleByIsbn(clean)]) {
+      try {
+        const result = await lookup();
+        if (result?.title) {
+          partial = partial ? { ...result, title: partial.title, author: partial.author || result.author, coverUrl: partial.coverUrl || result.coverUrl, publicationDate: partial.publicationDate || result.publicationDate } : result;
+          if (partial.author) return partial;
+        }
+      } catch { failed = true; }
     }
-    return this.lookupGoogleByIsbn(cleanIsbn);
+    if (partial) return partial;
+    if (failed) throw new Error('Book lookup could not be completed. Check your connection and try again. Your scanned ISBN has been kept.');
+    return null;
+  }
+
+  private async catalogueJson(url: string): Promise<any> {
+    const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
+    if (!response.ok) throw new Error('Book catalogue unavailable');
+    return response.json();
   }
 
   private async lookupOpenLibraryByIsbn(isbn: string): Promise<BookCatalogueResult | null> {
-    try {
-      const response = await fetch(`https://openlibrary.org/isbn/${encodeURIComponent(isbn)}.json`);
-      if (!response.ok) return null;
-      const edition = (await response.json()) as OpenLibraryEdition;
-      if (!edition.title) return null;
-      const authorNames = await Promise.all((edition.authors ?? []).map(async ({ key }) => {
-        if (!key) return '';
-        const authorResponse = await fetch(`https://openlibrary.org${key}.json`);
-        if (!authorResponse.ok) return '';
-        return ((await authorResponse.json()) as { name?: string }).name ?? '';
-      }));
-      if (!authorNames.some(Boolean)) return null;
-      const coverId = edition.covers?.find((id) => id > 0);
-      return {
-        isbn,
-        title: edition.title,
-        author: authorNames.filter(Boolean).join(', '),
-        category: this.categoryFor((edition.subjects ?? []).map((subject) => typeof subject === 'string' ? subject : subject.name ?? '')),
-        publicationDate: this.normalizedPublicationDate(edition.publish_date ?? ''),
-        coverUrl: coverId ? this.openLibraryCoverUrl(coverId) : '',
-      };
-    } catch {
-      return null;
-    }
+    const data = await this.catalogueJson('https://openlibrary.org/api/books?bibkeys=ISBN:' + encodeURIComponent(isbn) + '&jscmd=data&format=json');
+    const book = data['ISBN:' + isbn];
+    if (!book?.title) return null;
+    return { isbn, title: book.title, author: (book.authors ?? []).map((a: {name?:string}) => a.name).filter(Boolean).join(', '), category: this.categoryFor((book.subjects ?? []).map((s: {name?:string}) => s.name ?? '')), publicationDate: this.normalizedPublicationDate(book.publish_date ?? ''), coverUrl: this.ensureHttps(book.cover?.large ?? book.cover?.medium ?? '') ?? '' };
+  }
+
+  private async lookupOpenLibrarySearch(isbn: string): Promise<BookCatalogueResult | null> {
+    const data = await this.catalogueJson('https://openlibrary.org/search.json?isbn=' + encodeURIComponent(isbn) + '&fields=title,author_name,cover_i,first_publish_year&limit=1');
+    const book = data.docs?.[0];
+    if (!book?.title) return null;
+    return {isbn, title:book.title, author:(book.author_name ?? []).join(', '), category:'Other', publicationDate:this.normalizedPublicationDate(String(book.first_publish_year ?? '')), coverUrl:book.cover_i > 0 ? this.openLibraryCoverUrl(book.cover_i) : ''};
   }
 
   private async lookupGoogleByIsbn(isbn: string): Promise<BookCatalogueResult | null> {
-    try {
-      const volume = (await this.fetchGoogleBooks(`isbn:${isbn}`))[0];
-      const info = volume?.volumeInfo;
-      if (!info?.title) return null;
-      return {
-        isbn,
-        title: info.title,
-        author: (info.authors ?? []).join(', '),
-        category: this.categoryFor(info.categories ?? []),
-        publicationDate: this.normalizedPublicationDate(info.publishedDate ?? ''),
-        coverUrl: this.ensureHttps(this.getGoogleCover(info.imageLinks) ?? '') ?? '',
-      };
-    } catch {
-      return null;
-    }
+    const volume = (await this.fetchGoogleBooks('isbn:' + isbn))[0];
+    const info = volume?.volumeInfo;
+    if (!info?.title) return null;
+    return {isbn, title:info.title, author:(info.authors ?? []).join(', '), category:this.categoryFor(info.categories ?? []), publicationDate:this.normalizedPublicationDate(info.publishedDate ?? ''), coverUrl:this.ensureHttps(this.getGoogleCover(info.imageLinks) ?? '') ?? ''};
   }
 
   private normalizedPublicationDate(value: string): string {
@@ -444,14 +434,8 @@ export class OpenLibraryCoverService {
     url.searchParams.set('maxResults', '40');
     url.searchParams.set('printType', 'books');
 
-    if (environment.firebaseConfig.apiKey) {
-      url.searchParams.set('key', environment.firebaseConfig.apiKey);
-    }
 
-    const response = await fetch(url.toString());
-    if (!response.ok) return [];
-
-    const data = (await response.json()) as GoogleSearchResponse;
+    const data = await this.catalogueJson(url.toString()) as GoogleSearchResponse;
     return data.items ?? [];
   }
 

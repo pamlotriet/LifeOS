@@ -106,9 +106,12 @@ export class BookForm {
     this.error.set('');
     try {
       const isbn = await this.barcodeScanner.scan();
+      ++this.coverLookupVersion;
+      this.lookingUpCover.set(false);
+      this.form.controls.isbn.setValue(isbn);
       this.scanMessage.set('Looking up scanned ISBN...');
       const book = await this.covers.lookupByIsbn(isbn);
-      if (!book || !book.title || !book.author) {
+      if (!book || !book.title) {
         throw new Error(`No book details were found for ISBN ${isbn}. You can still enter it manually.`);
       }
       // An earlier title lookup must not overwrite the scanned edition's cover.
@@ -123,7 +126,7 @@ export class BookForm {
         isbn,
       });
       this.coverMessage.set(book.coverUrl ? 'Cover found from the scanned ISBN.' : 'Book details found without a cover.');
-      this.scanMessage.set(`Book details filled from ISBN ${isbn}.`);
+      this.scanMessage.set(book.author ? `Book details filled from ISBN ${isbn}.` : `ISBN ${isbn} found. Please add the missing author.`);
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not scan this book.');
       this.scanMessage.set('');

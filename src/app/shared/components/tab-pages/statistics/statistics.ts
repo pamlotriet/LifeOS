@@ -1,3 +1,4 @@
+import { BudgetStatistics } from './budget-statistics';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
@@ -12,7 +13,7 @@ import {
 
 @Component({
   selector: 'app-statistics',
-  imports: [IonContent, IonIcon, RouterLink, BudgetChart, AppSkeleton],
+  imports: [IonContent, IonIcon, RouterLink, BudgetChart, AppSkeleton, BudgetStatistics],
   styleUrl: './statistics.css',
   templateUrl: './statistics.html',
 })

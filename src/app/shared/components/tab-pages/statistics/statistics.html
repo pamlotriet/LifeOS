@@ -1,5 +1,5 @@
 <ion-content class="[--background:transparent]"
-  ><main class="stats-page mx-auto min-h-full max-w-3xl px-4 pb-10 pt-5">
+  ><main [class.budget-stats-page]="selected() === 'budget'" class="stats-page mx-auto min-h-full max-w-3xl px-4 pb-10 pt-5">
     <header class="stats-header">
       <h1>Stats</h1>
       <p>Viewing stats for</p>
@@ -66,6 +66,10 @@
           }
         </section>
       } @else {
+        @if (selected() === 'budget') {
+          <div class="budget-report-toolbar"><div><h2>Budget report</h2><p>Cycles ending {{ service.budgetReportCycle() }} ? {{ range() === 'All' ? 'All recorded totals; charts show latest 24 cycles' : 'Last ' + range() + ' of recorded activity' }}</p></div><nav aria-label="Budget report period">@for (item of ranges; track item) {<button type="button" [class.active]="range() === item" [attr.aria-pressed]="range() === item" (click)="range.set(item)">{{ item }}</button>}</nav></div>
+          <app-budget-statistics [data]="data" />
+        } @else {
         <section class="kpi-grid" aria-label="Key statistics">
           @for (item of data.kpis; track item.label) {
             <article class="kpi-card">
@@ -136,6 +140,7 @@
             <p>{{ data.insight }}</p>
           </div>
         </section>
+        }
       }
     }
   </main></ion-content

@@ -16,7 +16,7 @@ export class GymService {
   }
   async saveExercise(input: Omit<GymExercise,'id'>, id:string=crypto.randomUUID()): Promise<GymExercise> {
     validateExercise(input);
-    const record:GymExercise={id,name:input.name.trim(),muscle:input.muscle,equipment:input.equipment.trim(),sets:input.sets,reps:input.reps.trim(),rest:input.rest,notes:input.notes.trim()};
+    const record:GymExercise={id,name:input.name.trim(),muscle:input.muscle,equipment:input.equipment.trim(),notes:input.notes.trim()};
     await this.save('gymExercises',record);return record;
   }
   async saveEntry(input: Omit<GymEntry,'id'>, id:string=crypto.randomUUID()): Promise<GymEntry> {

@@ -1,6 +1,6 @@
-<div class="mx-auto flex w-full max-w-md flex-col gap-3 pb-8 text-white">
+<div class="fuel-history-page mx-auto flex w-full max-w-md flex-col gap-3 pb-8 text-white">
   <header><h1 class="text-2xl font-bold">Refuel History</h1><p class="mt-1 text-sm text-[var(--text-secondary)]">View and manage your refuelling records.</p></header>
-  @if (vehicles.loading() || refuels.loading()) { <div class="flex flex-col gap-3" role="status" aria-label="Loading fuel content"><app-skeleton variant="form" [count]="2" /><app-skeleton variant="list" [count]="5" /></div> } @else {
+  @if (vehicles.loading() || refuels.loading()) { <app-fuel-loading kind="history" label="Loading fill-up history" /> } @else {
 
 
   @if (refuels.vehicleOptions().length) {
@@ -16,15 +16,13 @@
       <button type="button" (click)="setDate('')" class="min-h-11 rounded-xl border border-[var(--border)] px-4 text-sm font-semibold text-cyan-200">Clear</button>
     }
   </div>
-  <a routerLink="/fuel/refuels/add" class="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 text-sm font-bold text-white no-underline"><ion-icon name="add" aria-hidden="true"></ion-icon> Log Refuel</a>
+  <a routerLink="/fuel/refuels/add" class="history-log-button"><ion-icon name="add" aria-hidden="true"></ion-icon> Log refuel</a>
 
-  @if (refuels.loading()) {
-    <p class="rounded-xl bg-[var(--card)] p-4 text-sm">Loading refuels...</p>
-  } @else if (refuels.error()) {
+  @if (refuels.error()) {
     <p role="alert" class="rounded-xl border border-rose-400/50 bg-[var(--card)] p-4 text-sm">{{ refuels.error() }}</p>
   } @else {
     @for (entry of visibleEntries(); track entry.id) {
-      <article class="rounded-xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--card)] p-3">
+      <article class="fuel-history-record rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
         <div class="flex items-start gap-3">
           <ion-icon name="battery-charging-outline" class="mt-1 text-2xl text-cyan-300" aria-hidden="true"></ion-icon>
           <div class="min-w-0 flex-1"><h2 class="text-sm font-semibold">{{ date(entry.dop) }}</h2><p class="text-xs text-[var(--text-secondary)]">{{ entry.pop }} · {{ entry.areaTown }}</p><p class="text-xs text-[var(--text-secondary)]">{{ entry.fuelType }} · {{ number(entry.odometer, 0) }} km</p></div>

@@ -2,10 +2,10 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
-import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
+import { FuelLoading } from '../fuel/fuel-loading';
 
 @Component({
-  imports: [IonIcon, RouterLink, AppSkeleton],
+  imports: [IonIcon, RouterLink, FuelLoading],
   selector: 'app-vehicles',
   styleUrl: './vehicles.css',
   templateUrl: './vehicles.html',

@@ -1,3 +1,4 @@
+import { budgetSpending } from '../../../pages/budget/budget-snapshot';
 import { inject, Injectable, Injector } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
 import { BookStore } from '../books/book-store';
@@ -23,6 +24,7 @@ export interface StatsKpi {
   accent: string;
 }
 export interface StatsDashboard {
+  spending?: Array<{id:string;name:string;colour:string;amount:number;percent:number;formatted:string}>;
   debt?: { kpis: StatsKpi[]; balances: ChartConfiguration; repayments: ChartConfiguration; empty: boolean; cycleLabel: string };
   kpis: StatsKpi[];
   primary: ChartConfiguration;
@@ -266,6 +268,7 @@ export class StatsService {
         : `No completed books recorded for ${year}.`,
     };
   }
+  budgetReportCycle(): string { return this.budget.cycleLabel(); }
   private budgetStats(range: StatsRange): StatsDashboard {
     const months = statsMonths(range, new Date(this.budget.month() + '-01T12:00:00'));
     const allowed = new Set(months);
@@ -278,18 +281,19 @@ export class StatsService {
     const grouped = months.map((month) => {
       const part = items.filter((x) => this.budget.inMonth(x.date, month));
       const value = summary(part, this.budget.categories());
-      return { month, income: value.income, expenses: value.expenses, remaining: value.remaining };
+      return { month, income: value.income, expenses: value.expenses, savings: value.savings, remaining: value.remaining };
     });
     return {
-      empty: !items.length && !this.budget.debts().length,
+      empty: !items.some(x => x.paymentStatus !== 'planned') && !this.budget.debts().length,
       emptyTitle: 'No budget data yet',
       emptyMessage: 'Add income or expenses to see financial trends.',
       action: '/budget/transactions/add',
+      spending: budgetSpending(items, this.budget.categories()).map(row => ({...row, formatted: money(row.amount)})),
       kpis: [
-        this.kpi('Net income', money(values.income), 'cash', '#20b875'),
-        this.kpi('Actual spend', money(values.expenses), 'wallet', '#ef4f5f'),
-        this.kpi('Left over', money(values.remaining), 'card-outline', '#2497ff'),
-        this.kpi('Savings', money(values.savings), 'lock-closed', '#8c4bff'),
+        this.kpi('Recorded income', money(values.income), 'cash', '#20b875'),
+        this.kpi('Actual spending', money(values.expenses), 'wallet', '#ef4f5f'),
+        this.kpi('Savings transfers', money(values.savings), 'lock-closed', '#8c4bff'),
+        this.kpi('Balance from records', money(values.remaining), 'card-outline', '#2497ff'),
       ],
       debt: {
         cycleLabel: this.budget.cycleLabel(),
@@ -316,12 +320,12 @@ export class StatsService {
           options: chartOptions(true),
         },
       },
-      primaryTitle: 'Income vs expenses',
-      secondaryTitle: 'Left over trend',
+      primaryTitle: 'Income, spending & savings',
+      secondaryTitle: 'Balance from records by cycle',
       primary: {
         type: 'bar',
         data: {
-          labels: labels(grouped.map((x) => x.month)),
+          labels: grouped.map(x => new Date(x.month + '-01T12:00:00').toLocaleDateString('en-ZA', {month:'short',year:'2-digit'})),
           datasets: [
             {
               label: 'Income',
@@ -330,11 +334,12 @@ export class StatsService {
               borderRadius: 5,
             },
             {
-              label: 'Expenses',
+              label: 'Actual spending',
               data: grouped.map((x) => x.expenses),
               backgroundColor: '#ef4f5f',
               borderRadius: 5,
             },
+            { label: 'Savings transfers', data: grouped.map(x => x.savings), backgroundColor: '#8a7ca8', borderRadius: 5 },
           ],
         },
         options: chartOptions(true),
@@ -342,13 +347,13 @@ export class StatsService {
       secondary: {
         type: 'line',
         data: {
-          labels: labels(grouped.map((x) => x.month)),
+          labels: grouped.map(x => new Date(x.month + '-01T12:00:00').toLocaleDateString('en-ZA', {month:'short',year:'2-digit'})),
           datasets: [
             {
-              label: 'Left over',
+              label: 'Balance from records',
               data: grouped.map((x) => x.remaining),
-              borderColor: '#7b3cff',
-              backgroundColor: '#7b3cff22',
+              borderColor: '#8a7ca8',
+              backgroundColor: '#8a7ca822',
               fill: true,
               tension: 0.35,
             },
@@ -356,7 +361,7 @@ export class StatsService {
         },
         options: chartOptions(true),
       },
-      insight: `Savings transfers are excluded from expenses to avoid double-counting.`,
+      insight: `Balance from records = income minus spending minus savings transfers. Spending includes bills and paid debt payments. Unpaid plans are excluded. Each point is a cycle total, not a cumulative bank balance.`,
     };
   }
   private kpi(label: string, value: string, icon: string, accent: string): StatsKpi {

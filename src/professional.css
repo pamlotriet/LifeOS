@@ -219,3 +219,202 @@ ion-tab-button.lifeos-tab-button ion-label { font-size: 0.72rem; font-weight: 60
 @media (min-width:1440px) {
   ion-app.lifeos-app .home-areas { grid-template-columns:repeat(4,minmax(0,1fr)); }
 }
+
+/* A shared, colorful theme for every LifeOS area. */
+:root {
+  --background:#faf7ff;
+  --foreground:#302842;
+  --card:#ffffff;
+  --primary:#6943bb;
+  --primary-foreground:#ffffff;
+  --secondary:#f0e9fc;
+  --muted:#f3eef9;
+  --muted-foreground:#70627e;
+  --accent:#eee6fc;
+  --border:#e7ddf0;
+  --ring:#875ed2;
+  --success:#137b60;
+  --warning:#996012;
+  --destructive:#bd365c;
+  --lifeos-violet:#7950c5;
+  --lifeos-magenta:#ba438d;
+  --chart-1:#7851c7;
+  --chart-2:#1b94af;
+  --chart-3:#d76b91;
+  --chart-4:#289f7e;
+  --chart-5:#d8a044;
+  --hue-rose:#b93d69;
+  --hue-mint:#137f66;
+  --hue-violet:#7650bd;
+  --hue-sky:#177aa7;
+  --hue-pink:#ad3f89;
+  --hue-amber:#95621c;
+  --hue-cyan:#0c7e8c;
+  --button-gradient:linear-gradient(120deg,#6943bb,#7851c7);
+  --soft-shadow:0 5px 20px rgb(91 59 128 / 5%);
+  --area-color:var(--hue-violet);
+}
+:root.dark {
+  --background:#191626;
+  --foreground:#f3ecff;
+  --card:#262138;
+  --primary:#cbb3ff;
+  --primary-foreground:#24143f;
+  --secondary:#39304f;
+  --muted:#30293f;
+  --muted-foreground:#bdb0d0;
+  --accent:#3b3053;
+  --border:#453957;
+  --ring:#cbb3ff;
+  --success:#78d6b2;
+  --warning:#f0c47c;
+  --destructive:#ffa0ba;
+  --lifeos-violet:#c5a4ff;
+  --lifeos-magenta:#f3a5db;
+  --hue-rose:#ffa0be;
+  --hue-mint:#7bdac1;
+  --hue-violet:#c7a8ff;
+  --hue-sky:#87cfff;
+  --hue-pink:#f3a5db;
+  --hue-amber:#f2cd86;
+  --hue-cyan:#78dae3;
+  --button-gradient:linear-gradient(120deg,#cbb3ff,#e0b5ef);
+  --soft-shadow:0 6px 22px rgb(0 0 0 / 10%);
+}
+:root,:root.dark {
+  --radius:1rem;
+  --surface-soft-blue:color-mix(in srgb,var(--hue-sky) 10%,var(--card));
+  --surface-soft-purple:color-mix(in srgb,var(--hue-violet) 10%,var(--card));
+  --surface-soft-cyan:color-mix(in srgb,var(--hue-cyan) 10%,var(--card));
+  --action-gradient-start:var(--primary);
+  --action-gradient-middle:var(--lifeos-violet);
+  --action-gradient-end:var(--lifeos-magenta);
+  --ion-color-primary-rgb:105,67,187;
+  --ion-color-primary-shade:var(--primary);
+  --ion-color-primary-tint:var(--primary);
+  --ion-color-primary-contrast-rgb:255,255,255;
+}
+:root.dark { --ion-color-primary-rgb:203,179,255; --ion-color-primary-contrast-rgb:36,20,63; }
+[data-accent='rose'] { --area-color:var(--hue-rose); }
+[data-accent='emerald'] { --area-color:var(--hue-mint); }
+[data-accent='violet'] { --area-color:var(--hue-violet); }
+[data-accent='sky'] { --area-color:var(--hue-sky); }
+[data-accent='pink'] { --area-color:var(--hue-pink); }
+[data-accent='amber'] { --area-color:var(--hue-amber); }
+[data-accent='cyan'] { --area-color:var(--hue-cyan); }
+
+/* Gentle color on the canvas; cards remain solid for legible content. */
+ion-app.lifeos-app ion-content::part(background) {
+  background:radial-gradient(ellipse at 0% 0%,color-mix(in srgb,var(--hue-violet) 7%,transparent),transparent 55%),radial-gradient(ellipse at 100% 75%,color-mix(in srgb,var(--hue-mint) 5%,transparent),transparent 60%),var(--background) !important;
+}
+ion-app.lifeos-app :is(.home-header,.today-header,.budget-overview-header,.planning-header),
+ion-app.lifeos-app .budget-page > .page-header {
+  padding:22px;
+  border:1px solid var(--border);
+  border-radius:22px;
+  background:linear-gradient(110deg,color-mix(in srgb,var(--hue-violet) 10%,var(--card)),color-mix(in srgb,var(--hue-pink) 7%,var(--card)));
+}
+ion-app.lifeos-app ion-header[app-page-header] > div { background:color-mix(in srgb,var(--hue-violet) 8%,var(--card)); border-bottom:1px solid var(--border); }
+ion-app.lifeos-app .budget-month-picker input { width:100%; min-width:0; }
+ion-app.lifeos-app :is(.panel,.today-card,.reading-section,.settings-card,.gym-panel,.planner-card) { box-shadow:var(--soft-shadow); }
+ion-app.lifeos-app :is(.primary-button,.button.primary,.lifeos-action-button) {
+  background:var(--button-gradient);
+  color:var(--primary-foreground);
+  border-color:transparent;
+  box-shadow:0 4px 12px color-mix(in srgb,var(--primary) 16%,transparent);
+}
+ion-app.lifeos-app :is(.secondary-button,.icon-button,.outline-action) { background:color-mix(in srgb,var(--primary) 5%,var(--card)); }
+ion-app.lifeos-app :is(.primary-button,.button.primary,.secondary-button,.home-card,.home-action,.planner-tile) { transition:background .18s,box-shadow .18s,transform .18s; }
+@media(hover:hover) {
+  ion-app.lifeos-app :is(.primary-button,.button.primary,.home-card,.planner-tile):hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 20px color-mix(in srgb,var(--primary) 15%,transparent); }
+}
+ion-app.lifeos-app :is(input[type='checkbox'],input[type='radio'],input[type='range']) { accent-color:var(--primary); }
+ion-app.lifeos-app :is(button,a,input,select,textarea):focus-visible { outline:3px solid var(--ring); outline-offset:3px; }
+
+/* Restore distinct accent families previously flattened into one neutral color. */
+[class*='text-cyan-'] { color:var(--hue-cyan); }
+[class*='text-sky-'],[class*='text-blue-'] { color:var(--hue-sky); }
+[class*='text-violet-'],[class*='text-purple-'] { color:var(--hue-violet); }
+[class*='text-fuchsia-'] { color:var(--hue-pink); }
+[class*='bg-cyan-'] { background-color:color-mix(in srgb,var(--hue-cyan) 12%,var(--card)); }
+[class*='bg-sky-'],[class*='bg-blue-'] { background-color:color-mix(in srgb,var(--hue-sky) 12%,var(--card)); }
+[class*='bg-violet-'],[class*='bg-purple-'] { background-color:color-mix(in srgb,var(--hue-violet) 12%,var(--card)); }
+[class*='bg-fuchsia-'] { background-color:color-mix(in srgb,var(--hue-pink) 12%,var(--card)); }
+
+/* Navigation uses a different accent for each destination. */
+ion-tab-button.lifeos-tab-button:nth-of-type(1) { --tab-accent:var(--hue-violet); }
+ion-tab-button.lifeos-tab-button:nth-of-type(2) { --tab-accent:var(--hue-sky); }
+ion-tab-button.lifeos-tab-button:nth-of-type(3) { --tab-accent:var(--hue-amber); }
+ion-tab-button.lifeos-tab-button:nth-of-type(4) { --tab-accent:var(--hue-pink); }
+ion-tab-button.lifeos-tab-button:nth-of-type(5) { --tab-accent:var(--hue-mint); }
+ion-app.lifeos-app ion-tab-button.lifeos-tab-button ion-icon { color:var(--tab-accent,var(--primary)); }
+ion-app.lifeos-app ion-tab-bar.lifeos-tab-bar ion-tab-button.lifeos-tab-button.tab-selected {
+  --color-selected:var(--tab-accent,var(--primary)) !important;
+  --background:color-mix(in srgb,var(--tab-accent,var(--primary)) 12%,var(--card)) !important;
+  background:color-mix(in srgb,var(--tab-accent,var(--primary)) 12%,var(--card)) !important;
+}
+ion-app.lifeos-app .desktop-nav-brand > span { color:var(--primary); }
+
+/* Color-coded financial metrics retain explicit text labels for status. */
+app-budget-summary .summary-card:nth-child(1) { --metric-color:var(--hue-mint); }
+app-budget-summary .summary-card:nth-child(2) { --metric-color:var(--hue-rose); }
+app-budget-summary .summary-card:nth-child(3) { --metric-color:var(--hue-sky); }
+app-budget-summary .summary-card:nth-child(4) { --metric-color:var(--hue-violet); }
+ion-app.lifeos-app app-budget-summary .summary-card { background:color-mix(in srgb,var(--metric-color) 9%,var(--card)); border-top:3px solid var(--metric-color); border-radius:16px; }
+ion-app.lifeos-app app-budget-summary .summary-card strong { color:var(--metric-color); }
+ion-app.lifeos-app .today-page .date-strip .active,
+ion-app.lifeos-app .planner-page .week-day.selected { background:var(--primary); color:var(--primary-foreground); }
+ion-app.lifeos-app .today-page .date-strip .active small { color:inherit; }
+ion-app.lifeos-app .planner-page .planner-card { background:var(--card); }
+ion-app.lifeos-app .reading-heading h2 { color:var(--foreground); }
+ion-app.lifeos-app .reading-section { border-top:3px solid var(--hue-violet); }
+ion-app.lifeos-app .lifeos-back-button { background:var(--secondary); color:var(--primary) !important; border-color:var(--border); box-shadow:none; }
+
+@media(max-width:480px) {
+  ion-app.lifeos-app :is(.home-header,.today-header,.budget-overview-header,.planning-header),ion-app.lifeos-app .budget-page > .page-header { padding:16px; border-radius:18px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  ion-app.lifeos-app :is(.primary-button,.button.primary,.secondary-button,.home-card,.home-action,.planner-tile) { transition:none; transform:none !important; }
+}
+/* Consolidated surfaces and hierarchy; color belongs to actions and content. */
+:root{--background:#f5f7f8;--foreground:#203139;--card:#ffffff;--primary:#15796b;--primary-foreground:#ffffff;--secondary:#e6f2ee;--muted:#edf2f2;--muted-foreground:#64767b;--border:#dce5e6;--ring:#258f7e;--hue-mint:#15796b;--hue-violet:#7557bd;--hue-sky:#237da6;--hue-rose:#bd4d70;--hue-pink:#ab5089;--hue-amber:#9a701e;--hue-cyan:#237d8b;--button-gradient:linear-gradient(115deg,#15796b,#1c8775);--soft-shadow:0 2px 8px rgb(25 55 60 / 3%);--ion-color-primary-rgb:21,121,107}
+:root.dark{--background:#101b21;--foreground:#e8f0f1;--card:#192930;--primary:#7dd9bd;--primary-foreground:#102c27;--secondary:#234138;--muted:#22343c;--muted-foreground:#a2b6bd;--border:#2c414b;--ring:#7dd9bd;--hue-mint:#7dd9bd;--hue-violet:#b7a0f5;--hue-sky:#80c7e8;--hue-rose:#eda0b5;--hue-pink:#e4a4d0;--hue-amber:#e7c17e;--hue-cyan:#88d4d8;--button-gradient:linear-gradient(115deg,#7dd9bd,#9be1c9);--soft-shadow:0 2px 8px rgb(0 0 0 / 8%);--ion-color-primary-rgb:125,217,189;--ion-color-primary-contrast-rgb:16,44,39}
+ion-app.lifeos-app ion-content::part(background){background:var(--background)!important}
+ion-app.lifeos-app :is(.home-header,.today-header,.budget-overview-header,.planning-header),ion-app.lifeos-app .budget-page>.page-header,ion-app.lifeos-app .gym-page .gym-header{padding:0;border:0;border-radius:0;background:none;box-shadow:none}
+ion-app.lifeos-app :is(.budget-page,.gym-page,.today-page,.planner-page) h1{font-size:clamp(1.6rem,2.4vw,2.15rem);font-weight:700;line-height:1.25;letter-spacing:-.035em}
+ion-app.lifeos-app :is(.panel,.gym-panel,.today-card,.planner-card,.reading-section){border-radius:14px;border-color:var(--border)}
+ion-app.lifeos-app .desktop-nav-brand{padding-bottom:30px;gap:10px}ion-app.lifeos-app .desktop-nav-brand img{width:32px;height:32px}ion-app.lifeos-app .desktop-nav-brand>span{font-size:1.25rem;color:var(--foreground)}ion-app.lifeos-app .desktop-nav-brand small{font-size:.63rem}
+ion-app.lifeos-app ion-tab-button.lifeos-tab-button ion-icon{font-size:22px!important}
+ion-app.lifeos-app .gym-page .day-card{border-top-width:3px;box-shadow:none}ion-app.lifeos-app .gym-page .week-summary>div{background:var(--card);border-top-width:1px;border-radius:12px}ion-app.lifeos-app .gym-page .week-summary strong{font-size:1.6rem}
+ion-app.lifeos-app .plan-forecast{background:color-mix(in srgb,var(--primary) 5%,var(--card));border-left-width:3px}
+ion-app.lifeos-app .comparison-summary>.panel{background:var(--card);border-top-width:3px}
+ion-app.lifeos-app .insight-card{border-top-width:3px}ion-app.lifeos-app .insight-value{font-size:1.65rem}
+ion-app.lifeos-app .primary-button,ion-app.lifeos-app .button.primary{box-shadow:none;border-radius:10px;font-weight:600}
+@media(min-width:768px){ion-app.lifeos-app app-tabs-shell ion-tab-bar.lifeos-tab-bar{padding:24px 14px;background:var(--card)!important}ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button{height:52px;flex-basis:52px;margin-bottom:6px;border-radius:10px}ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button::part(native){height:52px}ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button>div{gap:12px;padding-inline:10px}ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button>div>div{width:26px;height:26px;background:transparent}ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button ion-label{font-size:.82rem;font-weight:550}}
+@media(hover:hover){ion-app.lifeos-app :is(.home-card,.primary-button,.button.primary,.planner-tile):hover:not(:disabled){transform:none;box-shadow:var(--soft-shadow)}}
+/* Budget overview: compact actions, metrics, then two useful chart panels. */
+ion-app.lifeos-app .budget-entry-actions{justify-content:flex-start;gap:10px;margin-top:0;margin-bottom:20px}
+ion-app.lifeos-app .budget-entry-actions>*{flex:0 1 auto;min-width:160px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+ion-app.lifeos-app .budget-overview-header>div{margin-right:auto;margin-left:4px}
+ion-app.lifeos-app .budget-overview-header{justify-content:flex-start}
+@media(min-width:1000px){ion-app.lifeos-app .budget-overview-page{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:20px;align-content:start}ion-app.lifeos-app .budget-overview-page>*{grid-column:1/-1;min-width:0}ion-app.lifeos-app .budget-overview-page>app-budget-nav{margin:0}ion-app.lifeos-app .budget-overview-page>.balance-panel{grid-column:1;grid-template-columns:1fr;margin:0;padding:24px;gap:24px}ion-app.lifeos-app .budget-overview-page>.budget-content-card{grid-column:2;margin:0;padding:24px}ion-app.lifeos-app .budget-overview-page>.budget-entry-actions{margin:0}ion-app.lifeos-app .budget-overview-page .balance-values{grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;gap:12px}ion-app.lifeos-app .budget-overview-page .balance-bars{justify-content:flex-start}ion-app.lifeos-app .budget-overview-page>.section-heading{margin:4px 0 0}}
+@media(max-width:480px){ion-app.lifeos-app .budget-entry-actions>*{min-width:0;flex:1}}
+ion-app.lifeos-app ion-header[app-page-header]>div{background:var(--background);border-bottom:0;height:68px}
+ion-app.lifeos-app .planner-page .planner-tile{border-radius:12px;box-shadow:none}
+ion-app.lifeos-app .planner-page .planner-action>span{background:var(--secondary);color:var(--primary);box-shadow:none;border-radius:12px}
+ion-app.lifeos-app .budget-page .budget-entry-actions>*{flex:0 1 auto;min-width:160px}
+ion-app.lifeos-app .gym-page .gym-panel.day-card{border-top-color:var(--day-color)}
+@media(max-width:480px){ion-app.lifeos-app .budget-page .budget-entry-actions>*{min-width:0;flex:1}}
+/* Overlay content is rendered outside page styles. Keep mobile calendars inside
+   the viewport, including those opened from narrow columns or screen edges. */
+ion-popover.lifeos-date-popover { --width:min(340px,calc(100vw - 24px)); --max-width:calc(100vw - 24px); --max-height:calc(100dvh - 24px); }
+@media(max-width:767px) {
+  ion-popover.lifeos-date-popover::part(content) { position:fixed!important; inset:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))!important; margin:auto!important; width:min(340px,calc(100vw - 24px))!important; max-width:calc(100vw - 24px)!important; height:fit-content!important; max-height:calc(100dvh - 32px)!important; transform:none!important; overflow:auto; box-sizing:border-box; }
+  ion-app.lifeos-app :is(input[type=date],input[type=month],input[type=time],input[type=datetime-local]) { min-width:0; max-width:100%; box-sizing:border-box; }
+  ion-app.lifeos-app .month-nav { flex-wrap:wrap; gap:10px; }
+  ion-app.lifeos-app .month-nav>input { width:100%; }
+  ion-app.lifeos-app .comparison-month-controls { min-width:0; max-width:100%; flex:1 1 240px; }
+  ion-app.lifeos-app .comparison-month-controls input { min-width:0; width:100%; flex:1; }
+  ion-app.lifeos-app .comparison-month-controls .icon-button { flex-shrink:0; }
+  ion-app.lifeos-app .budget-month-picker { min-width:0; flex:1; max-width:240px; }
+}

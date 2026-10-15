@@ -3,7 +3,7 @@
     <h1 class="text-xl font-bold tracking-tight">My Vehicles</h1>
   </div>
 
-  @if (loading()) { <div role="status" aria-label="Loading vehicles"><app-skeleton variant="list" [count]="3" /></div>
+  @if (loading()) { <app-fuel-loading kind="vehicles" label="Loading vehicles" />
   } @else if (error()) {
     <div
       role="alert"

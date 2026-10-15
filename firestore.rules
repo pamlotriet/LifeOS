@@ -42,12 +42,12 @@ service cloud.firestore {
       match /gymExercises/{exerciseId} {
         allow read, delete: if owns(userId);
         allow create, update: if owns(userId)
-          && request.resource.data.keys().hasAll(['name', 'muscle', 'equipment', 'sets', 'reps', 'rest', 'notes'])
+          && request.resource.data.keys().hasAll(['name', 'muscle', 'equipment', 'notes'])
           && request.resource.data.keys().hasOnly(['name', 'muscle', 'equipment', 'sets', 'reps', 'rest', 'notes'])
           && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 100
           && request.resource.data.muscle in ['Full body', 'Chest', 'Back', 'Shoulders', 'Arms', 'Legs', 'Core', 'Cardio', 'Mobility', 'Other']
           && request.resource.data.equipment is string && request.resource.data.equipment.size() <= 100
-          && validGymPrescription(request.resource.data);
+          && request.resource.data.notes is string && request.resource.data.notes.size() <= 2000;
       }
       match /gymPlan/{entryId} {
         allow read, delete: if owns(userId);

@@ -12,12 +12,12 @@ import { IonIcon } from '@ionic/angular';
       <button
         type="button"
         aria-label="Go back"
-        class="lifeos-back-button grid h-12 w-12 shrink-0 place-items-center rounded-full border text-white active:scale-95"
+        class="lifeos-back-button grid h-10 w-10 shrink-0 place-items-center rounded-full border text-white active:scale-95"
         (click)="goBack()"
       >
-        <ion-icon name="chevron-back" class="text-[28px]" aria-hidden="true"></ion-icon>
+        <ion-icon name="chevron-back" class="text-[22px]" aria-hidden="true"></ion-icon>
       </button>
-      <h1 class="absolute left-1/2 -translate-x-1/2 text-2xl font-bold tracking-tight text-[var(--foreground)]">{{ title() }}</h1>
+      <h1 class="ml-4 text-xl font-semibold tracking-tight text-[var(--foreground)]">{{ title() }}</h1>
     </div>
     <ng-content></ng-content>
   `,

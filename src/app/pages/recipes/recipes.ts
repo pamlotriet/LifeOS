@@ -1,12 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { PageHeader } from '../../shared/components/page-header/page-header';
 import { RECIPE_CATEGORIES } from '../../shared/state/recipes/recipe.model';
 import { RecipeStore } from '../../shared/state/recipes/recipe-store';
 import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-recipes', imports: [IonContent, IonIcon, RouterLink, PageHeader, AppSkeleton], templateUrl: './recipes.html' })
+@Component({ selector: 'app-recipes', imports: [IonContent, IonIcon, RouterLink, AppSkeleton], templateUrl: './recipes.html', styleUrl: './recipes.css' })
 export class Recipes {
   readonly store = inject(RecipeStore); readonly categories = RECIPE_CATEGORIES;
   readonly search = signal(''); readonly category = signal('All'); readonly favouritesOnly = signal(false);

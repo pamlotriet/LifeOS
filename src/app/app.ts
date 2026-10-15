@@ -1,4 +1,5 @@
 import { DOCUMENT } from '@angular/common';
+import { AppUpdates } from './shared/state/app-updates.service';
 import { Component, inject, signal } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular';
 import { AuthService } from './shared/state/authentication/authentication.service';
@@ -13,6 +14,7 @@ import { ClearZeroOnFocus } from './shared/directives/clear-zero-on-focus';
   templateUrl: './app.html',
 })
 export class App {
+  readonly updates = inject(AppUpdates);
   readonly refreshCoordinator = inject(RefreshCoordinator);
   readonly theme = inject(ThemeService);
   readonly paletteToggle = signal(false);

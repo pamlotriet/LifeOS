@@ -1,5 +1,5 @@
 <ion-content>
-  <main class="budget-page">
+  <main class="budget-page budget-overview-page">
   <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
     <header class="page-header budget-overview-header">
       @if (monthlyView) { <a class="icon-button" routerLink="/budget" aria-label="Back to Budget"><ion-icon name="chevron-back" /></a> } @else { <a class="icon-button" routerLink="/home" aria-label="Back to Home"><ion-icon name="chevron-back" /></a> }
@@ -11,7 +11,7 @@
     @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
     @if (store.notice()) { <p class="status" role="status">{{ store.notice() }}</p> }
     @if (!store.loading() && !store.error()) {
-      <div class="form-actions mb-4" aria-label="Add budget transactions">
+      <div class="form-actions mb-4 budget-entry-actions" aria-label="Add budget transactions">
         <a class="primary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'income' }"><ion-icon name="cash" /> Add income</a>
         <a class="secondary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'expense' }">Add expense</a>
       </div>
@@ -19,9 +19,15 @@
         <section aria-label="Budget statistics"><app-budget-summary [transactions]="store.monthly()" [categories]="store.categories()" /></section>
       }
       @if (!monthlyView) {
-        <section class="panel balance-panel" aria-label="Monthly balance">
-          <div class="balance-values"><div><span>Total Income</span><strong>{{ money(totals().income) }}</strong></div><div><span>Total Expenses</span><strong>{{ money(totals().expenses) }}</strong></div><div><span>Remaining</span><strong [class.negative]="totals().remaining < 0">{{ money(totals().remaining) }}</strong></div></div>
-          <div class="balance-bars"><div><div class="track"><span style="background:#59dfb7" [style.width.%]="ratio(totals().income)"></span></div><small>Income</small></div><div><div class="track"><span style="background:#ff608b" [style.width.%]="ratio(totals().expenses)"></span></div><small>Expenses · includes bills</small></div></div>
+        <section class="panel balance-panel" aria-label="Balance after remaining plans">
+          <div class="section-heading"><h2>Your cycle outlook</h2><a class="text-link" routerLink="/budget/planned">Edit plans</a></div>
+          <span class="outlook-label">After remaining plans</span>
+          <strong class="outlook-total" [class.deficit]="snapshot().afterPlans < 0">{{ money(snapshot().afterPlans) }}</strong>
+          <p class="outlook-note">{{ snapshot().hasPlans ? 'Based on recorded income and the plans still to be covered.' : 'No plans added yet. Add your expected costs for a fuller picture.' }}</p>
+          <dl class="outlook-breakdown"><div><dt>Balance from records</dt><dd>{{ money(snapshot().remaining) }}</dd></div><div><dt>Unspent category plans</dt><dd>− {{ money(snapshot().categoryCommitments) }}</dd></div><div><dt>Unpaid debt plans</dt><dd>− {{ money(snapshot().debtCommitments) }}</dd></div></dl>
+          <div class="allocation-bar" aria-hidden="true">@for (part of snapshot().allocation; track part.label) { <span [style.width.%]="part.percent" [style.background]="part.color"></span> }</div>
+          <p class="outlook-note">@if (snapshot().outflowPercent !== null) { {{ snapshot().outflowPercent }}% of recorded income spent or moved to savings. } @else { No income recorded for this cycle. } Figures reflect your entries, not your bank balance.</p>
+          <a class="text-link" routerLink="/budget/comparison">Compare plans with actual spending →</a>
         </section>
       }
       @if (monthlyView) {
@@ -40,8 +46,9 @@
         @if (!monthlyView) { <section class="panel budget-content-card">
           <div class="section-heading"><h2>Spending by Category</h2><a class="text-link" routerLink="/budget/insights">See all</a></div>
           @if (spending().length) {
-            <div class="donut-layout"><div class="donut-wrap"><app-budget-chart [config]="donut()" [height]="180" label="Spending by category; amounts and percentages listed alongside" /><div class="donut-centre">{{ money(totals().expenses) }}<small>spent</small></div></div><div class="chart-legend">@for (item of spending(); track item.id) { <div class="legend-row"><span class="swatch" [style.background]="item.colour"></span><span>{{ item.name }}</span><strong>{{ item.percent }}%</strong></div> }</div></div>
+            <div class="donut-layout"><div class="donut-wrap"><app-budget-chart [config]="donut()" [height]="180" label="Spending by category; amounts and percentages listed alongside" /><div class="donut-centre">{{ money(totals().expenses) }}<small>spent</small></div></div><div class="chart-legend">@for (item of spending(); track item.id) { <div class="legend-row"><span class="swatch" [style.background]="item.colour"></span><span>{{ item.name }}</span><strong>{{ money(item.amount) }}<small>{{ item.percent }}%</small></strong></div> }</div></div>
           } @else { <div class="panel empty-state"><p>Your spending breakdown will appear here after your first expense.</p></div> }
+          <p class="spending-note">{{ snapshot().expenseCount }} recorded expenses · Includes bills and {{ money(snapshot().debtPaid) }} in debt payments. Savings and unpaid plans are excluded.</p>
           <div class="toolbar"><a class="text-link" routerLink="/budget/categories">Manage categories</a><a class="text-link" routerLink="/budget/insights">View insights <ion-icon name="chevron-forward" /></a></div>
         </section> }
       }

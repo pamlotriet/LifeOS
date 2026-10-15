@@ -104,3 +104,7 @@
 .google-button .button-chevron, .login-security > div:nth-child(2) { color: var(--text-secondary); }
 .login-security svg { stroke: var(--primary); filter: none; }
 .login-security > div + div { border-color: var(--border); }
+.login-card { border-radius:24px; border-top:4px solid var(--primary); box-shadow:var(--soft-shadow); }
+.login-brand h1 span { background:linear-gradient(115deg,var(--primary),var(--lifeos-magenta)); background-clip:text; color:transparent; }
+.login-logo { width:96px; }
+.app-update-banner{position:fixed;z-index:10000;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:calc(100% - 24px);max-width:560px;box-sizing:border-box;display:flex;align-items:center;gap:16px;padding:14px 16px;border:1px solid var(--primary);border-radius:12px;background:var(--card);color:var(--foreground);box-shadow:0 6px 24px #0003}.app-update-banner div{min-width:0;flex:1}.app-update-banner strong,.app-update-banner span{display:block}.app-update-banner strong{font-size:.9rem}.app-update-banner span{font-size:.75rem;line-height:1.5;color:var(--text-secondary);margin-top:4px}.app-update-banner button{min-height:44px;padding:10px 16px;border:0;border-radius:8px;background:var(--primary);color:var(--primary-foreground);font-weight:600}

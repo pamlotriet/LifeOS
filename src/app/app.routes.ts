@@ -4,9 +4,7 @@ import { More } from './shared/components/tab-pages/more/more';
 import { authGuard } from './shared/guards/auth.guard';
 import { AddCar } from './pages/add-car/add-car';
 import { Vehicles } from './pages/vehicles/vehicles';
-import { FuelConsumptions } from './pages/fuel-consumptions/fuel-consumptions';
 import { Fuel } from './pages/fuel/fuel';
-import { Insights } from './pages/insights/insights';
 import { TabsShell } from './shared/components/tabs-shell/tabs-shell';
 import { FuelHistory } from './pages/fuel-history/fuel-history';
 import { RefuelForm } from './pages/refuel-form/refuel-form';
@@ -33,11 +31,11 @@ export const routes: Routes = [
     component: Fuel,
     canActivate: [authGuard],
     children: [
-      { path: '', component: FuelConsumptions, pathMatch: 'full' },
+      { path: '', loadComponent: () => import('./pages/fuel-consumptions/fuel-consumptions').then(m => m.FuelConsumptions), pathMatch: 'full' },
       { path: 'vehicles', component: Vehicles },
       { path: 'add-car', component: AddCar },
       { path: 'edit-car/:id', component: AddCar },
-      { path: 'insights', component: Insights },
+      { path: 'insights', loadComponent: () => import('./pages/insights/insights').then(m => m.Insights) },
       { path: 'history', component: FuelHistory },
       { path: 'refuels/add', component: RefuelForm },
       { path: 'refuels/:vehicleId/:id/edit', component: RefuelForm },

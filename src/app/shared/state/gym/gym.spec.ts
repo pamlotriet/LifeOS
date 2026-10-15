@@ -7,21 +7,24 @@ import { GymExercise, GymEntry, validateExercise, validateGymEntry } from './gym
 import { GymService } from './gym.service';
 import { GymStore } from './gym.store';
 
-const exercise:GymExercise={id:'bench',name:'Bench press',muscle:'Chest',equipment:'Barbell',sets:3,reps:'8-12',rest:90,notes:'Keep form consistent'};
+const exercise:GymExercise={id:'bench',name:'Bench press',muscle:'Chest',equipment:'Barbell',notes:'Keep form consistent'};
 const entry:GymEntry={id:'monday',exerciseId:'bench',day:0,sets:4,reps:'6',rest:120,weight:'20 kg',notes:'',order:1};
 describe('Gym persistence and validation',()=>{
   it('rejects invalid workouts while allowing duration-based cardio and bodyweight entries',()=>{
-    expect(()=>validateExercise({...exercise,reps:'30 seconds'})).not.toThrow();
+    expect(()=>validateExercise(exercise)).not.toThrow();
     expect(()=>validateGymEntry({...entry,sets:0})).toThrow('sets');
     expect(()=>validateGymEntry({...entry,day:7})).toThrow('day');
-    expect(()=>validateExercise({...exercise,rest:-1})).toThrow('rest');
+    expect(()=>validateGymEntry({...entry,rest:-1})).toThrow('rest');
     expect(()=>validateExercise({...exercise,name:' '})).toThrow('name');
   });
   it('saves exercises and workout entries to the signed-in user without leaking IDs into fields',async()=>{
     const updateDocument=vi.fn();
     const service=runInInjectionContext(Injector.create({providers:[{provide:AuthService,useValue:{getSession:async()=>({uid:'me',token:'token'})}},{provide:FirestoreService,useValue:{updateDocument}}]}),()=>new GymService());
     await service.saveExercise({...exercise,name:'  Bench press  '},'bench');
-    expect(updateDocument).toHaveBeenCalledWith('users/me/gymExercises/bench',expect.objectContaining({name:{stringValue:'Bench press'},sets:{doubleValue:3}}),'token');
+    expect(updateDocument).toHaveBeenCalledWith('users/me/gymExercises/bench',expect.objectContaining({name:{stringValue:'Bench press'}}),'token');
+    expect(updateDocument.mock.calls[0][1]).not.toHaveProperty('sets');
+    expect(updateDocument.mock.calls[0][1]).not.toHaveProperty('reps');
+    expect(updateDocument.mock.calls[0][1]).not.toHaveProperty('rest');
     expect(updateDocument.mock.calls[0][1]).not.toHaveProperty('id');
     await service.saveEntry(entry,'monday');
     expect(updateDocument).toHaveBeenLastCalledWith('users/me/gymPlan/monday',expect.objectContaining({day:{doubleValue:0},sets:{doubleValue:4},exerciseId:{stringValue:'bench'}}),'token');

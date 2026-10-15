@@ -1,0 +1,28 @@
+<div class="budget-report">
+  <section class="report-kpis" aria-label="Budget totals for selected period">
+    @for (item of data().kpis; track item.label) {
+      <article><span>{{ item.label }}</span><strong>{{ item.value }}</strong><small>@switch (item.label) {@case ('Recorded income') {Income received in this period}@case ('Actual spending') {Includes bills and paid debt}@case ('Savings transfers') {Separate from spending}@default {Income − spending − savings}} </small></article>
+    }
+  </section>
+  <div class="report-charts">
+    <section class="report-card"><h2>{{ data().primaryTitle }}</h2><p>Compare recorded money in and out each budget cycle.</p><app-budget-chart [config]="data().primary" [height]="280" [label]="data().primaryTitle" /></section>
+    <section class="report-card"><h2>{{ data().secondaryTitle }}</h2><p>Each point is that cycle’s balance, not a running bank balance.</p><app-budget-chart [config]="data().secondary" [height]="280" [label]="data().secondaryTitle" /></section>
+  </div>
+  @if (data().spending; as spending) {
+    <section class="report-card"><div class="report-heading"><div><h2>Where your money went</h2><p>Actual expenses across the selected period. Savings and unpaid plans are excluded.</p></div><a routerLink="/budget/comparison">Planned vs actual →</a></div>
+      @if (spending.length) {
+        <div class="spending-table"><div class="table-header"><span>Category</span><span>Amount / share</span></div>@for (row of spending; track row.id) {<div class="spending-row"><div><span class="category-dot" [style.background]="row.colour"></span>{{ row.name }}<div class="spending-track"><span [style.width.%]="row.percent" [style.background]="row.colour"></span></div></div><div><strong>{{ row.formatted }}</strong><small>{{ row.percent }}%</small></div></div>}</div>
+      } @else {<p>No recorded expenses in this period.</p>}
+    </section>
+  }
+  @if (data().debt; as debt) {
+    <section class="report-card"><div class="report-heading"><div><h2>Debt at a glance</h2><p>Balances for {{ debt.cycleLabel }}. Repayments follow the selected period.</p></div><a routerLink="/budget/debts">Manage debt →</a></div>
+      @if (debt.empty) {<p>Add a debt account to track balances and repayments.</p>} @else {
+        <div class="debt-summary">@for (index of [0, 7, 8]; track index) {<div><span>{{ debt.kpis[index].label }}</span><strong>{{ debt.kpis[index].value }}</strong></div>}</div>
+        <div class="report-charts debt-charts"><div><h3>Outstanding by account</h3><app-budget-chart [config]="debt.balances" [height]="240" label="Outstanding debt by account" /></div><div><h3>Paid repayments by cycle</h3><app-budget-chart [config]="debt.repayments" [height]="240" label="Paid debt repayments by cycle" /></div></div>
+        <details><summary>Credit, interest &amp; account details</summary><dl>@for (item of debt.kpis.slice(1, 7); track item.label) {<div><dt>{{ item.label }}</dt><dd>{{ item.value }}</dd></div>}</dl><p>Credit remaining = cycle opening + estimated interest − paid repayments. Unpaid plans do not reduce outstanding balances.</p></details>
+      }
+    </section>
+  }
+  <aside class="report-note"><strong>How to read these figures</strong><p>{{ data().insight }}</p><a routerLink="/budget/insights">Explore budget insights →</a></aside>
+</div>

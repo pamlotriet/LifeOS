@@ -8,13 +8,14 @@ const localIso = (date: Date) => `${date.getFullYear()}-${String(date.getMonth()
   selector: 'app-date-picker',
   imports: [IonIcon, IonPopover],
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => AppDatePicker), multi: true }],
+  styles: `:host{display:block;min-width:0;max-width:100%}.date-picker-trigger{min-width:0;max-width:100%}`,
   template: `
     <div class="relative" [class.z-50]="open()">
       <button type="button" [attr.aria-label]="ariaLabel()" [attr.aria-expanded]="open()" aria-haspopup="dialog" [disabled]="disabled()" (click)="toggle($event)"
-        class="flex min-h-11 w-full items-center gap-3 rounded-xl border border-[#315b7e] bg-gradient-to-r from-[#143755] to-[#102b47] px-3 text-left text-base text-white outline-none focus-visible:border-cyan-300 disabled:opacity-50">
+        class="date-picker-trigger flex min-h-11 w-full items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 text-left text-base text-[var(--foreground)] outline-none focus-visible:border-[var(--primary)] disabled:opacity-50">
         <ion-icon name="calendar-outline" class="shrink-0 text-cyan-300" aria-hidden="true"></ion-icon><span class="min-w-0 flex-1 truncate" [class.text-[#91aecd]]="!currentValue()">{{ formatted() || placeholder() }}</span><ion-icon name="chevron-down-outline" class="shrink-0 text-[#afc9e7]" aria-hidden="true"></ion-icon>
       </button>
-      <ion-popover [isOpen]="open()" [event]="triggerEvent" reference="trigger" side="bottom" [alignment]="align() === 'left' ? 'start' : 'end'" [showBackdrop]="true" [arrow]="false" (didDismiss)="open.set(false)" style="--width: min(340px, calc(100vw - 24px)); --max-height: calc(100dvh - 24px); --background: #123451; --color: white;">
+      <ion-popover class="lifeos-date-popover" [isOpen]="open()" [event]="triggerEvent" reference="trigger" side="bottom" [alignment]="align() === 'left' ? 'start' : 'end'" [showBackdrop]="true" [arrow]="false" (didDismiss)="open.set(false)" style="--width: min(340px, calc(100vw - 24px)); --max-height: calc(100dvh - 24px); --background: #123451; --color: white;">
         <ng-template>
         <div role="dialog" [attr.aria-label]="ariaLabel()" class="rounded-xl border border-[#315b7e] bg-[#123451] p-3 text-white">
         <div class="mb-3 flex items-center justify-between"><button type="button" aria-label="Previous month" (click)="shiftMonth(-1)" [disabled]="mode() !== 'days'" class="grid h-9 w-9 place-items-center rounded-lg hover:bg-[#1c486a] disabled:opacity-30"><ion-icon name="chevron-back"></ion-icon></button><button type="button" (click)="mode.set('years')" class="rounded-lg px-2 py-1 text-sm font-semibold hover:bg-[#1c486a]">{{ monthLabel() }} ▾</button><button type="button" aria-label="Next month" (click)="shiftMonth(1)" [disabled]="mode() !== 'days'" class="grid h-9 w-9 place-items-center rounded-lg hover:bg-[#1c486a] disabled:opacity-30"><ion-icon name="chevron-forward"></ion-icon></button></div>
