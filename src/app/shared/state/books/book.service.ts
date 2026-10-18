@@ -1,3 +1,5 @@
+import { BookBackup, createBookBackup, parseBookBackup, planBookImport } from './book-transfer';
+import { FirestoreWrite } from '../../../core/firebase/firestore.service';
 import { inject, Injectable } from '@angular/core';
 import { FirestoreDocument, FirestoreService, FirestoreValue } from '../../../core/firebase/firestore.service';
 import { AuthService } from '../authentication/authentication.service';
@@ -13,6 +15,43 @@ export class BookService {
   private readonly auth = inject(AuthService);
   private readonly firestore = inject(FirestoreService);
   private readonly covers = inject(OpenLibraryCoverService);
+
+  async exportLibrary(): Promise<BookBackup> {
+    const { uid, token } = await this.auth.getSession();
+    const [books, tags] = await Promise.all([
+      this.firestore.listDocuments(`users/${uid}/books`, token),
+      this.firestore.listDocuments(`users/${uid}/bookTags`, token),
+    ]);
+    if(this.auth.userId() !== uid) throw new Error('Your account changed. Export again from your current account.');
+    return createBookBackup(books.map(doc => this.fromBook(doc)), tags.filter(doc => doc.name.split('/').at(-1) !== GENRE_SEED_ID).map(doc => this.fromTag(doc)));
+  }
+  async importLibrary(backup: BookBackup, updateExisting = true, progress: (saved: number, total: number) => void = () => {}): Promise<{added:number;updated:number;skipped:number}> {
+    backup = parseBookBackup(JSON.stringify(backup));
+    const { uid, token } = await this.auth.getSession();
+    const [bookDocs, tagDocs] = await Promise.all([
+      this.firestore.listDocuments(`users/${uid}/books`, token),
+      this.firestore.listDocuments(`users/${uid}/bookTags`, token),
+    ]);
+    const plan = planBookImport(backup, bookDocs.map(doc => this.fromBook(doc)), tagDocs.filter(doc => doc.name.split('/').at(-1) !== GENRE_SEED_ID).map(doc => this.fromTag(doc)), updateExisting);
+    const writes: {write:FirestoreWrite;book:boolean}[] = [
+      ...plan.tags.map(tag => ({book:false,write:{update:{name:this.firestore.documentName(`users/${uid}/bookTags/${tag.id}`),fields:{name:text(tag.name),type:text(tag.type),color:text(tag.color)}},currentDocument:{exists:false}}})),
+      ...plan.books.map(book => {
+        const previous = bookDocs.find(doc => doc.name.split('/').at(-1) === book.id);
+        const fields = this.toBookFields(book);
+        return {book:true,write:{update:{name:this.firestore.documentName(`users/${uid}/books/${book.id}`),fields},updateMask:{fieldPaths:Object.keys(fields)},currentDocument:previous ? (previous.updateTime ? {updateTime:previous.updateTime} : {exists:true}) : {exists:false}}};
+      }),
+    ];
+    let saved = 0; progress(0,plan.books.length);
+    try {
+      for(let offset=0;offset<writes.length;offset+=100) {
+        if(this.auth.userId() !== uid) throw new Error('Your account changed.');
+        const batch = writes.slice(offset,offset+100);
+        await this.firestore.commitWrites(batch.map(item=>item.write),token);
+        saved += batch.filter(item=>item.book).length; progress(saved,plan.books.length);
+      }
+    } catch(error) { throw new Error(`Import stopped after saving ${saved} of ${plan.books.length} books. Saved records are kept; retrying merges missing information into existing books without duplicating them. ${error instanceof Error?error.message:''}`); }
+    return {added:plan.added,updated:plan.updated,skipped:plan.skipped};
+  }
 
   async listBooks(): Promise<BookRecord[]> {
     const { uid, token } = await this.auth.getSession();

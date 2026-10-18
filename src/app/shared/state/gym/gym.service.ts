@@ -34,6 +34,20 @@ export class GymService {
     await this.firestore.commitWrites(entries.map(entry=>({update:{name:this.firestore.documentName(`users/${uid}/gymPlan/${entry.id}`),fields:fields(entry)}})),token);
     return entries;
   }
+  async importWeeklyPlan(exercises: GymExercise[], entries: GymEntry[]): Promise<void> {
+    exercises.forEach(validateExercise); entries.forEach(validateGymEntry);
+    if (exercises.length > 400 || entries.length > 400) throw new Error('The plan is too large to import.');
+    const { uid, token } = await this.auth.getSession();
+    // Save missing library exercises first so existing gymPlan reference rules remain valid.
+    if (exercises.length) await this.firestore.commitWrites(exercises.map(exercise => ({ update: { name: this.firestore.documentName(`users/${uid}/gymExercises/${exercise.id}`), fields: fields(exercise) }, currentDocument: { exists: false } })), token);
+    // Each gymPlan rule checks its referenced exercise with exists(). Firestore
+    // allows only 20 rule document accesses across a batch, even for <500 writes.
+    // Use ten-entry batches without relying on repeated-reference rule caching.
+    for (let offset = 0; offset < entries.length; offset += 10) {
+      const batch = entries.slice(offset, offset + 10);
+      await this.firestore.commitWrites(batch.map(entry => ({ update: { name: this.firestore.documentName(`users/${uid}/gymPlan/${entry.id}`), fields: fields(entry) }, currentDocument: { exists: false } })), token);
+    }
+  }
   private async save(collection:string,record:GymExercise|GymEntry):Promise<void> {
     const {uid,token}=await this.auth.getSession();await this.firestore.updateDocument(`users/${uid}/${collection}/${encodeURIComponent(record.id)}`,fields(record),token);
   }

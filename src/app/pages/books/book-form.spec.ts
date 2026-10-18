@@ -25,7 +25,7 @@ describe('BookForm', () => {
       providers: [
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: new Map(), data: {} } } },
-        { provide: BookStore, useValue: { tags: signal([]), saveBook } },
+        { provide: BookStore, useValue: { books: signal([]), tags: signal([]), saveBook } },
         { provide: OpenLibraryCoverService, useValue: { find: findCover, lookupByIsbn } },
         { provide: BookBarcodeScannerService, useValue: { scan } },
       ],

@@ -442,3 +442,64 @@ ion-app.lifeos-app .wheel-back-control{min-height:44px;padding:9px 12px;border:1
 ion-app.lifeos-app ion-header[app-page-header]>div{height:64px;background:transparent;border:0;box-shadow:none;}
 ion-app.lifeos-app ion-header[app-page-header] h1{font-size:1rem;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 ion-app.lifeos-app .wheel-back-control{width:44px;justify-content:center;padding:9px;}
+
+/* Purple reference theme: final shared palette and navigation rules. */
+:root {
+  --background:#f5f2fb;--foreground:#292237;--card:#fff;--primary:#7054d4;--primary-foreground:#fff;--secondary:#eee8fa;--muted:#eee9f5;--muted-foreground:#70677f;--accent:#eee8fa;--border:#ddd5e9;--ring:#8b73ed;--success:#168879;--warning:#a57529;--destructive:#c04766;
+}
+:root.dark {
+  --background:#0d0a18;--foreground:#e7e2f3;--card:#171225;--primary:#9b87ff;--primary-foreground:#100b22;--secondary:#241d38;--muted:#20192f;--muted-foreground:#aaa4bc;--accent:#241d38;--border:#30283e;--ring:#9b87ff;--success:#49e3d0;--warning:#edc784;--destructive:#ff91ad;
+}
+:root,:root.dark {
+  --card-foreground:var(--foreground);--popover:var(--card);--popover-foreground:var(--foreground);--secondary-foreground:var(--foreground);--accent-foreground:var(--primary);--input:var(--border);--text-secondary:var(--muted-foreground);--text-muted:var(--muted-foreground);
+  --action-background:var(--primary);--action-foreground:var(--primary-foreground);--button-gradient:linear-gradient(var(--primary),var(--primary));--lifeos-cyan:#49e3d0;--lifeos-blue:#a3afff;--lifeos-indigo:var(--primary);--lifeos-violet:var(--primary);--lifeos-magenta:#d5a0e8;--hue-sky:#a3afff;--hue-mint:#49e3d0;--hue-pink:#d5a0e8;--hue-violet:var(--primary);
+  --nav-background:var(--background);--nav-active:var(--primary);--nav-inactive:var(--muted-foreground);--nav-active-foreground:var(--primary);--dashboard-background:var(--background);--dashboard-card:var(--card);--dashboard-border:var(--border);--dashboard-card-hover:var(--muted);
+  --ion-background-color:var(--background);--ion-text-color:var(--foreground);--ion-card-background:var(--card);--ion-toolbar-background:var(--background);--ion-item-background:var(--card);--ion-color-primary:var(--primary);--ion-color-primary-contrast:var(--primary-foreground);--ion-color-primary-rgb:155,135,255;--ion-color-primary-shade:#8875e0;--ion-color-primary-tint:#a593ff;
+  --chart-1:var(--primary);--chart-2:#49e3d0;--chart-3:#a3afff;--chart-4:#d5a0e8;--chart-5:#edc784;
+}
+ion-app.lifeos-app ion-content::part(background){background:radial-gradient(ellipse at 95% 0%,color-mix(in srgb,var(--primary) 13%,transparent),transparent 55%),var(--background)!important}
+ion-app.lifeos-app .lifeos-tab-bar{background:var(--nav-background)!important;--background:var(--nav-background)!important;border-color:var(--border)!important}
+ion-app.lifeos-app .lifeos-tab-button{color:var(--nav-inactive)!important;--color:var(--nav-inactive);--color-selected:var(--primary)}
+ion-app.lifeos-app .lifeos-tab-button ion-icon{color:inherit!important;font-size:20px!important;filter:none!important}
+ion-app.lifeos-app .lifeos-tab-button.tab-selected{color:var(--primary)!important;background:var(--secondary)!important;--background:var(--secondary)!important}
+ion-app.lifeos-app .lifeos-tab-button[tab=today]>div>div{background:transparent!important;width:auto!important;height:auto!important;box-shadow:none!important}
+.nav-mark{display:grid;place-items:center;width:33px;height:33px;border-radius:12px;background:var(--primary);color:var(--primary-foreground);font-size:18px}
+@media(min-width:768px){
+ ion-app.lifeos-app ion-tabs{grid-template-columns:230px minmax(0,1fr)!important}
+ ion-app.lifeos-app .lifeos-tab-bar{width:230px!important;padding:26px 16px!important;gap:4px!important;border-right:1px solid var(--border)!important}
+ ion-app.lifeos-app .desktop-nav-brand{padding:0 7px 30px!important;gap:10px!important}
+ ion-app.lifeos-app .desktop-nav-brand small{font-size:10px!important;color:var(--muted-foreground)!important}
+ ion-app.lifeos-app .lifeos-tab-button{height:39px!important;min-height:39px!important;max-height:39px!important;border-radius:12px!important;margin:0!important;border:0!important;box-shadow:none!important}
+ ion-app.lifeos-app .lifeos-tab-button>div{flex-direction:row!important;justify-content:flex-start!important;gap:12px!important;padding:0 12px!important}
+ ion-app.lifeos-app .lifeos-tab-button ion-icon{margin:0!important}
+}
+@media(max-width:767px){
+ ion-app.lifeos-app .lifeos-tab-bar{margin:0 12px calc(10px + env(safe-area-inset-bottom));width:calc(100% - 24px)!important;border:1px solid var(--border)!important;border-radius:19px!important;padding:7px 5px!important;height:72px!important;box-shadow:0 8px 30px #0003!important}
+ ion-app.lifeos-app .lifeos-tab-button{border-radius:14px!important;min-height:54px!important;height:54px!important;margin:0 3px!important;box-shadow:none!important;border:0!important}
+ ion-app.lifeos-app .lifeos-tab-button ion-label{font-size:10px!important}
+}
+ion-app.lifeos-app app-tabs-shell ion-tab-bar.lifeos-tab-bar{background:var(--nav-background)!important}
+ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button ion-icon{font-size:20px!important;width:20px!important;height:20px!important;color:inherit!important}
+ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button::part(native){background:transparent!important}
+@media(min-width:768px){ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button::part(native){height:39px!important}ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button{flex-basis:39px!important;--background:transparent!important}ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button.tab-selected{--background:var(--secondary)!important;background:var(--secondary)!important}}
+@media(max-width:767px){ion-app.lifeos-app app-tabs-shell ion-tab-bar.lifeos-tab-bar{border-radius:19px!important;background:var(--background)!important;overflow:hidden!important}}
+/* Desktop navigation is a fixed-width column with a visible divider. */
+@media(min-width:768px){
+  ion-app.lifeos-app app-tabs-shell ion-tabs{grid-template-columns:230px minmax(0,1fr)!important}
+  ion-app.lifeos-app app-tabs-shell ion-tab-bar.lifeos-tab-bar{
+    box-sizing:border-box!important;width:230px!important;min-width:0;
+    border:0!important;border-right:1px solid var(--border)!important;
+    --border:0;box-shadow:1px 0 0 var(--border)!important;
+  }
+}
+/* Prevent Ionic's desktop tab bar padding from extending into the page. */
+@media(min-width:768px){
+  ion-app.lifeos-app app-tabs-shell ion-tab-bar.lifeos-tab-bar{max-width:230px!important;padding:26px 16px!important;contain:inline-size}
+}
+@media(min-width:768px){
+  /* Ionic enforces content-box inside its shadow root. Include padding in the column width. */
+  ion-app.lifeos-app app-tabs-shell ion-tab-bar.lifeos-tab-bar{
+    width:198px!important;max-width:198px!important;
+    box-shadow:1px 0 0 var(--dashboard-border)!important;
+  }
+}

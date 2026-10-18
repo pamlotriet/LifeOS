@@ -34,4 +34,24 @@ describe('RecipeService', () => {
     expect(uploadRecipePhoto).toHaveBeenCalledWith('user-1', expect.any(String), 'blob:photo', 'token');
     expect(createDocument).toHaveBeenCalledWith('users/user-1/recipes', expect.any(String), expect.objectContaining({ photoUrl: { stringValue: 'https://storage/photo' } }), 'token');
   });
+  it('round trips food quantities and nutrition snapshots', async () => {
+    const nutritionIngredients = [{ foodId: 'steak', name: 'Steak', grams: 250, per100: { calories: 200, protein: 20, carbs: 0, fat: 9 } }];
+    await service().save({ ...input, ingredients: [], nutritionIngredients });
+    const fields = createDocument.mock.calls[0][2];
+    getDocument.mockResolvedValue({ name: 'users/user-1/recipes/recipe-1', fields });
+    const recipe = await service().get('recipe-1');
+    expect(recipe.nutritionIngredients).toEqual(nutritionIngredients);
+    expect(recipe.ingredients).toEqual([]);
+    expect(recipe.servings).toBe(4);
+  });
+  it('loads existing recipes without nutrition ingredients', async () => {
+    getDocument.mockResolvedValue({ name: 'users/user-1/recipes/old', fields: {} });
+    expect((await service().get('old')).nutritionIngredients).toEqual([]);
+  });
+  it('rejects invalid servings and weights before writing', async () => {
+    await expect(service().save({ ...input, servings: 0 })).rejects.toThrow('Servings');
+    await expect(service().save({ ...input, nutritionIngredients: [{ foodId: 'food', name: 'Food', grams: -1, per100: { calories: 0, protein: 0, carbs: 0, fat: 0 } }] })).rejects.toThrow('weight');
+    expect(createDocument).not.toHaveBeenCalled();
+  });
+
 });

@@ -1,3 +1,5 @@
+import { addIcons } from 'ionicons';
+import { homeOutline, statsChartOutline, sunnyOutline, discOutline, ellipsisHorizontal } from 'ionicons/icons';
 import { Component } from '@angular/core';
 import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
 
@@ -7,36 +9,36 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
   template: `
     <ion-tabs>
       <ion-tab-bar slot="bottom" class="lifeos-tab-bar border-t border-[var(--border)] bg-[var(--nav-background)] [--background:var(--nav-background)] [--border:none]">
-        <div class="desktop-nav-brand"><img src="/icons/lifeos-192.png" alt="" /><span>LifeOS<small>Your everyday workspace</small></span></div>
+        <div class="desktop-nav-brand"><span class="nav-mark" aria-hidden="true">L</span><span>LifeOS<small>Everyday workspace</small></span></div>
         <ion-tab-button tab="home" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <ion-icon size="large" name="home" class="mb-1"></ion-icon>
+            <ion-icon size="large" name="home-outline" class="mb-1"></ion-icon>
             <ion-label>Home</ion-label>
           </div>
         </ion-tab-button>
         <ion-tab-button tab="stats" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <ion-icon size="large" name="stats-chart" class="mb-1"></ion-icon>
+            <ion-icon size="large" name="stats-chart-outline" class="mb-1"></ion-icon>
             <ion-label>Stats</ion-label>
           </div>
         </ion-tab-button>
         <ion-tab-button tab="today" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
             <div class="mb-1 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--secondary)]">
-              <ion-icon size="large" name="sunny" class="text-[var(--primary)]"></ion-icon>
+              <ion-icon size="large" name="sunny-outline" class="text-[var(--primary)]"></ion-icon>
             </div>
             <ion-label>Today</ion-label>
           </div>
         </ion-tab-button>
         <ion-tab-button tab="wheel" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <ion-icon size="large" name="disc" class="mb-1"></ion-icon>
+            <ion-icon size="large" name="disc-outline" class="mb-1"></ion-icon>
             <ion-label>Wheel</ion-label>
           </div>
         </ion-tab-button>
         <ion-tab-button tab="more" class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]">
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <ion-icon size="large" name="ellipsis-vertical" class="mb-1"></ion-icon>
+            <ion-icon size="large" name="ellipsis-horizontal" class="mb-1"></ion-icon>
             <ion-label>More</ion-label>
           </div>
         </ion-tab-button>
@@ -44,4 +46,6 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
     </ion-tabs>
   `,
 })
-export class TabsShell {}
+export class TabsShell {
+  constructor() { addIcons({homeOutline, statsChartOutline, sunnyOutline, discOutline, ellipsisHorizontal}); }
+}

@@ -1,0 +1,100 @@
+﻿<ion-header app-page-header title="Import & export books"></ion-header>
+<ion-content class="[--background:transparent]"
+  ><main class="transfer-page">
+    <a routerLink="/books">&larr; Back to your library</a>
+    <h1>Your books, backed up</h1>
+    <p>Export your complete library, or bring a LifeOS backup into this account.</p>
+    @if (error()) {
+      <p class="feedback" role="alert">{{ error() }}</p>
+    }
+    @if (notice()) {
+      <p class="feedback" role="status">{{ notice() }}</p>
+    }
+    <section>
+      <h2>Export all books</h2>
+      <p>
+        The JSON backup includes every book, category, copy format, reading progress, dates,
+        ratings, review, cover link, favourite and mood/genre tags. It exports the full library,
+        including books hidden by filters.
+      </p>
+      <div class="actions">
+        <button class="primary" [disabled]="busy()" (click)="exportBooks()">
+          Export full backup (JSON)</button
+        ><button [disabled]="busy()" (click)="exportBooks(true)">Export summary (CSV)</button>
+      </div>
+      <p>
+        Use JSON to restore or edit and re-import your library. CSV is a summary for spreadsheets
+        and cannot be imported here. Cover images are saved as links.
+      </p>
+    </section>
+    <section>
+      <h2>Import books</h2>
+      <p>
+        Select a LifeOS books JSON backup. You can review it before saving. Books outside this file
+        will stay in your library.
+      </p>
+      <label
+        >Backup file<input
+          type="file"
+          accept=".json,application/json"
+          [disabled]="busy()"
+          (change)="chooseFile($event)"
+      /></label>
+      @if (store.loading()) {
+        <p role="status">Loading your library for comparison...</p>
+      }
+      @if (store.error()) {
+        <p role="alert">
+          {{ store.error() }} <button (click)="store.reload()" [disabled]="busy()">Retry</button>
+        </p>
+      }
+      @if (backup(); as source) {
+        <p>{{ source.books.length }} books and {{ source.tags.length }} tags in this backup.</p>
+        <p>
+          Existing books are matched by ID, ISBN, or title and author when editions do not conflict.
+          Missing details, tags and copy formats are added automatically. Existing details and
+          reading history are preserved; Other categories can become more specific. Ambiguous
+          matches are skipped.
+        </p>
+        @if (preview(); as plan) {
+          <ul>
+            <li>{{ plan.added }} new books</li>
+            <li>{{ plan.updated }} existing books to update</li>
+            <li>{{ plan.skipped }} books to skip</li>
+            <li>{{ plan.tags.length }} new tags</li>
+          </ul>
+          <div class="preview" aria-label="Import preview">
+            @for (book of plan.books; track book.id) {
+              <p>
+                <strong>{{ book.title }}</strong> / {{ book.author }} / {{ book.category }}
+              </p>
+            } @empty {
+              <p>No book changes to import.</p>
+            }
+          </div>
+          <div class="actions">
+            <button
+              class="primary"
+              [disabled]="
+                busy() ||
+                store.loading() ||
+                !!store.error() ||
+                (!plan.books.length && !plan.tags.length)
+              "
+              (click)="importBooks()"
+            >
+              {{ busy() ? 'Importing...' : 'Import ' + plan.books.length + ' books' }}</button
+            ><button [disabled]="busy()" (click)="backup.set(null)">Cancel</button>
+          </div>
+        }
+      }
+      @if (busy()) {
+        <p role="status">
+          {{ total() ? 'Saved ' + saved() + ' of ' + total() + ' books...' : 'Working...' }}
+        </p>
+        @if (total()) {
+          <progress [value]="saved()" [max]="total()" aria-label="Book import progress"></progress>
+        }
+      }
+    </section></main
+></ion-content>

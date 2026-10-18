@@ -6,6 +6,7 @@ import { FirestoreService } from '../../../core/firebase/firestore.service';
 import { GymExercise, GymEntry, validateExercise, validateGymEntry } from './gym.model';
 import { GymService } from './gym.service';
 import { GymStore } from './gym.store';
+import { buildWeeklyPlan } from './weekly-plan';
 
 const exercise:GymExercise={id:'bench',name:'Bench press',muscle:'Chest',equipment:'Barbell',notes:'Keep form consistent'};
 const entry:GymEntry={id:'monday',exerciseId:'bench',day:0,sets:4,reps:'6',rest:120,weight:'20 kg',notes:'',order:1};
@@ -28,6 +29,26 @@ describe('Gym persistence and validation',()=>{
     expect(updateDocument.mock.calls[0][1]).not.toHaveProperty('id');
     await service.saveEntry(entry,'monday');
     expect(updateDocument).toHaveBeenLastCalledWith('users/me/gymPlan/monday',expect.objectContaining({day:{doubleValue:0},sets:{doubleValue:4},exerciseId:{stringValue:'bench'}}),'token');
+  });
+  it('imports references first and respects rule access limits with create-only batches', async () => {
+    const commitWrites = vi.fn(async (writes: any[]) => {
+      const referenced = new Set(writes.filter(w => w.update.name.includes('/gymPlan/')).map(w => w.update.fields.exerciseId.stringValue));
+      if (referenced.size > 20) throw new Error('Rule document access limit (403).');
+    });
+    const service = runInInjectionContext(Injector.create({providers:[{provide:AuthService,useValue:{getSession:async()=>({uid:'me',token:'token'})}},{provide:FirestoreService,useValue:{commitWrites,documentName:(path:string)=>path}}]}),()=>new GymService());
+    const plan = buildWeeklyPlan([],[]);
+    await service.importWeeklyPlan(plan.exercises,plan.entries);
+    expect(commitWrites).toHaveBeenCalledTimes(11);
+    expect(commitWrites.mock.calls[0][0].every((write:any) => write.update.name.startsWith('users/me/gymExercises/') && write.currentDocument.exists===false)).toBe(true);
+    const batches = commitWrites.mock.calls.slice(1).map(call => call[0]);
+    expect(batches.flat()).toHaveLength(94);
+    for (const batch of batches) {
+      expect(batch.length).toBeLessThanOrEqual(10);
+      expect(batch.every((write:any) => write.update.name.startsWith('users/me/gymPlan/') && write.currentDocument.exists===false)).toBe(true);
+    }
+    commitWrites.mockClear(); commitWrites.mockRejectedValueOnce(new Error('Offline'));
+    await expect(service.importWeeklyPlan(plan.exercises,plan.entries)).rejects.toThrow('Offline');
+    expect(commitWrites).toHaveBeenCalledTimes(1);
   });
   function storeFixture() {
     const store=Object.create(GymStore.prototype) as GymStore;

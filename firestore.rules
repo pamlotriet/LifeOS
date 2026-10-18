@@ -70,6 +70,25 @@ service cloud.firestore {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
 
+      match /nutrition/{entryId} {
+        allow read, delete: if owns(userId);
+        allow create, update: if owns(userId)
+          && request.resource.data.keys().hasOnly(['kind', 'data'])
+          && request.resource.data.kind in ['food', 'log', 'profile']
+          && request.resource.data.data is string
+          && request.resource.data.data.size() <= 20000;
+      }
+
+      match /ingredients/{ingredientId} {
+        allow read: if owns(userId) || sharesRecipes(userId);
+        allow delete: if owns(userId);
+        allow create, update: if (owns(userId) || sharesRecipes(userId))
+          && request.resource.data.keys().hasOnly(['kind', 'data'])
+          && request.resource.data.kind == 'ingredient'
+          && request.resource.data.data is string
+          && request.resource.data.data.size() <= 20000;
+      }
+
       match /recipes/{recipeId} {
         allow read, write: if owns(userId) || sharesRecipes(userId);
       }

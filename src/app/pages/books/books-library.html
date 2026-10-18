@@ -1,7 +1,7 @@
 <ion-header app-page-header title="Books"></ion-header>
 <ion-content class="[--background:transparent] [--color:#fff]">
   <main class="books-overview" [attr.aria-busy]="loading()">
-    <header class="books-header"><div><p class="books-eyebrow">Your personal library</p><h1>Your reading space</h1><p>Pick up a book, track your progress, find your next read.</p></div><div class="books-header-actions"><a routerLink="/books/scan" class="books-secondary"><ion-icon name="scan-outline" /> Scan ISBN</a><a routerLink="/books/add" class="books-primary"><ion-icon name="add" /> Add book</a></div></header>
+    <header class="books-header"><div><p class="books-eyebrow">Your personal library</p><h1>Your reading space</h1><p>Pick up a book, track your progress, find your next read.</p></div><div class="books-header-actions"><a routerLink="/books/transfer" class="books-secondary">Import / export</a><a routerLink="/books/scan" class="books-secondary"><ion-icon name="scan-outline" /> Scan ISBN</a><a routerLink="/books/add" class="books-primary"><ion-icon name="add" /> Add book</a></div></header>
     <nav class="books-nav" aria-label="Books navigation"><a routerLink="/books/shelf"><ion-icon name="library" /> Bookshelf <small>All your books</small></a><a routerLink="/books/finished"><ion-icon name="checkmark" /> Finished <small>Your completed reads</small></a><a routerLink="/books/tags"><ion-icon name="pricetags" /> Tags <small>Genres &amp; moods</small></a></nav>
     @if (loading()) {
       <div class="books-loading" role="status" aria-label="Loading your library and reading goal">

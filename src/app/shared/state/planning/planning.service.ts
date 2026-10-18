@@ -33,14 +33,15 @@ export class PlanningService {
   }
 
   async saveMeal(item: Omit<MealPlanItem, 'id'>, id?: string): Promise<MealPlanItem> {
+    if (!item.date || !item.title.trim() || !Number.isFinite(item.servings ?? 1) || (item.servings ?? 1) <= 0) throw new Error('Enter a date, title and positive servings.');
     const record = { ...item, id: id ?? crypto.randomUUID() };
-    await this.save('mealPlan', record.id, { date: text(record.date), title: text(record.title.trim()), detail: text(record.detail.trim()) }, !!id);
+    await this.save('mealPlan', record.id, { date: text(record.date), title: text(record.title.trim()), detail: text(record.detail.trim()), recipeId: text(record.recipeId ?? ''), meal: text(record.meal ?? 'Dinner'), ingredientId: text(record.ingredientId ?? ''), quantity: { doubleValue: record.quantity ?? 100 }, unit: text(record.unit ?? 'g'), servings: { doubleValue: record.servings ?? 1 } }, !!id);
     return record;
   }
 
   async saveGrocery(item: Omit<GroceryItem, 'id'>, id?: string): Promise<GroceryItem> {
     const record = { ...item, id: id ?? crypto.randomUUID() };
-    await this.save('groceryItems', record.id, { name: text(record.name.trim()), section: text(record.section.trim()), checked: bool(record.checked) }, !!id);
+    await this.save('groceryItems', record.id, { name: text(record.name.trim()), section: text(record.section.trim()), checked: bool(record.checked), generatedKey: text(record.generatedKey ?? '') }, !!id);
     return record;
   }
 
@@ -53,6 +54,6 @@ export class PlanningService {
   private id(doc: FirestoreDocument): string { return doc.name.split('/').at(-1) ?? ''; }
   private event(doc: FirestoreDocument): PlanningEvent { return { id: this.id(doc), title: this.value(doc, 'title'), date: this.value(doc, 'date'), startTime: this.value(doc, 'startTime'), endTime: this.value(doc, 'endTime'), location: this.value(doc, 'location'), notes: this.value(doc, 'notes'), category: (this.value(doc, 'category') || 'Personal') as PlanningEvent['category'], repeat: this.value(doc, 'repeat'), reminder: doc.fields?.['reminder']?.booleanValue ?? false, attendeeIds: doc.fields?.['attendeeIds']?.arrayValue?.values?.map(x => x.stringValue ?? '').filter(Boolean) ?? [], createdAt: doc.fields?.['createdAt']?.timestampValue ?? '' }; }
   private reminder(doc: FirestoreDocument): PlanningReminder { return { id: this.id(doc), title: this.value(doc, 'title'), date: this.value(doc, 'date'), time: this.value(doc, 'time'), category: (this.value(doc, 'category') || 'Personal') as PlanningReminder['category'], completed: doc.fields?.['completed']?.booleanValue ?? false, createdAt: doc.fields?.['createdAt']?.timestampValue ?? '' }; }
-  private meal(doc: FirestoreDocument): MealPlanItem { return { id: this.id(doc), date: this.value(doc, 'date'), title: this.value(doc, 'title'), detail: this.value(doc, 'detail') }; }
-  private grocery(doc: FirestoreDocument): GroceryItem { return { id: this.id(doc), name: this.value(doc, 'name'), section: this.value(doc, 'section'), checked: doc.fields?.['checked']?.booleanValue ?? false }; }
+  private meal(doc: FirestoreDocument): MealPlanItem { return { id: this.id(doc), date: this.value(doc, 'date'), title: this.value(doc, 'title'), detail: this.value(doc, 'detail'), recipeId: this.value(doc, 'recipeId'), meal: (this.value(doc, 'meal') || 'Dinner') as MealPlanItem['meal'], ingredientId: this.value(doc, 'ingredientId'), quantity: Number(doc.fields?.['quantity']?.doubleValue ?? 100), unit: this.value(doc, 'unit') || 'g', servings: Number(doc.fields?.['servings']?.doubleValue ?? doc.fields?.['servings']?.integerValue ?? 1) }; }
+  private grocery(doc: FirestoreDocument): GroceryItem { return { id: this.id(doc), name: this.value(doc, 'name'), section: this.value(doc, 'section'), ...(this.value(doc, 'generatedKey') ? { generatedKey: this.value(doc, 'generatedKey') } : {}), checked: doc.fields?.['checked']?.booleanValue ?? false }; }
 }

@@ -1,3 +1,4 @@
+import { validMacros } from '../nutrition/nutrition.model';
 import { inject, Injectable } from '@angular/core';
 import { FirestoreDocument, FirestoreService, FirestoreValue } from '../../../core/firebase/firestore.service';
 import { StoragePhotoService } from '../../../core/firebase/storage-photo.service';
@@ -22,8 +23,11 @@ export class RecipeService {
     return this.fromDocument(await this.firestore.getDocument(`users/${ownerId}/recipes/${encodeURIComponent(id)}`, token));
   }
   async save(input: RecipeInput, id?: string): Promise<RecipeRecord> {
+    if (!Number.isFinite(input.servings) || input.servings <= 0) throw new Error('Servings must be positive.');
+    if ((input.nutritionIngredients ?? []).some(item => !Number.isFinite(item.quantity ?? item.grams) || (item.quantity ?? item.grams) <= 0 || (!item.linked && !validMacros(item.per100)))) throw new Error('Ingredient weight must be positive.');
+    if (input.servingWeight != null && (!Number.isFinite(input.servingWeight) || input.servingWeight <= 0)) throw new Error('Serving weight must be positive.');
     if (!input.title.trim()) throw new Error('Enter a recipe title.');
-    if (!input.ingredients.length) throw new Error('Add at least one ingredient.');
+    if (!input.ingredients.length && !input.nutritionIngredients?.length) throw new Error('Add at least one ingredient.');
     if (!input.steps.length) throw new Error('Add at least one step.');
     const { uid, ownerId, token } = await this.scope();
     const recipeId = id ?? crypto.randomUUID();
@@ -54,9 +58,9 @@ export class RecipeService {
   private fields(recipe: RecipeRecord): Record<string, FirestoreValue> {
     return {
       title: text(recipe.title), description: text(recipe.description), category: text(recipe.category),
-      cookTime: { integerValue: String(recipe.cookTime) }, servings: { integerValue: String(recipe.servings) },
+      cookTime: { integerValue: String(recipe.cookTime) }, servings: { doubleValue: recipe.servings }, servingWeight: recipe.servingWeight != null ? { doubleValue: recipe.servingWeight } : { nullValue: null },
       difficulty: text(recipe.difficulty), photoUrl: text(recipe.photoUrl), photoPath: text(recipe.photoPath),
-      ingredients: strings(recipe.ingredients), tags: strings(recipe.tags), source: text(recipe.source),
+      nutritionIngredients: text(JSON.stringify(recipe.nutritionIngredients ?? [])), ingredients: strings(recipe.ingredients), tags: strings(recipe.tags), source: text(recipe.source),
       sourceLink: text(recipe.sourceLink), notes: text(recipe.notes), favourite: { booleanValue: recipe.favourite },
       private: { booleanValue: recipe.private }, createdAt: { timestampValue: recipe.createdAt },
       steps: { arrayValue: { values: recipe.steps.map((step) => ({ mapValue: { fields: { id: text(step.id), title: text(step.title), instruction: text(step.instruction) } } })) } },
@@ -70,8 +74,8 @@ export class RecipeService {
       title: value.mapValue?.fields?.['title']?.stringValue ?? '', instruction: value.mapValue?.fields?.['instruction']?.stringValue ?? '',
     }));
     return { id: doc.name.split('/').at(-1) ?? '', title: s('title'), description: s('description'), category: (s('category') || 'Other') as RecipeRecord['category'],
-      cookTime: Number(f['cookTime']?.integerValue ?? 0), servings: Number(f['servings']?.integerValue ?? 1), difficulty: (s('difficulty') || 'Easy') as RecipeRecord['difficulty'],
+      cookTime: Number(f['cookTime']?.integerValue ?? 0), servings: Number(f['servings']?.doubleValue ?? f['servings']?.integerValue ?? 1), ...(f['servingWeight']?.doubleValue ? { servingWeight: f['servingWeight'].doubleValue } : {}), difficulty: (s('difficulty') || 'Easy') as RecipeRecord['difficulty'],
       photoUrl: s('photoUrl'), photoPath: s('photoPath'), ingredients: list('ingredients'), steps, tags: list('tags'), source: s('source'), sourceLink: s('sourceLink'),
-      notes: s('notes'), favourite: f['favourite']?.booleanValue ?? false, private: f['private']?.booleanValue ?? true, createdAt: f['createdAt']?.timestampValue ?? '' };
+      nutritionIngredients: JSON.parse(s('nutritionIngredients') || '[]'), notes: s('notes'), favourite: f['favourite']?.booleanValue ?? false, private: f['private']?.booleanValue ?? true, createdAt: f['createdAt']?.timestampValue ?? '' };
   }
 }

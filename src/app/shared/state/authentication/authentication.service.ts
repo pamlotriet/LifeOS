@@ -19,6 +19,8 @@ export class AuthService {
   private readonly authenticated = signal(false);
   private readonly ready = signal(false);
   private readonly uid = signal<string | null>(null);
+  private readonly name = signal('');
+  readonly displayName = this.name.asReadonly();
   private loginPending = false;
   private authVersion = 0;
 
@@ -49,6 +51,7 @@ export class AuthService {
   ): Promise<void> {
     this.authenticated.set(false);
     this.uid.set(null);
+    this.name.set('');
     try {
       if (user) {
         await this.firestore.createUserIfMissing(user.uid, await user.getIdToken(), {
@@ -58,6 +61,7 @@ export class AuthService {
         });
       }
       if (version !== this.authVersion) return;
+      this.name.set(user?.displayName?.trim() ?? '');
       this.uid.set(user?.uid ?? null);
       this.authenticated.set(!!user);
     } catch (error) {
@@ -93,6 +97,7 @@ export class AuthService {
         }
         throw error;
       }
+      this.name.set(result.user.displayName?.trim() ?? '');
       this.uid.set(result.user.uid);
       this.authenticated.set(true);
       return result.user;
@@ -104,6 +109,7 @@ export class AuthService {
   async logout() {
     await webSignOut(this.webAuth);
     this.uid.set(null);
+    this.name.set('');
     this.authenticated.set(false);
   }
 }

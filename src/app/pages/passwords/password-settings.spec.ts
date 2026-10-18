@@ -1,3 +1,4 @@
+import { NutritionService, defaultProfile } from '../../shared/state/nutrition/nutrition.service';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
@@ -20,6 +21,7 @@ describe('Settings budget cycle', () => {
       imports: [PasswordSettings],
       providers: [
         provideRouter([]),
+        { provide: NutritionService, useValue: { profile: signal(defaultProfile()), loading: signal(false), error: signal('') } },
         { provide: BudgetStore, useValue: { cycleStartDay, loading, error: signal(''), cycleLabel: signal('Saved cycle'), setCycleStartDay } },
         { provide: ThemeService, useValue: { dark: signal(true) } },
         { provide: PasswordStore, useValue: { initialize: vi.fn(), vault: { crypto: { autoLockMinutes: signal(5), lockOnBackground: signal(true) } } } },
@@ -30,7 +32,7 @@ describe('Settings budget cycle', () => {
   it('restores the selected day after leaving and reopening Settings', async () => {
     const first = TestBed.createComponent(PasswordSettings);
     await first.whenStable();
-    const select = first.nativeElement.querySelector('select') as HTMLSelectElement;
+    const select = first.nativeElement.querySelector('[aria-label="Budget cycle starts on"]') as HTMLSelectElement;
     expect(select.selectedIndex).toBe(27);
     select.selectedIndex = 14;
     select.dispatchEvent(new Event('change'));
@@ -41,7 +43,7 @@ describe('Settings budget cycle', () => {
 
     const reopened = TestBed.createComponent(PasswordSettings);
     await reopened.whenStable();
-    expect((reopened.nativeElement.querySelector('select') as HTMLSelectElement).selectedIndex).toBe(14);
+    expect((reopened.nativeElement.querySelector('[aria-label="Budget cycle starts on"]') as HTMLSelectElement).selectedIndex).toBe(14);
   });
 
   it('shows the account day when it loads after the options render', async () => {
@@ -52,7 +54,7 @@ describe('Settings budget cycle', () => {
     cycleStartDay.set(31);
     loading.set(false);
     await fixture.whenStable();
-    const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
+    const select = fixture.nativeElement.querySelector('[aria-label="Budget cycle starts on"]') as HTMLSelectElement;
     expect(select.selectedIndex).toBe(30);
     expect(select.disabled).toBe(false);
     expect(setCycleStartDay).not.toHaveBeenCalled();

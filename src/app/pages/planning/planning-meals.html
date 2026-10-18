@@ -1,13 +1,222 @@
 <ion-header app-page-header title="Meal Plan & Grocery"></ion-header>
-<ion-content class="[--background:transparent]"><main class="planner-page mx-auto max-w-2xl px-4 pb-16 pt-4">
-  <nav class="planner-card mb-4 grid grid-cols-2 p-1"><button (click)="tab.set('meals')" class="rounded-2xl py-2 font-bold" [class.bg-cyan-400]="tab()==='meals'" [class.text-slate-900]="tab()==='meals'">Dinner Plan</button><button (click)="tab.set('groceries')" class="rounded-2xl py-2 font-bold" [class.bg-cyan-400]="tab()==='groceries'" [class.text-slate-900]="tab()==='groceries'">Grocery List</button></nav>
-  @if (tab()==='meals') {
-    <div class="mb-4 grid grid-cols-7 gap-1">@for (day of week; track day.iso) { <button (click)="choose(day.iso)" class="week-day border border-[var(--border)]" [class.selected]="selectedDate()===day.iso"><span>{{ day.day }}</span><strong>{{ day.number }}</strong></button> }</div>
-    <section class="planner-card planner-form"><h2 class="font-bold">Plan dinner</h2><input class="control" placeholder="Meal name" [ngModel]="mealTitle()" (ngModelChange)="mealTitle.set($event)" /><input class="control" placeholder="Details or side dish" [ngModel]="mealDetail()" (ngModelChange)="mealDetail.set($event)" /><button (click)="addMeal()" class="primary-button">Save meal</button></section>
-    <section class="mt-4 space-y-2">@for (day of week; track day.iso) { <div class="planner-row !grid-cols-[3rem_1fr_auto]"><time><strong>{{ day.day }}</strong><br>{{ day.number }}</time><span><strong>{{ meal(day.iso)?.title || 'No meal planned' }}</strong><small>{{ meal(day.iso)?.detail }}</small></span>@if (meal(day.iso); as item) { <button (click)="store.deleteMeal(item.id)" class="text-rose-400"><ion-icon [icon]="icons.trashOutline"></ion-icon></button> }</div> }</section>
-  } @else {
-    <section id="groceries" class="planner-card mb-4 p-4"><h2 class="mb-3 font-bold">Add grocery item</h2><div class="grid grid-cols-[1fr_auto] gap-2"><input class="control" placeholder="e.g. Tomatoes" [ngModel]="groceryName()" (ngModelChange)="groceryName.set($event)" /><select class="lifeos-select !w-28" [ngModel]="grocerySection()" (ngModelChange)="grocerySection.set($event)"><option>Produce</option><option>Bakery</option><option>Dairy</option><option>Meat</option><option>Pantry</option><option>Other</option></select></div><button (click)="addGrocery()" class="primary-button mt-3"><ion-icon [icon]="icons.add"></ion-icon>Add item</button></section>
-    @if (!store.groceries().length) { <div class="planner-card planner-empty">Your grocery list is empty.</div> }
-    @for (group of groceriesBySection(); track group[0]) { <section class="planner-card mb-3 p-3"><h2 class="mb-2 font-bold text-emerald-400">{{ group[0] }}</h2>@for (item of group[1]; track item.id) { <div class="flex items-center gap-3 border-t border-[var(--border)] py-2"><button (click)="store.toggleGrocery(item)" class="grid h-6 w-6 place-items-center rounded-md border border-cyan-300"><ion-icon [icon]="item.checked ? icons.checkmark : undefined"></ion-icon></button><span class="flex-1" [class.line-through]="item.checked">{{ item.name }}</span><button (click)="store.deleteGrocery(item.id)" class="text-rose-400"><ion-icon [icon]="icons.trashOutline"></ion-icon></button></div> }</section> }
-  }
-</main></ion-content>
+<ion-content class="[--background:transparent]"
+  ><main class="planner-page mx-auto max-w-2xl px-4 pb-16 pt-4">
+    <nav class="planner-card mb-4 grid grid-cols-2 p-1">
+      <button
+        (click)="tab.set('meals')"
+        class="rounded-2xl py-2 font-bold"
+        [class.bg-cyan-400]="tab() === 'meals'"
+        [class.text-slate-900]="tab() === 'meals'"
+      >
+        Meal Plan</button
+      ><button
+        (click)="tab.set('groceries')"
+        class="rounded-2xl py-2 font-bold"
+        [class.bg-cyan-400]="tab() === 'groceries'"
+        [class.text-slate-900]="tab() === 'groceries'"
+      >
+        Grocery List
+      </button>
+    </nav>
+    <a routerLink="/nutrition" class="block mb-3 text-cyan-300">Open calorie & macro tracker</a>
+    @if (nutritionError()) {
+      <p role="status">{{ nutritionError() }}</p>
+    }
+    @if (store.error()) {
+      <p role="alert">{{ store.error() }}</p>
+    }
+    @if (tab() === 'meals') {
+      <nav class="flex justify-between mb-3" aria-label="Week navigation">
+        <button (click)="shiftWeek(-1)">Previous week</button><span>{{ week[0].iso }}</span
+        ><button (click)="shiftWeek(1)">Next week</button>
+      </nav>
+      <div class="mb-4 grid grid-cols-7 gap-1">
+        @for (day of week; track day.iso) {
+          <button
+            (click)="choose(day.iso)"
+            class="week-day border border-[var(--border)]"
+            [class.selected]="selectedDate() === day.iso"
+          >
+            <span>{{ day.day }}</span
+            ><strong>{{ day.number }}</strong>
+          </button>
+        }
+      </div>
+      <section class="planner-card planner-form">
+        <h2 class="font-bold">{{ editingId ? 'Edit meal' : 'Plan meal' }}</h2>
+        <label
+          >Date<input
+            type="date"
+            class="control"
+            [ngModel]="selectedDate()"
+            (ngModelChange)="selectedDate.set($event)" /></label
+        ><label
+          >Meal<select [(ngModel)]="mealCategory" class="lifeos-select">
+            @for (m of categories; track m) {
+              <option>{{ m }}</option>
+            }
+          </select></label
+        >
+        <label
+          >Recipe<select
+            class="lifeos-select"
+            [(ngModel)]="recipeId"
+            (ngModelChange)="selectRecipe()"
+          >
+            <option value="">Custom meal</option>
+            @for (r of recipes.sorted(); track r.id) {
+              <option [value]="r.id">{{ r.title }}</option>
+            }
+          </select></label
+        >
+        <label
+          >Or ingredient<select
+            class="lifeos-select"
+            [(ngModel)]="ingredientId"
+            (ngModelChange)="selectIngredient()"
+          >
+            <option value="">No ingredient</option>
+            @for (f of nutrition.foods(); track f.id) {
+              @if (!f.archived) {
+                <option [value]="f.id">{{ f.name }} | {{ f.brand }} | {{ f.preparation }}</option>
+              }
+            }
+          </select></label
+        >
+        @if (ingredientId) {
+          <label
+            >Amount<input
+              class="control"
+              type="number"
+              min="0.01"
+              step="any"
+              [(ngModel)]="quantity" /></label
+          ><label
+            >Unit<input
+              class="control"
+              [(ngModel)]="unit"
+              placeholder="g, ml, or defined household portion"
+          /></label>
+        } @else {
+          <label
+            >Planned servings<input
+              class="control"
+              type="number"
+              min="0.01"
+              step="any"
+              [(ngModel)]="servings"
+          /></label>
+        }
+        <label
+          >Meal name<input
+            class="control"
+            [ngModel]="mealTitle()"
+            (ngModelChange)="mealTitle.set($event)" /></label
+        ><label
+          >Details<input
+            class="control"
+            [ngModel]="mealDetail()"
+            (ngModelChange)="mealDetail.set($event)" /></label
+        ><button (click)="addMeal()" [disabled]="logging()" class="primary-button">Save meal</button
+        ><button (click)="reset()">Clear / new meal</button>
+        <label
+          >Copy selected day's meals to<input
+            type="date"
+            class="control"
+            [(ngModel)]="copyDate" /></label
+        ><button (click)="copyDay()">Copy day / reuse plan</button>
+      </section>
+      @if (pendingMeal; as pending) {
+        <section class="planner-card p-4 my-4" aria-label="Confirm consumption">
+          <h2>Log {{ pending.title }} as eaten</h2>
+          <label
+            >Actual {{ pending.ingredientId ? pending.unit : 'servings'
+            }}<input type="number" min="0.01" step="any" class="control" [(ngModel)]="actualAmount"
+          /></label>
+          <p>{{ preview() }}</p>
+          <button (click)="logMeal()" [disabled]="logging()">Confirm consumption</button
+          ><button class="ml-4" (click)="pendingMeal = null">Cancel</button>
+        </section>
+      }
+      <section class="mt-4 space-y-3">
+        @for (day of week; track day.iso) {
+          <section class="planner-card p-4">
+            <h2 class="font-bold">{{ day.day }} {{ day.number }}</h2>
+            <p class="text-sm mb-3">{{ daily(day.iso) }}</p>
+            @for (item of meals(day.iso); track item.id) {
+              <article class="border-t border-[var(--border)] py-3">
+                <strong>{{ item.meal || 'Dinner' }} | {{ item.title }}</strong>
+                <p>{{ item.detail }}</p>
+                <p>{{ summary(item) }}</p>
+                <div class="flex flex-wrap gap-4">
+                  <button (click)="edit(item)">Edit</button
+                  ><button (click)="copyMeal(item)">Copy to {{ copyDate }}</button
+                  ><button (click)="store.deleteMeal(item.id)">Remove</button>
+                  @if (item.recipeId || item.ingredientId) {
+                    @if (logged(item)) {
+                      <span>Logged</span
+                      ><button (click)="confirmMeal(item, true)">Log again</button>
+                    } @else {
+                      <button (click)="confirmMeal(item)">Log as eaten</button>
+                    }
+                  }
+                </div>
+              </article>
+            } @empty {
+              <p>No meals planned.</p>
+            }
+          </section>
+        }
+      </section>
+    } @else {
+      <button class="primary-button mb-4" [disabled]="logging()" (click)="generateGroceries()">
+        Generate groceries from this week
+      </button>
+      <section id="groceries" class="planner-card mb-4 p-4">
+        <h2 class="mb-3 font-bold">Add grocery item</h2>
+        <div class="grid grid-cols-[1fr_auto] gap-2">
+          <input
+            class="control"
+            placeholder="e.g. Tomatoes"
+            [ngModel]="groceryName()"
+            (ngModelChange)="groceryName.set($event)"
+          /><select
+            class="lifeos-select !w-28"
+            [ngModel]="grocerySection()"
+            (ngModelChange)="grocerySection.set($event)"
+          >
+            <option>Produce</option>
+            <option>Bakery</option>
+            <option>Dairy</option>
+            <option>Meat</option>
+            <option>Pantry</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <button (click)="addGrocery()" class="primary-button mt-3">
+          <ion-icon [icon]="icons.add"></ion-icon>Add item
+        </button>
+      </section>
+      @if (!store.groceries().length) {
+        <div class="planner-card planner-empty">Your grocery list is empty.</div>
+      }
+      @for (group of groceriesBySection(); track group[0]) {
+        <section class="planner-card mb-3 p-3">
+          <h2 class="mb-2 font-bold text-emerald-400">{{ group[0] }}</h2>
+          @for (item of group[1]; track item.id) {
+            <div class="flex items-center gap-3 border-t border-[var(--border)] py-2">
+              <button
+                (click)="store.toggleGrocery(item)"
+                class="grid h-6 w-6 place-items-center rounded-md border border-cyan-300"
+              >
+                <ion-icon [icon]="item.checked ? icons.checkmark : undefined"></ion-icon></button
+              ><span class="flex-1" [class.line-through]="item.checked">{{ item.name }}</span
+              ><button (click)="store.deleteGrocery(item.id)" class="text-rose-400">
+                <ion-icon [icon]="icons.trashOutline"></ion-icon>
+              </button>
+            </div>
+          }
+        </section>
+      }
+    }</main
+></ion-content>

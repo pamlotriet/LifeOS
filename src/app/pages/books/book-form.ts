@@ -23,7 +23,7 @@ export class BookForm {
   readonly categories = BOOK_CATEGORIES;
   readonly formats = BOOK_FORMATS;
   readonly statuses = BOOK_STATUSES;
-  readonly categoryOptions = BOOK_CATEGORIES.map((item) => ({ value: item, label: item }));
+  get categoryOptions() { return [...new Set<string>([...BOOK_CATEGORIES, ...this.store.books().map(book => book.category)])].map(item => ({ value: item, label: item })); }
   readonly formatOptions = BOOK_FORMATS.map((item) => ({ value: item, label: item }));
   readonly statusOptions = BOOK_STATUSES.map((item) => ({ value: item, label: item }));
   readonly ratingOptions = [{ value: '0', label: 'Not rated' }, ...[1, 2, 3, 4, 5].map((item) => ({ value: String(item), label: `${item} star${item === 1 ? '' : 's'}` }))];

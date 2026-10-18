@@ -1,0 +1,194 @@
+<ion-header app-page-header title="Ingredients"></ion-header>
+<ion-content class="[--background:transparent]"
+  ><main class="nutrition-page">
+    <nav class="page-links">
+      <a routerLink="/nutrition">Calorie diary</a><a routerLink="/recipes">Recipes</a>
+    </nav>
+    <header class="section-heading">
+      <div>
+        <span class="eyebrow">Your food library</span>
+        <h1>Ingredients</h1>
+        <p>Label values you can reuse in recipes and your diary.</p>
+      </div>
+      <button class="action" (click)="create()" [disabled]="busy()">+ Add ingredient</button>
+    </header>
+    @if (store.loading()) {
+      <p role="status">Loading ingredients...</p>
+    }
+    @if (store.error()) {
+      <p role="alert">{{ store.error() }} <button (click)="store.reload()">Retry</button></p>
+    }
+    @if (error()) {
+      <p role="alert" class="notice">{{ error() }}</p>
+    }
+    @if (message()) {
+      <p role="status" class="notice">{{ message() }}</p>
+    }
+    @if (editorOpen()) {
+      <section id="ingredient-editor" class="surface editor">
+        <div class="section-heading">
+          <h2>{{ food.id ? 'Edit ingredient' : 'New ingredient' }}</h2>
+          <button (click)="editorOpen.set(false)" [disabled]="busy()">Cancel</button>
+        </div>
+        <p>
+          Enter your label values. Keep raw and cooked foods separate. Sodium uses mg; other
+          nutrients use g.
+        </p>
+        <form (ngSubmit)="saveFood()" class="space-y-3">
+          <label
+            >Name<input class="lifeos-select" name="name" [(ngModel)]="food.name" required
+          /></label>
+          <div class="grid grid-cols-2 gap-2">
+            <label
+              >Category<input
+                name="category"
+                class="lifeos-select"
+                [(ngModel)]="food.category" /></label
+            ><label
+              >Brand<input name="brand" class="lifeos-select" [(ngModel)]="food.brand" /></label
+            ><label
+              >Preparation state<input
+                name="preparation"
+                class="lifeos-select"
+                [(ngModel)]="food.preparation" /></label
+            ><label
+              >Barcode<input name="barcode" class="lifeos-select" [(ngModel)]="food.barcode"
+            /></label>
+          </div>
+          <label
+            >Description<textarea
+              name="description"
+              class="lifeos-select"
+              [(ngModel)]="food.description"
+            ></textarea>
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <label
+              >Label / serving amount<input
+                name="labelAmount"
+                class="lifeos-select"
+                type="number"
+                min="0.01"
+                step="any"
+                [(ngModel)]="labelAmount" /></label
+            ><label
+              >Label unit<select name="labelUnit" class="lifeos-select" [(ngModel)]="labelUnit">
+                <option>g</option>
+                <option>ml</option>
+              </select></label
+            >
+          </div>
+          <p>
+            Enter 1 or 100 for per-unit or per-100 values. For a serving, enter its defined weight
+            or volume here.
+          </p>
+          <div class="grid grid-cols-2 gap-2">
+            @for (key of keys; track key) {
+              <label class="capitalize"
+                >{{ key }} per {{ labelAmount }} {{ labelUnit
+                }}<input
+                  type="number"
+                  min="0"
+                  step="any"
+                  [name]="key"
+                  class="lifeos-select"
+                  [(ngModel)]="food[key]"
+                  required
+              /></label>
+            }
+            @for (key of optionalKeys; track key) {
+              <label
+                >{{ key }} (optional)<input
+                  type="number"
+                  min="0"
+                  step="any"
+                  [name]="key"
+                  class="lifeos-select"
+                  [ngModel]="food[key]"
+                  (ngModelChange)="food[key] = $event === null ? undefined : $event"
+              /></label>
+            }
+          </div>
+          <label
+            >Density: grams per ml (optional)<input
+              name="density"
+              class="lifeos-select"
+              type="number"
+              min="0.001"
+              step="any"
+              [ngModel]="food.density"
+              (ngModelChange)="food.density = $event === null ? undefined : $event"
+          /></label>
+          <details>
+            <summary>Household portions</summary>
+            <label
+              >Portion name (egg, slice, cup)<input
+                name="portionName"
+                class="lifeos-select"
+                [(ngModel)]="portionName" /></label
+            ><label
+              >Weight or volume of one portion<input
+                name="portionAmount"
+                type="number"
+                min="0.01"
+                step="any"
+                class="lifeos-select"
+                [(ngModel)]="portionAmount" /></label
+            ><label
+              >Unit<select name="portionBase" class="lifeos-select" [(ngModel)]="portionBase">
+                <option>g</option>
+                <option>ml</option>
+              </select></label
+            ><button type="button" (click)="addPortion()">Add portion</button>
+            @for (p of food.portions; track $index) {
+              <p>
+                1 {{ p.unit }} = {{ p.amount }} {{ p.baseUnit }}
+                <button type="button" (click)="food.portions?.splice($index, 1)">Remove</button>
+              </p>
+            }
+          </details>
+          <p>Label preview: {{ label(food) }} per {{ labelAmount }} {{ labelUnit }}</p>
+          <button [disabled]="busy() || store.loading()">
+            {{ food.id ? 'Update ingredient' : 'Create ingredient' }}
+          </button>
+        </form>
+      </section>
+    }
+    <section class="surface ingredient-list" aria-label="Ingredient library">
+      <label
+        >Search ingredients<input
+          class="lifeos-select"
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)" /></label
+      ><label
+        >Category<select
+          class="lifeos-select"
+          [ngModel]="category()"
+          (ngModelChange)="category.set($event)"
+        >
+          <option value="">All categories</option>
+          @for (c of foodCategories(); track c) {
+            <option>{{ c }}</option>
+          }
+        </select></label
+      >
+      @for (item of foods(); track item.id) {
+        <article class="border-t border-[var(--border)] py-2">
+          <strong>{{ item.name }}</strong> / {{ item.brand }} / {{ item.preparation }} /
+          {{ item.category }}
+          @if (item.archived) {
+            <span>Archived</span>
+          }
+          <p>{{ label(item) }} per 100 {{ item.baseUnit || 'g' }}</p>
+          <p>{{ item.description }}</p>
+          <button (click)="editFood(item)">Edit ingredient</button
+          ><button class="ml-4" [disabled]="busy()" (click)="archiveFood(item)">
+            {{ item.archived ? 'Restore' : 'Archive' }}
+          </button>
+        </article>
+      } @empty {
+        <p>No ingredients found. Use Add ingredient to create one.</p>
+      }
+    </section>
+  </main></ion-content
+>

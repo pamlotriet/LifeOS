@@ -7,6 +7,7 @@
     @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
     @if (notice()) { <p class="message" role="status">{{ notice() }}</p> }
     @if (tab() === 'week') {
+
       <section class="week-summary" aria-label="Weekly gym summary"><div><strong>{{ trainingDays() }}</strong><span>workout days</span></div><div><strong>{{ 7 - trainingDays() }}</strong><span>rest / unplanned days</span></div><div><strong>{{ store.entries().length }}</strong><span>exercise slots</span></div></section>
       <div class="section-heading"><div><h2>Your weekly routine</h2><p class="muted">Choose a day to build or edit your workout. A reusable Monday–Sunday plan. Empty days stay free for rest.</p></div></div>
       <div class="week-controls"><nav class="day-selector" aria-label="Choose workout day">@for(day of week();track day.day){<button type="button" [class.active]="!allWeek() && selectedDay()===day.day" [attr.aria-pressed]="!allWeek() && selectedDay()===day.day" (click)="showDay(day.day)"><strong>{{day.name.slice(0,3)}}</strong><small>{{day.day===today?'Today':day.entries.length ? day.entries.length+' exercises':'Rest'}}</small></button>}</nav><button type="button" class="button" [attr.aria-pressed]="allWeek()" (click)="allWeek.set(!allWeek())">{{allWeek()?'Focus on a day':'All week'}}</button></div>

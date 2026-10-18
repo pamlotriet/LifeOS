@@ -1,0 +1,319 @@
+<ion-header app-page-header title="Calorie diary"></ion-header>
+<ion-content class="[--background:transparent]"
+  ><main class="nutrition-page">
+    <nav class="page-links">
+      <a routerLink="/nutrition/ingredients">Ingredients</a
+      ><a routerLink="/planning/meals">Meal plan</a><a routerLink="/stats">Stats</a
+      ><a routerLink="/settings">Goals</a>
+    </nav>
+    <header class="diary-heading">
+      <div>
+        <span class="eyebrow">Daily nutrition</span>
+        <h1>{{ date() === today ? 'Today' : 'Your diary' }}</h1>
+      </div>
+      <button class="action" (click)="openLogger()" [disabled]="store.loading()">+ Log food</button>
+    </header>
+    <div class="date-nav">
+      <button aria-label="Previous day" (click)="changeDate(-1)">&larr;</button
+      ><label
+        ><span class="sr-only">Diary date</span
+        ><input
+          type="date"
+          [ngModel]="date()"
+          (ngModelChange)="date.set($event); editingId = ''; loggerOpen.set(false)" /></label
+      ><button aria-label="Next day" (click)="changeDate(1)">&rarr;</button>
+      @if (date() !== today) {
+        <button (click)="date.set(today); editingId = ''; loggerOpen.set(false)">Today</button>
+      }
+    </div>
+    @if (store.loading()) {
+      <p role="status">Loading your diary...</p>
+    }
+    @if (store.error()) {
+      <p role="alert" class="notice">
+        {{ store.error() }} <button (click)="store.reload()">Retry</button>
+      </p>
+    }
+    @if (error()) {
+      <p role="alert" class="notice">{{ error() }}</p>
+    }
+    @if (date() > today) {
+      <p class="notice">Future date. Planned meals stay separate from food you explicitly log.</p>
+    }
+    <section class="surface daily-overview" aria-label="Daily calorie progress">
+      <div class="calorie-ring" [style.--progress]="progress() + '%'">
+        <div>
+          <strong>{{ total().calories.toFixed(0) }}</strong
+          ><span>kcal eaten</span>
+        </div>
+      </div>
+      <div class="calorie-context">
+        <span class="eyebrow">{{
+          store.profile().targets.calories > 0
+            ? remaining() < 0
+              ? 'Above goal'
+              : 'Remaining today'
+            : 'Your daily intake'
+        }}</span>
+        <h2>
+          {{
+            store.profile().targets.calories > 0
+              ? remaining() < 0
+                ? (-remaining()).toFixed(0)
+                : remaining().toFixed(0)
+              : total().calories.toFixed(0)
+          }}
+          <small>kcal</small>
+        </h2>
+        @if (store.profile().targets.calories > 0) {
+          <p>of {{ store.profile().targets.calories }} kcal daily goal</p>
+        } @else {
+          <a routerLink="/settings">Set your calorie and macro goals</a>
+        }
+        <a class="planned-note" routerLink="/planning/meals"
+          >{{ planned().calories.toFixed(0) }} kcal planned separately &rarr;</a
+        >
+      </div>
+      <div class="macro-grid">
+        @for (key of macros; track key) {
+          <div class="macro" [attr.data-macro]="key">
+            <div>
+              <span class="capitalize">{{ key === 'carbs' ? 'Carbs' : key }}</span
+              ><strong>{{ total()[key].toFixed(1) }}<small> g</small></strong>
+            </div>
+            <progress
+              [attr.aria-label]="key + ' goal progress'"
+              [value]="total()[key]"
+              [max]="store.profile().targets[key] || 1"
+            ></progress
+            ><small>{{
+              store.profile().targets[key] > 0
+                ? 'of ' + store.profile().targets[key] + ' g'
+                : 'No goal set'
+            }}</small>
+          </div>
+        }
+      </div>
+    </section>
+    @if (loggerOpen()) {
+      <section id="food-composer" class="surface composer" aria-labelledby="log-food-heading">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Record what you ate</span>
+            <h2 id="log-food-heading">Log food</h2>
+          </div>
+          <button (click)="loggerOpen.set(false)" [disabled]="busy()">Cancel</button>
+        </div>
+        <label
+          >Meal<select class="lifeos-select" [(ngModel)]="meal">
+            @for (m of categories; track m) {
+              <option>{{ m }}</option>
+            }
+          </select></label
+        >
+        <div class="mode-switch" role="group" aria-label="Food source">
+          @for (mode of ['ingredient', 'recipe', 'manual']; track mode) {
+            <button
+              [class.active]="logMode() === mode"
+              [attr.aria-pressed]="logMode() === mode"
+              (click)="logMode.set($any(mode))"
+            >
+              {{ mode === 'manual' ? 'Quick entry' : mode === 'recipe' ? 'Recipe' : 'Ingredient' }}
+            </button>
+          }
+        </div>
+        @switch (logMode()) {
+          @case ('ingredient') {
+            <label
+              >Ingredient<select class="lifeos-select" [(ngModel)]="foodId">
+                <option value="">Choose ingredient</option>
+                @for (item of store.foods(); track item.id) {
+                  @if (!item.archived) {
+                    <option [value]="item.id">
+                      {{ item.name }}{{ item.brand ? ' / ' + item.brand : ''
+                      }}{{ item.preparation ? ' / ' + item.preparation : '' }}
+                    </option>
+                  }
+                }
+              </select></label
+            >
+            <div class="field-grid">
+              <label
+                >Amount<input
+                  type="number"
+                  min="0.01"
+                  step="any"
+                  class="lifeos-select"
+                  [(ngModel)]="grams" /></label
+              ><label
+                >Unit<select class="lifeos-select" [(ngModel)]="unit">
+                  @for (u of units(); track u) {
+                    <option>{{ u }}</option>
+                  }
+                </select></label
+              >
+            </div>
+            <p class="nutrition-preview" aria-live="polite">
+              {{ foodPreview() || 'Select an ingredient to preview nutrition.' }}
+            </p>
+            <button class="action wide" (click)="logFood()" [disabled]="busy() || store.loading()">
+              {{ busy() ? 'Saving...' : 'Add to diary' }}</button
+            ><a routerLink="/nutrition/ingredients">Manage ingredients &rarr;</a>
+          }
+          @case ('recipe') {
+            <label
+              >Recipe<select class="lifeos-select" [(ngModel)]="recipeId">
+                <option value="">Choose recipe</option>
+                @for (r of recipes.sorted(); track r.id) {
+                  <option [value]="r.id">{{ r.title }}</option>
+                }
+              </select></label
+            ><label
+              >Servings eaten<input
+                type="number"
+                min="0.01"
+                step="any"
+                class="lifeos-select"
+                [(ngModel)]="servings"
+            /></label>
+            <p class="nutrition-preview" aria-live="polite">
+              {{ recipePreview() || 'Select a recipe to preview nutrition.' }}
+            </p>
+            <button
+              class="action wide"
+              (click)="logRecipe()"
+              [disabled]="busy() || store.loading()"
+            >
+              {{ busy() ? 'Saving...' : 'Add to diary' }}
+            </button>
+          }
+          @case ('manual') {
+            <label
+              >Food name<input
+                class="lifeos-select"
+                [(ngModel)]="manualName"
+                placeholder="What did you eat?"
+            /></label>
+            <div class="field-grid">
+              @for (key of keys; track key) {
+                <label class="capitalize"
+                  >{{ key }} ({{ key === 'calories' ? 'kcal' : 'g' }})<input
+                    type="number"
+                    min="0"
+                    step="any"
+                    class="lifeos-select"
+                    [(ngModel)]="manual[key]"
+                /></label>
+              }
+            </div>
+            <button class="action wide" (click)="logManual()" [disabled]="busy()">
+              {{ busy() ? 'Saving...' : 'Add to diary' }}
+            </button>
+          }
+        }
+      </section>
+    }
+    <div class="section-heading meals-heading">
+      <div>
+        <h2>Your meals</h2>
+        <p>Only logged food counts toward your intake.</p>
+      </div>
+      <span class="entry-count">{{ entries().length }} entries</span>
+    </div>
+    <div class="meal-grid">
+      @for (m of categories; track m) {
+        <section class="surface meal-card">
+          <header>
+            <div>
+              <h3>{{ m }}</h3>
+              <span>{{ mealCalories(m).toFixed(0) }} kcal</span>
+            </div>
+            <button class="add-meal" [attr.aria-label]="'Add food to ' + m" (click)="openLogger(m)">
+              +
+            </button>
+          </header>
+          @for (entry of grouped(m); track entry.id) {
+            <article class="food-row">
+              <div class="food-row-title">
+                <div>
+                  <strong>{{ entry.name }}</strong
+                  ><small>{{ entry.amount }}</small>
+                </div>
+                <strong>{{ entry.nutrition.calories.toFixed(0) }} <small>kcal</small></strong>
+              </div>
+              <p class="food-macros">
+                P {{ entry.nutrition.protein.toFixed(1) }}g / C
+                {{ entry.nutrition.carbs.toFixed(1) }}g / F {{ entry.nutrition.fat.toFixed(1) }}g
+              </p>
+              @if (editingId === entry.id) {
+                <label
+                  >Recorded date<input
+                    type="date"
+                    [(ngModel)]="editDate"
+                    class="lifeos-select" /></label
+                ><label
+                  >Recorded meal<select [(ngModel)]="editMeal" class="lifeos-select">
+                    @for (m of categories; track m) {
+                      <option>{{ m }}</option>
+                    }
+                  </select></label
+                >
+                <label>Name<input class="lifeos-select" [(ngModel)]="manualName" /></label
+                ><label
+                  >Actual amount<input
+                    type="number"
+                    min="0.01"
+                    step="any"
+                    class="lifeos-select"
+                    [(ngModel)]="editQuantity"
+                /></label>
+                <p>
+                  Adjust the recorded nutrition below; quantity changes scale it proportionally.
+                </p>
+                <div class="grid grid-cols-2 gap-2">
+                  @for (key of keys; track key) {
+                    <label
+                      >{{ key
+                      }}<input
+                        type="number"
+                        min="0"
+                        step="any"
+                        class="lifeos-select"
+                        [(ngModel)]="manual[key]"
+                    /></label>
+                  }
+                </div>
+                <button (click)="saveEdit(entry)" [disabled]="busy()">Save changes</button
+                ><button (click)="editingId = ''">Cancel</button>
+              }
+
+              <div class="entry-actions">
+                <button (click)="startEdit(entry)">Edit</button
+                ><button (click)="copy(entry)" [disabled]="busy()">Log again</button
+                ><button (click)="removeLog(entry.id)" [disabled]="busy()">Remove</button>
+              </div>
+            </article>
+          } @empty {
+            <button class="empty-meal" (click)="openLogger(m)">
+              Nothing logged yet. <span>Add {{ m.toLowerCase() }} &rarr;</span>
+            </button>
+          }
+        </section>
+      }
+    </div>
+    <details class="surface recent-history">
+      <summary>Recent foods <span>Copy to this day</span></summary>
+      @for (entry of history(); track entry.id) {
+        <div class="history-row">
+          <div>
+            <strong>{{ entry.name }}</strong
+            ><small>{{ entry.date }} / {{ entry.amount }}</small>
+          </div>
+          <button (click)="copy(entry)" [disabled]="busy()">+ Add</button>
+        </div>
+      } @empty {
+        <p>Your recently logged foods will appear here.</p>
+      }
+    </details>
+  </main></ion-content
+>

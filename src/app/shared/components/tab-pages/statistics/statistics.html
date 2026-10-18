@@ -1,5 +1,8 @@
 <ion-content class="[--background:transparent]"
-  ><main [class.budget-stats-page]="selected() === 'budget'" class="stats-page mx-auto min-h-full max-w-3xl px-4 pb-10 pt-5">
+  ><main
+    [class.budget-stats-page]="selected() === 'budget'"
+    class="stats-page mx-auto min-h-full max-w-3xl px-4 pb-10 pt-5"
+  >
     <header class="stats-header">
       <h1>Stats</h1>
       <p>Viewing stats for</p>
@@ -31,12 +34,11 @@
           </div>
         }
       </div>
-      @if (
-        selected() === 'fuel' && service.vehicleOptions().length > 1
-      ) {
+      @if (selected() === 'fuel' && service.vehicleOptions().length > 1) {
         <label class="vehicle-filter"
           ><span>Vehicle</span
-          ><select class="lifeos-select"
+          ><select
+            class="lifeos-select"
             [value]="service.selectedVehicleId()"
             (change)="service.selectVehicle($any($event.target).value)"
           >
@@ -47,6 +49,50 @@
         >
       }
     </header>
+    <section class="stats-period" aria-label="Statistics period">
+      <nav aria-label="Time range">
+        @for (item of ranges; track item) {
+          <button
+            type="button"
+            [class.active]="range() === item"
+            [attr.aria-pressed]="range() === item"
+            (click)="range.set(item)"
+          >
+            {{ item }}
+          </button>
+        }
+      </nav>
+      @if (range() === '1M') {
+        <label
+          >Month<select
+            class="lifeos-select"
+            [ngModel]="selectedMonth()"
+            (ngModelChange)="selectedMonth.set($event)"
+          >
+            @for (month of monthOptions; track month.value) {
+              <option [value]="month.value">{{ month.label }}</option>
+            }
+          </select></label
+        >
+      }
+    </section>
+    @if (selected() === 'nutrition' && range() !== '1M') {
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <label
+          >From<input
+            type="date"
+            class="lifeos-select"
+            [ngModel]="nutritionStart()"
+            (ngModelChange)="nutritionStart.set($event)" /></label
+        ><label
+          >Through<input
+            type="date"
+            class="lifeos-select"
+            [ngModel]="nutritionEnd()"
+            (ngModelChange)="nutritionEnd.set($event)"
+        /></label>
+      </div>
+    }
     @if (loading()) {
       <app-skeleton variant="cards" [count]="4" />
       <div class="mt-4"><app-skeleton variant="chart" /></div>
@@ -67,79 +113,119 @@
         </section>
       } @else {
         @if (selected() === 'budget') {
-          <div class="budget-report-toolbar"><div><h2>Budget report</h2><p>Cycles ending {{ service.budgetReportCycle() }} &middot; {{ range() === 'All' ? 'All recorded totals; charts show latest 24 cycles' : range() === '1M' ? 'Selected budget cycle only' : 'Last ' + range() + ' of recorded activity' }}</p></div><nav aria-label="Budget report period">@for (item of ranges; track item) {<button type="button" [class.active]="range() === item" [attr.aria-pressed]="range() === item" (click)="range.set(item)">{{ item }}</button>}</nav></div>
+          <div class="budget-report-toolbar">
+            <div>
+              <h2>Budget report</h2>
+              <p>
+                Cycles ending {{ service.budgetReportCycle(range(), selectedMonth()) }} &middot;
+                {{
+                  range() === 'All'
+                    ? 'All recorded totals; charts show latest 24 cycles'
+                    : range() === '1M'
+                      ? 'Selected budget cycle only'
+                      : 'Last ' + range() + ' of recorded activity'
+                }}
+              </p>
+            </div>
+          </div>
           <app-budget-statistics [data]="data" />
         } @else {
-        <section class="kpi-grid" aria-label="Key statistics">
-          @for (item of data.kpis; track item.label) {
-            <article class="kpi-card">
-              <span [style.background]="item.accent"><ion-icon [name]="item.icon"></ion-icon></span>
-              <div>
-                <small>{{ item.label }}</small
-                ><strong>{{ item.value }}</strong>
-              </div>
-            </article>
-          }
-        </section>
-        <section class="stats-chart-card">
-          <div class="chart-heading">
-            <div>
-              <h2>{{ data.primaryTitle }}</h2>
-              <p>{{ option().label }} · {{ range() }}</p>
-            </div>
-            <nav aria-label="Time range">
-              @for (item of ranges; track item) {
-                <button
-                  type="button"
-                  [class.active]="range() === item"
-                  [attr.aria-pressed]="range() === item"
-                  (click)="range.set(item)"
-                >
-                  {{ item }}
-                </button>
-              }
-            </nav>
-          </div>
-          <app-budget-chart [config]="data.primary" [height]="230" [label]="data.primaryTitle" />
-        </section>
-        <section class="stats-chart-card">
-          <div class="chart-heading">
-            <div>
-              <h2>{{ data.secondaryTitle }}</h2>
-              <p>Actual recorded data</p>
-            </div>
-          </div>
-          <app-budget-chart [config]="data.secondary" [height]="230" [label]="data.secondaryTitle" />
-        </section>
-        @if (data.debt; as debt) {
-          <section class="stats-chart-card" aria-labelledby="debt-stats-title">
-            <div class="chart-heading">
-              <div><h2 id="debt-stats-title">Credit, loans &amp; debt</h2><p>Budget cycle: {{ debt.cycleLabel }} · repayments follow the selected time range</p></div>
-              <a routerLink="/budget/debts">Manage debts</a>
-            </div>
-            @if (debt.empty) {
-              <p class="stats-message">Add a credit card, loan or other debt account to see its statistics.</p>
-            } @else {
-              <div class="kpi-grid" aria-label="Debt statistics">
-                @for (item of debt.kpis; track item.label) {
-                  <article class="kpi-card"><span [style.background]="item.accent"><ion-icon [name]="item.icon"></ion-icon></span><div><small>{{ item.label }}</small><strong>{{ item.value }}</strong></div></article>
-                }
-              </div>
-              <h3 class="mt-5 mb-3">Outstanding by account</h3>
-              <app-budget-chart [config]="debt.balances" [height]="230" label="Outstanding debt by account" />
-              <h3 class="mt-5 mb-3">Monthly repayments @if (range() === 'All') { · latest 24 months }</h3>
-              <app-budget-chart [config]="debt.repayments" [height]="230" label="Monthly debt repayments" />
-              <p class="mt-4 text-sm text-[var(--text-secondary)]">Credit remaining = cycle opening + estimated interest − paid repayments. Deleting a payment recalculates these figures. Planned payments do not reduce outstanding balances or count as paid.</p>
+          <section class="kpi-grid" aria-label="Key statistics">
+            @for (item of data.kpis; track item.label) {
+              <article class="kpi-card">
+                <span [style.background]="item.accent"
+                  ><ion-icon [name]="item.icon"></ion-icon
+                ></span>
+                <div>
+                  <small>{{ item.label }}</small
+                  ><strong>{{ item.value }}</strong>
+                </div>
+              </article>
             }
           </section>
-        }
-        <section class="stats-insight">
-          <ion-icon name="bulb-outline"></ion-icon>
-          <div>
-            <h2>Insights</h2>
-            <p>{{ data.insight }}</p>
-          </div>
-        </section>
+          <section class="stats-chart-card">
+            <div class="chart-heading">
+              <div>
+                <h2>{{ data.primaryTitle }}</h2>
+                <p>{{ option().label }} · {{ range() === '1M' ? selectedMonth() : range() }}</p>
+              </div>
+            </div>
+            <app-budget-chart [config]="data.primary" [height]="230" [label]="data.primaryTitle" />
+          </section>
+          <section class="stats-chart-card">
+            <div class="chart-heading">
+              <div>
+                <h2>{{ data.secondaryTitle }}</h2>
+                <p>Actual recorded data</p>
+              </div>
+            </div>
+            <app-budget-chart
+              [config]="data.secondary"
+              [height]="230"
+              [label]="data.secondaryTitle"
+            />
+          </section>
+          @if (data.debt; as debt) {
+            <section class="stats-chart-card" aria-labelledby="debt-stats-title">
+              <div class="chart-heading">
+                <div>
+                  <h2 id="debt-stats-title">Credit, loans &amp; debt</h2>
+                  <p>
+                    Budget cycle: {{ debt.cycleLabel }} · repayments follow the selected time range
+                  </p>
+                </div>
+                <a routerLink="/budget/debts">Manage debts</a>
+              </div>
+              @if (debt.empty) {
+                <p class="stats-message">
+                  Add a credit card, loan or other debt account to see its statistics.
+                </p>
+              } @else {
+                <div class="kpi-grid" aria-label="Debt statistics">
+                  @for (item of debt.kpis; track item.label) {
+                    <article class="kpi-card">
+                      <span [style.background]="item.accent"
+                        ><ion-icon [name]="item.icon"></ion-icon
+                      ></span>
+                      <div>
+                        <small>{{ item.label }}</small
+                        ><strong>{{ item.value }}</strong>
+                      </div>
+                    </article>
+                  }
+                </div>
+                <h3 class="mt-5 mb-3">Outstanding by account</h3>
+                <app-budget-chart
+                  [config]="debt.balances"
+                  [height]="230"
+                  label="Outstanding debt by account"
+                />
+                <h3 class="mt-5 mb-3">
+                  Monthly repayments
+                  @if (range() === 'All') {
+                    · latest 24 months
+                  }
+                </h3>
+                <app-budget-chart
+                  [config]="debt.repayments"
+                  [height]="230"
+                  label="Monthly debt repayments"
+                />
+                <p class="mt-4 text-sm text-[var(--text-secondary)]">
+                  Credit remaining = cycle opening + estimated interest − paid repayments. Deleting
+                  a payment recalculates these figures. Planned payments do not reduce outstanding
+                  balances or count as paid.
+                </p>
+              }
+            </section>
+          }
+          <section class="stats-insight">
+            <ion-icon name="bulb-outline"></ion-icon>
+            <div>
+              <h2>Insights</h2>
+              <p>{{ data.insight }}</p>
+            </div>
+          </section>
         }
       }
     }

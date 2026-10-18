@@ -295,3 +295,8 @@
 :host-context(.dark) .chart-heading nav {
   background: var(--card);
 }
+.stats-period { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; margin: 18px 0; }
+.stats-period nav { display: flex; flex-wrap: wrap; gap: 6px; }
+.stats-period nav button { min-height: 40px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 10px; color: var(--foreground); background: var(--card); font-size: 13px; }
+.stats-period nav button.active { color: var(--primary-foreground); background: var(--primary); border-color: var(--primary); }
+.stats-period label { font-size: 12px; display: grid; gap: 5px; min-width: 180px; }

@@ -1,3 +1,4 @@
+import { buildWeeklyPlan } from './weekly-plan';
 import { effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { AuthService } from '../authentication/authentication.service';
 import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
@@ -31,6 +32,14 @@ export class GymStore {
     const uid=this.auth.userId();this.saving.set(true);
     try { const value=await operation();if(uid!==this.auth.userId())throw new Error('Your account changed. Reopen Gym to continue.');++this.version;apply(value);return value; }
     finally{this.saving.set(false);}
+  }
+  async importWeeklyPlan(): Promise<void> {
+    const plan = buildWeeklyPlan(this.exercises(), this.entries());
+    if (!plan.entries.length) return;
+    await this.mutate(async () => { await this.service.importWeeklyPlan(plan.exercises, plan.entries); return plan; }, saved => {
+      this.exercises.update(items => [...items, ...saved.exercises]);
+      this.entries.update(items => [...items, ...saved.entries]);
+    });
   }
   async saveExercise(input:Omit<GymExercise,'id'>,id?:string):Promise<GymExercise> {
     if(this.exercises().some(e=>e.id!==id&&e.name.trim().toLowerCase()===input.name.trim().toLowerCase()))throw new Error('An exercise with this name already exists. Edit it or use a different name.');

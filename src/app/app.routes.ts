@@ -25,6 +25,8 @@ export const routes: Routes = [
       { path: 'more', component: More, canActivate: [authGuard] },
     ],
   },
+  { path: 'nutrition/ingredients', loadComponent: () => import('./pages/nutrition/ingredients').then(m => m.Ingredients), canActivate: [authGuard] },
+  { path: 'nutrition', loadComponent: () => import('./pages/nutrition/nutrition').then(m => m.Nutrition), canActivate: [authGuard] },
   { path: 'gym', loadComponent: () => import('./pages/gym/gym').then(m => m.Gym), canActivate: [authGuard] },
   { path: 'budget', loadComponent: () => import('./pages/budget/budget-overview').then(m => m.BudgetOverview), canActivate: [authGuard] },
 
@@ -54,6 +56,7 @@ export const routes: Routes = [
   { path: 'budget/insights', loadComponent: () => import('./pages/budget/budget-insights').then(m => m.BudgetInsights), canActivate: [authGuard] },
   { path: 'vehicles', redirectTo: 'fuel/vehicles' },
   { path: 'books', loadComponent: () => import('./pages/books/books-library').then((m) => m.BooksLibrary), canActivate: [authGuard] },
+  { path: 'books/transfer', loadComponent: () => import('./pages/books/book-transfer').then(m => m.BookTransfer), canActivate: [authGuard] },
   { path: 'books/shelf', loadComponent: () => import('./pages/books/books-shelf').then((m) => m.BooksShelf), canActivate: [authGuard] },
   { path: 'books/finished', loadComponent: () => import('./pages/books/finished-books').then((m) => m.FinishedBooks), canActivate: [authGuard] },
   { path: 'books/scan', loadComponent: () => import('./pages/books/book-form').then((m) => m.BookForm), data: { scan: true }, canActivate: [authGuard] },
