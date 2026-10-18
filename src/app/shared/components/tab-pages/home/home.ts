@@ -8,7 +8,7 @@ import { VehicleStore } from '../../../state/vehicles/vehicle-store';
 import { money, summary } from '../../../state/budget/budget.model';
 import { localDate } from '../../../state/nutrition/nutrition.model';
 import { addIcons } from 'ionicons';
-import { restaurantOutline, barbell, wallet, car, calendar, book, lockClosed, carSport, scanOutline, cash, checkmark, searchOutline, arrowForwardOutline } from 'ionicons/icons';
+import { restaurantOutline, barbell, wallet, car, calendar, book, lockClosed, scanOutline, cash, checkmark, searchOutline, arrowForwardOutline } from 'ionicons/icons';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 
@@ -44,7 +44,7 @@ export class Home {
       {title:'Reading',value:String(this.reading()),unit:'in progress',hint:`${this.books.books().filter(b=>b.status==='Finished'&&b.finishDate.startsWith(this.isoToday.slice(0,7))).length} finished this month`,route:'/books',loading:this.books.loading(),error:this.books.error()},
     ];
   });
-  constructor(){addIcons({restaurantOutline,barbell,wallet,car,calendar,book,lockClosed,carSport,scanOutline,cash,checkmark,searchOutline,arrowForwardOutline});}
+  constructor(){addIcons({restaurantOutline,barbell,wallet,car,calendar,book,lockClosed,scanOutline,cash,checkmark,searchOutline,arrowForwardOutline});}
   matches(item: {title:string;description:string}): boolean {return `${item.title} ${item.description}`.toLowerCase().includes(this.query().trim().toLowerCase());}
   progress(value:number,goal:number):number {return goal>0?Math.min(100,Math.max(0,value/goal*100)):0;}
   spaceLoading(route:string):boolean {
@@ -81,7 +81,7 @@ export class Home {
     { title: 'Planning', description: 'Plan your days', icon: 'calendar', iconBackground: 'bg-gradient-to-br from-sky-300 to-blue-500', iconColor: 'text-slate-900', accent: 'sky', id: 3, route: '/planning' },
     { title: 'Passwords', description: 'Stay secure', icon: 'lock-closed', iconBackground: 'bg-gradient-to-br from-fuchsia-400 to-pink-500', iconColor: 'text-slate-900', accent: 'pink', id: 4, route: '/passwords' },
     { title: 'Recipes', description: 'Cook your favourites', icon: 'restaurant-outline', iconBackground: 'bg-gradient-to-br from-amber-300 to-orange-500', iconColor: 'text-slate-900', accent: 'amber', id: 5, route: '/recipes' },
-    { title: 'Vehicles', description: 'Manage your cars', icon: 'car-sport', iconBackground: 'bg-gradient-to-br from-cyan-300 to-cyan-500', iconColor: 'text-slate-900', accent: 'cyan', id: 6, route: '/fuel/vehicles' },
+    { title: 'Vehicles', description: 'Manage your cars', icon: 'car', iconBackground: 'bg-gradient-to-br from-cyan-300 to-cyan-500', iconColor: 'text-slate-900', accent: 'cyan', id: 6, route: '/fuel/vehicles' },
   ];
 
   readonly quickActions = [

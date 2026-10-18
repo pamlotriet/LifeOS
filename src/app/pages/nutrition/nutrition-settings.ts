@@ -178,7 +178,7 @@ export class NutritionSettings {
     this.message.set('');
     try {
       await this.store.saveProfile({ ...this.model, name: this.auth.displayName() });
-      this.message.set('Nutrition settings saved.');
+
     } catch (e) {
       this.message.set(e instanceof Error ? e.message : 'Could not save settings.');
     } finally {

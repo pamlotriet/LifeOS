@@ -87,7 +87,7 @@ export class Ingredients {
       this.food = { id: '', name: '', ...zeroMacros() };
       this.labelAmount = 100;
       this.editorOpen.set(false);
-      this.message.set('Ingredient saved.');
+
     });
   }
   editFood(food: Food): void {

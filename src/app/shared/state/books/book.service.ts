@@ -126,7 +126,7 @@ export class BookService {
         name: text(tag.name), type: text(tag.type), color: text(tag.color),
       } } })),
       { update: { name: this.firestore.documentName(`${path}/${GENRE_SEED_ID}`), fields: { seeded: { booleanValue: true } } } },
-    ], token);
+    ], token, false);
     return [...tags, ...additions];
   }
 

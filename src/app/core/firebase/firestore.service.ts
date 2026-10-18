@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { WriteFeedback } from './write-feedback.service';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 
 export interface FirestoreValue {
@@ -33,6 +34,7 @@ interface FirestoreRunQueryResult { document?: FirestoreDocument; }
 
 @Injectable({ providedIn: 'root' })
 export class FirestoreService {
+  constructor(private readonly feedback: WriteFeedback = inject(WriteFeedback)) {}
   private readonly baseUrl = `https://firestore.googleapis.com/v1/projects/${environment.firebaseConfig.projectId}/databases/(default)/documents`;
 
   async createUserIfMissing(
@@ -102,7 +104,9 @@ export class FirestoreService {
       { method: 'POST', body: JSON.stringify({ fields }) },
     );
     if (!response.ok) throw new Error(`Could not create Firestore document (${response.status}).`);
-    return (await response.json()) as FirestoreDocument;
+    const document = (await response.json()) as FirestoreDocument;
+    this.feedback.success('save');
+    return document;
   }
 
   async queryDocuments(collectionId: string, field: string, value: FirestoreValue, token: string): Promise<FirestoreDocument[]> {
@@ -139,6 +143,7 @@ export class FirestoreService {
       body: JSON.stringify({ fields }),
     });
     if (!response.ok) throw new Error(`Could not update Firestore document (${response.status}).`);
+    this.feedback.success('save');
   }
 
   async updateDocumentField(
@@ -155,6 +160,7 @@ export class FirestoreService {
       body: JSON.stringify({ fields: { [field]: value } }),
     });
     if (!response.ok) throw new Error(`Could not update Firestore document (${response.status}).`);
+    this.feedback.success('save');
   }
 
   async deleteDocument(path: string, id: string, token: string): Promise<void> {
@@ -166,15 +172,17 @@ export class FirestoreService {
     if (!response.ok && response.status !== 404) {
       throw new Error(`Could not delete Firestore document (${response.status}).`);
     }
+    this.feedback.success('delete');
   }
 
-  async commitWrites(writes: FirestoreWrite[], token: string): Promise<void> {
+  async commitWrites(writes: FirestoreWrite[], token: string, notify = true): Promise<void> {
     if (!writes.length) return;
     const response = await this.request(`${this.baseUrl}:commit`, token, {
       method: 'POST',
       body: JSON.stringify({ writes }),
     });
     if (!response.ok) throw new Error(`Could not save Firestore documents together (${response.status}).`);
+    if (notify) this.feedback.success(writes.some(write=>'delete' in write)?'delete':'save');
   }
 
   documentName(path: string): string {

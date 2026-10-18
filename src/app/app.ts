@@ -1,3 +1,4 @@
+import { WriteFeedback } from './core/firebase/write-feedback.service';
 import { DOCUMENT } from '@angular/common';
 import { AppNavigation } from './shared/state/app-navigation.service';
 import { AppUpdates } from './shared/state/app-updates.service';
@@ -15,6 +16,7 @@ import { ClearZeroOnFocus } from './shared/directives/clear-zero-on-focus';
   templateUrl: './app.html',
 })
 export class App {
+  readonly writeFeedback = inject(WriteFeedback);
   private readonly navigation = inject(AppNavigation);
   readonly updates = inject(AppUpdates);
   readonly refreshCoordinator = inject(RefreshCoordinator);
