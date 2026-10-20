@@ -13,6 +13,8 @@ import { AppSelect, SelectOption } from '../../shared/components/app-select/app-
 import { PageHeader } from '../../shared/components/page-header/page-header';
 import {
   RECIPE_CATEGORIES,
+  RecipeCategory,
+  recipeCategories,
   RECIPE_DIFFICULTIES,
   RecipeInput,
   RecipeStep,
@@ -147,10 +149,7 @@ export class RecipeForm {
   readonly steps = signal<RecipeStep[]>([{ id: crypto.randomUUID(), title: '', instruction: '' }]);
   readonly tags = signal<string[]>([]);
   readonly tagInput = signal('');
-  readonly categoryOptions: SelectOption[] = RECIPE_CATEGORIES.map((value) => ({
-    value,
-    label: value,
-  }));
+  readonly categories = RECIPE_CATEGORIES;
   readonly difficultyOptions: SelectOption[] = RECIPE_DIFFICULTIES.map((value) => ({
     value,
     label: value,
@@ -159,6 +158,7 @@ export class RecipeForm {
     title: '',
     description: '',
     category: 'Dinner',
+    categories: ['Dinner'],
     cookTime: 30,
     servings: 4,
     difficulty: 'Easy',
@@ -191,8 +191,13 @@ export class RecipeForm {
       this.loading.set(false);
     }
   }
-  setCategory(value: string): void {
-    this.model.category = value as RecipeInput['category'];
+  readonly selectedCategories = () => recipeCategories(this.model);
+  toggleCategory(value: RecipeCategory): void {
+    const selected = this.selectedCategories();
+    this.model.categories = selected.includes(value)
+      ? selected.filter((item) => item !== value)
+      : [...selected, value];
+    this.model.category = this.model.categories[0] ?? 'Other';
   }
   setDifficulty(value: string): void {
     this.model.difficulty = value as RecipeInput['difficulty'];
@@ -242,6 +247,10 @@ export class RecipeForm {
     }
     if ((!ingredients.length && !this.nutritionIngredients().length) || !steps.length) {
       this.error.set('Add at least one ingredient and one step.');
+      return;
+    }
+    if (!this.selectedCategories().length) {
+      this.error.set('Choose at least one recipe category.');
       return;
     }
     this.saving.set(true);

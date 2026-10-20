@@ -1,6 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
 import { NutritionService } from '../../shared/state/nutrition/nutrition.service';
@@ -11,9 +10,9 @@ import {
 } from '../../shared/state/nutrition/nutrition.calculations';
 @Component({
   selector: 'app-ingredients',
-  imports: [FormsModule, RouterLink, IonContent, PageHeader],
+  imports: [FormsModule, IonContent, PageHeader],
   templateUrl: './ingredients.html',
-  styleUrl: './nutrition.css',
+  styleUrl: '../nutrition/nutrition.css',
 })
 export class Ingredients {
   readonly store = inject(NutritionService);
@@ -87,7 +86,6 @@ export class Ingredients {
       this.food = { id: '', name: '', ...zeroMacros() };
       this.labelAmount = 100;
       this.editorOpen.set(false);
-
     });
   }
   editFood(food: Food): void {

@@ -1,18 +1,22 @@
 import { MealCategory } from '../nutrition/nutrition.model';
-export type PlanningCategory = 'Personal' | 'Bills' | 'Health' | 'Work' | 'Family' | 'Other';
-
-export interface PlanningEvent {
-  id: string; title: string; date: string; startTime: string; endTime: string;
-  location: string; notes: string; category: PlanningCategory; repeat: string; reminder: boolean; attendeeIds: string[]; createdAt: string;
+export interface MealPlanItem {
+  id: string;
+  date: string;
+  title: string;
+  detail: string;
+  recipeId?: string;
+  servings?: number;
+  meal?: MealCategory;
+  ingredientId?: string;
+  quantity?: number;
+  unit?: string;
 }
-export type PlanningEventInput = Omit<PlanningEvent, 'id' | 'createdAt'>;
-
-export interface PlanningReminder {
-  id: string; title: string; date: string; time: string; category: PlanningCategory; completed: boolean; createdAt: string;
+export interface GroceryItem {
+  id: string;
+  name: string;
+  section: string;
+  checked: boolean;
+  generatedKey?: string;
 }
-export type PlanningReminderInput = Omit<PlanningReminder, 'id' | 'createdAt'>;
-
-export interface MealPlanItem { id: string; date: string; title: string; detail: string; recipeId?: string; servings?: number; meal?: MealCategory; ingredientId?: string; quantity?: number; unit?: string; }
-export interface GroceryItem { id: string; name: string; section: string; checked: boolean; generatedKey?: string; }
 
 export type MealPlanEntry = MealPlanItem;

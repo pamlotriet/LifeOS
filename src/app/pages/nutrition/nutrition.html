@@ -2,9 +2,8 @@
 <ion-content class="[--background:transparent]"
   ><main class="nutrition-page">
     <nav class="page-links">
-      <a routerLink="/nutrition/ingredients">Ingredients</a
-      ><a routerLink="/planning/meals">Meal plan</a><a routerLink="/stats">Stats</a
-      ><a routerLink="/settings">Goals</a>
+      <a routerLink="/planning">Planning</a><a routerLink="/planning">Meal plan</a
+      ><a routerLink="/stats">Stats</a><a routerLink="/settings">Goals</a>
     </nav>
     <header class="diary-heading">
       <div>
@@ -70,7 +69,7 @@
         } @else {
           <a routerLink="/settings">Set your calorie and macro goals</a>
         }
-        <a class="planned-note" routerLink="/planning/meals"
+        <a class="planned-note" routerLink="/planning"
           >{{ planned().calories.toFixed(0) }} kcal planned separately &rarr;</a
         >
       </div>
@@ -158,7 +157,7 @@
             </p>
             <button class="action wide" (click)="logFood()" [disabled]="busy() || store.loading()">
               {{ busy() ? 'Saving...' : 'Add to diary' }}</button
-            ><a routerLink="/nutrition/ingredients">Manage ingredients &rarr;</a>
+            ><a routerLink="/planning/ingredients">Manage ingredients &rarr;</a>
           }
           @case ('recipe') {
             <label

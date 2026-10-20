@@ -93,7 +93,7 @@ describe('Personal nutrition persistence', () => {
     await store.reload();
     expect(store.error()).toContain('Deploy the updated Firestore rules');
   });
-  it('shares ingredient references with the recipe owner while keeping diary writes private', async () => {
+  it('keeps ingredients and diary personal despite a legacy enabled family link', async () => {
     const store = TestBed.inject(NutritionService);
     tryGetDocument.mockImplementation(async (path: string) =>
       path.startsWith('families/')
@@ -114,7 +114,7 @@ describe('Personal nutrition persistence', () => {
       fat: 0.3,
     });
     expect(updateDocument).toHaveBeenCalledWith(
-      'users/owner/ingredients/rice',
+      'users/member/ingredients/rice',
       expect.objectContaining({ kind: { stringValue: 'ingredient' } }),
       'token',
     );
@@ -126,7 +126,7 @@ describe('Personal nutrition persistence', () => {
     });
     expect(updateDocument.mock.calls.at(-1)?.[0]).toMatch(/^users\/member\/nutrition\//);
   });
-  it('keeps ingredients personal when family recipe sharing is disabled', async () => {
+  it('keeps ingredients personal despite a legacy disabled family link', async () => {
     const store = TestBed.inject(NutritionService);
     tryGetDocument.mockImplementation(async (path: string) =>
       path.startsWith('families/')

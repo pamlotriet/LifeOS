@@ -57,7 +57,7 @@ export class NutritionService {
     try {
       const { uid, token } = await this.auth.getSession();
       const docs = await this.db.listDocuments(`users/${uid}/nutrition`, token);
-      const ownerId = await this.ingredientOwner(uid, token);
+      const ownerId = uid;
       const ingredients = await this.db.listDocuments(`users/${ownerId}/ingredients`, token);
       if (version !== this.version) return;
       const read = <T>(kind: string): T[] =>
@@ -86,14 +86,6 @@ export class NutritionService {
     } finally {
       if (version === this.version) this.loading.set(false);
     }
-  }
-  private async ingredientOwner(uid: string, token: string): Promise<string> {
-    const profile = await this.db.tryGetDocument(`users/${uid}`, token);
-    const ownerId = profile?.fields?.['familyOwnerId']?.stringValue || uid;
-    const familyId = profile?.fields?.['familyId']?.stringValue;
-    if (ownerId === uid || !familyId) return uid;
-    const family = await this.db.tryGetDocument(`families/${familyId}`, token);
-    return family?.fields?.['shareRecipes']?.booleanValue === true ? ownerId : uid;
   }
   private async write(kind: string, id: string, data: unknown): Promise<boolean> {
     const { uid, token } = await this.auth.getSession();
@@ -135,7 +127,7 @@ export class NutritionService {
       throw new Error('Density must be positive.');
     const { uid, token } = await this.auth.getSession();
     const version = this.version;
-    const ownerId = await this.ingredientOwner(uid, token);
+    const ownerId = uid;
     const now = new Date().toISOString();
     food = {
       ...food,

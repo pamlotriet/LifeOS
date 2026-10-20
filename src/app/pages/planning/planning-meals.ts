@@ -18,6 +18,7 @@ import { nutritionLabel } from '../../shared/state/nutrition/nutrition.model';
 import { MealPlanItem } from '../../shared/state/planning/planning.model';
 import { PLANNING_ICONS } from './planning-icons';
 import { Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -227,6 +228,11 @@ export class PlanningMeals {
   readonly tab = signal<'meals' | 'groceries'>(
     this.route.snapshot.fragment === 'groceries' ? 'groceries' : 'meals',
   );
+  constructor() {
+    this.route.fragment.pipe(takeUntilDestroyed()).subscribe((fragment) => {
+      this.tab.set(fragment === 'groceries' ? 'groceries' : 'meals');
+    });
+  }
   week = week();
   readonly mealTitle = signal('');
   readonly mealDetail = signal('');

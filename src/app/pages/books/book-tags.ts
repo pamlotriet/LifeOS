@@ -1,10 +1,15 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { PageHeader } from '../../shared/components/page-header/page-header';
+import { RouterLink } from '@angular/router';
 import { BookTag, BookTagType } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
 
-@Component({ selector: 'app-book-tags', imports: [IonContent, IonIcon, PageHeader], templateUrl: './book-tags.html', styleUrls: ['./book-tags.css', './books-loading.css'] })
+@Component({
+  selector: 'app-book-tags',
+  imports: [IonContent, IonIcon, RouterLink],
+  templateUrl: './book-tags.html',
+  styleUrls: ['./book-tags.css', './books-loading.css'],
+})
 export class BookTags {
   readonly store = inject(BookStore);
   readonly type = signal<BookTagType>('mood');
@@ -17,27 +22,95 @@ export class BookTags {
   readonly busy = signal(false);
   readonly error = signal('');
   readonly search = signal('');
-  readonly visible = computed(() => this.store.tags().filter((tag) => tag.type === this.type() && tag.name.toLowerCase().includes(this.search().trim().toLowerCase())).sort((a, b) => a.name.localeCompare(b.name)));
+  readonly sort = signal<'az' | 'za' | 'books'>('az');
+  readonly moodCount = computed(
+    () => this.store.tags().filter((tag) => tag.type === 'mood').length,
+  );
+  readonly genreCount = computed(
+    () => this.store.tags().filter((tag) => tag.type === 'genre').length,
+  );
+  readonly visible = computed(() =>
+    this.store
+      .tags()
+      .filter(
+        (tag) =>
+          tag.type === this.type() &&
+          tag.name.toLowerCase().includes(this.search().trim().toLowerCase()),
+      )
+      .sort((a, b) =>
+        this.sort() === 'books'
+          ? this.count(b) - this.count(a) || a.name.localeCompare(b.name)
+          : this.sort() === 'za'
+            ? b.name.localeCompare(a.name)
+            : a.name.localeCompare(b.name),
+      ),
+  );
 
   count(tag: BookTag): number {
-    return this.store.books().filter((book) => (tag.type === 'mood' ? book.moodTagIds : book.genreTagIds).includes(tag.id)).length;
+    return this.store
+      .books()
+      .filter((book) => (tag.type === 'mood' ? book.moodTagIds : book.genreTagIds).includes(tag.id))
+      .length;
   }
-  openNew(): void { this.editing.set(null); this.name.set(''); this.color.set(this.colors[0]); this.error.set(''); this.formOpen.set(true); }
-  openEdit(tag: BookTag): void { this.editing.set(tag); this.name.set(tag.name); this.color.set(tag.color); this.error.set(''); this.formOpen.set(true); }
+  openNew(): void {
+    this.editing.set(null);
+    this.name.set('');
+    this.color.set(this.colors[0]);
+    this.error.set('');
+    this.formOpen.set(true);
+  }
+  openEdit(tag: BookTag): void {
+    this.editing.set(tag);
+    this.name.set(tag.name);
+    this.color.set(tag.color);
+    this.error.set('');
+    this.formOpen.set(true);
+  }
   async save(): Promise<void> {
     if (this.busy()) return;
-    if (!this.name().trim()) { this.error.set('Enter a tag name.'); return; }
-    if (this.store.tags().some((tag) => tag.type === this.type() && tag.name.toLowerCase() === this.name().trim().toLowerCase() && tag.id !== this.editing()?.id)) { this.error.set('A tag with that name already exists.'); return; }
-    this.busy.set(true); this.error.set('');
-    try { await this.store.saveTag({ name: this.name(), type: this.type(), color: this.color() }, this.editing()?.id); this.formOpen.set(false); }
-    catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not save tag.'); }
-    finally { this.busy.set(false); }
+    if (!this.name().trim()) {
+      this.error.set('Enter a tag name.');
+      return;
+    }
+    if (
+      this.store
+        .tags()
+        .some(
+          (tag) =>
+            tag.type === this.type() &&
+            tag.name.toLowerCase() === this.name().trim().toLowerCase() &&
+            tag.id !== this.editing()?.id,
+        )
+    ) {
+      this.error.set('A tag with that name already exists.');
+      return;
+    }
+    this.busy.set(true);
+    this.error.set('');
+    try {
+      await this.store.saveTag(
+        { name: this.name(), type: this.type(), color: this.color() },
+        this.editing()?.id,
+      );
+      this.formOpen.set(false);
+    } catch (error) {
+      this.error.set(error instanceof Error ? error.message : 'Could not save tag.');
+    } finally {
+      this.busy.set(false);
+    }
   }
   async remove(): Promise<void> {
-    const tag = this.deleting(); if (!tag || this.busy()) return;
-    this.busy.set(true); this.error.set('');
-    try { await this.store.deleteTag(tag); this.deleting.set(null); }
-    catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not delete tag.'); }
-    finally { this.busy.set(false); }
+    const tag = this.deleting();
+    if (!tag || this.busy()) return;
+    this.busy.set(true);
+    this.error.set('');
+    try {
+      await this.store.deleteTag(tag);
+      this.deleting.set(null);
+    } catch (error) {
+      this.error.set(error instanceof Error ? error.message : 'Could not delete tag.');
+    } finally {
+      this.busy.set(false);
+    }
   }
 }

@@ -15,7 +15,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
-import { RecipeRecord } from '../../shared/state/recipes/recipe.model';
+import { RecipeRecord, recipeCategories } from '../../shared/state/recipes/recipe.model';
 import { RecipeStore } from '../../shared/state/recipes/recipe-store';
 
 @Component({
@@ -24,6 +24,7 @@ import { RecipeStore } from '../../shared/state/recipes/recipe-store';
   templateUrl: './recipe-detail.html',
 })
 export class RecipeDetail {
+  readonly recipeCategories = recipeCategories;
   readonly nutrition = inject(NutritionService);
   readonly planning = inject(PlanningStore);
   readonly categories = MEAL_CATEGORIES;

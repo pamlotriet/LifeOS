@@ -1,1 +1,436 @@
-.week-controls{display:flex;align-items:stretch;gap:14px;margin:20px 0}.day-selector{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;flex:1;min-width:0}.day-selector button{border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--foreground);padding:12px 8px;min-width:0}.day-selector strong,.day-selector small{display:block}.day-selector strong{font-size:.85rem}.day-selector small{font-size:.66rem;margin-top:6px}.day-selector .active{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 10%,var(--card))}.day-selector .active strong{color:var(--primary)}.week-controls>.button{font-size:.75rem;flex-shrink:0}.week-grid.focused-workout{grid-template-columns:minmax(0,1fr);max-width:1000px;margin-inline:auto}.focused-workout .day-card{padding:28px}.focused-workout .workout-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:center}.focused-workout .prescription{margin:0}.focused-workout .item-actions{grid-column:1/-1;margin:0;justify-content:flex-end}.focused-workout .workout-notes{grid-column:1/-1}.focused-workout .day-empty{padding:30px 8px}.day-card .item-actions{flex-wrap:wrap;gap:12px}.order-button{width:40px;border:1px solid var(--border);border-radius:8px}.copy-workout{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:16px;margin-bottom:20px;border-color:var(--primary)}.copy-workout label{margin:0}.copy-workout .form-actions{grid-column:1/-1}@media(max-width:650px){.week-controls{flex-wrap:wrap}.day-selector{flex-basis:100%;gap:4px}.day-selector button{padding:12px 2px}.day-selector strong{font-size:.74rem}.day-selector small{font-size:.58rem;overflow-wrap:anywhere}.week-controls>.button{width:100%;min-height:40px}.focused-workout .day-card{padding:18px}.focused-workout .workout-item{grid-template-columns:minmax(0,1fr)}.focused-workout .prescription{margin-top:2px}.focused-workout .item-actions{justify-content:flex-start}.copy-workout{grid-template-columns:minmax(0,1fr)}}
+:host {
+  --background: #0c0917;
+  --foreground: #ece8f6;
+  --card: #171224;
+  --border: #2b2539;
+  --muted: #211a32;
+  --secondary: #211a32;
+  --primary: #9d88ff;
+  --primary-foreground: #100c21;
+  --text-secondary: #b7b1c8;
+  --ring: #9d88ff;
+  display: block;
+  background: var(--background);
+  color: var(--foreground);
+}
+ion-content {
+  --background: var(--background);
+}
+.gym-page {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 24px 48px;
+  box-sizing: border-box;
+}
+.gym-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.gym-topbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.gym-home,
+.training-space {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--foreground);
+  text-decoration: none;
+}
+.gym-home .gym-icon {
+  color: var(--text-secondary);
+  width: 16px;
+}
+.training-space .gym-icon {
+  color: #52e3d1;
+}
+.gym-header {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  padding: 32px 0;
+  margin: 0 0 32px;
+  align-items: flex-end;
+}
+.gym-header .eyebrow {
+  color: #52e3d1;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  margin: 0 0 8px;
+}
+.gym-header h1 {
+  font-size: 48px;
+  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+.gym-header h1 span {
+  color: var(--primary);
+}
+.gym-header .muted {
+  font-size: 14px;
+  margin-top: 12px;
+}
+.button {
+  font-weight: 500;
+  min-height: 36px;
+  padding: 8px 16px;
+}
+.gym-header .button {
+  margin-bottom: 0;
+}
+.week-summary {
+  border-block: 1px solid var(--border);
+  padding: 20px 0;
+  margin: 0 0 32px;
+  gap: 0;
+}
+.week-summary > div,
+.week-summary > div:nth-child(n) {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  padding: 0 24px;
+}
+.week-summary > div + div {
+  border-left: 1px solid var(--border);
+}
+.week-summary strong {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--foreground);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+.week-summary strong .gym-icon {
+  color: var(--primary);
+  width: 20px;
+  height: 20px;
+}
+.week-summary > div:nth-child(2) .gym-icon {
+  color: #52e3d1;
+}
+.week-summary > div:nth-child(3) .gym-icon {
+  color: #e4a6f1;
+}
+.week-summary span {
+  font-size: 12px;
+  margin-top: 8px;
+  color: var(--text-secondary);
+}
+.gym-tabs {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+.gym-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 0;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+  font-size: 14px;
+}
+.gym-tabs .active {
+  background: none;
+  box-shadow: none;
+  border-bottom-color: var(--primary);
+}
+.gym-tabs .gym-icon {
+  width: 16px;
+  height: 16px;
+}
+.day-selector {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 28px;
+}
+.day-selector button {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--foreground);
+  min-width: 0;
+  height: 80px;
+  padding: 12px 4px;
+}
+.day-selector strong,
+.day-selector small {
+  display: block;
+}
+.day-selector strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+.day-selector small {
+  font-size: 11px;
+  margin-top: 6px;
+}
+.day-selector .active {
+  border-color: var(--primary);
+  background: #2a2141;
+}
+.day-selector .active strong {
+  color: var(--primary);
+}
+.day-selector .today:after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #52e3d1;
+}
+.all-week .gym-icon {
+  margin-bottom: 4px;
+}
+.all-week strong {
+  font-size: 12px;
+}
+.week-grid,
+.week-grid.focused-workout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  max-width: none;
+  margin: 0;
+}
+.day-card,
+.focused-workout .day-card {
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.day-card header {
+  margin: 0 0 16px;
+  align-items: center;
+}
+.day-heading {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.day-number {
+  font-size: 30px;
+  font-weight: 300;
+  color: #706980;
+  letter-spacing: -0.06em;
+}
+.day-heading h3 {
+  font-size: 20px;
+  font-weight: 400;
+}
+.day-count {
+  background: none;
+  border-radius: 0;
+  padding: 0;
+  margin-top: 3px;
+  font-size: 12px;
+}
+.header-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--foreground);
+  font-size: 12px;
+  padding: 0 12px;
+}
+.workout-item,
+.focused-workout .workout-item {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: 0 12px;
+  align-items: start;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.workout-title {
+  display: contents;
+}
+.exercise-number {
+  grid-column: 1;
+  width: 32px;
+  height: 32px;
+  background: #211a32;
+  color: var(--primary);
+  border-radius: 10px;
+  font-weight: 400;
+}
+.workout-title > div {
+  grid-column: 2;
+}
+.workout-title h4 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.workout-title small {
+  font-size: 12px;
+  margin-top: 5px;
+}
+.prescription,
+.focused-workout .prescription {
+  grid-column: 3;
+  grid-row: 1;
+  margin: 4px 0 0;
+  gap: 8px;
+}
+.prescription span {
+  background: #211a32;
+  padding: 5px 8px;
+  border-radius: 16px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.workout-notes,
+.focused-workout .workout-notes {
+  grid-column: 2/-1;
+  margin-top: 10px;
+  font-size: 12px;
+}
+.item-actions,
+.focused-workout .item-actions {
+  grid-column: 2/-1;
+  justify-content: flex-start;
+  margin: 12px 0 0;
+  gap: 16px;
+}
+.item-actions .text-button {
+  width: 20px;
+  min-height: 26px;
+  color: var(--text-secondary);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+.item-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.item-actions .gym-icon {
+  width: 16px;
+  height: 16px;
+}
+.day-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  padding: 16px 0;
+}
+.button.day-add {
+  width: auto;
+  background: none;
+  color: var(--primary);
+  border: 0;
+  padding: 0;
+}
+.day-create {
+  font-size: 12px;
+}
+.day-card-actions > .text-button {
+  font-size: 12px;
+}
+.copy-workout {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.copy-workout .form-actions {
+  grid-column: 1/-1;
+}
+@media (max-width: 650px) {
+  .gym-page {
+    padding: 0 16px 32px;
+  }
+  .gym-topbar {
+    height: 72px;
+  }
+  .gym-header {
+    padding: 32px 0 0;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .gym-header h1 {
+    font-size: 36px;
+  }
+  .gym-header .button {
+    width: 100%;
+  }
+  .week-summary {
+    margin-bottom: 32px;
+  }
+  .week-summary > div,
+  .week-summary > div:nth-child(n) {
+    padding: 0 12px;
+  }
+  .week-summary strong {
+    font-size: 32px;
+  }
+  .week-summary strong .gym-icon {
+    display: none;
+  }
+  .gym-tabs {
+    gap: 20px;
+  }
+  .gym-tabs button {
+    flex: initial;
+    padding: 14px 0;
+    font-size: 14px;
+  }
+  .day-selector {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 28px;
+  }
+  .day-selector strong {
+    font-size: 14px;
+  }
+  .header-add span {
+    display: none;
+  }
+  .header-add {
+    padding: 0 12px;
+  }
+  .workout-item,
+  .focused-workout .workout-item {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 0 12px;
+  }
+  .prescription,
+  .focused-workout .prescription {
+    grid-column: 2;
+    grid-row: auto;
+    margin-top: 10px;
+  }
+  .workout-notes,
+  .focused-workout .workout-notes {
+    grid-column: 2;
+  }
+  .copy-workout {
+    grid-template-columns: 1fr;
+  }
+}

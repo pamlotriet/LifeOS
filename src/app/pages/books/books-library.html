@@ -1,79 +1,223 @@
-<ion-header app-page-header title="Books"></ion-header>
-<ion-content class="[--background:transparent] [--color:#fff]">
+<ion-content class="books-content">
   <main class="books-overview" [attr.aria-busy]="loading()">
-    <header class="books-header"><div><p class="books-eyebrow">Your personal library</p><h1>Your reading space</h1><p>Pick up a book, track your progress, find your next read.</p></div><div class="books-header-actions"><a routerLink="/books/transfer" class="books-secondary">Import / export</a><a routerLink="/books/scan" class="books-secondary"><ion-icon name="scan-outline" /> Scan ISBN</a><a routerLink="/books/add" class="books-primary"><ion-icon name="add" /> Add book</a></div></header>
-    <nav class="books-nav" aria-label="Books navigation"><a routerLink="/books/shelf"><ion-icon name="library" /> Bookshelf <small>All your books</small></a><a routerLink="/books/finished"><ion-icon name="checkmark" /> Finished <small>Your completed reads</small></a><a routerLink="/books/tags"><ion-icon name="pricetags" /> Tags <small>Genres &amp; moods</small></a></nav>
+    <nav class="books-topbar" aria-label="Library navigation">
+      <a routerLink="/home"><ion-icon name="arrow-back-outline" aria-hidden="true" /> LifeOS</a>
+      <span><ion-icon name="book-outline" aria-hidden="true" /> Reading space</span>
+    </nav>
+    <header class="books-header">
+      <div>
+        <p class="books-eyebrow">Your personal library</p>
+        <h1>Books <span>&amp; chapters</span></h1>
+        <p>A little less scrolling. A few more pages.</p>
+      </div>
+      <div class="books-header-actions">
+        <a routerLink="/books/tags" class="books-secondary"
+          ><ion-icon name="pricetags-outline" aria-hidden="true" /> Tags</a
+        >
+        <a routerLink="/books/shelf" class="books-secondary"
+          ><ion-icon name="library-outline" aria-hidden="true" /> Bookshelf</a
+        >
+        <a routerLink="/books/add" class="books-primary"
+          ><ion-icon name="add" aria-hidden="true" /> Open shelf</a
+        >
+      </div>
+    </header>
     @if (loading()) {
       <div class="books-loading" role="status" aria-label="Loading your library and reading goal">
         <span class="sr-only">Loading your library and reading goal...</span>
         <div class="books-skeleton-totals" aria-hidden="true">
-          @for (item of [1, 2, 3]; track item) { <div><i class="books-placeholder books-placeholder-number"></i><i class="books-placeholder books-placeholder-label"></i></div> }
-        </div>
-        <div class="reading-section books-skeleton-reading" aria-hidden="true">
-          <i class="books-placeholder books-placeholder-heading"></i>
-          @for (item of [1, 2]; track item) {
-            <div class="books-skeleton-book"><i class="books-placeholder books-placeholder-cover"></i><div><i class="books-placeholder books-placeholder-heading"></i><i class="books-placeholder books-placeholder-label"></i><i class="books-placeholder books-placeholder-track"></i><i class="books-placeholder books-placeholder-button"></i></div></div>
+          @for (item of [1, 2, 3, 4]; track item) {
+            <div>
+              <i class="books-placeholder books-placeholder-number"></i
+              ><i class="books-placeholder books-placeholder-label"></i>
+            </div>
           }
         </div>
-        <div class="books-skeleton-navigation" aria-hidden="true">@for (item of [1, 2]; track item) { <div><i class="books-placeholder books-placeholder-number"></i><i class="books-placeholder books-placeholder-label"></i></div> }</div>
-        <div class="books-skeleton-goal" aria-hidden="true"><i class="books-placeholder books-placeholder-heading"></i><div><i class="books-placeholder books-placeholder-ring"></i><span><i class="books-placeholder books-placeholder-heading"></i><i class="books-placeholder books-placeholder-label"></i></span></div></div>
+        <div class="books-skeleton-reading" aria-hidden="true">
+          <i class="books-placeholder books-placeholder-heading"></i>
+          @for (item of [1, 2]; track item) {
+            <div class="books-skeleton-book">
+              <i class="books-placeholder books-placeholder-cover"></i>
+              <div>
+                <i class="books-placeholder books-placeholder-heading"></i
+                ><i class="books-placeholder books-placeholder-label"></i
+                ><i class="books-placeholder books-placeholder-track"></i>
+              </div>
+            </div>
+          }
+        </div>
       </div>
     } @else {
-    <section
-      aria-label="Library totals" data-section="library-totals"
-      class="grid grid-cols-3 divide-x divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-[var(--card)] py-3 text-center"
-    >
-      <div>
-        <p class="text-lg font-bold text-cyan-300">{{ store.books().length }}</p>
-        <p class="text-[11px] text-[var(--text-secondary)]">In library</p>
-      </div>
-      <div>
-        <p class="text-lg font-bold text-emerald-300">{{ reading() }}</p>
-        <p class="text-[11px] text-[var(--text-secondary)]">Reading</p>
-      </div>
-      <div>
-        <p class="text-lg font-bold text-pink-300">{{ favourites() }}</p>
-        <p class="text-[11px] text-[var(--text-secondary)]">Favourites</p>
-      </div>
-    </section>
-
-    <section aria-labelledby="reading-now-title" class="reading-section">
-      <div class="reading-heading"><div><p class="reading-eyebrow">Pick up where you left off</p><h2 id="reading-now-title">Currently reading</h2></div><span class="reading-count">{{ currentlyReading().length }}</span></div>
-      @if (store.loading() && !store.books().length) { <app-skeleton variant="list" [count]="1" /> }
-      @else if (store.error()) { <p role="alert" class="reading-feedback">{{ store.error() }} <button type="button" (click)="store.reload()">Retry</button></p> }
-      @else {
-        <div class="reading-list">
-          @for (book of currentlyReading(); track book.id) {
-            <article class="reading-card">
-              <a [routerLink]="['/books', book.id, 'edit']" class="reading-cover" [attr.aria-label]="'View ' + book.title">
-                @if (book.coverUrl) { <img [src]="book.coverUrl" [alt]="book.title + ' cover'" loading="lazy" /> }
-                @else { <ion-icon name="book" aria-hidden="true" /> }
-              </a>
-              <div class="reading-details">
-                <a [routerLink]="['/books', book.id, 'edit']" class="reading-book-title">{{ book.title }}</a>
-                <p class="reading-author">{{ book.author }}</p>
-                <div class="reading-progress-copy"><span>{{ trackingMode(book)==='pages' && book.pageCount > 0 ? 'Page ' + book.pageProgress + ' of ' + book.pageCount : 'Reading progress' }}</span><strong>{{ pagePercent(book) }}%</strong></div>
-                <div class="reading-track" role="progressbar" [attr.aria-label]="'Progress for ' + book.title" [attr.aria-valuenow]="pagePercent(book)" aria-valuemin="0" aria-valuemax="100"><span [style.width.%]="pagePercent(book)"></span></div>
-                @if (trackingMode(book)==='pages' && book.pageCount > 0) { <p class="reading-remaining">{{ book.pageCount - book.pageProgress }} pages to go</p> }
-                <button type="button" class="reading-update" (click)="openProgress(book)" [attr.aria-label]="'Update progress for ' + book.title"><ion-icon name="add" aria-hidden="true" /> Update progress</button>
-              </div>
-            </article>
-          } @empty { <div class="reading-empty"><ion-icon name="book" aria-hidden="true" /><p>Your next chapter starts here.</p><a routerLink="/books/shelf">Choose a book from your shelf</a></div> }
+      <section class="books-totals" aria-label="Library totals" data-section="library-totals">
+        <a routerLink="/books/shelf"
+          ><ion-icon name="library-outline" aria-hidden="true" /><span
+            ><strong>{{ store.books().length }}</strong
+            ><small>On your shelf</small></span
+          ></a
+        >
+        <a routerLink="/books/shelf"
+          ><ion-icon name="book-outline" aria-hidden="true" /><span
+            ><strong>{{ reading() }}</strong
+            ><small>Currently reading</small></span
+          ></a
+        >
+        <a routerLink="/books/finished"
+          ><ion-icon name="checkmark-done-outline" aria-hidden="true" /><span
+            ><strong>{{ finished() }}</strong
+            ><small>Finished</small></span
+          ></a
+        >
+        <a routerLink="/books/shelf"
+          ><ion-icon name="bookmark-outline" aria-hidden="true" /><span
+            ><strong>{{ favourites() }}</strong
+            ><small>Favourites</small></span
+          ></a
+        >
+      </section>
+      <section aria-labelledby="reading-now-title" class="reading-section">
+        <div class="reading-heading">
+          <h2 id="reading-now-title">Currently reading</h2>
+          <a routerLink="/books/shelf"
+            >All reading <ion-icon name="arrow-up-outline" aria-hidden="true"
+          /></a>
         </div>
-      }
-      @if (progressNotice()) { <p role="status" class="reading-feedback">{{ progressNotice() }}</p> }
-    </section>
-    <section class="books-goal" aria-labelledby="reading-goal-title"><div class="books-goal-heading"><div><p class="books-eyebrow">{{year}} reading goal</p><h2 id="reading-goal-title">Make room for reading</h2></div><button type="button" class="books-text-button" (click)="editGoal()">{{goal()?'Edit goal':'Set goal'}}</button></div>
-      @if(goalLoading()){<app-skeleton variant="list" [count]="1" />} @else if(goal();as target){
-        <div class="books-goal-number"><strong>{{readThisYear()}}</strong><span>of {{target}} books finished</span></div>
-        <div class="books-goal-track" role="progressbar" aria-label="Yearly reading goal" [attr.aria-valuenow]="goalPercent()" aria-valuemin="0" aria-valuemax="100"><span [style.width.%]="goalPercent()"></span></div><p>{{goalRemaining()?goalRemaining()+' books to go. One chapter at a time.':'Goal reached. Keep reading!'}}</p>
-      } @else {<p>Choose how many books you?d like to finish this year. Each completed book moves you closer.</p>}
-      @if(goalError()&&!goalEditing()){<p role="alert">{{goalError()}}</p>}
-      <a routerLink="/books/finished" class="books-secondary">View finished books &rarr;</a>
-    </section>
-    <section class="books-discover"><div class="books-discover-heading"><h2>On your shelf</h2><a routerLink="/books/shelf">Browse all &rarr;</a></div>@if(store.books().length){<div class="books-preview-grid">@for(book of store.sortedBooks().slice(0,6);track book.id){<a [routerLink]="['/books',book.id,'edit']"><span class="books-preview-cover">@if(book.coverUrl){<img [src]="book.coverUrl" [alt]="book.title+' cover'" loading="lazy" />}@else{<ion-icon name="book" />}</span><strong>{{book.title}}</strong><small>{{book.author}}</small><span class="books-preview-status">{{book.status==='Not Started'?'Want to read':book.status}}</span></a>}</div>}@else{<div class="books-preview-empty"><ion-icon name="book" /><h3>Your next read starts here</h3><p>Scan an ISBN or add a book to start building your library.</p><a routerLink="/books/add" class="books-primary">Add your first book</a></div>}</section>
-
-
+        @if (store.error()) {
+          <p role="alert" class="reading-feedback">
+            {{ store.error() }} <button type="button" (click)="store.reload()">Retry</button>
+          </p>
+        } @else {
+          <div class="reading-list">
+            @for (book of currentlyReading(); track book.id) {
+              <article class="reading-card">
+                <a
+                  [routerLink]="['/books', book.id, 'edit']"
+                  class="reading-cover"
+                  [attr.aria-label]="'View ' + book.title"
+                >
+                  @if (book.coverUrl) {
+                    <img [src]="book.coverUrl" [alt]="book.title + ' cover'" loading="lazy" />
+                  } @else {
+                    <ion-icon name="book-outline" aria-hidden="true" />
+                  }
+                </a>
+                <div class="reading-details">
+                  <p class="reading-eyebrow">In progress</p>
+                  <a [routerLink]="['/books', book.id, 'edit']" class="reading-book-title">{{
+                    book.title
+                  }}</a>
+                  <p class="reading-author">{{ book.author }}</p>
+                  <div class="reading-progress-copy">
+                    <span>{{
+                      trackingMode(book) === 'pages' && book.pageCount > 0
+                        ? 'Page ' + book.pageProgress + ' of ' + book.pageCount
+                        : 'Reading progress'
+                    }}</span
+                    ><strong>{{ pagePercent(book) }}%</strong>
+                  </div>
+                  <div
+                    class="reading-track"
+                    role="progressbar"
+                    [attr.aria-label]="'Progress for ' + book.title"
+                    [attr.aria-valuenow]="pagePercent(book)"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    <span [style.width.%]="pagePercent(book)"></span>
+                  </div>
+                  <div class="reading-footer">
+                    <p class="reading-remaining">
+                      {{
+                        trackingMode(book) === 'pages' && book.pageCount > 0
+                          ? book.pageCount - book.pageProgress + ' pages to go'
+                          : 100 - pagePercent(book) + '% to go'
+                      }}
+                    </p>
+                    <button
+                      type="button"
+                      class="reading-update"
+                      (click)="openProgress(book)"
+                      [attr.aria-label]="'Update progress for ' + book.title"
+                    >
+                      Update progress
+                    </button>
+                  </div>
+                </div>
+              </article>
+            } @empty {
+              <div class="reading-empty">
+                <ion-icon name="book-outline" aria-hidden="true" />
+                <p>Your next chapter starts here.</p>
+                <a routerLink="/books/shelf">Choose a book from your shelf</a>
+              </div>
+            }
+          </div>
+        }
+        @if (progressNotice()) {
+          <p role="status" class="reading-feedback">{{ progressNotice() }}</p>
+        }
+      </section>
+      <aside class="books-sidebar">
+        <section class="books-goal" aria-labelledby="reading-goal-title">
+          <div class="books-goal-heading">
+            <p class="books-eyebrow">
+              <ion-icon name="radio-button-on-outline" aria-hidden="true" /> Reading goal
+            </p>
+            <button
+              type="button"
+              class="books-text-button"
+              (click)="editGoal()"
+              [attr.aria-label]="goal() ? 'Edit reading goal' : 'Set reading goal'"
+            >
+              <ion-icon name="pencil-outline" aria-hidden="true" />
+            </button>
+          </div>
+          <h2 id="reading-goal-title">Make time for a good book.</h2>
+          @if (goal(); as target) {
+            <div class="books-goal-number">
+              <strong>{{ readThisYear() }}</strong
+              ><span>/ {{ target }}</span>
+            </div>
+            <p class="books-goal-caption">books finished in {{ year }}</p>
+            <div
+              class="books-goal-track"
+              role="progressbar"
+              aria-label="Yearly reading goal"
+              [attr.aria-valuenow]="goalPercent()"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <span [style.width.%]="goalPercent()"></span>
+            </div>
+            <div class="books-goal-status">
+              <span>{{
+                goalRemaining()
+                  ? goalRemaining() + ' more stories to go'
+                  : 'Goal reached. Keep reading!'
+              }}</span
+              ><span>{{ goalPercent() }}%</span>
+            </div>
+          } @else {
+            <p class="books-goal-empty">
+              Choose how many books you&rsquo;d like to finish this year.
+            </p>
+            <button type="button" class="books-secondary" (click)="editGoal()">
+              Set reading goal
+            </button>
+          }
+          @if (goalError() && !goalEditing()) {
+            <p role="alert" class="reading-feedback">{{ goalError() }}</p>
+          }
+          <a routerLink="/books/finished" class="books-secondary books-finished"
+            ><ion-icon name="checkmark-done-outline" aria-hidden="true" /> Finished books
+            <ion-icon name="arrow-up-outline" aria-hidden="true"
+          /></a>
+        </section>
+        <section class="books-note">
+          <ion-icon name="bookmark-outline" aria-hidden="true" />
+          <h2>One chapter at a time.</h2>
+          <p>There&rsquo;s no rush to the last page.</p>
+        </section>
+      </aside>
     }
   </main>
 
@@ -124,23 +268,89 @@
       </div>
     </div>
   }
-  <ion-modal [isOpen]="!!progressBook()" [canDismiss]="!progressSaving()" (didDismiss)="closeProgress()" class="progress-modal" aria-labelledby="progress-dialog-title">
+  <ion-modal
+    [isOpen]="!!progressBook()"
+    [canDismiss]="!progressSaving()"
+    (didDismiss)="closeProgress()"
+    class="progress-modal"
+    aria-labelledby="progress-dialog-title"
+  >
     <ng-template>
       @if (progressBook(); as book) {
         <form class="progress-editor" (submit)="$event.preventDefault(); saveProgress()">
-          <div class="progress-dialog-heading"><div><p class="reading-eyebrow">One chapter at a time</p><h2 id="progress-dialog-title">Update progress</h2></div><button class="progress-close" type="button" aria-label="Close progress editor" (click)="closeProgress()" [disabled]="progressSaving()">×</button></div>
+          <div class="progress-dialog-heading">
+            <div>
+              <p class="reading-eyebrow">One chapter at a time</p>
+              <h2 id="progress-dialog-title">Update progress</h2>
+            </div>
+            <button
+              class="progress-close"
+              type="button"
+              aria-label="Close progress editor"
+              (click)="closeProgress()"
+              [disabled]="progressSaving()"
+            >
+              ×
+            </button>
+          </div>
           <p class="progress-book-name">{{ book.title }}</p>
           <fieldset [disabled]="progressSaving()">
             <div class="progress-modes" role="group" aria-label="Progress unit">
-              @if (book.pageCount > 0) { <button type="button" [class.active]="progressMode() === 'pages'" [attr.aria-pressed]="progressMode() === 'pages'" (click)="changeProgressMode('pages')">Pages</button> }
-              <button type="button" [class.active]="progressMode() === 'percent'" [attr.aria-pressed]="progressMode() === 'percent'" (click)="changeProgressMode('percent')">Percentage</button>
+              @if (book.pageCount > 0) {
+                <button
+                  type="button"
+                  [class.active]="progressMode() === 'pages'"
+                  [attr.aria-pressed]="progressMode() === 'pages'"
+                  (click)="changeProgressMode('pages')"
+                >
+                  Pages
+                </button>
+              }
+              <button
+                type="button"
+                [class.active]="progressMode() === 'percent'"
+                [attr.aria-pressed]="progressMode() === 'percent'"
+                (click)="changeProgressMode('percent')"
+              >
+                Percentage
+              </button>
             </div>
-            <label class="progress-label" for="reading-position">{{ progressMode() === 'pages' ? 'What page are you on?' : 'How far have you read?' }}</label>
-            <div class="progress-number"><input id="reading-position" type="number" inputmode="numeric" min="0" [max]="progressMode() === 'pages' ? book.pageCount : 100" step="1" required [value]="progressInput()" (input)="progressInput.set($any($event.target).value)" aria-describedby="progress-unit" /><span id="progress-unit">{{ progressMode() === 'pages' ? 'of ' + book.pageCount + ' pages' : 'percent' }}</span></div>
-            <p class="reading-remaining">Previously {{ trackingMode(book)==='pages' && book.pageCount > 0 ? 'page ' + book.pageProgress : book.progress + '%' }}. You can also correct an earlier entry.</p>
-            @if (progressError()) { <p role="alert" class="progress-error">{{ progressError() }}</p> }
-            <button class="reading-update progress-save" type="submit">{{ progressSaving() ? 'Saving...' : 'Save progress' }}</button>
-            <button type="button" class="progress-finish" (click)="saveProgress(true)">Finish book · mark 100% and finished today</button>
+            <label class="progress-label" for="reading-position">{{
+              progressMode() === 'pages' ? 'What page are you on?' : 'How far have you read?'
+            }}</label>
+            <div class="progress-number">
+              <input
+                id="reading-position"
+                type="number"
+                inputmode="numeric"
+                min="0"
+                [max]="progressMode() === 'pages' ? book.pageCount : 100"
+                step="1"
+                required
+                [value]="progressInput()"
+                (input)="progressInput.set($any($event.target).value)"
+                aria-describedby="progress-unit"
+              /><span id="progress-unit">{{
+                progressMode() === 'pages' ? 'of ' + book.pageCount + ' pages' : 'percent'
+              }}</span>
+            </div>
+            <p class="reading-remaining">
+              Previously
+              {{
+                trackingMode(book) === 'pages' && book.pageCount > 0
+                  ? 'page ' + book.pageProgress
+                  : book.progress + '%'
+              }}. You can also correct an earlier entry.
+            </p>
+            @if (progressError()) {
+              <p role="alert" class="progress-error">{{ progressError() }}</p>
+            }
+            <button class="reading-update progress-save" type="submit">
+              {{ progressSaving() ? 'Saving...' : 'Save progress' }}
+            </button>
+            <button type="button" class="progress-finish" (click)="saveProgress(true)">
+              Finish book · mark 100% and finished today
+            </button>
           </fieldset>
         </form>
       }

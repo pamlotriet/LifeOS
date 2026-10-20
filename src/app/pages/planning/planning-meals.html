@@ -1,9 +1,10 @@
-<ion-header app-page-header title="Meal Plan & Grocery"></ion-header>
+<ion-header app-page-header title="Planning" backUrl="/home"></ion-header>
 <ion-content class="[--background:transparent]"
   ><main class="planner-page mx-auto max-w-2xl px-4 pb-16 pt-4">
-    <nav class="planner-card mb-4 grid grid-cols-2 p-1">
+    <nav class="planner-card mb-4 grid grid-cols-3 p-1" aria-label="Planning sections">
       <button
         (click)="tab.set('meals')"
+        [attr.aria-pressed]="tab() === 'meals'"
         class="rounded-2xl py-2 font-bold"
         [class.bg-cyan-400]="tab() === 'meals'"
         [class.text-slate-900]="tab() === 'meals'"
@@ -11,12 +12,16 @@
         Meal Plan</button
       ><button
         (click)="tab.set('groceries')"
+        [attr.aria-pressed]="tab() === 'groceries'"
         class="rounded-2xl py-2 font-bold"
         [class.bg-cyan-400]="tab() === 'groceries'"
         [class.text-slate-900]="tab() === 'groceries'"
       >
         Grocery List
       </button>
+      <a routerLink="/planning/ingredients" class="rounded-2xl py-2 font-bold text-center"
+        >Ingredients</a
+      >
     </nav>
     <a routerLink="/nutrition" class="block mb-3 text-cyan-300">Open calorie & macro tracker</a>
     @if (nutritionError()) {

@@ -17,7 +17,7 @@ LifeOS now extends its existing Recipes, Planning, Grocery List, Nutrition and S
 ## Storage and access
 
 - `users/{ingredientOwnerId}/ingredients/{id}`: reusable ingredient JSON envelopes, matching the repository's existing JSON persistence pattern. An ingredient's canonical persisted label is per 100 g or per 100 ml (`baseUnit`); the deterministic calculator normalizes this to per g/ml for calculation without rounding. Metadata includes owner, timestamps, archive state, density and portion definitions.
-- Ingredient scope follows the recipe family owner only when family recipe sharing is enabled. Otherwise ingredients remain in the signed-in user's scope. Recipe-sharing rules allow family members to read/edit the shared library. Existing private legacy food records remain readable from the signed-in user's nutrition collection; editing one copies the same ID to the active ingredient scope, without destructive migration.
+- Ingredients and recipes are stored in the signed-in user's scope. Legacy family links are ignored. Existing private legacy food records remain readable from the signed-in user's nutrition collection; editing one copies the same ID to the active ingredient scope, without destructive migration.
 - `users/{recipeOwnerId}/recipes/{id}`: existing recipes retain their original text ingredients and structured nutrition ingredient array. Current calculations use the library's current values by ID; old copied `per100` fields are compatibility fallback data, not the source of truth for linked ingredients.
 - `users/{planningOwnerId}/mealPlan/{id}` and `groceryItems/{id}`: existing collections, expanded with optional meal category, ingredient amount/unit and generated grocery key. Old meals default to Dinner. Existing manual groceries retain their original shape.
 - `users/{signedInUserId}/nutrition/{id}`: existing owner-only collection for profile/targets, legacy foods and diary snapshots. No family read/write permissions were added. Logs contain source references, amount, meal/date, immutable copied nutrients, timestamp and targets at recording time. Explicit user edits replace that record; source updates cannot mutate it.
@@ -27,7 +27,7 @@ LifeOS now extends its existing Recipes, Planning, Grocery List, Nutrition and S
 
 - `src/app/shared/state/nutrition/nutrition.model.ts`: compatible expanded domain types.
 - `src/app/shared/state/nutrition/nutrition.calculations.ts`: normalization, explicit conversions, recipe aggregation, scaling, snapshots, daily statistics, duplicate detection and grocery aggregation.
-- `src/app/shared/state/nutrition/nutrition.service.ts`: ingredient CRUD/archive, family ingredient scope, private logging/edits/deletes, goals and persistence.
+- `src/app/shared/state/nutrition/nutrition.service.ts`: ingredient CRUD/archive, personal ingredient scope, private logging/edits/deletes, goals and persistence.
 - `src/app/shared/components/nutrition-summary.ts`: reusable complete/incomplete recipe nutrition summary.
 - `src/app/pages/nutrition/nutrition.ts`, `nutrition.html`, `nutrition-settings.ts`: daily diary, library, logging/history/editing and target guidance.
 - `src/app/pages/recipes/recipe-form.*`, `recipe-detail.*`, `src/app/shared/state/recipes/recipe.model.ts`, `recipe.service.ts`: existing recipe integration and compatibility.
@@ -46,7 +46,7 @@ npm.cmd run build
 firebase deploy --only hosting --project fuel-consumption-92c8c
 ```
 
-No destructive migration, backfill or new composite index is required. The implementation uses the existing collection listing and cached signal conventions rather than new compound Firestore queries. Older recipes, dinner plans, manual groceries and food logs remain readable. Link legacy recipe rows gradually in the editor. To share a legacy personal food library with family recipes, edit/save those ingredients into the active shared ingredient scope before linking them.
+No destructive migration, backfill or new composite index is required. The implementation uses the existing collection listing and cached signal conventions rather than new compound Firestore queries. Older recipes, dinner plans, manual groceries and food logs remain readable. Link legacy recipe rows gradually in the editor.
 
 ## Validation and remaining limits
 
