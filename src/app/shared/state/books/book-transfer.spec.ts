@@ -44,6 +44,14 @@ const book: BookRecord = {
   genreTagIds: ['genre'],
 };
 describe('Book backups', () => {
+  it('round trips Kindle tracking and raw location sessions', () => {
+    const kindle: BookRecord = {...book, progressMode: 'locations', totalLocations: 4500, currentLocation: 900, pageCount: 0, locationsPerPage: 15.5, locationEntries: [{id: 'session', date: '2026-10-21', fromLocation: 0, toLocation: 900}]};
+    const backup = createBookBackup([kindle], tags);
+    expect(parseBookBackup(JSON.stringify(backup))).toEqual(backup);
+    const merged = mergeBookInformation(kindle, {...book, pageCount: 300});
+    expect(merged.locationEntries).toEqual(kindle.locationEntries);
+    expect(merged.currentLocation).toBe(900);
+  });
   it('round-trips every book field, custom categories, multiple copies and tags', () => {
     const backup = createBookBackup([book], tags);
     expect(parseBookBackup(JSON.stringify(backup))).toEqual(backup);

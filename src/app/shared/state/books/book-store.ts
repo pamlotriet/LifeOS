@@ -93,6 +93,19 @@ export class BookStore {
     if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book,progressMode:'pages', pageProgress: position, progress: pages ? Math.round(position / pages * 100) : 0 } : book));
   }
 
+  async setReadingLocation(id: string, currentLocation: number, finished = false): Promise<void> {
+    const book = await this.getBook(id);
+    const { id: bookId, ...input } = book;
+    const fromLocation = book.currentLocation ?? 0;
+    const entry = { id: crypto.randomUUID(), date: new Date().toISOString(), fromLocation, toLocation: currentLocation };
+    const now = new Date();
+    const finishDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    await this.saveBook({ ...input, currentLocation,
+      locationEntries: currentLocation === fromLocation ? (book.locationEntries ?? []) : [...(book.locationEntries ?? []), entry],
+      ...(finished ? { status: 'Finished' as const, finishDate } : {}),
+    }, bookId);
+  }
+
   async saveTag(input: Pick<BookTag, 'name' | 'type' | 'color'>, id?: string): Promise<void> {
     const uid = this.auth.userId();
     const tag = await this.service.saveTag(input, id);

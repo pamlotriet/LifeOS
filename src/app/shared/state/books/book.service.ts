@@ -4,7 +4,7 @@ import { inject, Injectable } from '@angular/core';
 import { FirestoreDocument, FirestoreService, FirestoreValue } from '../../../core/firebase/firestore.service';
 import { AuthService } from '../authentication/authentication.service';
 import { OpenLibraryCoverService } from './open-library-cover.service';
-import { BookInput, BookRecord, BookTag, BookTagType } from './book.model';
+import { BookInput, BookRecord, BookTag, BookTagType, validateLocationTracking, locationProgress, effectiveTotalPages } from './book.model';
 import { DEFAULT_GENRE_TAGS, GENRE_SEED_ID } from './default-genre-tags';
 
 const text = (value: string): FirestoreValue => ({ stringValue: value });
@@ -65,6 +65,10 @@ export class BookService {
   }
 
   async saveBook(input: BookInput, id?: string): Promise<BookRecord> {
+    if (input.progressMode === 'locations') {
+      validateLocationTracking(input);
+      input = { ...input, progress: Math.round(locationProgress(input as BookRecord) * 100), pageProgress: Math.round(locationProgress(input as BookRecord) * effectiveTotalPages(input as BookRecord)) };
+    }
     if (!input.title.trim() || !input.author.trim() || !input.category) throw new Error('Title, author, and category are required.');
     if (!input.copies.length) throw new Error('Add at least one copy.');
     const { uid, token } = await this.auth.getSession();
@@ -160,6 +164,12 @@ export class BookService {
 
   private toBookFields(book: BookRecord): Record<string, FirestoreValue> {
     return {
+      totalLocations: { integerValue: String(book.totalLocations ?? 0) },
+      currentLocation: { integerValue: String(book.currentLocation ?? 0) },
+      locationsPerPage: { doubleValue: book.locationsPerPage ?? 15 },
+      locationEntries: { arrayValue: { values: (book.locationEntries ?? []).map(entry => ({ mapValue: { fields: {
+        id: text(entry.id), date: text(entry.date), fromLocation: { integerValue: String(entry.fromLocation) }, toLocation: { integerValue: String(entry.toLocation) },
+      } } })) } },
       title: text(book.title), author: text(book.author), category: text(book.category), coverUrl: text(book.coverUrl), isbn: text(book.isbn),
       progressMode:text(book.progressMode ?? (book.pageCount>0?'pages':'percent')), publicationDate: text(book.publicationDate), status: text(book.status), progress: { integerValue: String(book.progress) }, pageCount: { integerValue: String(book.pageCount) }, pageProgress: { integerValue: String(book.pageProgress) }, rating: { integerValue: String(book.rating) },
       spiceRating: { integerValue: String(book.spiceRating) },
@@ -183,7 +193,11 @@ export class BookService {
     return {
       id: doc.name.split('/').at(-1) ?? '', title: s('title'), author: s('author'), category: s('category'), isbn: s('isbn'),
       coverUrl: s('coverUrl'), publicationDate: s('publicationDate'), status: (s('status') || 'Not Started') as BookRecord['status'],
-      progressMode:s('progressMode')==='percent'?'percent':Number(f['pageCount']?.integerValue ?? 0)>0?'pages':'percent',
+      totalLocations: Number(f['totalLocations']?.integerValue ?? 0),
+      currentLocation: Number(f['currentLocation']?.integerValue ?? 0),
+      locationsPerPage: Number(f['locationsPerPage']?.doubleValue ?? f['locationsPerPage']?.integerValue ?? 15),
+      locationEntries: (f['locationEntries']?.arrayValue?.values ?? []).map(value => { const fields = value.mapValue?.fields ?? {}; return { id: fields['id']?.stringValue ?? '', date: fields['date']?.stringValue ?? '', fromLocation: Number(fields['fromLocation']?.integerValue ?? 0), toLocation: Number(fields['toLocation']?.integerValue ?? 0) }; }),
+      progressMode:s('progressMode')==='locations'?'locations':s('progressMode')==='percent'?'percent':Number(f['pageCount']?.integerValue ?? 0)>0?'pages':'percent',
       rating: Number(f['rating']?.integerValue ?? 0), progress: Number(f['progress']?.integerValue ?? 0), pageCount: Number(f['pageCount']?.integerValue ?? 0), pageProgress: Number(f['pageProgress']?.integerValue ?? 0), spiceRating: Number(f['spiceRating']?.integerValue ?? 0),
       wheelSelected: f['wheelSelected']?.booleanValue ?? false, favourite: f['favourite']?.booleanValue ?? false,
       wouldRecommend: f['wouldRecommend']?.booleanValue ?? false, reread: f['reread']?.booleanValue ?? false,

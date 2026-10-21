@@ -106,6 +106,7 @@
                     book.title
                   }}</a>
                   <p class="reading-author">{{ book.author }}</p>
+                  @if (book.progressMode === 'locations') { <p class="text-xs">{{ kindleSummary(book) }}</p> }
                   <div class="reading-progress-copy">
                     <span>{{
                       trackingMode(book) === 'pages' && book.pageCount > 0
@@ -152,6 +153,7 @@
             }
           </div>
         }
+        @if (estimatedPagesLogged() > 0) { <p class="reading-feedback">&asymp; {{ estimatedPagesLogged() }} estimated pages logged from Kindle locations</p> }
         @if (progressNotice()) {
           <p role="status" class="reading-feedback">{{ progressNotice() }}</p>
         }
@@ -295,7 +297,7 @@
           </div>
           <p class="progress-book-name">{{ book.title }}</p>
           <fieldset [disabled]="progressSaving()">
-            <div class="progress-modes" role="group" aria-label="Progress unit">
+            @if (book.progressMode !== 'locations') { <div class="progress-modes" role="group" aria-label="Progress unit">
               @if (book.pageCount > 0) {
                 <button
                   type="button"
@@ -315,8 +317,9 @@
                 Percentage
               </button>
             </div>
+            }
             <label class="progress-label" for="reading-position">{{
-              progressMode() === 'pages' ? 'What page are you on?' : 'How far have you read?'
+              progressMode() === 'locations' ? 'What Kindle location are you on?' : progressMode() === 'pages' ? 'What page are you on?' : 'How far have you read?'
             }}</label>
             <div class="progress-number">
               <input
@@ -324,24 +327,25 @@
                 type="number"
                 inputmode="numeric"
                 min="0"
-                [max]="progressMode() === 'pages' ? book.pageCount : 100"
+                [max]="progressMode() === 'locations' ? book.totalLocations : progressMode() === 'pages' ? book.pageCount : 100"
                 step="1"
                 required
                 [value]="progressInput()"
                 (input)="progressInput.set($any($event.target).value)"
                 aria-describedby="progress-unit"
               /><span id="progress-unit">{{
-                progressMode() === 'pages' ? 'of ' + book.pageCount + ' pages' : 'percent'
+                progressMode() === 'locations' ? 'of ' + book.totalLocations + ' locations' : progressMode() === 'pages' ? 'of ' + book.pageCount + ' pages' : 'percent'
               }}</span>
             </div>
             <p class="reading-remaining">
               Previously
               {{
-                trackingMode(book) === 'pages' && book.pageCount > 0
+                trackingMode(book) === 'locations' ? 'location ' + book.currentLocation : trackingMode(book) === 'pages' && book.pageCount > 0
                   ? 'page ' + book.pageProgress
                   : book.progress + '%'
               }}. You can also correct an earlier entry.
             </p>
+            @if (book.progressMode === 'locations') { <p class="progress-label" role="status">{{ locationSessionPreview(book) }}</p> }
             @if (progressError()) {
               <p role="alert" class="progress-error">{{ progressError() }}</p>
             }

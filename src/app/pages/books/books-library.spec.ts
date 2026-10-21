@@ -12,16 +12,31 @@ describe('Reading progress editor', () => {
   const books = signal([book]);
   const loading = signal(false);
   const getGoal = vi.fn();
+  const setReadingLocation = vi.fn();
   const setReadingPosition = vi.fn();
   const setReadingProgress = vi.fn();
   const saveBook = vi.fn();
   const create = () => runInInjectionContext(Injector.create({ providers: [
-    { provide: BookStore, useValue: { books, sortedBooks: books, loading, setReadingPosition, setReadingProgress, saveBook } },
+    { provide: BookStore, useValue: { books, sortedBooks: books, loading, setReadingLocation, setReadingPosition, setReadingProgress, saveBook } },
     { provide: ReadingGoalService, useValue: { get: getGoal } },
     { provide: RefreshCoordinator, useValue: { register: () => () => {} } },
     { provide: DestroyRef, useValue: { onDestroy: vi.fn() } },
   ] }), () => new BooksLibrary());
   beforeEach(() => { vi.resetAllMocks(); books.set([book]); loading.set(false); getGoal.mockResolvedValue(null); });
+  it('logs Kindle locations and completes at the final location', async () => {
+    const kindle: BookRecord = {...book, progressMode: 'locations', totalLocations: 4500, currentLocation: 900};
+    books.set([kindle]);
+    const page = create();
+    page.openProgress(kindle);
+    expect(page.progressInput()).toBe('900');
+    page.progressInput.set('1000');
+    await page.saveProgress();
+    expect(setReadingLocation).toHaveBeenCalledWith(book.id, 1000, false);
+    page.openProgress(kindle);
+    await page.saveProgress(true);
+    expect(setReadingLocation).toHaveBeenCalledWith(book.id, 4500, true);
+    expect(setReadingPosition).not.toHaveBeenCalled();
+  });
   it('waits for the reading goal after the library finishes loading', async () => {
     let resolveGoal!: (goal: number) => void;
     getGoal.mockReturnValue(new Promise<number>(resolve => { resolveGoal = resolve; }));

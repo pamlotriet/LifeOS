@@ -1,27 +1,33 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { PageHeader } from '../../shared/components/page-header/page-header';
-import { BOOK_FORMATS } from '../../shared/state/books/book.model';
+import { addIcons } from 'ionicons';
+import { addOutline, arrowBackOutline, bookmarkOutline, bookOutline, checkmarkOutline, heartOutline, searchOutline } from 'ionicons/icons';
+import { kindleSummary } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
 
 @Component({
   selector: 'app-books-shelf',
-  imports: [IonContent, IonIcon, PageHeader, RouterLink],
+  imports: [IonContent, IonIcon, RouterLink],
   templateUrl: './books-shelf.html',
-  styleUrl: './books-loading.css',
+  styleUrls: ['./books-loading.css', './books-shelf.css'],
 })
 export class BooksShelf {
+  readonly kindleSummary = kindleSummary;
   readonly store = inject(BookStore);
-  readonly formats = BOOK_FORMATS;
   readonly search = signal('');
-  readonly format = signal('All');
-  readonly view = signal<'covers' | 'list'>('covers');
+  readonly status = signal('All books');
+  readonly filters = ['All books', 'Reading', 'Want to read', 'Finished', 'Favourites'];
   readonly filtered = computed(() => {
     const query = this.search().trim().toLowerCase();
+    const status = this.status();
     return this.store.sortedBooks().filter((book) =>
-      (this.format() === 'All' || book.copies.some((copy) => copy.format === this.format())) &&
+      (status === 'All books' || (status === 'Favourites' ? book.favourite : book.status === (status === 'Want to read' ? 'Not Started' : status))) &&
       (!query || [book.title, book.author, book.category, book.seriesName].some((part) => part.toLowerCase().includes(query))),
     );
   });
+
+  constructor() {
+    addIcons({ addOutline, arrowBackOutline, bookmarkOutline, bookOutline, checkmarkOutline, heartOutline, searchOutline });
+  }
 }

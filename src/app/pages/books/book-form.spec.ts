@@ -47,6 +47,22 @@ describe('BookForm', () => {
     expect(saveBook).toHaveBeenCalledWith(expect.objectContaining({ title: 'Test Book', pageCount: 300 }), undefined);
   });
 
+  it('saves Kindle settings without creating reading activity', async () => {
+    const component = fixture.componentInstance;
+    component.trackingMode.set('locations');
+    component.form.patchValue({title: 'Kindle Book', author: 'Author', category: 'Fantasy', totalLocations: 4500, currentLocation: 900});
+    await component.save();
+    expect(saveBook).toHaveBeenCalledWith(expect.objectContaining({progressMode: 'locations', totalLocations: 4500, currentLocation: 900, locationsPerPage: 15, pageCount: 0, locationEntries: []}), undefined);
+  });
+  it('rejects a Kindle position above the total', async () => {
+    const component = fixture.componentInstance;
+    component.trackingMode.set('locations');
+    component.form.patchValue({title: 'Kindle Book', author: 'Author', category: 'Fantasy', totalLocations: 4500, currentLocation: 4501});
+    await component.save();
+    expect(saveBook).not.toHaveBeenCalled();
+    expect(component.error()).toContain('Current location');
+  });
+
   it('keeps a scanned ISBN when catalogue requests fail', async () => {
     scan.mockResolvedValue('9780140328721');lookupByIsbn.mockRejectedValue(new Error('Book lookup could not be completed.'));
     await fixture.componentInstance.scanBook();

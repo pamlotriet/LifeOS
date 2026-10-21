@@ -33,6 +33,15 @@ describe('BookService', () => {
   };
   beforeEach(() => { vi.clearAllMocks(); getSession.mockResolvedValue({ uid: 'user-1', token: 'id-token' }); findCover.mockResolvedValue('https://covers.openlibrary.org/b/id/123-M.jpg?default=false'); });
 
+  it('round trips Kindle settings and raw reading history in Firestore', async () => {
+    const entry = {id: 'entry-1', date: '2026-10-21T12:00:00.000Z', fromLocation: 0, toLocation: 900};
+    const saved = await service().saveBook({...input, progressMode: 'locations', totalLocations: 4500, currentLocation: 900, locationsPerPage: 15.5, locationEntries: [entry]});
+    const fields = createDocument.mock.calls[0][2];
+    getDocument.mockResolvedValue({name: 'users/user-1/books/' + saved.id, fields});
+    const loaded = await service().getBook(saved.id);
+    expect(loaded).toMatchObject({progressMode: 'locations', totalLocations: 4500, currentLocation: 900, locationsPerPage: 15.5, progress: 20, pageProgress: 58, locationEntries: [entry]});
+  });
+
   it('saves independent copies and both kinds of tags under the signed-in user', async () => {
     await service().saveBook(input);
     expect(createDocument).toHaveBeenCalledWith('users/user-1/books', expect.any(String), expect.objectContaining({

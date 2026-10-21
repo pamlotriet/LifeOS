@@ -15,7 +15,7 @@ import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon, IonModal } from '@ionic/angular';
 import {
-  bookProgressMode,
+  bookProgressMode, kindleSummary, locationProgress, locationSessionPages,
   BookRecord,
   BOOK_CATEGORIES,
   BOOK_FORMATS,
@@ -88,25 +88,27 @@ export class BooksLibrary {
     this.store.sortedBooks().filter((book) => book.status === 'Reading'),
   );
   readonly progressBook = signal<BookRecord | null>(null);
-  readonly progressMode = signal<'pages' | 'percent'>('pages');
+  readonly progressMode = signal<'pages' | 'percent' | 'locations'>('pages');
   readonly progressInput = signal('');
   readonly progressSaving = signal(false);
   readonly progressError = signal('');
   readonly progressNotice = signal('');
 
+  readonly kindleSummary = kindleSummary;
+  readonly estimatedPagesLogged = computed(() => Math.round(this.store.books().reduce((sum, book) => sum + (book.locationEntries ?? []).reduce((subtotal, entry) => subtotal + locationSessionPages(book, entry), 0), 0)));
   readonly trackingMode = bookProgressMode;
   openProgress(book: BookRecord): void {
     this.progressBook.set(book);
     this.progressMode.set(bookProgressMode(book));
     this.progressInput.set(
-      String(bookProgressMode(book) === 'pages' ? book.pageProgress : book.progress),
+      String(bookProgressMode(book) === 'locations' ? book.currentLocation ?? 0 : bookProgressMode(book) === 'pages' ? book.pageProgress : book.progress),
     );
     this.progressError.set('');
     this.progressNotice.set('');
   }
   changeProgressMode(mode: 'pages' | 'percent'): void {
     const book = this.progressBook();
-    if (!book || mode === this.progressMode() || (mode === 'pages' && !book.pageCount)) return;
+    if (!book || book.progressMode === 'locations' || mode === this.progressMode() || (mode === 'pages' && !book.pageCount)) return;
     const value = Number(this.progressInput());
     this.progressInput.set(
       this.progressInput().trim() && Number.isFinite(value)
@@ -120,6 +122,13 @@ export class BooksLibrary {
     this.progressMode.set(mode);
     this.progressError.set('');
   }
+  locationSessionPreview(book: BookRecord): string {
+    const value = Number(this.progressInput());
+    if (!this.progressInput().trim() || !Number.isSafeInteger(value) || value < 0 || value > (book.totalLocations ?? 0)) return '';
+    const updated = {...book, currentLocation: value};
+    const pages = Math.round(locationSessionPages(book, {id: '', date: '', fromLocation: book.currentLocation ?? 0, toLocation: value}));
+    return `${kindleSummary(updated)}. Estimated pages read this session: ${pages}.`;
+  }
   closeProgress(): void {
     if (!this.progressSaving()) this.progressBook.set(null);
   }
@@ -131,7 +140,7 @@ export class BooksLibrary {
       this.progressError.set('This book is no longer in your library.');
       return;
     }
-    const max = this.progressMode() === 'pages' ? book.pageCount : 100;
+    const max = book.progressMode === 'locations' ? book.totalLocations ?? 0 : this.progressMode() === 'pages' ? book.pageCount : 100;
     const value = Number(this.progressInput());
     if (
       !finished &&
@@ -143,7 +152,9 @@ export class BooksLibrary {
     this.progressSaving.set(true);
     this.progressError.set('');
     try {
-      if (finished) {
+      if (book.progressMode === 'locations') {
+        await this.store.setReadingLocation(book.id, finished ? book.totalLocations! : value, finished);
+      } else if (finished) {
         const now = new Date();
         const finishDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         const { id, ...input } = book;
@@ -253,6 +264,7 @@ export class BooksLibrary {
       .map((tag) => tag.name);
   }
   pagePercent(book: BookRecord): number {
+    if (book.progressMode === 'locations') return Math.round(locationProgress(book) * 100);
     return Math.max(
       0,
       Math.min(

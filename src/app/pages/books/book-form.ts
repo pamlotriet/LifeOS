@@ -3,7 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
-import { BookCopy, BookFormat, BookInput, BookRecord, BookTag, BOOK_CATEGORIES, BOOK_FORMATS, BOOK_STATUSES } from '../../shared/state/books/book.model';
+import { BookCopy, BookFormat, BookInput, BookRecord, BookTag, BOOK_CATEGORIES, BOOK_FORMATS, BOOK_STATUSES, validateLocationTracking, kindleSummary, locationSessionPages, locationPagesRead } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
 import { OpenLibraryCoverService } from '../../shared/state/books/open-library-cover.service';
 import { AppSelect } from '../../shared/components/app-select/app-select';
@@ -30,8 +30,11 @@ export class BookForm {
   readonly copies = signal<BookCopy[]>([{ id: crypto.randomUUID(), format: 'Paperback', label: '' }]);
   readonly moodTagIds = signal<string[]>([]);
   readonly genreTagIds = signal<string[]>([]);
-  readonly trackingMode = signal<'pages'|'percent'>('pages');
+  readonly trackingMode = signal<'pages'|'percent'|'locations'>('pages');
   trackingByPages():boolean {return this.hasPageFormat() && this.trackingMode()==='pages';}
+  readonly kindleSummary = kindleSummary;
+  readonly sessionPages = (book: BookRecord, entry: NonNullable<BookRecord['locationEntries']>[number]) => Math.round(locationSessionPages(book, entry));
+  readonly locationPagesRead = locationPagesRead;
   readonly loading = signal(!!this.id);
   readonly saving = signal(false);
   readonly deleting = signal(false);
@@ -48,6 +51,7 @@ export class BookForm {
   private coverLookupVersion = 0;
 
   readonly form = this.fb.nonNullable.group({
+    totalLocations: [0], currentLocation: [0], locationsPerPage: [15],
     title: ['', Validators.required], author: ['', Validators.required], category: ['', Validators.required],
     coverUrl: [''], isbn: [''], publicationDate: [''], status: ['Not Started'], progress: [0], pageCount: [0], pageProgress: [0], rating: [0], spiceRating: [0],
     favourite: [false], wouldRecommend: [false], reread: [false], wheelSelected: [false],
@@ -166,6 +170,9 @@ export class BookForm {
     if (this.trackingByPages() && (!Number.isInteger(pages) || pages < 1)) {
       this.error.set('Enter the number of pages for this book.'); return false;
     }
+    if (this.trackingMode() === 'locations') {
+      try { validateLocationTracking({ ...this.form.getRawValue(), pageCount: Number(this.form.controls.pageCount.value) }); } catch (error) { this.error.set((error as Error).message); return false; }
+    }
     return true;
   }
   async toggleFlag(field: 'favourite' | 'wouldRecommend' | 'reread'): Promise<void> {
@@ -197,11 +204,12 @@ export class BookForm {
     try {
       if (this.lookingUpCover()) await this.lookupCover();
       const value = this.form.getRawValue();
-      const pageCount = this.hasPageFormat() ? Math.max(0, Math.floor(Number(value.pageCount)||0)) : 0;
+      const pageCount = (this.hasPageFormat() || this.trackingMode() === 'locations') ? Math.max(0, Math.floor(Number(value.pageCount)||0)) : 0;
       const pageProgress = pageCount ? this.trackingByPages() ? Math.min(pageCount, Math.max(0, Number(value.pageProgress))) : Math.round(Number(value.progress)/100*pageCount) : 0;
       const input: BookInput = {
         ...value, status: value.status as BookInput['status'],
-        progressMode: this.trackingByPages() ? 'pages' : 'percent',
+        progressMode: this.trackingMode() === 'locations' ? 'locations' : this.trackingByPages() ? 'pages' : 'percent',
+        locationEntries: this.book()?.locationEntries ?? [],
         progress: this.trackingByPages() && pageCount ? Math.round(pageProgress / pageCount * 100) : Number(value.progress),
         pageCount,
         pageProgress,

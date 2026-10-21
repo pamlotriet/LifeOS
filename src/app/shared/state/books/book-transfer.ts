@@ -1,4 +1,4 @@
-import { BOOK_FORMATS, BOOK_STATUSES, BookRecord, BookTag } from './book.model';
+import { BOOK_FORMATS, BOOK_STATUSES, BookRecord, BookTag, validateLocationTracking } from './book.model';
 export interface BookBackup {
   format: 'lifeos-books';
   version: 1;
@@ -103,10 +103,24 @@ export function parseBookBackup(json: string): BookBackup {
       result['status'] = b['status'];
       if (
         b['progressMode'] !== undefined &&
-        !['pages', 'percent'].includes(String(b['progressMode']))
+        !['pages', 'percent', 'locations'].includes(String(b['progressMode']))
       )
         throw new Error('Invalid progress unit.');
       if (b['progressMode'] !== undefined) result['progressMode'] = b['progressMode'];
+      for (const key of ['totalLocations', 'currentLocation', 'locationsPerPage'] as const) {
+        if (b[key] !== undefined) {
+          if (typeof b[key] !== 'number' || !Number.isFinite(b[key]) || b[key] < 0) throw new Error(`Invalid ${key}.`);
+          result[key] = b[key];
+        }
+      }
+      if (b['locationEntries'] !== undefined) {
+        result['locationEntries'] = list(b['locationEntries']).map(value => {
+          const entry = object(value);
+          for (const key of ['fromLocation', 'toLocation']) if (!Number.isSafeInteger(entry[key]) || Number(entry[key]) < 0) throw new Error('Invalid reading location.');
+          return { id: id(entry['id']), date: text(entry['date'], 100), fromLocation: entry['fromLocation'], toLocation: entry['toLocation'] };
+        });
+      }
+      if (result['progressMode'] === 'locations') validateLocationTracking(result as unknown as BookRecord);
       for (const key of ['yearRead', 'seriesNumber']) {
         const n = b[key];
         if (n !== null && (typeof n !== 'number' || !Number.isSafeInteger(n) || n < 0))
@@ -168,6 +182,8 @@ export function mergeBookInformation(current: BookRecord, incoming: BookRecord):
   if (
     current.status === 'Not Started' &&
     current.progress === 0 &&
+    !(current.locationEntries?.length) &&
+    !current.currentLocation &&
     !current.startDate &&
     !current.finishDate
   ) {
@@ -175,6 +191,10 @@ export function mergeBookInformation(current: BookRecord, incoming: BookRecord):
     merged.progress = incoming.progress;
     merged.pageProgress = incoming.pageProgress;
     merged.progressMode = incoming.progressMode;
+    merged.totalLocations = incoming.totalLocations;
+    merged.currentLocation = incoming.currentLocation;
+    merged.locationsPerPage = incoming.locationsPerPage;
+    merged.locationEntries = structuredClone(incoming.locationEntries ?? []);
     merged.yearRead = incoming.yearRead;
   } else {
     merged.startDate =
@@ -276,6 +296,10 @@ export function booksCsv(books: BookRecord[]): string {
     'progress',
     'pageCount',
     'pageProgress',
+    'progressMode',
+    'totalLocations',
+    'currentLocation',
+    'locationsPerPage',
     'rating',
     'spiceRating',
     'startDate',
