@@ -20,7 +20,7 @@
 .book-sheet-header { position: relative; margin-bottom: 22px; padding-right: 24px; }
 .book-sheet-header h1 { font-size: 28px; font-weight: 600; line-height: 1.3; }
 .book-sheet-header p { margin-top: 10px; color: var(--text-secondary); font-size: 17px; line-height: 1.5; }
-.book-sheet-close { position: absolute; right: -12px; top: -12px; width: 44px; height: 44px; color: #aaa3ba; font-size: 28px; }
+.book-sheet-close { position: absolute; z-index: 30; right: 12px; top: 8px; border-radius: 50%; background: #0c0918; width: 44px; height: 44px; color: #aaa3ba; font-size: 28px; }
 .book-sheet form { gap: 24px; }
 .book-sheet .book-step { color: var(--text-secondary); }
 .book-sheet .book-step-bars { max-width: 400px; gap: 10px; margin-top: 10px; }
@@ -56,3 +56,9 @@
   .book-sheet .book-basics { display: grid; grid-template-columns: 1fr; gap: 22px; }
   .book-sheet .book-cover-preview { height: 148px; min-height: 148px; }
 }
+
+.book-sheet-footer { background: #0c0918; border-top: 1px solid #292238; }
+.book-sheet-footer .book-form-actions { position: static; margin: 0; padding: 14px 30px max(14px, env(safe-area-inset-bottom)); background: #0c0918; }
+.book-sheet-footer button { color: #b9b4d8; border-color: #393047; }
+.book-sheet-footer button[type=submit] { background: #a18aff; color: #100a25; }
+@media (max-width: 639px) { .book-sheet-footer .book-form-actions { padding-inline: 24px; } }

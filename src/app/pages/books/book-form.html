@@ -1,8 +1,9 @@
 @if (!embedded) { <ion-header app-page-header [title]="id ? (showEditor() ? 'Edit Book' : 'Books') : 'Add Book'"></ion-header> }
 <ion-content class="[--background:transparent] [--color:#fff]">
+  @if (embedded) { <button slot="fixed" type="button" class="book-sheet-close" aria-label="Close add book" [disabled]="saving()" (click)="cancel()">&#215;</button> }
   <main class="mx-auto max-w-xl px-4 pb-10 pt-4 text-white" [class.book-sheet]="embedded">
     @if (embedded) {
-      <header class="book-sheet-header"><button type="button" class="book-sheet-close" aria-label="Close add book" [disabled]="saving()" (click)="cancel()">&#215;</button><h1>Add book</h1><p>Two quick steps ? the basics, then where it lands on your shelf.</p></header>
+      <header class="book-sheet-header"><h1>Add book</h1><p>Two quick steps &mdash; the basics, then where it lands on your shelf.</p></header>
     }
     @if (loading()) {
       <app-skeleton variant="form" [count]="6" />
@@ -62,7 +63,7 @@
         <div class="mt-5 grid grid-cols-2 gap-2"><button type="button" (click)="openEditor()" class="min-h-11 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 font-bold text-[var(--card)]">Edit Details</button><button type="button" (click)="showDelete.set(true)" class="min-h-11 rounded-xl border border-rose-400/60 text-rose-200">Delete Book</button></div>
       } @else { <p role="alert" class="rounded-xl border border-rose-400/50 bg-[var(--card)] p-4 text-sm">{{ error() || 'Book not found.' }}</p> }
     } @else {
-      <form [formGroup]="form" (ngSubmit)="step() === 1 ? nextStep() : save()" class="flex flex-col gap-3">
+      <form id="book-editor-form" [formGroup]="form" (ngSubmit)="step() === 1 ? nextStep() : save()" class="flex flex-col gap-3">
         <div class="book-step text-center"><p class="text-xs text-[var(--text-secondary)]">{{ step() }} of 2 · {{ step() === 1 ? 'Basics' : 'Details' }}</p><div class="book-step-bars mx-auto mt-2 flex max-w-44 gap-1.5"><span class="h-1.5 flex-1 rounded-full bg-cyan-400"></span><span class="h-1.5 flex-1 rounded-full" [class]="step() === 2 ? 'bg-cyan-400' : 'bg-[var(--border)]'"></span></div></div>
 
         @if (step() === 1) {
@@ -100,9 +101,11 @@
           <label class="text-xs">Review<textarea formControlName="review" rows="3" placeholder="Write your review..." class="mt-1 block w-full rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 text-base text-white"></textarea></label>
         }
         @if (error()) { <p role="alert" class="rounded-xl border border-rose-400/50 bg-[var(--card)] p-3 text-sm text-rose-200">{{ error() }}</p> }
-        <div class="book-form-actions"><button type="button" (click)="step() === 2 ? step.set(1) : cancel()" class="min-h-11 rounded-xl border border-[var(--border)] text-sm font-semibold text-[var(--text-secondary)]">{{ step() === 2 ? 'Back' : 'Cancel' }}</button><button type="submit" [disabled]="saving()" class="min-h-11 rounded-xl bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 text-sm font-bold text-white disabled:opacity-60">{{ step() === 1 ? 'Next' : saving() ? 'Saving...' : id ? 'Save Changes' : 'Save Book' }}</button></div>
+        @if (!embedded) { <div class="book-form-actions"><button type="button" (click)="step() === 2 ? step.set(1) : cancel()" class="min-h-11 rounded-xl border border-[var(--border)] text-sm font-semibold text-[var(--text-secondary)]">{{ step() === 2 ? 'Back' : 'Cancel' }}</button><button type="submit" [disabled]="saving()" class="min-h-11 rounded-xl bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 text-sm font-bold text-white disabled:opacity-60">{{ step() === 1 ? 'Next' : saving() ? 'Saving...' : id ? 'Save Changes' : 'Save Book' }}</button></div> }
       </form>
     }
     @if (showDelete()) { <div class="fixed inset-0 z-50 grid place-items-center bg-black/70 p-5"><div role="dialog" aria-modal="true" aria-label="Delete book" class="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 text-center"><h2 class="text-lg font-bold">Delete this book?</h2><p class="mt-2 text-sm text-[var(--text-secondary)]">All copies and reading details for this book will be removed.</p><div class="mt-5 grid grid-cols-2 gap-2"><button type="button" (click)="showDelete.set(false)" class="rounded-xl border border-[var(--border)] py-3">Cancel</button><button type="button" (click)="delete()" [disabled]="deleting()" class="rounded-xl bg-rose-500 py-3 font-semibold">{{ deleting() ? 'Deleting...' : 'Delete' }}</button></div></div></div> }
   </main>
 </ion-content>
+
+@if (embedded) { <ion-footer class="book-sheet-footer ion-no-border"><div class="book-form-actions"><button type="button" [disabled]="saving()" (click)="step() === 2 ? step.set(1) : cancel()" class="min-h-11 rounded-xl border border-[var(--border)] text-sm font-semibold text-[var(--text-secondary)]">{{ step() === 2 ? 'Back' : 'Cancel' }}</button><button type="submit" form="book-editor-form" [disabled]="saving()" class="min-h-11 rounded-xl bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 text-sm font-bold text-white disabled:opacity-60">{{ step() === 1 ? 'Next' : saving() ? 'Saving...' : id ? 'Save Changes' : 'Save Book' }}</button></div></ion-footer> }

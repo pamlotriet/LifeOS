@@ -1,7 +1,7 @@
 import { Component, inject, signal, Input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IonContent, IonIcon, ModalController } from '@ionic/angular';
+import { IonContent, IonIcon, IonFooter, ModalController } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
 import { BookCopy, BookFormat, BookInput, BookRecord, BookTag, BOOK_CATEGORIES, BOOK_FORMATS, BOOK_STATUSES, validateLocationTracking, kindleSummary, locationSessionPages, locationPagesRead } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
@@ -11,7 +11,7 @@ import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-
 import { BookBarcodeScannerService } from '../../shared/state/books/book-barcode-scanner.service';
 import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-book-form', imports: [IonContent, IonIcon, PageHeader, RouterLink, ReactiveFormsModule, AppSelect, AppDatePicker, AppSkeleton], templateUrl: './book-form.html', styleUrl: './book-form.css' })
+@Component({ selector: 'app-book-form', imports: [IonContent, IonIcon, IonFooter, PageHeader, RouterLink, ReactiveFormsModule, AppSelect, AppDatePicker, AppSkeleton], templateUrl: './book-form.html', styleUrl: './book-form.css' })
 export class BookForm {
   @Input() embedded = false;
   private readonly modal = inject(ModalController);

@@ -619,8 +619,8 @@ ion-modal.add-book-sheet {
   --box-shadow: 0 -12px 60px #0006;
   align-items: flex-end;
 }
-ion-modal.add-book-sheet::part(content) { border: 1px solid #292238; border-bottom: 0; }
-ion-modal.add-book-sheet ion-content { --background: #0c0918; }
+ion-modal.add-book-sheet::part(content) { border: 1px solid #292238; border-bottom: 0; border-radius: 24px 24px 0 0; overflow: hidden; }
+ion-modal.add-book-sheet ion-content { --background: #0c0918; --padding-top: 0; --padding-bottom: 0; }
 ion-modal.add-book-sheet app-select > div > button,
 ion-modal.add-book-sheet app-date-picker > div > button {
   min-height: 50px;
