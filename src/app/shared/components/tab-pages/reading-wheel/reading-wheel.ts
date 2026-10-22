@@ -1,3 +1,4 @@
+import { AddBookSheet } from '../../../../pages/books/add-book-sheet.service';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -14,6 +15,7 @@ const COLORS = ['#2477c6', '#7437d0', '#1aa89f', '#edae28', '#e45a53', '#b12e83'
   styleUrl: './reading-wheel.css',
 })
 export class ReadingWheel {
+  readonly addBookSheet = inject(AddBookSheet);
   readonly store = inject(BookStore);
   readonly mode = signal<'wheel' | 'manage' | 'result'>('wheel');
   readonly busy = signal(false);

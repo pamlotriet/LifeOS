@@ -1,3 +1,4 @@
+import { AddBookSheet } from './add-book-sheet.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -14,6 +15,7 @@ import { BookStore } from '../../shared/state/books/book-store';
 })
 export class BooksShelf {
   readonly kindleSummary = kindleSummary;
+  readonly addBookSheet = inject(AddBookSheet);
   readonly store = inject(BookStore);
   readonly search = signal('');
   readonly status = signal('All books');

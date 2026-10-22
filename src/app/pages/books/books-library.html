@@ -17,9 +17,8 @@
         <a routerLink="/books/shelf" class="books-secondary"
           ><ion-icon name="library-outline" aria-hidden="true" /> Bookshelf</a
         >
-        <a routerLink="/books/add" class="books-primary"
-          ><ion-icon name="add" aria-hidden="true" /> Open shelf</a
-        >
+        <button type="button" (click)="addBookSheet.open()" class="books-primary"
+          ><ion-icon name="add" aria-hidden="true" /> Add book</button>
       </div>
     </header>
     @if (loading()) {

@@ -1,6 +1,7 @@
 import '@angular/compiler';
 import { DestroyRef, Injector, runInInjectionContext, signal } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AddBookSheet } from './add-book-sheet.service';
 import { BooksLibrary } from './books-library';
 import { BookStore } from '../../shared/state/books/book-store';
 import { BookRecord } from '../../shared/state/books/book.model';
@@ -17,6 +18,7 @@ describe('Reading progress editor', () => {
   const setReadingProgress = vi.fn();
   const saveBook = vi.fn();
   const create = () => runInInjectionContext(Injector.create({ providers: [
+    { provide: AddBookSheet, useValue: { open: vi.fn() } },
     { provide: BookStore, useValue: { books, sortedBooks: books, loading, setReadingLocation, setReadingPosition, setReadingProgress, saveBook } },
     { provide: ReadingGoalService, useValue: { get: getGoal } },
     { provide: RefreshCoordinator, useValue: { register: () => () => {} } },

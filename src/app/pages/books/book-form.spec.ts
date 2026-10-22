@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BookForm } from './book-form';
 import { BookStore } from '../../shared/state/books/book-store';
@@ -11,6 +12,7 @@ import { book, calendarOutline, chevronBack, chevronDownOutline, scanOutline } f
 
 describe('BookForm', () => {
   let fixture: ComponentFixture<BookForm>;
+  const dismiss = vi.fn().mockResolvedValue(true);
   const saveBook = vi.fn().mockResolvedValue({});
   const findCover = vi.fn();
   const scan = vi.fn();
@@ -24,6 +26,7 @@ describe('BookForm', () => {
       imports: [BookForm],
       providers: [
         provideRouter([]),
+        { provide: ModalController, useValue: { dismiss } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: new Map(), data: {} } } },
         { provide: BookStore, useValue: { books: signal([]), tags: signal([]), saveBook } },
         { provide: OpenLibraryCoverService, useValue: { find: findCover, lookupByIsbn } },
@@ -33,6 +36,21 @@ describe('BookForm', () => {
     vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     fixture = TestBed.createComponent(BookForm);
     fixture.detectChanges();
+  });
+
+  it('closes the embedded form on cancel without navigating', () => {
+    fixture.componentRef.setInput('embedded', true);
+    fixture.componentInstance.cancel();
+    expect(dismiss).toHaveBeenCalled();
+    expect(TestBed.inject(Router).navigateByUrl).not.toHaveBeenCalled();
+  });
+
+  it('dismisses the sheet after saving and stays on the current screen', async () => {
+    fixture.componentRef.setInput('embedded', true);
+    fixture.componentInstance.form.patchValue({ title: 'New book', author: 'Author', category: 'Fantasy', pageCount: 300 });
+    await fixture.componentInstance.save();
+    expect(dismiss).toHaveBeenCalledWith(undefined, 'saved');
+    expect(TestBed.inject(Router).navigateByUrl).not.toHaveBeenCalled();
   });
 
   it('saves a completed book after moving from basics to details', async () => {

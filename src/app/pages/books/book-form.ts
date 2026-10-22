@@ -1,7 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, Input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent, IonIcon, ModalController } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
 import { BookCopy, BookFormat, BookInput, BookRecord, BookTag, BOOK_CATEGORIES, BOOK_FORMATS, BOOK_STATUSES, validateLocationTracking, kindleSummary, locationSessionPages, locationPagesRead } from '../../shared/state/books/book.model';
 import { BookStore } from '../../shared/state/books/book-store';
@@ -13,6 +13,8 @@ import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
 @Component({ selector: 'app-book-form', imports: [IonContent, IonIcon, PageHeader, RouterLink, ReactiveFormsModule, AppSelect, AppDatePicker, AppSkeleton], templateUrl: './book-form.html', styleUrl: './book-form.css' })
 export class BookForm {
+  @Input() embedded = false;
+  private readonly modal = inject(ModalController);
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -152,6 +154,8 @@ export class BookForm {
   openEditor(): void { this.error.set(''); this.step.set(1); this.showEditor.set(true); }
   addCopyFromDetails(): void { this.openEditor(); this.addCopy(); }
   cancel(): void {
+    if (this.saving()) return;
+    if (this.embedded) { void this.modal.dismiss(); return; }
     if (this.id) { const book = this.book(); if (book) this.populate(book); this.error.set(''); this.showEditor.set(false); this.step.set(1); }
     else void this.router.navigateByUrl('/books');
   }
@@ -224,6 +228,8 @@ export class BookForm {
         this.book.set(await this.store.getBook(this.id));
         this.showEditor.set(false);
         this.step.set(1);
+      } else if (this.embedded) {
+        await this.modal.dismiss(undefined, 'saved');
       } else {
         await this.router.navigateByUrl('/books', { replaceUrl: true });
       }

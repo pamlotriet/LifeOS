@@ -1,3 +1,4 @@
+import { AddBookSheet } from './add-book-sheet.service';
 import { addIcons } from 'ionicons';
 import {
   add,
@@ -31,6 +32,7 @@ import { RefreshCoordinator } from '../../shared/state/refresh/refresh-coordinat
   styleUrls: ['./books-library.css', './books-layout.css'],
 })
 export class BooksLibrary {
+  readonly addBookSheet = inject(AddBookSheet);
   readonly store = inject(BookStore);
   private readonly goals = inject(ReadingGoalService);
   private readonly refreshCoordinator = inject(RefreshCoordinator);
