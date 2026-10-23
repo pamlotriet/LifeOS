@@ -1,3 +1,4 @@
+import { buildBookStats, BookStatsDetail } from './book-stats';
 import { cycleBounds } from '../budget/budget-cycle';
 import { NutritionService } from '../nutrition/nutrition.service';
 import { nutritionStats } from '../nutrition/nutrition.calculations';
@@ -27,6 +28,7 @@ export interface StatsKpi {
   accent: string;
 }
 export interface StatsDashboard {
+  books?: BookStatsDetail;
   spending?: Array<{
     id: string;
     name: string;
@@ -366,50 +368,9 @@ export class StatsService {
     };
   }
   private bookStats(range: StatsRange, selectedMonth?: string): StatsDashboard {
-    const books = this.books.books();
-    const year = new Date().getFullYear();
-    const month = statsMonths('1M', statsAnchor(range, selectedMonth))[0];
-    const finished = books.filter(
-      (x) =>
-        x.status === 'Finished' &&
-        (range === '1M' ? x.finishDate?.slice(0, 7) === month : x.yearRead === year),
-    );
-    const byCategory = this.count(range === '1M' ? finished : books, (x) => x.category);
-    return {
-      empty: !books.length,
-      emptyTitle: 'No reading stats yet',
-      emptyMessage: 'Add books and update their reading status to see your trends.',
-      action: '/books/add',
-      kpis: [
-        this.kpi('Total books', String(books.length), 'book', '#2497ff'),
-        this.kpi(
-          range === '1M' ? 'Read this month' : 'Read this year',
-          String(finished.length),
-          'checkmark',
-          '#20b875',
-        ),
-        this.kpi(
-          'Currently reading',
-          String(books.filter((x) => x.status === 'Reading').length),
-          'book',
-          '#14ddea',
-        ),
-        this.kpi('Favourites', String(books.filter((x) => x.favourite).length), 'heart', '#c23cff'),
-      ],
-      primaryTitle: 'Books read by month',
-      secondaryTitle: range === '1M' ? 'Books finished by category' : 'Books by category',
-      primary: this.monthBars(
-        finished.map((x) => x.finishDate || `${year}-01-01`),
-        'Books read',
-        false,
-        range === '1M' ? [month] : undefined,
-      ),
-      secondary: categoryChart('Books', byCategory),
-      insight: finished.length
-        ? `${finished.length} book${finished.length === 1 ? '' : 's'} finished in ${range === '1M' ? month : year}.`
-        : `No completed books recorded for ${range === '1M' ? month : year}.`,
-    };
+    return buildBookStats(this.books.books(), range, selectedMonth);
   }
+
   budgetReportCycle(range?: StatsRange, selectedMonth?: string): string {
     if (range === '1M') {
       const month = statsMonths(range, statsAnchor(range, selectedMonth))[0];

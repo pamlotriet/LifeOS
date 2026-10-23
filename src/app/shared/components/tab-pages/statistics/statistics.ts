@@ -1,3 +1,17 @@
+import { addIcons } from 'ionicons';
+import {
+  arrowBackOutline,
+  barChartOutline,
+  bookOutline,
+  bookmarkOutline,
+  checkmarkDoneOutline,
+  readerOutline,
+  timeOutline,
+  trophyOutline,
+  flameOutline,
+  starOutline,
+  trendingUpOutline,
+} from './statistics-icons';
 import { statsMonthOptions } from '../../../state/statistics/stats.calculations';
 import { FormsModule } from '@angular/forms';
 import { BudgetStatistics } from './budget-statistics';
@@ -46,6 +60,19 @@ export class Statistics {
   readonly loading = computed(() => this.service.loading(this.selected()));
   readonly error = computed(() => this.service.error(this.selected()));
   constructor() {
+    addIcons({
+      arrowBackOutline,
+      barChartOutline,
+      bookOutline,
+      bookmarkOutline,
+      checkmarkDoneOutline,
+      readerOutline,
+      timeOutline,
+      trophyOutline,
+      flameOutline,
+      starOutline,
+      trendingUpOutline,
+    });
     effect(() => {
       if (this.selected() === 'fuel' && this.service.selectedVehicleId())
         this.service.ensureFuelLoaded();
@@ -68,9 +95,9 @@ export class Statistics {
   private restoreModule(): StatsModule {
     try {
       const value = localStorage.getItem('lifeos.stats.module');
-      return this.modules.some((item) => item.id === value) ? (value as StatsModule) : 'fuel';
+      return this.modules.some((item) => item.id === value) ? (value as StatsModule) : 'books';
     } catch {
-      return 'fuel';
+      return 'books';
     }
   }
 }

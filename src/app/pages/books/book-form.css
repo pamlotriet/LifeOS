@@ -57,7 +57,7 @@
   .book-sheet .book-cover-preview { height: 148px; min-height: 148px; }
 }
 
-.book-sheet-footer { background: #0c0918; border-top: 1px solid #292238; }
+.book-sheet-footer { flex-shrink: 0; z-index: 10; background: #0c0918; border-top: 1px solid #292238; }
 .book-sheet-footer .book-form-actions { position: static; margin: 0; padding: 14px 30px max(14px, env(safe-area-inset-bottom)); background: #0c0918; }
 .book-sheet-footer button { color: #b9b4d8; border-color: #393047; }
 .book-sheet-footer button[type=submit] { background: #a18aff; color: #100a25; }

@@ -3,10 +3,17 @@
     [class.budget-stats-page]="selected() === 'budget'"
     class="stats-page mx-auto min-h-full max-w-3xl px-4 pb-10 pt-5"
   >
+    <div class="stats-topbar">
+      <a routerLink="/home"><ion-icon name="arrow-back-outline" /> LifeOS</a
+      ><span><ion-icon name="bar-chart-outline" /> Signals &amp; trends</span>
+    </div>
     <header class="stats-header">
-      <h1>Stats</h1>
-      <p>Viewing stats for</p>
-      <div class="module-selector">
+      <div class="stats-intro">
+        <p class="eyebrow">Numbers worth keeping</p>
+        <h1>Stats <span>&amp; progress</span></h1>
+        <p>A quiet look at how the year is actually going.</p>
+      </div>
+      <div class="module-selector" (keydown.escape)="selectorOpen.set(false)">
         <button
           type="button"
           class="module-trigger"
@@ -112,7 +119,141 @@
           }
         </section>
       } @else {
-        @if (selected() === 'budget') {
+        @if (data.books; as book) {
+          <section class="book-kpis" aria-label="Book statistics">
+            @for (card of book.cards; track card.label) {
+              <article class="book-card book-kpi">
+                <div class="book-kpi-label"><ion-icon [name]="card.icon" />{{ card.label }}</div>
+                <div class="book-value">
+                  {{ card.value }} <span>{{ card.unit }}</span>
+                </div>
+                <p>{{ card.note }}</p>
+              </article>
+            }
+          </section>
+          <div class="book-main-grid">
+            <section class="book-card reading-chart">
+              <div class="book-heading">
+                <h2>Books read by month</h2>
+                <span>{{ book.totalFinished }} books ï¿½ {{ range() }}</span>
+              </div>
+              <app-budget-chart
+                [config]="data.primary"
+                [height]="240"
+                label="Books finished each month"
+              />
+              <div class="book-divider"></div>
+              <div class="book-heading">
+                <h3>Pages read</h3>
+                <span>{{ book.totalPages }} pages</span>
+              </div>
+              <app-budget-chart
+                [config]="book.pages"
+                [height]="150"
+                label="Pages in books finished each month"
+              />
+              <p class="chart-note">Pages in finished books@if (range() === 'All') { ? Charts show the latest 24 months; totals include all books. }</p>
+            </section>
+            <section class="book-card">
+              <h2>Top authors</h2>
+              <p class="book-subtitle">Most finished books</p>
+              @for (row of book.authors; track row.label) {
+                <div class="book-bar-row">
+                  <div>
+                    <span>{{ row.label }}</span
+                    ><span>{{ row.value }}</span>
+                  </div>
+                  <div class="book-track">
+                    <i [style.width.%]="(row.value / book.authors[0].value) * 100"></i>
+                  </div>
+                </div>
+              } @empty {
+                <p class="book-subtitle">Finish a book to see your top authors.</p>
+              }
+              <div class="book-divider"></div>
+              <h3 class="rating-heading"><ion-icon name="star-outline" /> Ratings spread</h3>
+              @for (row of book.ratings; track row.label) {
+                <div class="rating-row">
+                  <span>{{ row.label }}</span>
+                  <div class="book-track">
+                    <i
+                      [style.width.%]="(row.value / (book.totalFinished || 1)) * 100"
+                      [style.background]="row.color"
+                    ></i>
+                  </div>
+                  <span>{{ row.value }}</span>
+                </div>
+              }
+            </section>
+          </div>
+          <div class="book-lower-grid">
+            <section class="book-card">
+              <h2>Books by category</h2>
+              <p class="book-subtitle">Across everything finished in this period</p>
+              <div class="category-content">
+                <div class="category-chart">
+                  <app-budget-chart
+                    [config]="data.secondary"
+                    [height]="200"
+                    label="Finished books by category"
+                  />
+                </div>
+                <div class="category-legend">
+                  @for (row of book.categories; track row.label) {
+                    <div>
+                      <i [style.background]="row.color"></i><span>{{ row.label }}</span
+                      ><strong>{{ row.value }}</strong
+                      ><span>{{ row.percent }}%</span>
+                    </div>
+                  } @empty {
+                    <p>No finished books in this period.</p>
+                  }
+                </div>
+              </div>
+            </section>
+            <div class="book-details">
+              <div class="book-highlights">
+                <article class="book-card">
+                  <ion-icon name="trophy-outline" />
+                  <div class="book-value">
+                    {{ book.bestMonth }} <span>ï¿½ {{ book.bestCount }} books</span>
+                  </div>
+                  <p>Best month in this period</p>
+                </article>
+                <article class="book-card">
+                  <ion-icon name="flame-outline" />
+                  <div class="book-value">{{ book.streak }} <span>in a row</span></div>
+                  <p>Consecutive days finishing books</p>
+                </article>
+              </div>
+              <section class="book-card">
+                <h2>Formats on the shelf</h2>
+                <p class="book-subtitle">How you own them ï¿½ all recorded copies</p>
+                @for (row of book.formats; track row.label) {
+                  <div class="book-bar-row">
+                    <div>
+                      <span>{{ row.label }}</span
+                      ><span>{{ row.value }}</span>
+                    </div>
+                    <div class="book-track">
+                      <i [style.width.%]="row.percent" [style.background]="row.color"></i>
+                    </div>
+                  </div>
+                } @empty {
+                  <p class="book-subtitle">Add a format to your books to see the breakdown.</p>
+                }
+              </section>
+            </div>
+          </div>
+          <section class="book-card book-insights">
+            <h2><ion-icon name="bulb-outline" /> Insights</h2>
+            <div>
+              @for (insight of book.insights; track insight) {
+                <p><ion-icon name="trending-up-outline" />{{ insight }}</p>
+              }
+            </div>
+          </section>
+        } @else if (selected() === 'budget') {
           <div class="budget-report-toolbar">
             <div>
               <h2>Budget report</h2>
@@ -147,7 +288,9 @@
             <div class="chart-heading">
               <div>
                 <h2>{{ data.primaryTitle }}</h2>
-                <p>{{ option().label }} · {{ range() === '1M' ? selectedMonth() : range() }}</p>
+                <p>
+                  {{ option().label }} &middot; {{ range() === '1M' ? selectedMonth() : range() }}
+                </p>
               </div>
             </div>
             <app-budget-chart [config]="data.primary" [height]="230" [label]="data.primaryTitle" />
@@ -171,7 +314,8 @@
                 <div>
                   <h2 id="debt-stats-title">Credit, loans &amp; debt</h2>
                   <p>
-                    Budget cycle: {{ debt.cycleLabel }} · repayments follow the selected time range
+                    Budget cycle: {{ debt.cycleLabel }} &middot; repayments follow the selected time
+                    range
                   </p>
                 </div>
                 <a routerLink="/budget/debts">Manage debts</a>
@@ -203,7 +347,7 @@
                 <h3 class="mt-5 mb-3">
                   Monthly repayments
                   @if (range() === 'All') {
-                    · latest 24 months
+                    &middot; latest 24 months
                   }
                 </h3>
                 <app-budget-chart
@@ -212,9 +356,9 @@
                   label="Monthly debt repayments"
                 />
                 <p class="mt-4 text-sm text-[var(--text-secondary)]">
-                  Credit remaining = cycle opening + estimated interest − paid repayments. Deleting
-                  a payment recalculates these figures. Planned payments do not reduce outstanding
-                  balances or count as paid.
+                  Credit remaining = cycle opening + estimated interest &minus; paid repayments.
+                  Deleting a payment recalculates these figures. Planned payments do not reduce
+                  outstanding balances or count as paid.
                 </p>
               }
             </section>
