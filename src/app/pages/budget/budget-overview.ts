@@ -1,4 +1,4 @@
-import { BudgetNumber, parseBudgetNumber } from '../../shared/directives/budget-number';
+import { BudgetNumber } from '../../shared/directives/budget-number';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { budgetSnapshot, budgetSpending } from './budget-snapshot';
 import { cycleMonth } from '../../shared/state/budget/budget-cycle';
@@ -19,17 +19,19 @@ export class BudgetOverview {
   readonly monthlyView = !!inject(ActivatedRoute).snapshot.data['monthly'];
   readonly selectedDate = signal('');
   readonly money = money;
-  readonly balanceInput = signal('');
+  readonly balanceInput = signal<number | null>(null);
+  readonly balanceSaved = signal(false);
   readonly savingBalance = signal(false);
   readonly balanceError = signal('');
   async saveSpendingBalance(): Promise<void> {
     if (this.savingBalance()) return;
-    this.savingBalance.set(true); this.balanceError.set('');
+    this.savingBalance.set(true); this.balanceError.set(''); this.balanceSaved.set(false);
     try {
-      const amount = parseBudgetNumber(this.balanceInput());
-      if (amount === null) throw new Error('Enter the balance currently in your Spending account.');
+      const amount = this.balanceInput();
+      if (amount === null || !Number.isFinite(amount)) throw new Error('Enter the balance currently in your Spending account.');
       await this.store.setSpendingBalance(amount);
-      this.balanceInput.set('');
+      this.balanceInput.set(null);
+      this.balanceSaved.set(true);
     } catch (error) { this.balanceError.set(error instanceof Error ? error.message : 'Could not save balance.'); }
     finally { this.savingBalance.set(false); }
   }

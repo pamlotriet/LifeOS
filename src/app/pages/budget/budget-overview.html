@@ -34,7 +34,8 @@
             <a class="text-link spending-transfer-link" routerLink="/budget/transactions/add" [queryParams]="{ type: 'spending-transfer' }">Record transfer to Spending &rarr;</a>
             <details class="spending-balance-editor"><summary>Set current Spending balance</summary>
               <p>Enter what is in your Spending account now, after transfers and purchases already recorded here. Existing purchases will not be deducted again. Main-account bills, savings and other accounts stay separate.</p>
-              <form (ngSubmit)="saveSpendingBalance()"><label>Current balance (R)<input type="text" appBudgetNumber inputmode="decimal" name="spendingBalance" [ngModel]="balanceInput()" (ngModelChange)="balanceInput.set($event)" [disabled]="savingBalance()" required /></label><button type="submit" class="secondary-button" [disabled]="savingBalance()">{{ savingBalance() ? 'Saving...' : 'Confirm current balance' }}</button></form>
+              <form (ngSubmit)="saveSpendingBalance()"><label>Current balance (R)<input type="text" appBudgetNumber inputmode="decimal" name="spendingBalance" [ngModel]="balanceInput()" (ngModelChange)="balanceInput.set($event); balanceSaved.set(false)" [disabled]="savingBalance()" required /></label><button type="submit" class="secondary-button" [disabled]="savingBalance()">{{ savingBalance() ? 'Saving...' : 'Confirm current balance' }}</button></form>
+              @if (balanceSaved()) { <p class="positive" role="status">Spending balance saved.</p> }
               @if (balanceError()) { <p class="negative" role="alert">{{ balanceError() }}</p> }
               <p>Set this once to get started. Your balance carries forward across cycles. Record each actual transfer into Spending and each Spending purchase; no monthly balance adjustment is needed.</p>
             </details></article>
