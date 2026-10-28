@@ -22,13 +22,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { PageHeader } from '../../shared/components/page-header/page-header';
+import { PlanningHeader } from './planning-header';
 import { GroceryItem } from '../../shared/state/planning/planning.model';
 import { PlanningStore } from '../../shared/state/planning/planning-store';
 
 @Component({
   selector: 'app-planning-meals',
-  imports: [RouterLink, IonContent, IonIcon, FormsModule, PageHeader],
+  imports: [RouterLink, IonContent, IonIcon, FormsModule, PlanningHeader],
   templateUrl: './planning-meals.html',
   styleUrl: './planning.css',
 })
@@ -46,6 +46,7 @@ export class PlanningMeals {
   readonly categories = MEAL_CATEGORIES;
   readonly nutritionError = signal('');
   readonly logging = signal(false);
+  readonly editorOpen = signal(false);
   pendingMeal: MealPlanItem | null = null;
   actualAmount = 1;
   repeat = false;
@@ -150,6 +151,8 @@ export class PlanningMeals {
     }
   }
   async copyDay(): Promise<void> {
+    if (this.logging()) return;
+    this.logging.set(true); this.nutritionError.set('');
     try {
       if (this.copyDate === this.selectedDate())
         throw new Error('Choose a different destination date.');
@@ -160,10 +163,10 @@ export class PlanningMeals {
       this.nutritionError.set('Meals copied.');
     } catch (e) {
       this.nutritionError.set((e as Error).message);
-    }
+    } finally { this.logging.set(false); }
   }
   async generateGroceries(): Promise<void> {
-    if (this.logging()) return;
+    if (this.logging() || this.store.loading() || this.store.error()) return;
     this.logging.set(true);
     try {
       const dates = new Set(this.week.map((d) => d.iso));
@@ -254,18 +257,28 @@ export class PlanningMeals {
     this.choose(this.week[0].iso);
   }
   async copyMeal(item: MealPlanItem): Promise<void> {
+    if (this.logging()) return;
+    this.logging.set(true); this.nutritionError.set('');
     try {
       const { id, ...input } = item;
       await this.store.saveMeal({ ...input, date: this.copyDate });
       this.nutritionError.set(`Meal copied to ${this.copyDate}.`);
     } catch (e) {
       this.nutritionError.set((e as Error).message);
-    }
+    } finally { this.logging.set(false); }
+  }
+  async removeMeal(id: string): Promise<void> {
+    if (this.logging()) return;
+    this.logging.set(true); this.nutritionError.set('');
+    try { await this.store.deleteMeal(id); }
+    catch (error) { this.nutritionError.set(error instanceof Error ? error.message : 'Could not remove meal.'); }
+    finally { this.logging.set(false); }
   }
   meals(date: string) {
     return this.store.meals().filter((item) => item.date === date);
   }
   edit(item: MealPlanItem): void {
+    this.editorOpen.set(true);
     this.selectedDate.set(item.date);
     this.editingId = item.id;
     this.recipeId = item.recipeId ?? '';
@@ -303,6 +316,7 @@ export class PlanningMeals {
         this.editingId || undefined,
       );
       this.reset();
+      this.editorOpen.set(false);
     } catch (e) {
       this.nutritionError.set((e as Error).message);
     } finally {
@@ -315,16 +329,25 @@ export class PlanningMeals {
     this.recipeId = '';
     this.ingredientId = '';
     this.servings = 1;
+    this.quantity = 100;
+    this.unit = 'g';
     this.editingId = '';
   }
   async addGrocery(): Promise<void> {
-    if (!this.groceryName().trim()) return;
-    await this.store.saveGrocery({
-      name: this.groceryName(),
-      section: this.grocerySection(),
-      checked: false,
-    });
-    this.groceryName.set('');
+    if (!this.groceryName().trim() || this.logging()) return;
+    this.logging.set(true); this.nutritionError.set('');
+    try {
+      await this.store.saveGrocery({ name: this.groceryName().trim(), section: this.grocerySection(), checked: false });
+      this.groceryName.set('');
+    } catch (error) { this.nutritionError.set(error instanceof Error ? error.message : 'Could not add shopping item.'); }
+    finally { this.logging.set(false); }
+  }
+  async changeGrocery(item: GroceryItem, remove = false): Promise<void> {
+    if (this.logging()) return;
+    this.logging.set(true); this.nutritionError.set('');
+    try { if (remove) await this.store.deleteGrocery(item.id); else await this.store.toggleGrocery(item); }
+    catch (error) { this.nutritionError.set(error instanceof Error ? error.message : 'Could not update shopping item.'); }
+    finally { this.logging.set(false); }
   }
   choose(date: string): void {
     this.selectedDate.set(date);

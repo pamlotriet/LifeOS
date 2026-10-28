@@ -4,7 +4,7 @@ import { StatsService } from './stats.service';
 import { NutritionService } from '../nutrition/nutrition.service';
 import { BudgetStore } from '../budget/budget.store';
 import { BookStore } from '../books/book-store';
-import { RefuelStore } from '../refuels/refuel-store';
+import { VehicleStore } from '../vehicles/vehicle-store';
 import { cycleMonth, inCycle } from '../budget/budget-cycle';
 describe('Selected month reports', () => {
   const year = new Date().getFullYear();
@@ -28,7 +28,7 @@ describe('Selected month reports', () => {
               profile: () => ({ targets: { calories: 2000, protein: 100, carbs: 200, fat: 60 } }),
             },
           },
-          { provide: RefuelStore, useValue: { entries: () => [] } },
+          { provide: VehicleStore, useValue: { vehicles: () => [] } },
           {
             provide: BookStore,
             useValue: {

@@ -4,7 +4,7 @@
       <p class="text-xs font-semibold uppercase tracking-[.22em] text-cyan-300">LifeOS</p>
       <h1 class="mt-1 text-3xl font-bold">More</h1>
       <p class="mt-1 text-sm text-[var(--text-secondary)]">
-        Manage your app and security preferences.
+        Your wellbeing, app preferences and security.
       </p>
     </header>
 
@@ -26,6 +26,13 @@
           ></span
         >
         <ion-icon name="chevron-forward" class="text-xl text-[var(--text-secondary)]"></ion-icon>
+      </a>
+    </section>
+    <section class="mt-5 overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--card)]">
+      <a routerLink="/nutrition/profile" class="flex min-h-20 items-center gap-4 p-4 text-white no-underline">
+        <span class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[var(--secondary)] text-[var(--primary)]"><ion-icon [icon]="nutritionIcon" class="text-2xl" aria-hidden="true" /></span>
+        <span class="min-w-0 flex-1"><strong class="block text-base">Nutrition</strong><span class="mt-0.5 block text-sm text-[var(--text-secondary)]">Your profile, calorie goals and daily targets</span></span>
+        <ion-icon name="chevron-forward" class="text-xl text-[var(--text-secondary)]" aria-hidden="true" />
       </a>
     </section>
     @if (updates.enabled) {

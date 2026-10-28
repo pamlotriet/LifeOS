@@ -1,11 +1,20 @@
 <ion-content>
   <main class="budget-page budget-overview-page">
-  <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
-    <header class="page-header budget-overview-header">
+    <div class="budget-topbar">
       @if (monthlyView) { <app-back-button fallback="/budget" /> } @else { <app-back-button fallback="/home" /> }
-      @if (monthlyView) { <label class="budget-month-picker"><input type="month" aria-label="Budget month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></label> } @else { <div><h1>Budget</h1><a class="budget-month-link" routerLink="/budget/month">{{ monthLabel() }} <ion-icon name="chevron-down-outline" /></a></div> }
-      <a class="icon-button" [routerLink]="monthlyView ? '/budget/transactions/add' : '/budget/month'" [attr.aria-label]="monthlyView ? 'Add transaction' : 'Open monthly calendar'"><ion-icon [name]="monthlyView ? 'add' : 'calendar-outline'" /></a>
+    </div>
+    <header class="page-header budget-overview-header">
+      <div class="budget-title"><span class="budget-eyebrow">Personal finance</span><h1>@if (monthlyView) { Your <span>transactions</span> } @else { Your <span>budget</span> }</h1><p class="muted">{{ monthlyView ? "Your records, one cycle at a time" : "Plan your money. Track your progress." }}</p></div>
+      <a class="icon-button" [routerLink]="monthlyView ? '/budget/transactions/add' : '/budget/month'" [attr.aria-label]="monthlyView ? 'Add transaction' : 'View transactions'"><ion-icon [name]="monthlyView ? 'add' : 'calendar-outline'" /></a>
     </header>
+    <section class="cycle-selector" aria-label="Budget cycle">
+      <div class="cycle-navigation">
+        <button type="button" class="icon-button" aria-label="Previous budget cycle" (click)="shiftMonth(-1)"><ion-icon name="chevron-back" aria-hidden="true" /></button>
+        <label class="cycle-picker"><span>Budget cycle</span><input #cycleInput type="month" aria-label="Budget cycle month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" (click)="openCyclePicker(cycleInput)" /></label>
+        <button type="button" class="icon-button" aria-label="Next budget cycle" (click)="shiftMonth(1)"><ion-icon name="chevron-forward" aria-hidden="true" /></button>
+      </div>
+      <div class="cycle-details"><p aria-label="Budget cycle dates" aria-live="polite">{{ cycleDates() }}</p><button type="button" class="text-link" (click)="goToCurrentCycle()">Current cycle</button></div>
+    </section>
     <app-budget-nav />
     @if (store.loading()) { <section class="budget-loading" aria-label="Loading your budget"><app-skeleton variant="cards" [count]="4" /><div class="panel mt-4 p-4"><app-skeleton variant="chart" /></div><div class="panel mt-4 p-4"><app-skeleton variant="list" [count]="4" /></div></section> }
     @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
@@ -15,7 +24,7 @@
         <a class="primary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'income' }"><ion-icon name="cash" /> Add income</a>
         <a class="secondary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'expense' }">Add expense</a>
       </div>
-      @if (!monthlyView || tab() === 'overview') {
+      @if (!monthlyView) {
         <section aria-label="Budget statistics"><app-budget-summary [transactions]="store.monthly()" [categories]="store.categories()" /></section>
       }
       @if (!monthlyView) {
@@ -30,19 +39,6 @@
           <a class="text-link" routerLink="/budget/comparison">Compare plans with actual spending →</a>
         </section>
       }
-      @if (monthlyView) {
-        <nav class="segments monthly-display" aria-label="Transaction display"><button type="button" [class.active]="tab() === 'overview'" [attr.aria-pressed]="tab() === 'overview'" (click)="tab.set('overview')">Summary &amp; transactions</button><button type="button" [class.active]="tab() === 'transactions'" [attr.aria-pressed]="tab() === 'transactions'" (click)="tab.set('transactions')">Transactions only</button></nav>
-        <section class="calendar" aria-label="Filter transactions by date">
-          <div class="calendar-grid">
-            @for (day of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']; track day) { <span>{{ day }}</span> }
-            @for (day of days(); track $index) {
-              @if (day) { <button type="button" [class.selected]="selectedDate() === day.date" [class.has-data]="hasTransactions(day.date)" [attr.aria-label]="day.date" [attr.aria-pressed]="selectedDate() === day.date" (click)="selectDay(day.date)">{{ day.label }}</button> } @else { <span></span> }
-            }
-          </div>
-          @if (selectedDate()) { <button class="text-link" (click)="selectedDate.set('')">Show all dates</button> }
-        </section>
-      }
-      @if (tab() === 'overview') {
         @if (!monthlyView) { <section class="panel budget-content-card">
           <div class="section-heading"><h2>Spending by Category</h2><a class="text-link" routerLink="/budget/insights">See all</a></div>
           @if (spending().length) {
@@ -51,8 +47,10 @@
           <p class="spending-note">{{ snapshot().expenseCount }} recorded expenses · Includes bills and {{ money(snapshot().debtPaid) }} in debt payments. Savings and unpaid plans are excluded.</p>
           <div class="toolbar"><a class="text-link" routerLink="/budget/categories">Manage categories</a><a class="text-link" routerLink="/budget/insights">View insights <ion-icon name="chevron-forward" /></a></div>
         </section> }
+      <div class="section-heading transaction-heading"><div><h2>{{ monthlyView ? 'Transactions' : 'Recent transactions' }}</h2>@if (monthlyView) { <p class="transaction-count" aria-live="polite">{{ filtered().length }} {{ filtered().length === 1 ? 'transaction' : 'transactions' }} {{ selectedDate() ? 'on this date' : 'this cycle' }}</p> }</div>@if (!monthlyView) { <a class="text-link" routerLink="/budget/month">See all</a> } @else { <a class="text-link" routerLink="/budget/transactions/add">Add new</a> }</div>
+      @if (monthlyView) {
+        <div class="transaction-filters"><label for="transaction-date">Date<select id="transaction-date" [ngModel]="selectedDate()" (ngModelChange)="selectedDate.set($event)"><option value="">All dates in this cycle</option>@for (date of transactionDates(); track date.value) { <option [value]="date.value">{{ date.label }}</option> }</select></label>@if (selectedDate()) { <button type="button" class="text-link" (click)="selectedDate.set('')">Clear filter</button> }</div>
       }
-      <div class="section-heading"><h2>{{ selectedDate() ? 'Transactions · ' + selectedDate() : monthlyView ? 'Transactions' : 'Recent Transactions' }}</h2>@if (!monthlyView) { <a class="text-link" routerLink="/budget/month">See all</a> } @else { <a class="text-link" routerLink="/budget/transactions/add">Add new</a> }</div>
       <app-budget-transactions [transactions]="monthlyView ? filtered() : store.monthly().slice(0, 5)" [categories]="store.categories()" />
     }
   </main>

@@ -630,3 +630,41 @@ ion-modal.add-book-sheet app-date-picker > div > button {
 ion-modal.add-book-sheet app-select [role='listbox'] { border-color: #393047; background: #201831; }
 ion-modal.add-book-sheet app-select [role='option']:hover,
 ion-modal.add-book-sheet app-select [role='option'][aria-selected='true'] { background: #3a2d57; }
+
+/* Fuel editors use the same desktop dialog / mobile sheet presentation as other editors. */
+ion-modal.fuel-editor-modal {
+  --width: min(680px, calc(100vw - 48px));
+  --height: min(88dvh, 860px);
+  --border-radius: 24px;
+  --background: var(--card, #171225);
+  --backdrop-opacity: .65;
+  --box-shadow: 0 24px 80px #0006;
+}
+ion-modal.fuel-editor-modal::part(content) { border: 1px solid var(--border); background: var(--card, #171225); }
+.fuel-editor-body { height: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 32px; background: var(--card, #171225); color: var(--foreground); box-sizing: border-box; }
+.fuel-editor-close { position: sticky; top: 0; z-index: 2; display: grid; place-items: center; margin-left: auto; margin-bottom: 8px; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; background: var(--card); color: var(--text-secondary); font-size: 26px; cursor: pointer; }
+.fuel-editor-body form { color: var(--foreground); padding-bottom: 0; }
+.fuel-editor-body :is(input,button) { color: inherit; }
+.fuel-editor-body input { min-height: 48px; }
+.fuel-editor-body button[type=submit] { background: var(--primary); color: var(--primary-foreground); border-color: transparent; border-radius: 12px; box-shadow: none; }
+.fuel-editor-body :is(button,input):focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.fuel-editor-body button:disabled { cursor: wait; opacity: .6; }
+@media (max-width: 767px) {
+  ion-modal.fuel-editor-modal { --width: 100%; --height: 92dvh; --border-radius: 28px 28px 0 0; align-items: end; }
+  .fuel-editor-body { padding: 18px 20px calc(24px + env(safe-area-inset-bottom)); }
+}
+
+/* Shared ingredient and recipe popup presentation. */
+ion-modal.food-editor-modal { --width: min(760px, calc(100vw - 40px)); --height: min(90dvh, 960px); --border-radius: 20px; --background: var(--card); --backdrop-opacity: .6; }
+ion-modal.food-editor-modal::part(content) { border: 1px solid var(--border); }
+ion-modal.food-editor-modal ion-content { --background: var(--background); --color: var(--foreground); }
+ion-modal.food-editor-modal main { padding: 24px; max-width: none; }
+.ingredient-modal-content { padding: 24px; }
+.ingredient-modal-content .editor { margin: 0; padding: 0; border: 0; background: transparent; }
+.recipe-modal-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+.recipe-modal-heading h1 { margin: 0; font-size: 1.75rem; font-weight: 600; }
+.recipe-modal-heading p { margin: 8px 0 0; font-size: .85rem; line-height: 1.6; color: var(--text-secondary); }
+.recipe-modal-heading button { flex-shrink: 0; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 12px; }
+.recipe-modal-heading ion-icon { font-size: 24px; }
+ion-modal.food-editor-modal button ion-icon { vertical-align: middle; }
+@media(max-width:600px) { ion-modal.food-editor-modal { --width: 100%; --height: 94dvh; --border-radius: 24px 24px 0 0; align-items: end; } ion-modal.food-editor-modal main,.ingredient-modal-content { padding: 20px 16px calc(24px + env(safe-area-inset-bottom)); } }

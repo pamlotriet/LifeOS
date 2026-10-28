@@ -7,8 +7,8 @@
         <h1 class="mt-1 text-3xl font-bold">Recipes</h1>
         <p class="text-sm text-[var(--text-secondary)]">Save the meals you love.</p>
       </div>
-      <a routerLink="/recipes/add" class="recipe-add"
-        ><ion-icon name="add" aria-hidden="true" /> Add recipe</a
+      <button type="button" (click)="editorOpen.set(true)" class="recipe-add"
+        ><ion-icon name="add" aria-hidden="true" /> Add recipe</button
       >
     </header>
     <label
@@ -44,7 +44,7 @@
             : 'border-[var(--border)] text-[var(--text-secondary)]'
         "
       >
-        ♥ Favourites
+        â™¥ Favourites
       </button>
       @for (item of categories; track item) {
         <button
@@ -104,12 +104,12 @@
                 ></span>
               }
               @if (recipe.favourite) {
-                <span class="absolute right-2 top-2 text-xl text-pink-400">♥</span>
+                <span class="absolute right-2 top-2 text-xl text-pink-400">â™¥</span>
               }</span
             ><span class="block p-3"
               ><strong class="block line-clamp-2 text-sm">{{ recipe.title }}</strong
               ><span class="mt-1 block text-[11px] text-[var(--text-secondary)]"
-                >{{ recipeCategories(recipe).join(' / ') }} · {{ recipe.cookTime }} mins</span
+                >{{ recipeCategories(recipe).join(' / ') }} Â· {{ recipe.cookTime }} mins</span
               ></span
             ></a
           >
@@ -118,3 +118,5 @@
     }
   </main>
 </ion-content>
+
+@if (editorOpen()) { <app-recipe-form [embedded]="true" (dismissed)="editorOpen.set(false)" (saved)="editorOpen.set(false)" /> }

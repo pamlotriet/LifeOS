@@ -1,1 +1,76 @@
-﻿:host{display:block}.history-log-button{display:inline-flex;align-self:flex-start;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border:1px solid var(--border);border-radius:10px;background:var(--secondary);color:var(--foreground);font-size:.85rem;font-weight:600;text-decoration:none}.history-log-button ion-icon{color:var(--primary)}.history-log-button:hover{background:var(--muted);border-color:var(--primary)}.fuel-history-record{background:var(--card);border-color:var(--border)}.history-log-button:focus-visible{outline:3px solid var(--ring);outline-offset:3px}
+﻿:host {
+  display: block;
+}
+.history-log-button {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--secondary);
+  color: var(--foreground);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.history-log-button ion-icon {
+  color: var(--primary);
+}
+.history-log-button:hover {
+  background: var(--muted);
+  border-color: var(--primary);
+}
+.fuel-history-record {
+  background: var(--card);
+  border-color: var(--border);
+}
+.history-log-button:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.fuel-history-page {
+  max-width: none;
+  color: var(--foreground);
+  gap: 18px;
+}
+.fuel-history-page > header h1 {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+.fuel-history-record {
+  padding: 24px;
+  border-radius: 20px;
+}
+.fuel-history-record h2 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.fuel-history-record .grid {
+  gap: 20px;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+.fuel-history-record .grid span {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.fuel-history-record .grid strong {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+@media (max-width: 500px) {
+  .fuel-history-record {
+    padding: 18px;
+  }
+  .fuel-history-record .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

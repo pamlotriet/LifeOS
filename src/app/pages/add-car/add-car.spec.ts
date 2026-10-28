@@ -1,3 +1,5 @@
+import { IonModal } from '@ionic/angular';
+import { FuelModalStub } from '../fuel/fuel-modal.testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { AddCar } from './add-car';
@@ -13,11 +15,19 @@ describe('AddCar', () => {
     await TestBed.configureTestingModule({
       imports: [AddCar],
       providers: [provideRouter([]), { provide: VehicleStore, useValue: { add: addVehicle } }],
-    }).compileComponents();
+    }).overrideComponent(AddCar, { remove: { imports: [IonModal] }, add: { imports: [FuelModalStub] } }).compileComponents();
 
     fixture = TestBed.createComponent(AddCar);
     component = fixture.componentInstance;
     await fixture.whenStable();
+  });
+
+  it('closes on dismissal and ignores duplicate dismissal events', () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    fixture.componentInstance.dismiss();
+    fixture.componentInstance.dismiss();
+    expect(fixture.componentInstance.modalOpen()).toBe(false);
+    expect(navigate).toHaveBeenCalledTimes(1);
   });
 
   it('should create', () => {

@@ -129,6 +129,21 @@ export class BudgetStore {
     ++this.generation;
     this.plans.update(items => items.filter(item => item.id !== id));
   }
+  async markSavingsMoved(planId: string, date: string): Promise<void> {
+    const plan = this.plans().find(item => item.id === planId);
+    if (!plan || !this.activeCategories().some(category => category.id === plan.categoryId && category.type === 'savings')) throw new Error('Choose an existing savings plan.');
+    if (!this.inMonth(date, plan.month) || date > localDate()) throw new Error('Choose a transfer date within this budget cycle, on or before today.');
+    const id = `savings-plan-${plan.id}`;
+    if (this.transactions().some(item => item.id === id)) return;
+    await this.saveTransaction({ amount: plan.amount, type: 'transfer', categoryId: plan.categoryId,
+      title: plan.name || 'Savings moved', date, paymentMethod: 'Bank transfer',
+      notes: '', receiptUrl: '', receiptPath: '', paymentStatus: 'paid' }, id);
+  }
+  async undoSavingsMoved(planId: string): Promise<void> {
+    if (this.loading() || this.error()) throw new Error('Load your budget before changing savings.');
+    const transaction = this.transactions().find(item => item.id === `savings-plan-${planId}` && item.type === 'transfer');
+    if (transaction) await this.deleteTransaction(transaction);
+  }
   async copyPlansToNextMonth(month: string, categoryId?: string): Promise<{ copied: number; skipped: number; month: string }> {
     if (this.loading() || this.error()) throw new Error('Load your budget before copying planned items.');
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) throw new Error('Choose a valid budget month.');

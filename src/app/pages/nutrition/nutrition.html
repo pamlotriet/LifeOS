@@ -3,7 +3,7 @@
   ><main class="nutrition-page">
     <nav class="page-links">
       <a routerLink="/planning">Planning</a><a routerLink="/planning">Meal plan</a
-      ><a routerLink="/stats">Stats</a><a routerLink="/settings">Goals</a>
+      ><a routerLink="/stats">Stats</a><a routerLink="/nutrition/profile">Goals</a>
     </nav>
     <header class="diary-heading">
       <div>
@@ -67,7 +67,7 @@
         @if (store.profile().targets.calories > 0) {
           <p>of {{ store.profile().targets.calories }} kcal daily goal</p>
         } @else {
-          <a routerLink="/settings">Set your calorie and macro goals</a>
+          <a routerLink="/nutrition/profile">Set your calorie and macro goals</a>
         }
         <a class="planned-note" routerLink="/planning"
           >{{ planned().calories.toFixed(0) }} kcal planned separately &rarr;</a
@@ -316,3 +316,4 @@
     </details>
   </main></ion-content
 >
+

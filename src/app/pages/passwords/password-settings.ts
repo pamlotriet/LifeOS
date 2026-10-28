@@ -1,4 +1,3 @@
-import { NutritionSettings } from '../nutrition/nutrition-settings';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
@@ -9,7 +8,7 @@ import { ThemeService } from '../../shared/state/theme/theme.service';
 
 @Component({
   selector: 'app-password-settings',
-  imports: [NutritionSettings, FormsModule, IonContent, IonIcon, PageHeader],
+  imports: [FormsModule, IonContent, IonIcon, PageHeader],
   templateUrl: './password-settings.html',
 })
 export class PasswordSettings {

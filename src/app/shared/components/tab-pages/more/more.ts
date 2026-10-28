@@ -1,3 +1,4 @@
+import { nutritionOutline } from 'ionicons/icons';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -11,6 +12,7 @@ import { AppUpdates } from '../../../state/app-updates.service';
   templateUrl: './more.html',
 })
 export class More {
+  readonly nutritionIcon = nutritionOutline;
   readonly updates = inject(AppUpdates);
   private readonly auth = inject(AuthService);
   readonly signingOut = signal(false);

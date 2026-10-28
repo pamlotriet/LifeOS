@@ -1,3 +1,4 @@
+import { RecipeForm } from './recipe-form';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -8,11 +9,12 @@ import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
 @Component({
   selector: 'app-recipes',
-  imports: [BackButton, IonContent, IonIcon, RouterLink, AppSkeleton],
+  imports: [BackButton, IonContent, IonIcon, RouterLink, AppSkeleton, RecipeForm],
   templateUrl: './recipes.html',
   styleUrl: './recipes.css',
 })
 export class Recipes {
+  readonly editorOpen = signal(false);
   readonly recipeCategories = recipeCategories;
   readonly store = inject(RecipeStore);
   readonly categories = RECIPE_CATEGORIES;

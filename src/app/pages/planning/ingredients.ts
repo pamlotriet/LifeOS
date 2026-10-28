@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonContent } from '@ionic/angular';
-import { PageHeader } from '../../shared/components/page-header/page-header';
+import { IonContent, IonModal } from '@ionic/angular';
+import { PlanningHeader } from './planning-header';
 import { NutritionService } from '../../shared/state/nutrition/nutrition.service';
 import { Food, nutritionLabel, zeroMacros } from '../../shared/state/nutrition/nutrition.model';
 import {
@@ -10,9 +10,9 @@ import {
 } from '../../shared/state/nutrition/nutrition.calculations';
 @Component({
   selector: 'app-ingredients',
-  imports: [FormsModule, IonContent, PageHeader],
+  imports: [FormsModule, IonContent, IonModal, PlanningHeader],
   templateUrl: './ingredients.html',
-  styleUrl: '../nutrition/nutrition.css',
+  styleUrls: ['../nutrition/nutrition.css', './ingredients.css'],
 })
 export class Ingredients {
   readonly store = inject(NutritionService);
@@ -67,6 +67,8 @@ export class Ingredients {
     }
   }
   addPortion(): void {
+    if (!this.portionName.trim() || !Number.isFinite(this.portionAmount) || this.portionAmount <= 0) { this.error.set('Enter a portion name and a positive weight or volume.'); return; }
+    this.error.set('');
     this.food.portions = [
       ...(this.food.portions ?? []),
       { unit: this.portionName.trim(), amount: this.portionAmount, baseUnit: this.portionBase },
@@ -90,11 +92,6 @@ export class Ingredients {
   }
   editFood(food: Food): void {
     this.editorOpen.set(true);
-    setTimeout(() =>
-      document
-        .getElementById('ingredient-editor')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-    );
     this.food = structuredClone(food);
     this.labelAmount = 100;
     this.labelUnit = food.baseUnit ?? 'g';

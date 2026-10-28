@@ -41,7 +41,7 @@
           </div>
         }
       </div>
-      @if (selected() === 'fuel' && service.vehicleOptions().length > 1) {
+      @if (selected() === 'fuel') {
         <label class="vehicle-filter"
           ><span>Vehicle</span
           ><select
@@ -49,8 +49,9 @@
             [value]="service.selectedVehicleId()"
             (change)="service.selectVehicle($any($event.target).value)"
           >
+            <option value="all">All cars</option>
             @for (vehicle of service.vehicleOptions(); track vehicle.id) {
-              <option [value]="vehicle.id">{{ vehicle.name }}</option>
+              <option [value]="vehicle.id">{{ vehicle.name }} ({{ vehicle.registration }})</option>
             }
           </select></label
         >
@@ -152,7 +153,12 @@
                 [height]="150"
                 label="Pages in books finished each month"
               />
-              <p class="chart-note">Pages in finished books@if (range() === 'All') { ? Charts show the latest 24 months; totals include all books. }</p>
+              <p class="chart-note">
+                Pages in finished books
+                @if (range() === 'All') {
+                  ? Charts show the latest 24 months; totals include all books.
+                }
+              </p>
             </section>
             <section class="book-card">
               <h2>Top authors</h2>

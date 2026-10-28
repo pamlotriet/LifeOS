@@ -74,8 +74,7 @@ export class Statistics {
       trendingUpOutline,
     });
     effect(() => {
-      if (this.selected() === 'fuel' && this.service.selectedVehicleId())
-        this.service.ensureFuelLoaded();
+      if (this.selected() === 'fuel') void this.service.ensureFuelLoaded();
     });
     effect(() => {
       try {

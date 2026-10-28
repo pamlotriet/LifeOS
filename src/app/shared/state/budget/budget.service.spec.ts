@@ -9,16 +9,18 @@ import { DEFAULT_CATEGORIES, TransactionInput } from './budget.model';
 
 describe('BudgetService', () => {
   const getSession = vi.fn();
-  const firestore = { listDocuments: vi.fn(), createDocument: vi.fn(), updateDocument: vi.fn(), deleteDocument: vi.fn() };
+  const firestore = { tryGetDocument: vi.fn(), listDocuments: vi.fn(), createDocument: vi.fn(), updateDocument: vi.fn(), deleteDocument: vi.fn() };
   const photos = { uploadBudgetReceipt: vi.fn(), deletePhoto: vi.fn() };
   const input: TransactionInput = { amount: 450.25, type: 'expense', categoryId: 'food', title: ' Groceries ', date: '2026-09-01', paymentMethod: 'Card', notes: '', receiptUrl: '', receiptPath: '' };
   const service = () => runInInjectionContext(Injector.create({ providers: [{ provide: AuthService, useValue: { getSession } }, { provide: FirestoreService, useValue: firestore }, { provide: StoragePhotoService, useValue: photos }] }), () => new BudgetService());
-  beforeEach(() => { vi.resetAllMocks(); getSession.mockResolvedValue({ uid: 'owner', token: 'token' }); firestore.listDocuments.mockResolvedValue([]); photos.deletePhoto.mockResolvedValue(undefined); });
+  beforeEach(() => { vi.resetAllMocks(); getSession.mockResolvedValue({ uid: 'owner', token: 'token' }); firestore.listDocuments.mockResolvedValue([]); firestore.tryGetDocument.mockResolvedValue(null); photos.deletePhoto.mockResolvedValue(undefined); });
   it('scopes both collections to the signed-in user and decodes numeric values', async () => {
     firestore.listDocuments.mockResolvedValueOnce([{ name: 'budgets/owner/transactions/t1', fields: { amount: { integerValue: '45' }, type: { stringValue: 'expense' } } }]);
     const result = await service().load();
     expect(firestore.listDocuments).toHaveBeenCalledWith('budgets/owner/transactions', 'token');
     expect(firestore.listDocuments).toHaveBeenCalledWith('budgets/owner/categories', 'token');
+    expect(firestore.tryGetDocument).toHaveBeenCalledWith('budgets/owner/settings/cycle', 'token');
+    expect(result.cycleStartDay).toBe(1);
     expect(result.transactions[0]).toMatchObject({ id: 't1', amount: 45 });
   });
   it('creates and updates transactions without duplicating them', async () => {

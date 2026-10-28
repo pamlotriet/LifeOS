@@ -1,3 +1,5 @@
+import { IonModal } from '@ionic/angular';
+import { FuelModalStub } from '../fuel/fuel-modal.testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
@@ -26,9 +28,17 @@ describe('RefuelForm', () => {
         save,
         selectVehicle: vi.fn(),
       } }],
-    }).compileComponents();
+    }).overrideComponent(RefuelForm, { remove: { imports: [IonModal] }, add: { imports: [FuelModalStub] } }).compileComponents();
     fixture = TestBed.createComponent(RefuelForm);
     await fixture.whenStable();
+  });
+
+  it('closes on dismissal and ignores duplicate dismissal events', () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    fixture.componentInstance.dismiss();
+    fixture.componentInstance.dismiss();
+    expect(fixture.componentInstance.modalOpen()).toBe(false);
+    expect(navigate).toHaveBeenCalledTimes(1);
   });
 
   it('keeps the form hidden until vehicles and refuel records are ready', async () => {

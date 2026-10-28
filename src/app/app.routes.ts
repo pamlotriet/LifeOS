@@ -2,12 +2,7 @@ import { Routes } from '@angular/router';
 import { Home } from './shared/components/tab-pages/home/home';
 import { More } from './shared/components/tab-pages/more/more';
 import { authGuard } from './shared/guards/auth.guard';
-import { AddCar } from './pages/add-car/add-car';
-import { Vehicles } from './pages/vehicles/vehicles';
-import { Fuel } from './pages/fuel/fuel';
 import { TabsShell } from './shared/components/tabs-shell/tabs-shell';
-import { FuelHistory } from './pages/fuel-history/fuel-history';
-import { RefuelForm } from './pages/refuel-form/refuel-form';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -52,6 +47,11 @@ export const routes: Routes = [
   { path: 'nutrition/ingredients', redirectTo: 'planning/ingredients', pathMatch: 'full' },
 
   {
+    path: 'nutrition/profile',
+    loadComponent: () => import('./pages/nutrition/nutrition-profile').then((m) => m.NutritionProfile),
+    canActivate: [authGuard],
+  },
+  {
     path: 'nutrition',
     loadComponent: () => import('./pages/nutrition/nutrition').then((m) => m.Nutrition),
     canActivate: [authGuard],
@@ -69,7 +69,7 @@ export const routes: Routes = [
 
   {
     path: 'fuel',
-    component: Fuel,
+    loadComponent: () => import('./pages/fuel/fuel').then((m) => m.Fuel),
     canActivate: [authGuard],
     children: [
       {
@@ -78,16 +78,34 @@ export const routes: Routes = [
           import('./pages/fuel-consumptions/fuel-consumptions').then((m) => m.FuelConsumptions),
         pathMatch: 'full',
       },
-      { path: 'vehicles', component: Vehicles },
-      { path: 'add-car', component: AddCar },
-      { path: 'edit-car/:id', component: AddCar },
+      {
+        path: 'vehicles',
+        loadComponent: () => import('./pages/vehicles/vehicles').then((m) => m.Vehicles),
+      },
+      {
+        path: 'add-car',
+        loadComponent: () => import('./pages/add-car/add-car').then((m) => m.AddCar),
+      },
+      {
+        path: 'edit-car/:id',
+        loadComponent: () => import('./pages/add-car/add-car').then((m) => m.AddCar),
+      },
       {
         path: 'insights',
         loadComponent: () => import('./pages/insights/insights').then((m) => m.Insights),
       },
-      { path: 'history', component: FuelHistory },
-      { path: 'refuels/add', component: RefuelForm },
-      { path: 'refuels/:vehicleId/:id/edit', component: RefuelForm },
+      {
+        path: 'history',
+        loadComponent: () => import('./pages/fuel-history/fuel-history').then((m) => m.FuelHistory),
+      },
+      {
+        path: 'refuels/add',
+        loadComponent: () => import('./pages/refuel-form/refuel-form').then((m) => m.RefuelForm),
+      },
+      {
+        path: 'refuels/:vehicleId/:id/edit',
+        loadComponent: () => import('./pages/refuel-form/refuel-form').then((m) => m.RefuelForm),
+      },
     ],
   },
   { path: 'add/car', redirectTo: 'fuel/add-car' },

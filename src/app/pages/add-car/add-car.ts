@@ -1,20 +1,29 @@
-import { Component, inject, signal } from '@angular/core';
+import { fuelEditorSheet } from '../fuel/fuel-editor-sheet';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonIcon } from '@ionic/angular';
+import { IonIcon, IonModal } from '@ionic/angular';
 import { VehicleStore } from '../../shared/state/vehicles/vehicle-store';
 import { saRegistrationValidator } from '../../shared/validators/sa-registration.validator';
 import { AppSelect } from '../../shared/components/app-select/app-select';
 import { pickImage } from '../../shared/utils/pick-image';
 import { FuelLoading } from '../fuel/fuel-loading';
 @Component({
-  imports: [IonIcon, ReactiveFormsModule, AppSelect, FuelLoading],
+  imports: [IonModal, IonIcon, ReactiveFormsModule, AppSelect, FuelLoading],
   selector: 'app-add-car',
   styleUrl: './add-car.css',
   templateUrl: './add-car.html',
 })
 export class AddCar {
+  readonly mobileSheet = fuelEditorSheet();
+  readonly modalOpen = signal(true);
+  dismiss(): void {
+    if (!this.modalOpen()) return;
+    this.modalOpen.set(false);
+    this.cancel();
+  }
+
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly formBuilder = inject(FormBuilder);
@@ -60,6 +69,7 @@ export class AddCar {
   readonly fuelSelectOptions = this.fuelTypes.map((fuel) => ({ value: fuel, label: fuel }));
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => this.modalOpen.set(false));
     if (this.editId) void this.loadVehicle(this.editId);
   }
 
@@ -107,17 +117,21 @@ export class AddCar {
       };
       if (this.editId) await this.vehicleStore.update(this.editId, changes);
       else await this.vehicleStore.add(changes);
-      await this.router.navigateByUrl('/fuel/vehicles', { replaceUrl:true });
+      this.modalOpen.set(false);
+      await this.router.navigateByUrl('/fuel/vehicles', { replaceUrl: true });
     } catch (error) {
       console.error('Could not save vehicle', error);
-      this.saveError.set(error instanceof Error ? error.message : 'Could not save vehicle. Please try again.');
+      this.saveError.set(
+        error instanceof Error ? error.message : 'Could not save vehicle. Please try again.',
+      );
     } finally {
       this.saving.set(false);
     }
   }
 
   cancel(): void {
-    void this.router.navigateByUrl('/fuel/vehicles', { replaceUrl:true });
+    this.modalOpen.set(false);
+    void this.router.navigateByUrl('/fuel/vehicles', { replaceUrl: true });
   }
 
   async deleteVehicle(): Promise<void> {
@@ -127,12 +141,20 @@ export class AddCar {
     this.saveError.set('');
     try {
       await this.vehicleStore.delete(this.editId);
-      await this.router.navigateByUrl('/fuel/vehicles', { replaceUrl:true });
+      this.modalOpen.set(false);
+      await this.router.navigateByUrl('/fuel/vehicles', { replaceUrl: true });
     } catch (error) {
       this.saveError.set(error instanceof Error ? error.message : 'Could not delete this vehicle.');
     } finally {
       this.deleting.set(false);
     }
   }
-  async pickMedia(): Promise<void> { try { const photo = await pickImage(); if (photo) this.vehicleForm.controls.photoUrl.setValue(photo); } catch { this.saveError.set('Could not read the photo.'); } }
+  async pickMedia(): Promise<void> {
+    try {
+      const photo = await pickImage();
+      if (photo) this.vehicleForm.controls.photoUrl.setValue(photo);
+    } catch {
+      this.saveError.set('Could not read the photo.');
+    }
+  }
 }

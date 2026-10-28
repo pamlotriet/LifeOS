@@ -1,28 +1,6 @@
-<ion-header app-page-header title="Planning" backUrl="/home"></ion-header>
 <ion-content class="[--background:transparent]"
-  ><main class="planner-page mx-auto max-w-2xl px-4 pb-16 pt-4">
-    <nav class="planner-card mb-4 grid grid-cols-3 p-1" aria-label="Planning sections">
-      <button
-        (click)="tab.set('meals')"
-        [attr.aria-pressed]="tab() === 'meals'"
-        class="rounded-2xl py-2 font-bold"
-        [class.bg-cyan-400]="tab() === 'meals'"
-        [class.text-slate-900]="tab() === 'meals'"
-      >
-        Meal Plan</button
-      ><button
-        (click)="tab.set('groceries')"
-        [attr.aria-pressed]="tab() === 'groceries'"
-        class="rounded-2xl py-2 font-bold"
-        [class.bg-cyan-400]="tab() === 'groceries'"
-        [class.text-slate-900]="tab() === 'groceries'"
-      >
-        Grocery List
-      </button>
-      <a routerLink="/planning/ingredients" class="rounded-2xl py-2 font-bold text-center"
-        >Ingredients</a
-      >
-    </nav>
+  ><main class="planner-page meal-planning-page">
+    <app-planning-header [section]="tab()" />
     <a routerLink="/nutrition" class="block mb-3 text-cyan-300">Open calorie & macro tracker</a>
     @if (nutritionError()) {
       <p role="status">{{ nutritionError() }}</p>
@@ -30,23 +8,27 @@
     @if (store.error()) {
       <p role="alert">{{ store.error() }}</p>
     }
-    @if (tab() === 'meals') {
+    @if (store.loading()) { <p class="planner-empty" role="status">Loading your meal plan and shopping list...</p> }
       <nav class="flex justify-between mb-3" aria-label="Week navigation">
-        <button (click)="shiftWeek(-1)">Previous week</button><span>{{ week[0].iso }}</span
+        <button (click)="shiftWeek(-1)">Previous week</button><span>{{ week[0].iso }} to {{ week[6].iso }}</span
         ><button (click)="shiftWeek(1)">Next week</button>
       </nav>
-      <div class="mb-4 grid grid-cols-7 gap-1">
+    @if (tab() === 'meals') {
+      <div class="meal-plan-actions"><h2>This week</h2><button type="button" class="secondary-button" (click)="reset(); editorOpen.set(!editorOpen())">{{ editorOpen() ? 'Close editor' : '+ Plan a meal' }}</button></div>
+      <div class="week-strip grid grid-cols-7 gap-2">
         @for (day of week; track day.iso) {
           <button
             (click)="choose(day.iso)"
             class="week-day border border-[var(--border)]"
             [class.selected]="selectedDate() === day.iso"
+            [attr.aria-pressed]="selectedDate() === day.iso"
           >
             <span>{{ day.day }}</span
             ><strong>{{ day.number }}</strong>
           </button>
         }
       </div>
+      @if (editorOpen()) {
       <section class="planner-card planner-form">
         <h2 class="font-bold">{{ editingId ? 'Edit meal' : 'Plan meal' }}</h2>
         <label
@@ -131,6 +113,7 @@
             [(ngModel)]="copyDate" /></label
         ><button (click)="copyDay()">Copy day / reuse plan</button>
       </section>
+      }
       @if (pendingMeal; as pending) {
         <section class="planner-card p-4 my-4" aria-label="Confirm consumption">
           <h2>Log {{ pending.title }} as eaten</h2>
@@ -153,10 +136,10 @@
                 <strong>{{ item.meal || 'Dinner' }} | {{ item.title }}</strong>
                 <p>{{ item.detail }}</p>
                 <p>{{ summary(item) }}</p>
-                <div class="flex flex-wrap gap-4">
+                <div class="meal-row-actions flex flex-wrap gap-4">
                   <button (click)="edit(item)">Edit</button
                   ><button (click)="copyMeal(item)">Copy to {{ copyDate }}</button
-                  ><button (click)="store.deleteMeal(item.id)">Remove</button>
+                  ><button (click)="removeMeal(item.id)">Remove</button>
                   @if (item.recipeId || item.ingredientId) {
                     @if (logged(item)) {
                       <span>Logged</span
@@ -174,19 +157,19 @@
         }
       </section>
     } @else {
-      <button class="primary-button mb-4" [disabled]="logging()" (click)="generateGroceries()">
-        Generate groceries from this week
+      <button class="primary-button mb-4" [disabled]="logging() || store.loading() || !!store.error()" (click)="generateGroceries()">
+        Update shopping list from this week
       </button>
       <section id="groceries" class="planner-card mb-4 p-4">
         <h2 class="mb-3 font-bold">Add grocery item</h2>
         <div class="grid grid-cols-[1fr_auto] gap-2">
           <input
             class="control"
-            placeholder="e.g. Tomatoes"
+            aria-label="Shopping item name" placeholder="e.g. Tomatoes"
             [ngModel]="groceryName()"
             (ngModelChange)="groceryName.set($event)"
           /><select
-            class="lifeos-select !w-28"
+            aria-label="Shopping aisle" class="lifeos-select !w-28"
             [ngModel]="grocerySection()"
             (ngModelChange)="grocerySection.set($event)"
           >
@@ -198,7 +181,7 @@
             <option>Other</option>
           </select>
         </div>
-        <button (click)="addGrocery()" class="primary-button mt-3">
+        <button (click)="addGrocery()" [disabled]="logging() || !groceryName().trim()" class="primary-button mt-3">
           <ion-icon [icon]="icons.add"></ion-icon>Add item
         </button>
       </section>
@@ -211,12 +194,12 @@
           @for (item of group[1]; track item.id) {
             <div class="flex items-center gap-3 border-t border-[var(--border)] py-2">
               <button
-                (click)="store.toggleGrocery(item)"
-                class="grid h-6 w-6 place-items-center rounded-md border border-cyan-300"
+                (click)="changeGrocery(item)"
+                [disabled]="logging()" [attr.aria-label]="(item.checked ? 'Uncheck ' : 'Check off ') + item.name" [attr.aria-pressed]="item.checked" class="shopping-check"
               >
                 <ion-icon [icon]="item.checked ? icons.checkmark : undefined"></ion-icon></button
               ><span class="flex-1" [class.line-through]="item.checked">{{ item.name }}</span
-              ><button (click)="store.deleteGrocery(item.id)" class="text-rose-400">
+              ><button (click)="changeGrocery(item, true)" [disabled]="logging()" [attr.aria-label]="'Remove ' + item.name" class="text-rose-400">
                 <ion-icon [icon]="icons.trashOutline"></ion-icon>
               </button>
             </div>

@@ -1,7 +1,15 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { fuelEditorSheet } from '../fuel/fuel-editor-sheet';
+import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonIcon } from '@ionic/angular';
+import { IonIcon, IonModal } from '@ionic/angular';
 import { RefuelStore } from '../../shared/state/refuels/refuel-store';
 import { RefuelInput } from '../../shared/state/refuels/refuel.model';
 import { AppSelect } from '../../shared/components/app-select/app-select';
@@ -22,19 +30,30 @@ function parseDecimal(value: DecimalInput): number | null {
 
 function decimalMin(minimum: number, required = false): ValidatorFn {
   return (control: AbstractControl<DecimalInput>): ValidationErrors | null => {
-    const empty = control.value === null || (typeof control.value === 'string' && control.value.trim() === '');
+    const empty =
+      control.value === null || (typeof control.value === 'string' && control.value.trim() === '');
     if (empty) return required ? { required: true } : null;
     const value = parseDecimal(control.value);
-    return value !== null && value >= minimum ? null : { min: { min: minimum, actual: control.value } };
+    return value !== null && value >= minimum
+      ? null
+      : { min: { min: minimum, actual: control.value } };
   };
 }
 
 @Component({
   selector: 'app-refuel-form',
-  imports: [ReactiveFormsModule, IonIcon, AppSelect, AppDatePicker, FuelLoading],
+  imports: [IonModal, ReactiveFormsModule, IonIcon, AppSelect, AppDatePicker, FuelLoading],
   templateUrl: './refuel-form.html',
 })
 export class RefuelForm {
+  readonly mobileSheet = fuelEditorSheet();
+  readonly modalOpen = signal(true);
+  dismiss(): void {
+    if (!this.modalOpen()) return;
+    this.modalOpen.set(false);
+    this.cancel();
+  }
+
   private readonly builder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -43,7 +62,9 @@ export class RefuelForm {
   readonly routeVehicleId = this.route.snapshot.paramMap.get('vehicleId');
   readonly loading = signal(!!this.entryId);
   readonly vehicles = inject(VehicleStore);
-  readonly contentLoading = computed(() => this.loading() || this.vehicles.loading() || this.refuels.loading());
+  readonly contentLoading = computed(
+    () => this.loading() || this.vehicles.loading() || this.refuels.loading(),
+  );
   readonly saving = signal(false);
   readonly deleting = signal(false);
   readonly confirmDelete = signal(false);
@@ -51,7 +72,10 @@ export class RefuelForm {
   readonly attempted = signal(false);
 
   readonly form = this.builder.group({
-    vehicleId: this.builder.nonNullable.control(this.routeVehicleId ?? this.refuels.selectedVehicleId() ?? '', Validators.required),
+    vehicleId: this.builder.nonNullable.control(
+      this.routeVehicleId ?? this.refuels.selectedVehicleId() ?? '',
+      Validators.required,
+    ),
     dop: this.builder.nonNullable.control(this.today(), Validators.required),
     pop: this.builder.nonNullable.control('', [Validators.required, Validators.pattern(/\S/)]),
     fuelType: this.builder.nonNullable.control('', Validators.required),
@@ -64,9 +88,14 @@ export class RefuelForm {
 
   readonly fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'ULP 93', 'ULP 95'];
   readonly fuelOptions = this.fuelTypes.map((fuel) => ({ value: fuel, label: fuel }));
-  readonly vehicleOptions = computed(() => this.refuels.vehicleOptions().map((vehicle) => ({
-    value: vehicle.id, label: vehicle.name, description: `${vehicle.description} · ${vehicle.registration}`, image: vehicle.image,
-  })));
+  readonly vehicleOptions = computed(() =>
+    this.refuels.vehicleOptions().map((vehicle) => ({
+      value: vehicle.id,
+      label: vehicle.name,
+      description: `${vehicle.description} · ${vehicle.registration}`,
+      image: vehicle.image,
+    })),
+  );
 
   private today(): string {
     const now = new Date();
@@ -74,9 +103,11 @@ export class RefuelForm {
   }
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => this.modalOpen.set(false));
     effect(() => {
       const selected = this.refuels.selectedVehicleId();
-      if (!this.entryId && selected && !this.form.controls.vehicleId.value) this.form.controls.vehicleId.setValue(selected);
+      if (!this.entryId && selected && !this.form.controls.vehicleId.value)
+        this.form.controls.vehicleId.setValue(selected);
     });
     if (this.entryId && this.routeVehicleId) void this.load(this.routeVehicleId, this.entryId);
   }
@@ -104,8 +135,14 @@ export class RefuelForm {
     const { vehicleId, odometer, initialRangeKm } = this.form.getRawValue();
     const currentOdometer = parseDecimal(odometer);
     if (currentOdometer === null) return null;
-    const previous = this.refuels.entries()
-      .filter((entry) => entry.vehicleId === vehicleId && entry.id !== this.entryId && entry.odometer < currentOdometer)
+    const previous = this.refuels
+      .entries()
+      .filter(
+        (entry) =>
+          entry.vehicleId === vehicleId &&
+          entry.id !== this.entryId &&
+          entry.odometer < currentOdometer,
+      )
       .at(-1);
     return previous ? currentOdometer - previous.odometer : parseDecimal(initialRangeKm);
   }
@@ -117,7 +154,7 @@ export class RefuelForm {
 
   get previewLitersPer100Km(): number | null {
     const qty = parseDecimal(this.form.controls.qtyLiters.value);
-    return this.previewRange && qty ? qty / this.previewRange * 100 : null;
+    return this.previewRange && qty ? (qty / this.previewRange) * 100 : null;
   }
 
   number(value: number | null, digits = 2): string {
@@ -149,7 +186,8 @@ export class RefuelForm {
     try {
       await this.refuels.save(value.vehicleId, input, this.entryId ?? undefined);
       this.refuels.selectVehicle(value.vehicleId);
-      await this.router.navigateByUrl('/fuel/history', { replaceUrl:true });
+      this.modalOpen.set(false);
+      await this.router.navigateByUrl('/fuel/history', { replaceUrl: true });
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not save the refuel.');
     } finally {
@@ -163,7 +201,8 @@ export class RefuelForm {
     this.error.set('');
     try {
       await this.refuels.delete(this.routeVehicleId, this.entryId);
-      await this.router.navigateByUrl('/fuel/history', { replaceUrl:true });
+      this.modalOpen.set(false);
+      await this.router.navigateByUrl('/fuel/history', { replaceUrl: true });
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not delete the refuel.');
       this.confirmDelete.set(false);
@@ -173,6 +212,7 @@ export class RefuelForm {
   }
 
   cancel(): void {
-    void this.router.navigateByUrl(this.entryId ? '/fuel/history' : '/fuel', { replaceUrl:true });
+    this.modalOpen.set(false);
+    void this.router.navigateByUrl(this.entryId ? '/fuel/history' : '/fuel', { replaceUrl: true });
   }
 }

@@ -3,13 +3,14 @@ import { cycleBounds } from '../budget/budget-cycle';
 import { NutritionService } from '../nutrition/nutrition.service';
 import { nutritionStats } from '../nutrition/nutrition.calculations';
 import { budgetSpending } from '../../../pages/budget/budget-snapshot';
-import { inject, Injectable, Injector } from '@angular/core';
+import { inject, Injectable, Injector, signal } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
 import { BookStore } from '../books/book-store';
 import { BudgetStore } from '../budget/budget.store';
 import { localDate, money, summary } from '../budget/budget.model';
-import { RefuelStore } from '../refuels/refuel-store';
-import { refuelAverages } from '../refuels/refuel.model';
+import { AuthService } from '../authentication/authentication.service';
+import { RefuelService } from '../refuels/refuel.service';
+import { calculateRefuels, RefuelEntry, refuelAverages } from '../refuels/refuel.model';
 import { VehicleStore } from '../vehicles/vehicle-store';
 import { statsAnchor, statsMonths, sumByMonth } from './stats.calculations';
 import { debtStats } from './debt-stats';
@@ -125,12 +126,14 @@ const categoryChart = (
 @Injectable({ providedIn: 'root' })
 export class StatsService {
   private readonly injector = inject(Injector);
+  private readonly fuelEntries = signal<RefuelEntry[]>([]);
+  private readonly fuelLoading = signal(false);
+  private readonly fuelError = signal('');
+  private fuelVersion = 0;
+  readonly selectedVehicleId = signal('all');
   /** Stores are resolved on demand so opening Fuel Stats does not load every LifeOS module. */
   private get nutrition(): NutritionService {
     return this.injector.get(NutritionService);
-  }
-  private get refuels(): RefuelStore {
-    return this.injector.get(RefuelStore);
   }
   private get books(): BookStore {
     return this.injector.get(BookStore);
@@ -157,7 +160,7 @@ export class StatsService {
   loading(module: StatsModule): boolean {
     if (module === 'nutrition') return this.nutrition.loading();
     return module === 'fuel'
-      ? this.refuels.loading() || this.vehicles.loading()
+      ? this.fuelLoading() || this.vehicles.loading()
       : module === 'books'
         ? this.books.loading()
         : this.budget.loading();
@@ -165,7 +168,7 @@ export class StatsService {
   error(module: StatsModule): string {
     if (module === 'nutrition') return this.nutrition.error();
     return module === 'fuel'
-      ? this.refuels.error() || this.vehicles.error()
+      ? this.fuelError() || this.vehicles.error()
       : module === 'books'
         ? this.books.error()
         : this.budget.error();
@@ -177,22 +180,38 @@ export class StatsService {
     }
     if (module === 'fuel') {
       void this.vehicles.reload();
-      void this.refuels.reload();
+      void this.ensureFuelLoaded();
     } else if (module === 'books') void this.books.reload();
     else void this.budget.reload();
   }
-  /** Refuels depend on the vehicle-selection signal, so only reload after it exists. */
-  ensureFuelLoaded(): void {
-    void this.refuels.reload();
+  async ensureFuelLoaded(): Promise<void> {
+    const uid = this.injector.get(AuthService).userId();
+    const options = this.vehicles.vehicles();
+    const version = ++this.fuelVersion;
+    this.fuelEntries.set([]);
+    this.fuelError.set('');
+    this.fuelLoading.set(!!uid && !!options.length);
+    if (!uid || !options.length) return;
+    try {
+      const service = this.injector.get(RefuelService);
+      const groups = await Promise.all(
+        options.map(async (vehicle) => calculateRefuels(await service.list(vehicle.id))),
+      );
+      if (version === this.fuelVersion && this.injector.get(AuthService).userId() === uid)
+        this.fuelEntries.set(groups.flat());
+    } catch {
+      if (version === this.fuelVersion)
+        this.fuelError.set('Could not load vehicle statistics. Please try again.');
+    } finally {
+      if (version === this.fuelVersion) this.fuelLoading.set(false);
+    }
   }
   vehicleOptions() {
-    return this.refuels.vehicleOptions();
-  }
-  selectedVehicleId(): string | null {
-    return this.refuels.selectedVehicleId();
+    return this.vehicles.vehicles();
   }
   selectVehicle(id: string): void {
-    this.refuels.selectVehicle(id);
+    if (id === 'all' || this.vehicleOptions().some((vehicle) => vehicle.id === id))
+      this.selectedVehicleId.set(id);
   }
 
   nutritionStart = '';
@@ -277,17 +296,18 @@ export class StatsService {
     };
   }
   private fuel(range: StatsRange, selectedMonth?: string): StatsDashboard {
-    const all = this.refuels.entries();
+    const all = this.fuelEntries().filter(
+      (entry) => this.selectedVehicleId() === 'all' || entry.vehicleId === this.selectedVehicleId(),
+    );
     const allowed = new Set(statsMonths(range, statsAnchor(range, selectedMonth)));
     const entries = range === 'All' ? all : all.filter((x) => allowed.has(x.dop.slice(0, 7)));
     const averages = refuelAverages(entries);
     const spendByMonth = sumByMonth(
-      all,
+      entries,
       (x) => x.dop,
       (x) => x.amountPaid,
     );
-    const spendMonths =
-      range === '1M' ? statsMonths(range, statsAnchor(range, selectedMonth)) : statsMonths('1Y');
+    const spendMonths = statsMonths(range, statsAnchor(range, selectedMonth));
     const economy = entries
       .filter((x) => x.kmPerLiter !== null)
       .sort((a, b) => a.dop.localeCompare(b.dop) || a.odometer - b.odometer);
@@ -295,54 +315,72 @@ export class StatsService {
       new Date(`${x.dop}T12:00:00`).toLocaleDateString('en-ZA', { month: 'short', day: 'numeric' }),
     );
     return {
-      empty: !all.length,
-      emptyTitle: 'No fuel data yet',
-      emptyMessage: 'Log your first refuel to start seeing fuel trends.',
+      empty: !entries.length,
+      emptyTitle: 'No refuels in this period',
+      emptyMessage: 'Choose another period or vehicle, or log a refuel to see your statistics.',
       action: '/fuel/history',
       kpis: [
+        this.kpi('Fuel spend', money(averages.totalSpent), 'cash', '#8c4bff'),
         this.kpi(
-          range === '1M' ? 'Selected month spend' : 'Lifetime spend',
-          money(refuelAverages(range === '1M' ? entries : all).totalSpent),
-          'cash',
-          '#8c4bff',
-        ),
-        this.kpi(
-          'Range tracked',
-          `${Math.round(refuelAverages(range === '1M' ? entries : all).totalRangeKm).toLocaleString('en-ZA')} km`,
+          'Distance tracked',
+          `${Math.round(averages.totalRangeKm).toLocaleString('en-ZA')} km`,
           'speedometer-outline',
           '#20b875',
         ),
         this.kpi(
-          'Average L/100 km',
-          averages.litersPer100Km ? `${averages.litersPer100Km.toFixed(1)} L/100km` : '—',
+          'Average consumption',
+          averages.litersPer100Km ? `${averages.litersPer100Km.toFixed(1)} L/100 km` : 'N/A',
           'water-outline',
           '#2497ff',
         ),
         this.kpi(
-          'Total refuels',
-          String(range === '1M' ? entries.length : all.length),
-          'car-sport-outline',
-          '#14ddea',
+          'Fuel cost / km',
+          averages.totalRangeKm > 0
+            ? `${money(entries.filter((x) => x.rangeKm !== null).reduce((sum, x) => sum + x.amountPaid, 0) / averages.totalRangeKm)} / km`
+            : 'N/A',
+          'cash',
+          '#8c4bff',
+        ),
+        this.kpi(
+          'Fuel purchased',
+          `${averages.totalLitres.toFixed(1)} L`,
+          'water-outline',
+          '#2497ff',
+        ),
+        this.kpi(
+          'Average fuel price',
+          averages.randPerLiter !== null ? `${money(averages.randPerLiter)} / L` : 'N/A',
+          'cash',
+          '#20b875',
+        ),
+        this.kpi('Refuels', String(entries.length), 'car-sport-outline', '#14ddea'),
+        this.kpi(
+          'Average refill cost',
+          entries.length ? money(averages.totalSpent / entries.length) : 'N/A',
+          'cash',
+          '#8c4bff',
         ),
       ],
-      primaryTitle: 'Fuel efficiency trend',
-      secondaryTitle:
-        range === '1M' ? 'Selected month fuel spend' : 'Monthly fuel spend · 12 months',
+      primaryTitle: 'Fuel efficiency by vehicle (km/L)',
+      secondaryTitle: 'Monthly fuel spend',
       primary: {
         type: 'line',
         data: {
           labels: labelsFor,
-          datasets: [
-            {
-              label: 'km/L',
-              data: economy.map((x) => x.kmPerLiter),
-              borderColor: '#14ddea',
-              backgroundColor: '#14ddea33',
-              pointBackgroundColor: '#14ddea',
-              tension: 0.35,
-              fill: true,
-            },
-          ],
+          datasets: this.vehicleOptions()
+            .filter(
+              (vehicle) =>
+                this.selectedVehicleId() === 'all' || vehicle.id === this.selectedVehicleId(),
+            )
+            .map((vehicle, index) => ({
+              label: `${vehicle.name} (${vehicle.registration})`,
+              data: economy.map((entry) =>
+                entry.vehicleId === vehicle.id ? entry.kmPerLiter : null,
+              ),
+              borderColor: ['#14ddea', '#2497ff', '#efa62b', '#c23cff', '#20b875'][index % 5],
+              tension: 0.25,
+              spanGaps: true,
+            })),
         },
         options: chartOptions(),
       },
@@ -361,10 +399,7 @@ export class StatsService {
         },
         options: chartOptions(true),
       },
-      insight:
-        entries.length > 1 && averages.kmPerLiter
-          ? `Your average economy for this period is ${averages.kmPerLiter.toFixed(1)} km/L.`
-          : 'Add at least two refuels with odometer readings to calculate economy.',
+      insight: `All figures follow the selected vehicle and period. Consumption and fuel cost/km use only refuels with a known distance (${economy.length} of ${entries.length}). Distances are calculated separately for each car before filtering by refuel date; intervals may start before the period. Economy uses total distance and litres, based on recorded refills, and assumes consistent filling. ${range === 'All' ? 'Spending chart shows the latest 24 months; totals include all records.' : ''}`,
     };
   }
   private bookStats(range: StatsRange, selectedMonth?: string): StatsDashboard {

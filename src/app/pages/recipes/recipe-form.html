@@ -1,6 +1,7 @@
-<ion-header app-page-header [title]="id ? 'Edit Recipe' : 'Add Recipe'"></ion-header>
-<ion-content class="[--background:transparent]">
+<ion-modal class="food-editor-modal" [isOpen]="modalOpen()" [canDismiss]="!saving()" (didDismiss)="onDismiss()" [attr.aria-label]="id ? 'Edit recipe' : 'Add recipe'">
+<ng-template><ion-content>
   <main class="mx-auto max-w-2xl px-4 pb-16 pt-4">
+    <header class="recipe-modal-heading"><div><h1>{{ id ? 'Edit recipe' : 'Add recipe' }}</h1><p>Ingredients, instructions and the details that make it yours.</p></div><button type="button" aria-label="Close recipe editor" [disabled]="saving()" (click)="close()"><ion-icon [icon]="icons.closeOutline" aria-hidden="true" /></button></header>
     @if (loading()) {
       <p class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
         Loading recipe...
@@ -20,7 +21,7 @@
             /><span class="absolute inset-x-0 bottom-0 bg-black/60 py-2 text-sm">Change photo</span>
           } @else {
             <span class="text-center text-sm text-[var(--text-secondary)]"
-              ><ion-icon name="camera-outline" class="mb-2 block text-4xl text-cyan-300"></ion-icon
+              ><ion-icon [icon]="icons.cameraOutline" class="mb-2 block text-4xl text-cyan-300"></ion-icon
               >Add a recipe photo</span
             >
           }
@@ -107,8 +108,8 @@
                 [attr.aria-label]="'Ingredient ' + (index + 1)"
                 placeholder="e.g. 2 chicken breasts"
                 class="min-w-0 flex-1 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 text-base"
-              /><button type="button" (click)="removeIngredient(index)" class="px-2 text-rose-300">
-                ×
+              /><button type="button" (click)="removeIngredient(index)" aria-label="Remove ingredient" class="px-2 text-rose-300">
+                <ion-icon [icon]="icons.closeOutline" aria-hidden="true" />
               </button>
             </div>
           }
@@ -265,8 +266,8 @@
                   (input)="updateStep(index, 'title', $any($event.target).value)"
                   placeholder="Step title"
                   class="min-w-0 flex-1 bg-transparent text-base font-semibold outline-none"
-                /><button type="button" (click)="removeStep(index)" class="px-2 text-rose-300">
-                  ×
+                /><button type="button" (click)="removeStep(index)" aria-label="Remove step" class="px-2 text-rose-300">
+                  <ion-icon [icon]="icons.closeOutline" aria-hidden="true" />
                 </button>
               </div>
               <textarea
@@ -300,10 +301,10 @@
             @for (tag of tags(); track tag) {
               <button
                 type="button"
-                (click)="removeTag(tag)"
+                (click)="removeTag(tag)" [attr.aria-label]="'Remove tag ' + tag"
                 class="rounded-full border border-[var(--border)] px-3 py-1 text-xs"
               >
-                {{ tag }} ×
+                {{ tag }} <ion-icon [icon]="icons.closeOutline" aria-hidden="true" />
               </button>
             }
           </div>
@@ -331,7 +332,7 @@
           <div class="mt-3 grid grid-cols-2 gap-2">
             <button
               type="button"
-              (click)="model.favourite = !model.favourite"
+              (click)="model.favourite = !model.favourite" [attr.aria-pressed]="model.favourite"
               class="min-h-12 rounded-xl border"
               [class]="
                 model.favourite
@@ -339,13 +340,13 @@
                   : 'border-[var(--border)]'
               "
             >
-              {{ model.favourite ? '♥ Favourite' : '♡ Favourite' }}</button
+              <ion-icon [icon]="model.favourite ? icons.heart : icons.heartOutline" aria-hidden="true" /> Favourite</button
             ><button
               type="button"
-              (click)="model.private = !model.private"
+              (click)="model.private = !model.private" [attr.aria-pressed]="model.private"
               class="min-h-12 rounded-xl border border-[var(--border)]"
             >
-              {{ model.private ? '🔒 Private' : 'Public' }}
+              <ion-icon [icon]="model.private ? icons.lockClosedOutline : icons.globeOutline" aria-hidden="true" /> {{ model.private ? 'Private' : 'Public' }}
             </button>
           </div>
         </section>
@@ -368,3 +369,5 @@
     }
   </main>
 </ion-content>
+
+</ng-template></ion-modal>
