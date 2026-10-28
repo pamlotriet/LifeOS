@@ -102,7 +102,7 @@ service cloud.firestore {
           && (!('paymentStatus' in d) || d.paymentStatus in ['paid', 'planned'])
           && (!('paymentStatus' in d) || d.paymentStatus != 'planned' || (d.type == 'expense' && 'debtId' in d && d.debtId != ''))
           && d.amount is number && d.amount > 0 && d.amount <= 999999999
-          && d.type in ['expense', 'income', 'transfer']
+          && d.type in ['expense', 'income', 'transfer', 'spending-transfer']
           && d.categoryId is string && d.categoryId.size() > 0 && d.categoryId.size() <= 128
           && d.title is string && d.title.size() > 0 && d.title.size() <= 120
           && d.date is string && d.date.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}')
@@ -137,6 +137,16 @@ service cloud.firestore {
           && request.resource.data.keys().hasOnly(['startDay'])
           && request.resource.data.startDay is int
           && request.resource.data.startDay >= 1 && request.resource.data.startDay <= 31;
+      }
+      match /spendingBalances/{month} {
+        allow read: if owns(userId);
+        allow create, update: if owns(userId)
+          && month.matches('[0-9]{4}-(0[1-9]|1[0-2])')
+          && request.resource.data.keys().hasOnly(['balance', 'recordedSpending', 'recordedFunding'])
+          && request.resource.data.balance is number
+          && request.resource.data.balance >= -999999999 && request.resource.data.balance <= 999999999
+          && (!('recordedFunding' in request.resource.data) || (request.resource.data.recordedFunding is number && request.resource.data.recordedFunding >= 0))
+          && request.resource.data.recordedSpending is number && request.resource.data.recordedSpending >= 0;
       }
       match /plans/{planId} {
         allow read, delete: if owns(userId);

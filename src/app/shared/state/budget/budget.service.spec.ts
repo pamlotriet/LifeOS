@@ -23,6 +23,11 @@ describe('BudgetService', () => {
     expect(result.cycleStartDay).toBe(1);
     expect(result.transactions[0]).toMatchObject({ id: 't1', amount: 45 });
   });
+  it('persists an account balance checkpoint scoped to the user and cycle', async () => {
+    await service().saveSpendingBalance({ id: '2026-10', balance: 4537, recordedSpending: 1378.36 });
+    expect(firestore.updateDocument).toHaveBeenCalledWith('budgets/owner/spendingBalances/2026-10', { balance: { doubleValue: 4537 }, recordedSpending: { doubleValue: 1378.36 } }, 'token');
+    await expect(service().saveSpendingBalance({ id: 'bad', balance: 4537, recordedSpending: 0 })).rejects.toThrow();
+  });
   it('creates and updates transactions without duplicating them', async () => {
     await service().saveTransaction(input);
     expect(firestore.createDocument).toHaveBeenCalledWith('budgets/owner/transactions', expect.any(String), expect.objectContaining({ amount: { doubleValue: 450.25 }, title: { stringValue: 'Groceries' } }), 'token');

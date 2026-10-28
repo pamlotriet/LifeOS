@@ -24,7 +24,7 @@
         </fieldset></form>
       </section>
     } @else {
-      <div class="panel category-list">@for (category of rows(); track category.id) { <button class="category-row" (click)="open(category)"><span class="category-icon" [style.background]="category.colour"><ion-icon [name]="category.icon" /></span><span class="row-copy"><strong>{{ category.name }}</strong><small>{{ money(category.amount) }} · {{ category.percent }}%</small></span><ion-icon name="chevron-forward" /></button> } @empty { <div class="empty-state"><h3>No categories here yet</h3><p>Add one to organise your {{ label(tab()).toLowerCase() }}.</p><button class="text-link" (click)="open()">Add category</button></div> }</div>
+      <div class="panel category-list">@for (category of rows(); track category.id) { <button class="category-row" (click)="open(category)"><span class="category-icon" [style.background]="category.colour"><ion-icon [name]="category.icon" /></span><span class="row-copy"><strong>{{ category.name }}</strong><small>@if (isSpending(category)) { {{ leftOver().confirmed ? 'Spending account balance' : 'Estimated spending left' }} {{ money(leftOver().actual) }} &middot; Planned spending money {{ money(leftOver().planned) }} } @else { {{ money(category.amount) }} · {{ category.percent }}% }</small></span><ion-icon name="chevron-forward" /></button> } @empty { <div class="empty-state"><h3>No categories here yet</h3><p>Add one to organise your {{ label(tab()).toLowerCase() }}.</p><button class="text-link" (click)="open()">Add category</button></div> }</div>
       <p class="muted" style="font-size:12px;margin-top:16px">Percentages show each category's share of this tab's monthly total.</p>
     }
   }

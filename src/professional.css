@@ -397,7 +397,16 @@ ion-app.lifeos-app .budget-entry-actions{justify-content:flex-start;gap:10px;mar
 ion-app.lifeos-app .budget-entry-actions>*{flex:0 1 auto;min-width:160px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 ion-app.lifeos-app .budget-overview-header>div{margin-right:auto;margin-left:4px}
 ion-app.lifeos-app .budget-overview-header{justify-content:flex-start}
-@media(min-width:1000px){ion-app.lifeos-app .budget-overview-page{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:20px;align-content:start}ion-app.lifeos-app .budget-overview-page>*{grid-column:1/-1;min-width:0}ion-app.lifeos-app .budget-overview-page>app-budget-nav{margin:0}ion-app.lifeos-app .budget-overview-page>.balance-panel{grid-column:1;grid-template-columns:1fr;margin:0;padding:24px;gap:24px}ion-app.lifeos-app .budget-overview-page>.budget-content-card{grid-column:2;margin:0;padding:24px}ion-app.lifeos-app .budget-overview-page>.budget-entry-actions{margin:0}ion-app.lifeos-app .budget-overview-page .balance-values{grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;gap:12px}ion-app.lifeos-app .budget-overview-page .balance-bars{justify-content:flex-start}ion-app.lifeos-app .budget-overview-page>.section-heading{margin:4px 0 0}}
+@media (min-width: 1000px) {
+  ion-app.lifeos-app .budget-overview-page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-content: start; max-width: 1280px; }
+  ion-app.lifeos-app .budget-overview-page > * { grid-column: 1 / -1; min-width: 0; margin-block: 0; }
+  ion-app.lifeos-app .budget-overview-page > app-budget-nav { margin: 0; }
+  ion-app.lifeos-app .budget-overview-page > .balance-panel { grid-column: 1; margin: 0; padding: 24px; }
+  ion-app.lifeos-app .budget-overview-page > .budget-content-card { grid-column: 2; margin: 0; padding: 24px; }
+  ion-app.lifeos-app .budget-overview-page > .budget-entry-actions { margin: 0; }
+  ion-app.lifeos-app .budget-overview-page > .section-heading { margin: 8px 0 0; }
+}
+
 @media(max-width:480px){ion-app.lifeos-app .budget-entry-actions>*{min-width:0;flex:1}}
 ion-app.lifeos-app ion-header[app-page-header]>div{background:var(--background);border-bottom:0;height:68px}
 ion-app.lifeos-app .planner-page .planner-tile{border-radius:12px;box-shadow:none}

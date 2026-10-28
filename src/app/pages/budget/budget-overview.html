@@ -28,6 +28,17 @@
         <section aria-label="Budget statistics"><app-budget-summary [transactions]="store.monthly()" [categories]="store.categories()" /></section>
       }
       @if (!monthlyView) {
+        <section class="left-over-cards" aria-label="Cycle left over">
+          <article class="panel"><h2>Planned spending money</h2><strong [class.negative]="snapshot().leftOver.planned < 0">{{ money(snapshot().leftOver.planned) }}</strong><p>Recorded income minus your full cycle plan.</p></article>
+          <article class="panel"><h2>{{ snapshot().leftOver.confirmed ? "Spending account balance" : "Estimated spending left" }}</h2><strong [class.negative]="snapshot().leftOver.actual < 0" aria-live="polite">{{ money(snapshot().leftOver.actual) }}</strong><p>{{ snapshot().leftOver.confirmed ? "Carries forward your balance, adds recorded transfers to Spending and deducts Spending purchases." : 'Estimate from your budget. Set your real Spending account balance below.' }}</p>
+            <a class="text-link spending-transfer-link" routerLink="/budget/transactions/add" [queryParams]="{ type: 'spending-transfer' }">Record transfer to Spending &rarr;</a>
+            <details class="spending-balance-editor"><summary>Set current Spending balance</summary>
+              <p>Enter what is in your Spending account now, after transfers and purchases already recorded here. Existing purchases will not be deducted again. Main-account bills, savings and other accounts stay separate.</p>
+              <form (ngSubmit)="saveSpendingBalance()"><label>Current balance (R)<input type="text" appBudgetNumber inputmode="decimal" name="spendingBalance" [ngModel]="balanceInput()" (ngModelChange)="balanceInput.set($event)" [disabled]="savingBalance()" required /></label><button type="submit" class="secondary-button" [disabled]="savingBalance()">{{ savingBalance() ? 'Saving...' : 'Confirm current balance' }}</button></form>
+              @if (balanceError()) { <p class="negative" role="alert">{{ balanceError() }}</p> }
+              <p>Set this once to get started. Your balance carries forward across cycles. Record each actual transfer into Spending and each Spending purchase; no monthly balance adjustment is needed.</p>
+            </details></article>
+        </section>
         <section class="panel balance-panel" aria-label="Balance after remaining plans">
           <div class="section-heading"><h2>Your cycle outlook</h2><a class="text-link" routerLink="/budget/planned">Edit plans</a></div>
           <span class="outlook-label">After remaining plans</span>

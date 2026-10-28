@@ -45,3 +45,30 @@
 .savings-transfer-date { display: flex; align-items: center; gap: .75rem; margin: .75rem 0; }
 .savings-transfer-date input { color-scheme: dark; padding: .5rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--secondary); color: inherit; }
 .savings-moved-action { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; padding: .25rem 0 .75rem; font-size: .85rem; }
+
+:host .budget-planning-page .planning-topbar { margin-bottom: 24px; padding-bottom: 16px; }
+:host .budget-planning-page .planning-header { margin-bottom: 24px; }
+:host .budget-planning-page .planning-title h1 { margin-block: 8px 12px; }
+:host .budget-planning-page .planning-summary { gap: 16px; align-items: stretch; }
+:host .budget-planning-page .planning-summary article { display: flex; flex-direction: column; padding: var(--budget-padding); }
+:host .budget-planning-page .planning-summary small { display: block; line-height: 1.6; }
+:host .budget-planning-page .planning-summary strong { margin-block: 12px; }
+:host .budget-planning-page .planning-summary article:last-child { grid-column: 1 / -1; }
+:host .budget-planning-page .plan-panel { padding: 0; }
+:host .budget-planning-page .category-plan { padding: 20px; }
+:host .budget-planning-page .plan-item-row { padding-block: 8px; }
+:host .budget-planning-page .plan-section-toolbar { flex-wrap: wrap; }
+:host .budget-planning-page .plan-filters { max-width: 100%; }
+:host .budget-planning-page .savings-transfer-date { flex-wrap: wrap; gap: 8px 12px; font-size: .8rem; }
+:host .budget-planning-page .savings-transfer-date input { min-height: 44px; max-width: 100%; color-scheme: light dark; }
+:host .budget-planning-page .savings-moved-action { gap: 8px; padding-block: 8px 16px; line-height: 1.5; }
+:host .budget-planning-page .savings-moved-action button { min-height: 44px; }
+@media (max-width: 600px) {
+  :host .budget-planning-page .planning-summary { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  :host .budget-planning-page .planning-summary .forecast-card { grid-column: auto; }
+  :host .budget-planning-page .planning-summary article { padding: 18px; }
+  :host .budget-planning-page .category-plan { padding: 16px; }
+  :host .budget-planning-page .plan-column-labels,
+  :host .budget-planning-page .plan-item-row { grid-template-columns: minmax(0, 1fr) 90px 36px; }
+  :host .budget-planning-page .category-actions { gap: 8px 16px; }
+}

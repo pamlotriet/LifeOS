@@ -1,10 +1,11 @@
-import { inCycle } from '../../shared/state/budget/budget-cycle';
-import { BudgetCategory, BudgetPlan, BudgetTransaction, categoryPlanItems, summary, supportsPlan, total } from '../../shared/state/budget/budget.model';
+import { cycleBounds, cycleStart, inCycle } from '../../shared/state/budget/budget-cycle';
+import { SpendingBalanceCheckpoint, BudgetCategory, BudgetPlan, BudgetTransaction, categoryPlanItems, isSpendingCategory, summary, supportsPlan, total } from '../../shared/state/budget/budget.model';
 const round=(value:number)=>Math.round(value*100)/100;
-export function budgetSnapshot(transactions:BudgetTransaction[],categories:BudgetCategory[],plans:BudgetPlan[],month:string,startDay:number){
+export function budgetSnapshot(transactions:BudgetTransaction[],categories:BudgetCategory[],plans:BudgetPlan[],month:string,startDay:number,checkpoints:SpendingBalanceCheckpoint[]=[]){
   const recorded=transactions.filter(t=>t.paymentStatus!=='planned'&&inCycle(t.date,month,startDay));
   const values=summary(recorded,categories);
-  const categoryPlans=categories.filter(c=>supportsPlan(c.type)).map(category=>{
+  const spendingIds=new Set(categories.filter(isSpendingCategory).map(c=>c.id));
+  const categoryPlans=categories.filter(c=>supportsPlan(c.type)&&!spendingIds.has(c.id)).map(category=>{
     const plan=categoryPlanItems(plans,month,category.id);
     const actual=total(recorded.filter(t=>t.categoryId===category.id&&!t.debtId&&(category.type==='savings'?t.type==='transfer':t.type==='expense')));
     return {planned:plan.amount,actual,hasPlan:plan.items.length>0};
@@ -12,8 +13,18 @@ export function budgetSnapshot(transactions:BudgetTransaction[],categories:Budge
   const categoryCommitments=round(categoryPlans.reduce((sum,p)=>sum+Math.max(0,p.planned-p.actual),0));
   const debtCommitments=round(transactions.filter(t=>t.type==='expense'&&t.debtId&&t.paymentStatus==='planned'&&inCycle(t.date,month,startDay)).reduce((sum,t)=>sum+t.amount,0));
   const commitments=round(categoryCommitments+debtCommitments);
+  const debtPayments=transactions.filter(t=>t.type==='expense'&&t.debtId&&inCycle(t.date,month,startDay));
+  const plannedDebt=round(debtPayments.filter(t=>t.paymentStatus==='planned'||t.id.startsWith('debt-plan-')).reduce((sum,t)=>sum+t.amount,0));
+  const plannedTotal=round(categoryPlans.reduce((sum,p)=>sum+p.planned,0)+plannedDebt);
+  // Keep planned envelopes reserved after their money is transferred or used.
+  const reserved=round(categoryPlans.reduce((sum,p)=>sum+(p.hasPlan?p.planned:p.actual),0)+debtPayments.reduce((sum,t)=>sum+t.amount,0));
+  const spendingUsed=total(recorded.filter(t=>t.type==='expense'&&!t.debtId&&spendingIds.has(t.categoryId)));
+  const checkpoint=checkpoints.filter(item=>item.id<=month).sort((a,b)=>b.id.localeCompare(a.id))[0];
+  const spendingSinceCheckpoint=checkpoint?total(transactions.filter(t=>t.type==='expense'&&!t.debtId&&spendingIds.has(t.categoryId)&&t.date>=cycleStart(checkpoint.id,startDay)&&t.date<cycleBounds(month,startDay).endExclusive)):0;
+  const funding=checkpoint?total(transactions.filter(t=>t.type==='spending-transfer'&&t.date>=cycleStart(checkpoint.id,startDay)&&t.date<cycleBounds(month,startDay).endExclusive))-(checkpoint.recordedFunding??0):0;
+  const leftOver={id:'spending',name:'Spending',planned:round(values.income-plannedTotal),actual:checkpoint?round(checkpoint.balance+checkpoint.recordedSpending+funding-spendingSinceCheckpoint):round(values.income-reserved-spendingUsed),confirmed:!!checkpoint,spent:spendingUsed};
   const allocationBase=Math.max(values.income,values.expenses+values.savings,1);
-  return {...values,categoryCommitments,debtCommitments,commitments,afterPlans:round(values.remaining-commitments),
+  return {...values,leftOver,plannedTotal,categoryCommitments,debtCommitments,commitments,afterPlans:round(values.remaining-commitments),
     hasPlans:categoryPlans.some(p=>p.hasPlan)||debtCommitments>0,
     recordedCount:recorded.length,expenseCount:recorded.filter(t=>t.type==='expense').length,
     debtPaid:total(recorded.filter(t=>t.type==='expense'&&!!t.debtId)),

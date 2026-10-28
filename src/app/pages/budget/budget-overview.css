@@ -30,3 +30,41 @@
   .budget-overview-page > .transaction-heading { margin-top:32px; margin-bottom:20px; }
   .cycle-selector { padding:16px; }
 }
+
+.left-over-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+.left-over-cards article { padding: 20px; min-width: 0; }
+.left-over-cards h2 { font-size: .85rem; }
+.left-over-cards strong { display: block; font-size: clamp(1.5rem, 4vw, 2rem); margin: .5rem 0; overflow-wrap: anywhere; }
+.left-over-cards p { font-size: .8rem; color: var(--text-secondary); }
+@media (max-width: 480px) { .left-over-cards { grid-template-columns: 1fr; } }
+
+.spending-balance-editor { margin-top: 12px; font-size: .85rem; }
+.spending-balance-editor summary { cursor: pointer; color: var(--primary); }
+.spending-balance-editor p { margin: 12px 0; }
+.spending-balance-editor form, .spending-balance-editor label { display: grid; gap: 8px; }
+.spending-balance-editor input { min-width: 0; width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--foreground); }
+
+/* Keep balance, outlook and transaction sections on the same spacing scale. */
+:host .budget-overview-page > :is(.budget-topbar, .budget-overview-header, .left-over-cards, .balance-panel, .budget-content-card, section[aria-label='Budget statistics']) { margin-bottom: var(--budget-gap); }
+:host .budget-overview-page .budget-topbar { padding-bottom: 16px; }
+:host .budget-overview-page > app-budget-nav { margin-block: var(--budget-gap); }
+:host .budget-overview-page .left-over-cards { gap: 16px; align-items: start; }
+:host .budget-overview-page .left-over-cards article { padding: var(--budget-padding); }
+:host .budget-overview-page .left-over-cards p { margin: 10px 0 0; line-height: 1.65; }
+:host .budget-overview-page .spending-transfer-link { min-height: 44px; margin-top: 8px; }
+:host .budget-overview-page .spending-balance-editor { padding-top: 12px; border-top: 1px solid var(--border); }
+:host .budget-overview-page .spending-balance-editor summary { line-height: 1.5; padding-block: 4px; }
+:host .budget-overview-page .spending-balance-editor form { gap: 12px; margin-top: 16px; }
+:host .budget-overview-page .spending-balance-editor input { min-height: 44px; margin-top: 6px; }
+:host .budget-overview-page .chart-legend { gap: 0; }
+:host .budget-overview-page .legend-row { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 10px; padding: 10px 0; }
+:host .budget-overview-page .legend-row strong { margin-left: 0; white-space: nowrap; }
+:host .budget-overview-page .donut-layout { gap: 24px; }
+@media (max-width: 600px) {
+  :host .budget-overview-page .budget-entry-actions { gap: 12px; margin-bottom: 20px; }
+  :host .budget-overview-page .left-over-cards { grid-template-columns: minmax(0, 1fr); }
+  :host .budget-overview-page .donut-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  :host .budget-overview-page .donut-wrap { width: 100%; max-width: 260px; margin-inline: auto; }
+  :host .budget-overview-page .chart-legend { max-height: none; overflow: visible; }
+  :host .budget-overview-page .transaction-heading { margin-block: 24px 16px; }
+}

@@ -1,5 +1,5 @@
 import { cycleStart, inCycle } from './budget-cycle';
-export type TransactionType = 'expense' | 'income' | 'transfer';
+export type TransactionType = 'expense' | 'income' | 'transfer' | 'spending-transfer';
 export type CategoryType = 'expense' | 'income' | 'bills' | 'savings';
 export function supportsPlan(type: CategoryType): boolean { return type === 'expense' || type === 'bills' || type === 'savings'; }
 export interface BudgetCategory {
@@ -51,6 +51,7 @@ export const DEFAULT_CATEGORIES: BudgetCategory[] = [
   ['lifestyle', 'Lifestyle', 'expense', 'wallet', '#a56aef'],
   ['health', 'Health', 'expense', 'heart', '#12c9c1'],
   ['entertainment', 'Entertainment', 'expense', 'disc', '#ffac50'],
+  ['spending', 'Spending', 'expense', 'wallet', '#35dba4'],
   ['other', 'Other', 'expense', 'document-text', '#768bad'],
   ['salary', 'Salary', 'income', 'cash', '#35dba4'],
   ['other-income', 'Other income', 'income', 'wallet', '#12c9c1'],
@@ -69,7 +70,7 @@ export function total(items: BudgetTransaction[]): number {
   return items.filter(item => item.paymentStatus !== 'planned').reduce((sum, item) => sum + Math.round(item.amount * 100), 0) / 100;
 }
 export function compatibleCategory(type: TransactionType, category: CategoryType): boolean {
-  return type === 'income' ? category === 'income' : type === 'transfer' ? category === 'savings' : category === 'expense' || category === 'bills';
+  return type === 'spending-transfer' ? category === 'expense' : type === 'income' ? category === 'income' : type === 'transfer' ? category === 'savings' : category === 'expense' || category === 'bills';
 }
 export function summary(items: BudgetTransaction[], categories: BudgetCategory[]) {
   const income = total(items.filter(x => x.type === 'income'));
@@ -96,10 +97,14 @@ export function validateTransaction(input: TransactionInput): void {
   if (input.debtId && input.type !== 'expense') throw new Error('Debt payments must be expenses.');
   if (input.debtId && input.paymentStatus !== 'planned' && input.date > localDate()) throw new Error('Use planned for a payment you have not made yet.');
   if (!Number.isFinite(input.amount) || input.amount <= 0 || input.amount > 999999999 || Math.abs(input.amount * 100 - Math.round(input.amount * 100)) > .00001) throw new Error('Enter an amount greater than zero with up to two decimal places.');
-  if (!['expense', 'income', 'transfer'].includes(input.type)) throw new Error('Choose a transaction type.');
+  if (!['expense', 'income', 'transfer', 'spending-transfer'].includes(input.type)) throw new Error('Choose a transaction type.');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.date) || Number.isNaN(Date.parse(input.date)) || new Date(input.date).toISOString().slice(0, 10) !== input.date) throw new Error('Choose a valid date.');
   if (!input.title.trim() || input.title.length > 120) throw new Error('Enter a title of up to 120 characters.');
   if (!input.categoryId) throw new Error('Choose a category.');
   if (!['Card', 'Cash', 'Bank transfer', 'Debit order', 'Other'].includes(input.paymentMethod)) throw new Error('Choose a payment method.');
   if (input.notes.length > 2000) throw new Error('Keep notes under 2,000 characters.');
 }
+
+export function isSpendingCategory(category: BudgetCategory): boolean { return category.type === 'expense' && (category.id === 'spending' || category.name.trim().toLowerCase() === 'spending'); }
+
+export interface SpendingBalanceCheckpoint { id: string; balance: number; recordedSpending: number; recordedFunding?: number; }

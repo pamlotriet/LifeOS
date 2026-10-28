@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
-import { compatibleCategory, localDate, TransactionInput, TransactionType } from '../../shared/state/budget/budget.model';
+import { compatibleCategory, isSpendingCategory, localDate, TransactionInput, TransactionType } from '../../shared/state/budget/budget.model';
 
 @Component({ selector: 'app-budget-transaction-form', imports: [BackButton, BudgetNumber, IonContent, IonIcon, FormsModule, RouterLink], templateUrl: './budget-transaction-form.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetTransactionForm {
@@ -16,8 +16,8 @@ export class BudgetTransactionForm {
   readonly busy = signal(false); readonly error = signal(''); readonly loaded = signal(false);
   readonly confirmDelete = signal(false); readonly localReceipt = signal('');
   readonly type = signal<TransactionType>('expense');
-  readonly types: TransactionType[] = ['expense', 'income', 'transfer'];
-  readonly categories = computed(() => this.store.activeCategories().filter(x => compatibleCategory(this.type(), x.type)));
+  readonly types: TransactionType[] = ['expense', 'income', 'transfer', 'spending-transfer'];
+  readonly categories = computed(() => this.store.activeCategories().filter(x => this.type() === 'spending-transfer' ? isSpendingCategory(x) : compatibleCategory(this.type(), x.type)));
   model: TransactionInput = { amount: null as unknown as number, type: 'expense', categoryId: 'food', title: '', date: localDate(), paymentMethod: 'Card', notes: '', receiptUrl: '', receiptPath: '', debtId: '' };
   constructor() {
     effect(() => {
@@ -34,10 +34,10 @@ export class BudgetTransactionForm {
   ionViewWillEnter(): void {
     if (!this.id) {
       const requested = this.route.snapshot.queryParamMap.get('type');
-      const type: TransactionType = requested === 'income' || requested === 'transfer' ? requested : 'expense';
+      const type: TransactionType = requested === 'income' || requested === 'transfer' || requested === 'spending-transfer' ? requested : 'expense';
       const today = localDate();
       const date = this.store.inMonth(today) ? today : this.store.cycle().start;
-      this.model = { amount: null as unknown as number, type, categoryId: this.store.activeCategories().find(x => compatibleCategory(type, x.type))?.id ?? '', title: '', date, paymentMethod: type === 'income' ? 'Bank transfer' : 'Card', notes: '', receiptUrl: '', receiptPath: '', debtId: '' };
+      this.model = { amount: null as unknown as number, type, categoryId: this.store.activeCategories().find(x => compatibleCategory(type, x.type))?.id ?? '', title: '', date, paymentMethod: type !== 'expense' ? 'Bank transfer' : 'Card', notes: '', receiptUrl: '', receiptPath: '', debtId: '' };
       this.type.set(type); this.localReceipt.set(''); this.error.set(''); this.confirmDelete.set(false);
     }
   }

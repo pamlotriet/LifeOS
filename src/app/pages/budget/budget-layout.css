@@ -31,3 +31,39 @@
 .segments[aria-label='Monthly views'] { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; }
 .segments[aria-label='Monthly views'] > :is(button,a) { display:flex; align-items:center; justify-content:center; min-width:0; min-height:44px; margin:0; padding:8px 3px; border:0; border-radius:10px; color:var(--text-secondary); font:inherit; font-size:clamp(.65rem,2.6vw,.85rem); font-weight:600; line-height:1.2; text-align:center; text-decoration:none; background:transparent; }
 .segments[aria-label='Monthly views'] > button.active { color:var(--primary-foreground); background:var(--primary); }
+
+/* Shared spacing and sizing across all Budget pages. */
+:host .budget-page {
+  --budget-gap: 24px;
+  --budget-padding: 24px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1200px;
+  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+}
+:host .budget-page :is(input, select, textarea, button, a, article, section) { box-sizing: border-box; }
+:host .budget-page .page-header { flex-wrap: wrap; gap: 16px; margin-bottom: var(--budget-gap); }
+:host .budget-page .page-header > div { min-width: 0; }
+:host .budget-page .section-heading { flex-wrap: wrap; gap: 12px; }
+:host .budget-page .section-heading :is(h2, p) { margin-block: 0; }
+:host .budget-page :is(.panel, .category-plan) { min-width: 0; }
+:host .budget-page :is(.plan-panel, .debt-panel, .budget-content-card, .editor, .receipt-panel, .chart-panel) { padding: var(--budget-padding); }
+:host .budget-page :is(.row-copy, .plan-category-total, .legend-row) { line-height: 1.5; }
+:host .budget-page .row-copy small { margin-top: 4px; line-height: 1.5; }
+:host .budget-page :is(.primary-button, .secondary-button, .icon-button) { flex-shrink: 0; }
+:host .budget-page .form-actions { flex-wrap: wrap; gap: 12px; }
+:host .budget-page .form-actions > * { flex: 1 1 150px; }
+:host .budget-page .field { margin-bottom: 20px; }
+:host .budget-page .field-grid { gap: 0 20px; }
+:host .budget-page .segments { gap: 4px; }
+:host .budget-page .segments > button { min-width: 0; line-height: 1.4; }
+:host .budget-page .category-row { padding: 18px 8px; gap: 14px; }
+:host .budget-page .toolbar { gap: 12px 24px; padding-top: 8px; }
+@media (max-width: 600px) {
+  :host .budget-page { --budget-gap: 20px; --budget-padding: 18px; padding-inline: 16px; }
+  :host .budget-page .page-header .compact-title { text-align: left; flex: 1; font-size: 1.35rem; }
+  :host .budget-page .page-header > .secondary-button { width: 100%; }
+  :host .budget-page .month-nav { flex-wrap: wrap; gap: 12px; }
+  :host .budget-page .field-grid { grid-template-columns: minmax(0, 1fr); }
+  :host .budget-page .segments[aria-label='Transaction type'] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

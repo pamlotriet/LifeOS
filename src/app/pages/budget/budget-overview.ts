@@ -1,3 +1,4 @@
+import { BudgetNumber, parseBudgetNumber } from '../../shared/directives/budget-number';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { budgetSnapshot, budgetSpending } from './budget-snapshot';
 import { cycleMonth } from '../../shared/state/budget/budget-cycle';
@@ -12,15 +13,29 @@ import { localDate, money, summary } from '../../shared/state/budget/budget.mode
 import { BudgetChart, BudgetSummary, BudgetTransactions } from './budget-ui';
 import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
-@Component({ selector: 'app-budget-overview', imports: [BackButton, BudgetNav, IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-overview.css'] })
+@Component({ selector: 'app-budget-overview', imports: [BudgetNumber, BackButton, BudgetNav, IonContent, IonIcon, FormsModule, RouterLink, BudgetChart, BudgetSummary, BudgetTransactions, AppSkeleton], templateUrl: './budget-overview.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-overview.css'] })
 export class BudgetOverview {
   readonly store = inject(BudgetStore);
   readonly monthlyView = !!inject(ActivatedRoute).snapshot.data['monthly'];
   readonly selectedDate = signal('');
   readonly money = money;
+  readonly balanceInput = signal('');
+  readonly savingBalance = signal(false);
+  readonly balanceError = signal('');
+  async saveSpendingBalance(): Promise<void> {
+    if (this.savingBalance()) return;
+    this.savingBalance.set(true); this.balanceError.set('');
+    try {
+      const amount = parseBudgetNumber(this.balanceInput());
+      if (amount === null) throw new Error('Enter the balance currently in your Spending account.');
+      await this.store.setSpendingBalance(amount);
+      this.balanceInput.set('');
+    } catch (error) { this.balanceError.set(error instanceof Error ? error.message : 'Could not save balance.'); }
+    finally { this.savingBalance.set(false); }
+  }
   readonly totals = computed(() => summary(this.store.monthly(), this.store.categories()));
   readonly filtered = computed(() => this.store.monthly().filter(x => !this.selectedDate() || x.date === this.selectedDate()));
-  readonly snapshot = computed(() => budgetSnapshot(this.store.transactions(),this.store.categories(),this.store.plans(),this.store.month(),this.store.cycleStartDay()));
+  readonly snapshot = computed(() => budgetSnapshot(this.store.transactions(),this.store.categories(),this.store.plans(),this.store.month(),this.store.cycleStartDay(), this.store.spendingBalances?.() ?? []));
   readonly spending = computed(() => budgetSpending(this.store.monthly(),this.store.categories()));
   readonly donut = computed<ChartConfiguration>(() => ({
     type: 'doughnut', data: { labels: this.spending().map(x => x.name), datasets: [{ data: this.spending().map(x => x.amount), backgroundColor: this.spending().map(x => x.colour), borderWidth: 0, hoverOffset: 5 }] },

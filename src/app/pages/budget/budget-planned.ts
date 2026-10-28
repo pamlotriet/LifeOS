@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
-import { BudgetPlan, categoryPlanItems, compatibleCategory, debtPlanId, localDate, money, supportsPlan, total } from '../../shared/state/budget/budget.model';
+import { BudgetPlan, categoryPlanItems, compatibleCategory, debtPlanId, localDate, money, isSpendingCategory, supportsPlan, total } from '../../shared/state/budget/budget.model';
 import { BudgetTransactions } from './budget-ui';
 
 @Component({ selector: 'app-budget-planned', imports: [BackButton, BudgetNav, BudgetNumber, IonContent, IonIcon, FormsModule, RouterLink, BudgetTransactions], templateUrl: './budget-planned.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-planned.css'] })
@@ -34,16 +34,16 @@ export class BudgetPlanned {
     const transaction = this.store.transactions().find(item => item.id === debtPlanId(this.store.month(), debt.id));
     return { ...debt, planned: transaction?.amount ?? 0, paid: !!transaction && transaction.paymentStatus !== 'planned', actual: total(this.store.monthly().filter(item => item.type === 'expense' && item.debtId === debt.id)) };
   }));
-  readonly planned = computed(() => this.store.activeCategories().filter(category => supportsPlan(category.type)).map(category => {
+  readonly planned = computed(() => this.store.activeCategories().filter(category => supportsPlan(category.type) && !isSpendingCategory(category)).map(category => {
     const plan = categoryPlanItems(this.store.plans(), this.store.month(), category.id);
     const actual = total(this.store.monthly().filter(item => !item.debtId && compatibleCategory(item.type, category.type) && item.categoryId === category.id));
     return { ...category, planned: plan.amount, items: plan.items, actual };
   }));
-  readonly plannedTotal = computed(() => Math.round(this.planned().reduce((sum, item) => sum + Math.round(item.planned * 100), 0) + this.debtPlans().reduce((sum, item) => sum + Math.round(item.planned * 100), 0)) / 100);
+  readonly plannedTotal = computed(() => this.outlook().plannedTotal);
   readonly hasPlannedItems = computed(() => this.planned().some(item => item.items.length > 0));
   readonly income = computed(() => total(this.store.monthly().filter(item => item.type === 'income')));
   readonly predictedBalance = computed(() => Math.round((this.income() - this.plannedTotal()) * 100) / 100);
-  readonly outlook = computed(() => budgetSnapshot(this.store.transactions(), this.store.activeCategories(), this.store.plans(), this.store.month(), this.store.cycleStartDay()));
+  readonly outlook = computed(() => budgetSnapshot(this.store.transactions(), this.store.activeCategories(), this.store.plans(), this.store.month(), this.store.cycleStartDay(), this.store.spendingBalances?.() ?? []));
   openCyclePicker(input: HTMLInputElement): void { try { input.showPicker?.(); } catch { input.focus(); } }
   goToCurrentCycle(): void { this.setMonth(cycleMonth(localDate(), this.store.cycleStartDay())); }
   async copyPlans(categoryId?: string): Promise<void> {

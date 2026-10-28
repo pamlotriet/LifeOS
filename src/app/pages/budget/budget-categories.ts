@@ -1,3 +1,4 @@
+import { budgetSnapshot } from './budget-snapshot';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { BudgetNav } from './budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -5,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
-import { BudgetCategory, CATEGORY_COLOURS, CATEGORY_ICONS, CATEGORY_TYPES, CategoryType, money, total } from '../../shared/state/budget/budget.model';
+import { BudgetCategory, CATEGORY_COLOURS, CATEGORY_ICONS, CATEGORY_TYPES, CategoryType, isSpendingCategory, money, total } from '../../shared/state/budget/budget.model';
 
 @Component({ selector: 'app-budget-categories', imports: [BackButton, BudgetNav, FormsModule, RouterLink, IonContent, IonIcon], templateUrl: './budget-categories.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetCategories {
@@ -13,6 +14,8 @@ export class BudgetCategories {
   readonly tab = signal<CategoryType>('expense');
   readonly types = CATEGORY_TYPES; readonly icons = CATEGORY_ICONS; readonly colours = CATEGORY_COLOURS;
   readonly money = money;
+  readonly isSpending = isSpendingCategory;
+  readonly leftOver = computed(() => budgetSnapshot(this.store.transactions(), this.store.categories(), this.store.plans(), this.store.month(), this.store.cycleStartDay(), this.store.spendingBalances?.() ?? []).leftOver);
   readonly editor = signal<BudgetCategory | null>(null);
   readonly isNew = signal(false); readonly busy = signal(false); readonly error = signal(''); readonly confirming = signal(false);
   readonly rows = computed(() => {

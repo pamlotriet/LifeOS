@@ -12,7 +12,8 @@
     <section class="planning-summary" aria-label="Cycle plan forecast">
       <article><span>Recorded income</span><strong>{{ money(income()) }}</strong><small>Income entered for this cycle</small></article>
       <article><span>Total planned</span><strong>{{ money(plannedTotal()) }}</strong><small>Expenses, savings and debt payments</small></article>
-      <article class="forecast-card"><span>Balance against plan</span><strong [class.negative]="predictedBalance() < 0" aria-live="polite">{{ money(predictedBalance()) }}</strong><small>Recorded income minus planned values; excludes unplanned spending</small></article>
+      <article class="forecast-card"><span>Planned spending money</span><strong [class.negative]="predictedBalance() < 0" aria-live="polite">{{ money(predictedBalance()) }}</strong><small>Recorded income minus planned values; excludes unplanned spending</small></article>
+      <article class="forecast-card"><span>{{ outlook().leftOver.confirmed ? 'Spending account balance' : 'Estimated spending left' }}</span><strong [class.negative]="outlook().leftOver.actual < 0" aria-live="polite">{{ money(outlook().leftOver.actual) }}</strong><small>Confirm the actual account balance on Budget. Transfers into Spending increase it; Spending purchases reduce it.</small></article>
       <article class="forecast-card"><span>After spending &amp; remaining plans</span><strong [class.negative]="outlook().afterPlans < 0" aria-live="polite">{{ money(outlook().afterPlans) }}</strong><small>Recorded balance less unspent category plans and unpaid debt plans</small></article>
     </section>
     @if (!income()) { <p class="planning-hint">Add income for this cycle to complete your forecast.</p> }

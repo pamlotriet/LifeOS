@@ -3,7 +3,7 @@ import { AuthService } from '../authentication/authentication.service';
 import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
 import { BudgetService } from './budget.service';
 import { cycleBounds, cycleMonth, cycleStart, inCycle } from './budget-cycle';
-import { BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, debtPlanId, localDate, supportsPlan, TransactionInput } from './budget.model';
+import { SpendingBalanceCheckpoint, isSpendingCategory, total, BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, debtPlanId, localDate, supportsPlan, TransactionInput } from './budget.model';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetStore {
@@ -13,6 +13,7 @@ export class BudgetStore {
   readonly transactions = signal<BudgetTransaction[]>([]);
   readonly categories = signal<BudgetCategory[]>(DEFAULT_CATEGORIES.map(x => ({ ...x })));
   readonly plans = signal<BudgetPlan[]>([]);
+  readonly spendingBalances = signal<SpendingBalanceCheckpoint[]>([]);
   readonly debts = signal<BudgetDebt[]>([]);
   readonly activeCategories = computed(() => this.categories().filter(x => !x.deleted).sort((a, b) => a.order - b.order || a.name.localeCompare(b.name)));
   readonly month = signal(localDate().slice(0, 7));
@@ -33,7 +34,7 @@ export class BudgetStore {
         ++this.generation;
         this.transactions.set([]);
         this.categories.set(DEFAULT_CATEGORIES.map(x => ({ ...x })));
-        this.plans.set([]); this.debts.set([]);
+        this.plans.set([]); this.debts.set([]); this.spendingBalances.set([]);
         this.month.set(localDate().slice(0, 7));
         this.cycleStartDay.set(1);
         this.error.set(''); this.notice.set(''); this.loading.set(false);
@@ -50,6 +51,7 @@ export class BudgetStore {
       this.transactions.set(data.transactions);
       this.plans.set(data.plans);
       this.debts.set(data.debts);
+      this.spendingBalances.set(data.spendingBalances ?? []);
       const startDay = Number.isInteger(data.cycleStartDay) && data.cycleStartDay >= 1 && data.cycleStartDay <= 31 ? data.cycleStartDay : 1;
       if (startDay !== this.cycleStartDay()) this.month.set(cycleMonth(localDate(), startDay));
       this.cycleStartDay.set(startDay);
@@ -60,9 +62,23 @@ export class BudgetStore {
       if (version === this.generation) this.error.set(error instanceof Error ? error.message : 'Could not load your budget.');
     } finally { if (version === this.generation) this.loading.set(false); }
   }
+  async setSpendingBalance(balance: number): Promise<void> {
+    if (this.loading() || this.error()) throw new Error('Wait for your budget to load first.');
+    const uid = this.auth.userId();
+    const month = this.month();
+    const ids = new Set(this.categories().filter(isSpendingCategory).map(category => category.id));
+    const recordedSpending = total(this.transactions().filter(t => t.type === 'expense' && !t.debtId && ids.has(t.categoryId) && this.inMonth(t.date, month)));
+    const recordedFunding = total(this.transactions().filter(t => t.type === 'spending-transfer' && this.inMonth(t.date, month)));
+    const checkpoint = { recordedFunding, id: month, balance: Math.round(balance * 100) / 100, recordedSpending };
+    await this.service.saveSpendingBalance(checkpoint);
+    if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget.');
+    ++this.generation;
+    this.spendingBalances.update(items => [...items.filter(item => item.id !== month), checkpoint]);
+  }
   async saveTransaction(input: TransactionInput, id?: string, receipt?: string): Promise<void> {
     if (this.loading() || this.error()) throw new Error('Wait for your budget to load, or retry loading it first.');
     const category = this.activeCategories().find(x => x.id === input.categoryId);
+    if (input.type === 'spending-transfer' && (!category || !isSpendingCategory(category))) throw new Error('Choose the Spending category for an account transfer.');
     if (!category || !compatibleCategory(input.type, category.type)) throw new Error('Choose a category for this transaction type.');
     if (input.debtId && !this.debts().some(debt => debt.id === input.debtId)) throw new Error('Choose an existing debt account.');
     const uid = this.auth.userId();
