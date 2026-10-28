@@ -72,3 +72,6 @@
   :host .budget-planning-page .plan-item-row { grid-template-columns: minmax(0, 1fr) 90px 36px; }
   :host .budget-planning-page .category-actions { gap: 8px 16px; }
 }
+
+:host .budget-planning-page .planning-topbar { padding: 0; margin-bottom: 16px; border: 0; }
+:host .budget-planning-page > .planning-header { display: flex; }

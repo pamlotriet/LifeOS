@@ -68,3 +68,6 @@
   :host .budget-overview-page .chart-legend { max-height: none; overflow: visible; }
   :host .budget-overview-page .transaction-heading { margin-block: 24px 16px; }
 }
+
+:host .budget-overview-page .budget-topbar { padding: 0; margin-bottom: 16px; border: 0; }
+:host .budget-overview-page > .budget-overview-header { display: flex; }

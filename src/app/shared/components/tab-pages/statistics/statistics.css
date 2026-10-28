@@ -1,11 +1,11 @@
 /* Shared statistics theme, matching the reading dashboard. */
 :host {
-  --stats-bg: #0c0917;
-  --stats-card: #161225;
-  --stats-border: #30293f;
-  --stats-text: #eeeaf9;
-  --stats-muted: #b8c3ed;
-  --stats-purple: #9b87ff;
+  --stats-bg: var(--background);
+  --stats-card: var(--card);
+  --stats-border: var(--border);
+  --stats-text: var(--foreground);
+  --stats-muted: var(--text-secondary);
+  --stats-purple: var(--primary);
 }
 ion-content {
   --background: var(--stats-bg) !important;
@@ -16,10 +16,6 @@ ion-content {
   width: 100%;
   padding: 28px 28px 48px;
   color: var(--stats-text);
-  --card: var(--stats-card);
-  --border: var(--stats-border);
-  --foreground: var(--stats-text);
-  --text-secondary: var(--stats-muted);
 }
 .stats-topbar {
   display: flex;
@@ -27,7 +23,7 @@ ion-content {
   justify-content: space-between;
   padding: 8px 12px 26px;
   margin-bottom: 32px;
-  border-bottom: 1px solid #262131;
+  border-bottom: 1px solid var(--stats-border);
   font-size: 12px;
   color: var(--stats-muted);
 }
@@ -72,7 +68,7 @@ ion-content {
 .stats-intro > p:last-child {
   margin: 10px 0 0;
   font-size: 14px;
-  color: #b5b0c4;
+  color: var(--stats-muted);
 }
 .module-selector,
 .budget-stats-page .module-selector {
@@ -112,7 +108,7 @@ ion-content {
 }
 .module-options button:hover,
 .module-options button[aria-current='true'] {
-  background: #241c3a;
+  background: var(--secondary);
   color: var(--stats-text);
 }
 .module-options ion-icon:first-child {
@@ -143,11 +139,11 @@ ion-content {
   font-size: 12px;
   border: 0;
   border-radius: 9px;
-  color: #b5b0c4;
+  color: var(--stats-muted);
   background: transparent;
 }
 .stats-period nav button.active {
-  background: #211933;
+  background: var(--secondary);
   color: var(--stats-purple);
 }
 .book-card {
@@ -268,7 +264,7 @@ ion-content {
 .book-track {
   height: 6px;
   border-radius: 10px;
-  background: #221b34;
+  background: var(--muted);
   overflow: hidden;
 }
 .book-track i {
@@ -628,7 +624,7 @@ ion-content {
   font-size: 12px;
 }
 .lifeos-select {
-  color-scheme: dark;
+  color-scheme: light dark;
 }
 .budget-report-toolbar {
   margin-bottom: 20px;

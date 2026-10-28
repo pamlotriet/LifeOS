@@ -16,10 +16,9 @@ ion-content {
   padding: 0 0 32px;
 }
 .fuel-heading app-back-button {
-  display: block;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 24px;
-  margin-bottom: 36px;
+  display: inline-flex;
+  padding: 0;
+  margin-bottom: 16px;
 }
 .fuel-eyebrow {
   display: block;
@@ -81,7 +80,7 @@ a:focus-visible {
     padding-bottom: 16px;
   }
   .fuel-heading app-back-button {
-    margin-bottom: 28px;
+    margin-bottom: 16px;
   }
   .fuel-heading p {
     font-size: 0.9rem;

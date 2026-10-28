@@ -1,3 +1,5 @@
+import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
+import { AppMonthPicker } from '../../shared/components/app-month-picker/app-month-picker';
 import { budgetSnapshot } from './budget-snapshot';
 import { cycleMonth } from '../../shared/state/budget/budget-cycle';
 import { BackButton } from '../../shared/components/back-button/back-button';
@@ -11,7 +13,7 @@ import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { BudgetPlan, categoryPlanItems, compatibleCategory, debtPlanId, localDate, money, isSpendingCategory, supportsPlan, total } from '../../shared/state/budget/budget.model';
 import { BudgetTransactions } from './budget-ui';
 
-@Component({ selector: 'app-budget-planned', imports: [BackButton, BudgetNav, BudgetNumber, IonContent, IonIcon, FormsModule, RouterLink, BudgetTransactions], templateUrl: './budget-planned.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-planned.css'] })
+@Component({ selector: 'app-budget-planned', imports: [AppDatePicker, AppMonthPicker, BackButton, BudgetNav, BudgetNumber, IonContent, IonIcon, FormsModule, RouterLink, BudgetTransactions], templateUrl: './budget-planned.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-planned.css'] })
 export class BudgetPlanned {
   readonly store = inject(BudgetStore);
   readonly money = money;

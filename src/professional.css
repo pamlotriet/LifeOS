@@ -416,9 +416,20 @@ ion-app.lifeos-app .gym-page .gym-panel.day-card{border-top-color:var(--day-colo
 @media(max-width:480px){ion-app.lifeos-app .budget-page .budget-entry-actions>*{min-width:0;flex:1}}
 /* Overlay content is rendered outside page styles. Keep mobile calendars inside
    the viewport, including those opened from narrow columns or screen edges. */
-ion-popover.lifeos-date-popover { --width:min(340px,calc(100vw - 24px)); --max-width:calc(100vw - 24px); --max-height:calc(100dvh - 24px); }
+ion-modal.lifeos-date-modal {
+  --width: min(360px, calc(100vw - 32px));
+  --height: auto;
+  --max-width: calc(100vw - 32px);
+  --max-height: calc(100dvh - 48px);
+  --border-radius: 16px;
+  --background: var(--card);
+  --color: var(--foreground);
+  --backdrop-opacity: .5;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+ion-modal.lifeos-date-modal::part(content) { max-width: 100%; overflow-y: auto; overscroll-behavior: contain; }
+ion-modal.lifeos-date-modal .ion-page { position: relative; display: block; contain: content; }
 @media(max-width:767px) {
-  ion-popover.lifeos-date-popover::part(content) { position:fixed!important; inset:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))!important; margin:auto!important; width:min(340px,calc(100vw - 24px))!important; max-width:calc(100vw - 24px)!important; height:fit-content!important; max-height:calc(100dvh - 32px)!important; transform:none!important; overflow:auto; box-sizing:border-box; }
   ion-app.lifeos-app :is(input[type=date],input[type=month],input[type=time],input[type=datetime-local]) { min-width:0; max-width:100%; box-sizing:border-box; }
   ion-app.lifeos-app .month-nav { flex-wrap:wrap; gap:10px; }
   ion-app.lifeos-app .month-nav>input { width:100%; }
@@ -457,7 +468,7 @@ ion-app.lifeos-app .wheel-back-control{width:44px;justify-content:center;padding
   --background:#f5f2fb;--foreground:#292237;--card:#fff;--primary:#7054d4;--primary-foreground:#fff;--secondary:#eee8fa;--muted:#eee9f5;--muted-foreground:#70677f;--accent:#eee8fa;--border:#ddd5e9;--ring:#8b73ed;--success:#168879;--warning:#a57529;--destructive:#c04766;
 }
 :root.dark {
-  --background:#0d0a18;--foreground:#e7e2f3;--card:#171225;--primary:#9b87ff;--primary-foreground:#100b22;--secondary:#241d38;--muted:#20192f;--muted-foreground:#aaa4bc;--accent:#241d38;--border:#30283e;--ring:#9b87ff;--success:#49e3d0;--warning:#edc784;--destructive:#ff91ad;
+  --background:#211d30;--foreground:#f2edf9;--card:#302a42;--primary:#b6a4ff;--primary-foreground:#211534;--secondary:#3b334f;--muted:#372f49;--muted-foreground:#c5bdd5;--accent:#3b334f;--border:#544965;--ring:#9b87ff;--success:#49e3d0;--warning:#edc784;--destructive:#ff91ad;
 }
 :root,:root.dark {
   --card-foreground:var(--foreground);--popover:var(--card);--popover-foreground:var(--foreground);--secondary-foreground:var(--foreground);--accent-foreground:var(--primary);--input:var(--border);--text-secondary:var(--muted-foreground);--text-muted:var(--muted-foreground);

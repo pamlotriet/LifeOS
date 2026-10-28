@@ -10,7 +10,7 @@
     <section class="cycle-selector" aria-label="Budget cycle">
       <div class="cycle-navigation">
         <button type="button" class="icon-button" aria-label="Previous budget cycle" (click)="shiftMonth(-1)"><ion-icon name="chevron-back" aria-hidden="true" /></button>
-        <label class="cycle-picker"><span>Budget cycle</span><input #cycleInput type="month" aria-label="Budget cycle month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" (click)="openCyclePicker(cycleInput)" /></label>
+        <label class="cycle-picker"><span>Budget cycle</span><app-month-picker ariaLabel="Budget cycle month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></label>
         <button type="button" class="icon-button" aria-label="Next budget cycle" (click)="shiftMonth(1)"><ion-icon name="chevron-forward" aria-hidden="true" /></button>
       </div>
       <div class="cycle-details"><p aria-label="Budget cycle dates" aria-live="polite">{{ cycleDates() }}</p><button type="button" class="text-link" (click)="goToCurrentCycle()">Current cycle</button></div>

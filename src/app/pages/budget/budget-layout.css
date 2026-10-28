@@ -67,3 +67,17 @@
   :host .budget-page .field-grid { grid-template-columns: minmax(0, 1fr); }
   :host .budget-page .segments[aria-label='Transaction type'] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+:host .budget-page > .page-header { display: grid; grid-template-columns: 44px minmax(0,1fr) auto; align-items: center; gap: 12px; }
+:host .budget-page > .page-header app-back-button { align-self: center; }
+:host .budget-page > .page-header .compact-title { text-align: left; }
+:host .budget-page app-month-picker { min-width: 0; max-width: 100%; }
+:host .budget-page .month-nav > app-month-picker { flex: 1 1 220px; max-width: 320px; }
+:host .budget-page :is(.comparison-month-controls, .cycle-navigation, .planning-cycle-controls) > app-month-picker { flex: 1; }
+:host .budget-page .savings-transfer-date app-date-picker { flex: 1 1 180px; min-width: 0; }
+@media (max-width:600px) {
+  :host .budget-page > .page-header .debt-header-actions,
+  :host .budget-page > .page-header > a.secondary-button { grid-column: 1/-1; width: 100%; }
+  :host .budget-page .month-nav > app-month-picker { flex-basis: 100%; max-width: none; }
+  :host .budget-page :is(.cycle-navigation,.planning-cycle-controls,.comparison-month-controls) { gap: 8px; }
+}

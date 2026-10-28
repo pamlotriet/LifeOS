@@ -1,3 +1,4 @@
+import { AppMonthPicker } from '../../shared/components/app-month-picker/app-month-picker';
 import { budgetSnapshot } from './budget-snapshot';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -9,7 +10,7 @@ import { categoryPlanItems, compatibleCategory, isSpendingCategory, money } from
 import { BudgetNav } from './budget-nav';
 import { compareBudgetCategories } from './budget-comparison.model';
 
-@Component({ selector: 'app-budget-comparison', imports:[BackButton,FormsModule, RouterLink, IonContent, BudgetNav], templateUrl: './budget-comparison.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-comparison.css'] })
+@Component({ selector: 'app-budget-comparison', imports:[AppMonthPicker, BackButton,FormsModule, RouterLink, IonContent, BudgetNav], templateUrl: './budget-comparison.html', styleUrls: ['./budget.css', './budget-layout.css', './budget-comparison.css'] })
 export class BudgetComparison {
   readonly store = inject(BudgetStore);
   readonly money = money;

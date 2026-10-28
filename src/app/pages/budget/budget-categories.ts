@@ -1,3 +1,4 @@
+import { AppMonthPicker } from '../../shared/components/app-month-picker/app-month-picker';
 import { budgetSnapshot } from './budget-snapshot';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { BudgetNav } from './budget-nav';
@@ -8,7 +9,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { BudgetCategory, CATEGORY_COLOURS, CATEGORY_ICONS, CATEGORY_TYPES, CategoryType, isSpendingCategory, money, total } from '../../shared/state/budget/budget.model';
 
-@Component({ selector: 'app-budget-categories', imports: [BackButton, BudgetNav, FormsModule, RouterLink, IonContent, IonIcon], templateUrl: './budget-categories.html', styleUrls: ['./budget.css', './budget-layout.css'] })
+@Component({ selector: 'app-budget-categories', imports: [AppMonthPicker, BackButton, BudgetNav, FormsModule, RouterLink, IonContent, IonIcon], templateUrl: './budget-categories.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetCategories {
   readonly store = inject(BudgetStore);
   readonly tab = signal<CategoryType>('expense');

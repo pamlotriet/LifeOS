@@ -2,7 +2,7 @@
   <div class="planning-topbar"><app-back-button fallback="/budget" /></div>
   <header class="page-header planning-header"><div class="planning-title"><div><p class="planning-eyebrow">Personal finance / Planning</p><h1>Plan your <span>cycle</span></h1><p class="muted">Give every rand a purpose.</p></div></div></header>
   <section class="planning-cycle" aria-label="Planning cycle">
-    <div class="planning-cycle-controls"><button type="button" class="icon-button" aria-label="Previous budget cycle" [disabled]="savingPlanItem() || savingDebtPlan()" (click)="shiftMonth(-1)"><ion-icon name="chevron-back" /></button><label>Budget cycle<input #cycleInput type="month" aria-label="Planning cycle month" [disabled]="savingPlanItem() || savingDebtPlan()" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" (click)="openCyclePicker(cycleInput)" /></label><button type="button" class="icon-button" aria-label="Next budget cycle" [disabled]="savingPlanItem() || savingDebtPlan()" (click)="shiftMonth(1)"><ion-icon name="chevron-forward" /></button></div>
+    <div class="planning-cycle-controls"><button type="button" class="icon-button" aria-label="Previous budget cycle" [disabled]="savingPlanItem() || savingDebtPlan()" (click)="shiftMonth(-1)"><ion-icon name="chevron-back" /></button><label>Budget cycle<app-month-picker ariaLabel="Planning cycle month" [disabled]="savingPlanItem() || savingDebtPlan()" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></label><button type="button" class="icon-button" aria-label="Next budget cycle" [disabled]="savingPlanItem() || savingDebtPlan()" (click)="shiftMonth(1)"><ion-icon name="chevron-forward" /></button></div>
     <div class="planning-cycle-details"><p aria-live="polite">{{ store.cycleLabel() }}</p><button type="button" class="text-link" [disabled]="savingPlanItem() || savingDebtPlan()" (click)="goToCurrentCycle()">Current cycle</button></div>
   </section>
   <app-budget-nav />
@@ -29,7 +29,7 @@
               <div class="plan-row"><span class="category-icon" [style.background]="item.colour"><ion-icon [name]="item.icon" /></span><span class="row-copy"><strong>{{ item.name }}</strong><small>Actual {{ money(item.actual) }}</small></span><span class="plan-category-total"><small>Planned total</small><strong>{{ money(item.planned) }}</strong></span></div>
               @if (item.items.length) { <div class="plan-column-labels" aria-hidden="true"><span>Payment / item</span><span>Amount (R)</span><span></span></div> }
               @if (item.type === 'savings' && item.items.length) {
-                <label class="savings-transfer-date">Transfer date<input type="date" [ngModel]="savingsDate()" (ngModelChange)="savingsDate.set($event)" [disabled]="savingPlanItem()" /></label>
+                <label class="savings-transfer-date">Transfer date<app-date-picker ariaLabel="Transfer date" [ngModel]="savingsDate()" (ngModelChange)="savingsDate.set($event)" [disabled]="savingPlanItem()" /></label>
                 <p class="muted">Mark savings after transferring the money. This deducts it from your actual balance.</p>
               }
               @for (entry of item.items; track entry.id) {

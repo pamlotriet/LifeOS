@@ -1,3 +1,4 @@
+import { AppDatePicker } from '../../shared/components/app-date-picker/app-date-picker';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { BudgetNumber } from '../../shared/directives/budget-number';
 import { Component, computed, effect, inject, signal } from '@angular/core';
@@ -7,7 +8,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../../shared/state/budget/budget.store';
 import { compatibleCategory, isSpendingCategory, localDate, TransactionInput, TransactionType } from '../../shared/state/budget/budget.model';
 
-@Component({ selector: 'app-budget-transaction-form', imports: [BackButton, BudgetNumber, IonContent, IonIcon, FormsModule, RouterLink], templateUrl: './budget-transaction-form.html', styleUrls: ['./budget.css', './budget-layout.css'] })
+@Component({ selector: 'app-budget-transaction-form', imports: [AppDatePicker, BackButton, BudgetNumber, IonContent, IonIcon, FormsModule, RouterLink], templateUrl: './budget-transaction-form.html', styleUrls: ['./budget.css', './budget-layout.css'] })
 export class BudgetTransactionForm {
   readonly store = inject(BudgetStore);
   private readonly router = inject(Router);
