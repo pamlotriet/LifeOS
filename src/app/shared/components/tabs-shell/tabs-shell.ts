@@ -19,8 +19,8 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
         class="lifeos-tab-bar border-t border-[var(--border)] bg-[var(--nav-background)] [--background:var(--nav-background)] [--border:none]"
       >
         <div class="desktop-nav-brand">
-          <span class="nav-mark" aria-hidden="true">L</span
-          ><span>LifeOS<small>Everyday workspace</small></span>
+          <img src="/icons/lifeos-plum-192.png" width="32" height="32" alt="" />
+          <span>LifeOS<small>Everyday workspace</small></span>
         </div>
         <ion-tab-button
           tab="home"

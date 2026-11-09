@@ -24,19 +24,17 @@
       </div>
     </div>
   }
-  @if (!authService.authReady()) {
-    <div class="grid h-full place-items-center text-[var(--text-secondary)]" role="status">Loading LifeOS...</div>
-  } @else if (authService.isAuthenticated()) {
+  @if (authService.authReady() && authService.isAuthenticated()) {
     <ion-router-outlet
       class="app-route-outlet"
       [animated]="false"
       [swipeGesture]="false"
     ></ion-router-outlet>
-  } @else {
+  } @else if (authService.authReady()) {
     <main class="login-page">
       <div class="login-content">
         <header class="login-brand">
-          <img class="login-logo" src="/icons/lifeos-192.png" alt="" />
+          <img class="login-logo" src="/icons/lifeos-plum-192.png" alt="" />
           <h1>Life<span>OS</span></h1>
           <p>Organize your life beautifully.</p>
         </header>

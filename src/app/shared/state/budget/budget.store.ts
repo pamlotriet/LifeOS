@@ -3,7 +3,7 @@ import { AuthService } from '../authentication/authentication.service';
 import { RefreshCoordinator } from '../refresh/refresh-coordinator.service';
 import { BudgetService } from './budget.service';
 import { cycleBounds, cycleMonth, cycleStart, inCycle } from './budget-cycle';
-import { SpendingBalanceCheckpoint, isSpendingCategory, total, BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, debtPlanId, localDate, supportsPlan, TransactionInput } from './budget.model';
+import { SavingsBalance, savingsNet, SpendingBalanceCheckpoint, isSpendingCategory, total, BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, compatibleCategory, DEFAULT_CATEGORIES, debtPlanId, localDate, supportsPlan, TransactionInput } from './budget.model';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetStore {
@@ -14,6 +14,17 @@ export class BudgetStore {
   readonly categories = signal<BudgetCategory[]>(DEFAULT_CATEGORIES.map(x => ({ ...x })));
   readonly plans = signal<BudgetPlan[]>([]);
   readonly spendingBalances = signal<SpendingBalanceCheckpoint[]>([]);
+  readonly savingsBalance = signal<SavingsBalance | undefined>(undefined);
+  readonly savingsTotal = computed(() => Math.round(((this.savingsBalance()?.balance ?? 0) + savingsNet(this.transactions()) - (this.savingsBalance()?.recordedNet ?? 0)) * 100) / 100);
+  async setSavingsBalance(balance: number): Promise<void> {
+    if (this.loading() || this.error()) throw new Error('Load your budget first.');
+    const uid = this.auth.userId();
+    const checkpoint = { balance: Math.round(balance * 100) / 100, recordedNet: savingsNet(this.transactions()) };
+    await this.service.saveSavingsBalance(checkpoint);
+    if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget.');
+    ++this.generation;
+    this.savingsBalance.set(checkpoint);
+  }
   readonly debts = signal<BudgetDebt[]>([]);
   readonly activeCategories = computed(() => this.categories().filter(x => !x.deleted).sort((a, b) => a.order - b.order || a.name.localeCompare(b.name)));
   readonly month = signal(localDate().slice(0, 7));
@@ -34,7 +45,7 @@ export class BudgetStore {
         ++this.generation;
         this.transactions.set([]);
         this.categories.set(DEFAULT_CATEGORIES.map(x => ({ ...x })));
-        this.plans.set([]); this.debts.set([]); this.spendingBalances.set([]);
+        this.savingsBalance.set(undefined); this.plans.set([]); this.debts.set([]); this.spendingBalances.set([]);
         this.month.set(localDate().slice(0, 7));
         this.cycleStartDay.set(1);
         this.error.set(''); this.notice.set(''); this.loading.set(false);
@@ -51,6 +62,7 @@ export class BudgetStore {
       this.transactions.set(data.transactions);
       this.plans.set(data.plans);
       this.debts.set(data.debts);
+      this.savingsBalance.set(data.savingsBalance);
       this.spendingBalances.set(data.spendingBalances ?? []);
       const startDay = Number.isInteger(data.cycleStartDay) && data.cycleStartDay >= 1 && data.cycleStartDay <= 31 ? data.cycleStartDay : 1;
       if (startDay !== this.cycleStartDay()) this.month.set(cycleMonth(localDate(), startDay));
@@ -67,7 +79,7 @@ export class BudgetStore {
     const uid = this.auth.userId();
     const month = this.month();
     const ids = new Set(this.categories().filter(isSpendingCategory).map(category => category.id));
-    const recordedSpending = total(this.transactions().filter(t => t.type === 'expense' && !t.debtId && ids.has(t.categoryId) && this.inMonth(t.date, month)));
+    const recordedSpending = total(this.transactions().filter(t => t.type === 'expense' && !t.debtId && !t.account && ids.has(t.categoryId) && this.inMonth(t.date, month)));
     const recordedFunding = total(this.transactions().filter(t => t.type === 'spending-transfer' && this.inMonth(t.date, month)));
     const checkpoint = { recordedFunding, id: month, balance: Math.round(balance * 100) / 100, recordedSpending };
     await this.service.saveSpendingBalance(checkpoint);

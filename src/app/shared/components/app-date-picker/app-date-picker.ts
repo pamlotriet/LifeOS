@@ -25,7 +25,7 @@ const localIso = (date: Date) => `${date.getFullYear()}-${String(date.getMonth()
         <div class="grid grid-cols-7 text-center text-[11px] text-[var(--text-secondary)]">@for (day of weekdays; track day) { <span class="py-1">{{ day }}</span> }</div>
         <div class="grid grid-cols-7 gap-0.5 text-center text-sm">@for (day of days(); track $index) { @if (day) { <button type="button" [attr.aria-label]="dateLabel(day)" [attr.aria-pressed]="isSelected(day)" (click)="choose(day)" class="grid h-9 place-items-center rounded-lg hover:bg-[var(--muted)]" [class]="isSelected(day) ? 'bg-cyan-400 font-bold text-[#062642]' : 'text-[var(--foreground)]'">{{ day }}</button> } @else { <span></span> } }</div>
         }
-        <div class="mt-2 flex justify-between border-t border-[var(--border)] pt-2"><button type="button" (click)="chooseToday()" class="text-xs text-cyan-300">Today</button>@if (clearable()) { <button type="button" (click)="chooseEmpty()" class="text-xs text-[#b5cbe2]">Clear date</button> }</div>
+        <div class="mt-2 flex justify-between border-t border-[var(--border)] pt-2"><button type="button" (click)="chooseToday()" class="text-xs text-cyan-300">Today</button>@if (clearable()) { <button type="button" (click)="chooseEmpty()" class="text-xs text-[#9e7eb5]">Clear date</button> }</div>
       </div>
         </ng-template>
       </ion-modal>

@@ -1,5 +1,5 @@
 @if (!embedded) { <ion-header app-page-header [title]="id ? (showEditor() ? 'Edit Book' : 'Books') : 'Add Book'"></ion-header> }
-<ion-content class="[--background:transparent] [--color:#fff]">
+<ion-content class="[--background:transparent] [--color:var(--foreground)]">
   @if (embedded) { <button slot="fixed" type="button" class="book-sheet-close" aria-label="Close add book" [disabled]="saving()" (click)="cancel()">&#215;</button> }
   <main class="mx-auto max-w-xl px-4 pb-10 pt-4 text-white" [class.book-sheet]="embedded">
     @if (embedded) {

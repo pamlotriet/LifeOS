@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { FirestoreDocument, FirestoreService, FirestoreValue } from '../../../core/firebase/firestore.service';
 import { StoragePhotoService } from '../../../core/firebase/storage-photo.service';
 import { AuthService } from '../authentication/authentication.service';
-import { SpendingBalanceCheckpoint, BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, CATEGORY_ICONS, CATEGORY_TYPES, TransactionInput, validateTransaction } from './budget.model';
+import { SavingsBalance, SpendingBalanceCheckpoint, BudgetCategory, BudgetDebt, BudgetDebtInput, BudgetPlan, BudgetTransaction, CATEGORY_ICONS, CATEGORY_TYPES, TransactionInput, validateTransaction } from './budget.model';
 
 function fields(record: object): Record<string, FirestoreValue> {
   return Object.fromEntries(Object.entries(record).filter(([key, value]) => key !== 'id' && value !== undefined).map(([key, value]) => [key,
@@ -17,18 +17,24 @@ export class BudgetService {
   private readonly firestore = inject(FirestoreService);
   private readonly photos = inject(StoragePhotoService);
 
-  async load(): Promise<{ transactions: BudgetTransaction[]; categories: BudgetCategory[]; plans: BudgetPlan[]; debts: BudgetDebt[]; cycleStartDay: number; spendingBalances: SpendingBalanceCheckpoint[] }> {
+  async load(): Promise<{ transactions: BudgetTransaction[]; categories: BudgetCategory[]; plans: BudgetPlan[]; debts: BudgetDebt[]; cycleStartDay: number; spendingBalances: SpendingBalanceCheckpoint[]; savingsBalance?: SavingsBalance }> {
     const { uid, token } = await this.auth.getSession();
-    const [transactions, categories, plans, debts, cycle, spendingBalances] = await Promise.all([
+    const [transactions, categories, plans, debts, cycle, spendingBalances, savingsBalance] = await Promise.all([
       this.firestore.listDocuments(`budgets/${uid}/transactions`, token),
       this.firestore.listDocuments(`budgets/${uid}/categories`, token),
       this.firestore.listDocuments(`budgets/${uid}/plans`, token),
       this.firestore.listDocuments(`budgets/${uid}/debts`, token),
       this.firestore.tryGetDocument(`budgets/${uid}/settings/cycle`, token),
       this.firestore.listDocuments(`budgets/${uid}/spendingBalances`, token),
+      this.firestore.tryGetDocument(`budgets/${uid}/settings/savings`, token),
     ]);
     const cycleStartDay = cycle ? Number(decode<{ startDay: number }>(cycle).startDay) : 1;
-    return { spendingBalances: spendingBalances.map(x => decode<SpendingBalanceCheckpoint>(x)), cycleStartDay, transactions: transactions.map(x => decode<BudgetTransaction>(x)), categories: categories.map(x => decode<BudgetCategory>(x)), plans: plans.map(x => decode<BudgetPlan>(x)), debts: debts.map(x => { const debt = decode<BudgetDebt>(x); return { ...debt, openingOverride: debt.openingOverride ?? null }; }) };
+    return { savingsBalance: savingsBalance ? decode<SavingsBalance>(savingsBalance) : undefined, spendingBalances: spendingBalances.map(x => decode<SpendingBalanceCheckpoint>(x)), cycleStartDay, transactions: transactions.map(x => decode<BudgetTransaction>(x)), categories: categories.map(x => decode<BudgetCategory>(x)), plans: plans.map(x => decode<BudgetPlan>(x)), debts: debts.map(x => { const debt = decode<BudgetDebt>(x); return { ...debt, openingOverride: debt.openingOverride ?? null }; }) };
+  }
+  async saveSavingsBalance(balance: SavingsBalance): Promise<void> {
+    if (!Number.isFinite(balance.balance) || balance.balance < 0 || balance.balance > 999999999 || !Number.isFinite(balance.recordedNet)) throw new Error('Enter a valid savings balance.');
+    const { uid, token } = await this.auth.getSession();
+    await this.firestore.updateDocument(`budgets/${uid}/settings/savings`, fields(balance), token);
   }
   async saveSpendingBalance(checkpoint: SpendingBalanceCheckpoint): Promise<void> {
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(checkpoint.id) || !Number.isFinite(checkpoint.balance) || Math.abs(checkpoint.balance) > 999999999 || !Number.isFinite(checkpoint.recordedSpending) || checkpoint.recordedSpending < 0 || (checkpoint.recordedFunding !== undefined && (!Number.isFinite(checkpoint.recordedFunding) || checkpoint.recordedFunding < 0))) throw new Error('Enter a valid current account balance.');

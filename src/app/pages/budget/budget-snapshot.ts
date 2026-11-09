@@ -18,9 +18,9 @@ export function budgetSnapshot(transactions:BudgetTransaction[],categories:Budge
   const plannedTotal=round(categoryPlans.reduce((sum,p)=>sum+p.planned,0)+plannedDebt);
   // Keep planned envelopes reserved after their money is transferred or used.
   const reserved=round(categoryPlans.reduce((sum,p)=>sum+(p.hasPlan?p.planned:p.actual),0)+debtPayments.reduce((sum,t)=>sum+t.amount,0));
-  const spendingUsed=total(recorded.filter(t=>t.type==='expense'&&!t.debtId&&spendingIds.has(t.categoryId)));
+  const spendingUsed=total(recorded.filter(t=>t.type==='expense'&&!t.debtId&&!t.account&&spendingIds.has(t.categoryId)));
   const checkpoint=checkpoints.filter(item=>item.id<=month).sort((a,b)=>b.id.localeCompare(a.id))[0];
-  const spendingSinceCheckpoint=checkpoint?total(transactions.filter(t=>t.type==='expense'&&!t.debtId&&spendingIds.has(t.categoryId)&&t.date>=cycleStart(checkpoint.id,startDay)&&t.date<cycleBounds(month,startDay).endExclusive)):0;
+  const spendingSinceCheckpoint=checkpoint?total(transactions.filter(t=>t.type==='expense'&&!t.debtId&&!t.account&&spendingIds.has(t.categoryId)&&t.date>=cycleStart(checkpoint.id,startDay)&&t.date<cycleBounds(month,startDay).endExclusive)):0;
   const funding=checkpoint?total(transactions.filter(t=>t.type==='spending-transfer'&&t.date>=cycleStart(checkpoint.id,startDay)&&t.date<cycleBounds(month,startDay).endExclusive))-(checkpoint.recordedFunding??0):0;
   const leftOver={id:'spending',name:'Spending',planned:round(values.income-plannedTotal),actual:checkpoint?round(checkpoint.balance+checkpoint.recordedSpending+funding-spendingSinceCheckpoint):round(values.income-reserved-spendingUsed),confirmed:!!checkpoint,spent:spendingUsed};
   const allocationBase=Math.max(values.income,values.expenses+values.savings,1);

@@ -36,6 +36,20 @@ export class BudgetOverview {
     } catch (error) { this.balanceError.set(error instanceof Error ? error.message : 'Could not save balance.'); }
     finally { this.savingBalance.set(false); }
   }
+  readonly savingsInput = signal<number | null>(null);
+  readonly savingsBusy = signal(false);
+  readonly savingsMessage = signal('');
+  async saveSavingsBalance(): Promise<void> {
+    if (this.savingsBusy()) return;
+    this.savingsBusy.set(true); this.savingsMessage.set('');
+    try {
+      const value = this.savingsInput();
+      if (value === null || !Number.isFinite(value) || value < 0) throw new Error('Enter your current total savings.');
+      await this.store.setSavingsBalance(value);
+      this.savingsInput.set(null); this.savingsMessage.set('Savings balance saved.');
+    } catch (error) { this.savingsMessage.set(error instanceof Error ? error.message : 'Could not save savings.'); }
+    finally { this.savingsBusy.set(false); }
+  }
   readonly totals = computed(() => summary(this.store.monthly(), this.store.categories()));
   readonly filtered = computed(() => this.store.monthly().filter(x => !this.selectedDate() || x.date === this.selectedDate()));
   readonly snapshot = computed(() => budgetSnapshot(this.store.transactions(),this.store.categories(),this.store.plans(),this.store.month(),this.store.cycleStartDay(), this.store.spendingBalances?.() ?? []));

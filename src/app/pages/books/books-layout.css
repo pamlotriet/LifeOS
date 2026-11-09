@@ -1,22 +1,16 @@
-/* The reading landing has its own quiet, ink-coloured canvas. */
+/* Reading surfaces inherit the active app palette. */
 :host {
-  --books-bg: #0c0917;
-  --books-text: #f3efff;
-  --books-muted: #bfc5e6;
-  --books-line: #262132;
-  --books-purple: #9d87ff;
-  --books-track: #211a33;
-  --books-cyan: #40f2dd;
-  --card: var(--books-track);
-  --foreground: var(--books-text);
-  --text-secondary: var(--books-muted);
-  --border: var(--books-line);
-  --secondary: var(--books-track);
+  --books-bg: var(--background);
+  --books-text: var(--foreground);
+  --books-muted: var(--muted-foreground);
+  --books-line: var(--border);
+  --books-purple: var(--primary);
+  --books-track: var(--secondary);
+  --books-cyan: var(--primary);
   display: block;
   background: var(--books-bg);
 }
 .books-content {
-  --background: var(--books-bg);
   --color: var(--books-text);
 }
 .books-overview {
@@ -105,7 +99,7 @@ ion-icon {
   gap: 8px;
   min-height: 36px;
   padding: 8px 16px;
-  border: 1px solid #332c43;
+  border: 1px solid var(--border);
   border-radius: 11px;
   font-size: 14px;
   line-height: 1.3;
@@ -116,7 +110,7 @@ ion-icon {
 .books-primary {
   background: var(--books-purple);
   border-color: transparent;
-  color: #100923;
+  color: var(--primary-foreground);
 }
 .books-primary ion-icon,
 .books-secondary ion-icon {
@@ -145,10 +139,10 @@ ion-icon {
   color: var(--books-cyan);
 }
 .books-totals a:nth-child(3) ion-icon {
-  color: #b6b7ff;
+  color: var(--palette-purple);
 }
 .books-totals a:nth-child(4) ion-icon {
-  color: #f0afff;
+  color: var(--palette-purple);
 }
 .books-totals strong {
   display: block;
@@ -208,11 +202,11 @@ ion-icon {
   display: grid;
   place-items: center;
   aspect-ratio: 2/3;
-  border: 1px solid #362d49;
+  border: 1px solid var(--border);
   border-radius: 10px;
   overflow: hidden;
   color: var(--books-purple);
-  background: #201831;
+  background: var(--secondary);
 }
 .reading-cover img {
   width: 100%;
@@ -292,7 +286,7 @@ ion-icon {
   min-height: 32px;
   border: 0;
   border-radius: 11px;
-  background: #211831;
+  background: var(--secondary);
   color: var(--books-text);
   padding: 8px 12px;
   font-size: 12px;
@@ -315,7 +309,7 @@ ion-icon {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #efb0ff;
+  color: var(--palette-purple);
   margin: 0;
 }
 .books-text-button {
@@ -369,7 +363,7 @@ ion-icon {
   color: var(--books-muted);
 }
 .books-goal-status span:last-child {
-  color: #efb0ff;
+  color: var(--palette-purple);
 }
 .books-finished {
   width: 100%;
@@ -480,7 +474,6 @@ button:focus-visible {
 
 /* Scope overrides for the shared application canvas and card treatments. */
 :host .books-content {
-  --background: var(--books-bg) !important;
   background: var(--books-bg) !important;
 }
 :host .books-content::part(background) {
@@ -492,7 +485,7 @@ button:focus-visible {
 }
 :host .books-primary {
   background: var(--books-purple) !important;
-  color: #100923 !important;
+  color: var(--primary-foreground) !important;
 }
 :host .reading-section {
   border: 0;

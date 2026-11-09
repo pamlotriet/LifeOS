@@ -7,13 +7,13 @@
   --max-height: 90dvh;
   --border-radius: 24px;
   --background: var(--card);
-  --color: #fff;
+  --color: var(--foreground);
 }
 .progress-editor {
   padding: 24px;
   overflow-y: auto;
   max-height: 85dvh;
-  color: #fff;
+  color: var(--foreground);
 }
 .progress-editor fieldset {
   min-width: 0;
@@ -55,7 +55,7 @@
 }
 .progress-modes button.active {
   background: var(--card);
-  color: #fff;
+  color: var(--foreground);
 }
 .progress-label {
   display: block;
@@ -78,7 +78,7 @@
   font-weight: 700;
   background: transparent;
   border: 0;
-  color: #fff;
+  color: var(--foreground);
   outline-offset: 4px;
 }
 .progress-number span {
@@ -200,7 +200,7 @@ input:focus-visible {
   border-color: var(--books-line);
 }
 .books-placeholder {
-  background: linear-gradient(90deg, var(--books-track) 25%, #362b4d 50%, var(--books-track) 75%);
+  background: linear-gradient(90deg, var(--books-track) 25%, var(--muted) 50%, var(--books-track) 75%);
   background-size: 200% 100%;
 }
 @media (max-width: 720px) {

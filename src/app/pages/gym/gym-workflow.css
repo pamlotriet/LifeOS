@@ -1,20 +1,7 @@
 :host {
-  --background: #0c0917;
-  --foreground: #ece8f6;
-  --card: #171224;
-  --border: #2b2539;
-  --muted: #211a32;
-  --secondary: #211a32;
-  --primary: #9d88ff;
-  --primary-foreground: #100c21;
-  --text-secondary: #b7b1c8;
-  --ring: #9d88ff;
   display: block;
   background: var(--background);
   color: var(--foreground);
-}
-ion-content {
-  --background: var(--background);
 }
 .gym-page {
   max-width: 1200px;
@@ -49,7 +36,7 @@ ion-content {
   width: 16px;
 }
 .training-space .gym-icon {
-  color: #52e3d1;
+  color: var(--primary);
 }
 .gym-header {
   border: 0;
@@ -60,7 +47,7 @@ ion-content {
   align-items: flex-end;
 }
 .gym-header .eyebrow {
-  color: #52e3d1;
+  color: var(--primary);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.07em;
@@ -119,10 +106,10 @@ ion-content {
   height: 20px;
 }
 .week-summary > div:nth-child(2) .gym-icon {
-  color: #52e3d1;
+  color: var(--primary);
 }
 .week-summary > div:nth-child(3) .gym-icon {
-  color: #e4a6f1;
+  color: var(--palette-purple);
 }
 .week-summary span {
   font-size: 12px;
@@ -188,7 +175,7 @@ ion-content {
 }
 .day-selector .active {
   border-color: var(--primary);
-  background: #2a2141;
+  background: var(--secondary);
 }
 .day-selector .active strong {
   color: var(--primary);
@@ -201,7 +188,7 @@ ion-content {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #52e3d1;
+  background: var(--primary);
 }
 .all-week .gym-icon {
   margin-bottom: 4px;
@@ -237,7 +224,7 @@ ion-content {
 .day-number {
   font-size: 30px;
   font-weight: 300;
-  color: #706980;
+  color: var(--muted-foreground);
   letter-spacing: -0.06em;
 }
 .day-heading h3 {
@@ -275,7 +262,7 @@ ion-content {
   grid-column: 1;
   width: 32px;
   height: 32px;
-  background: #211a32;
+  background: var(--secondary);
   color: var(--primary);
   border-radius: 10px;
   font-weight: 400;
@@ -299,7 +286,7 @@ ion-content {
   gap: 8px;
 }
 .prescription span {
-  background: #211a32;
+  background: var(--secondary);
   padding: 5px 8px;
   border-radius: 16px;
   font-size: 11px;

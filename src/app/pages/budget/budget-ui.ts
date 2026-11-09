@@ -31,7 +31,7 @@ export { BudgetSummary } from './budget-summary';
     @for (item of transactions; track item.id) {
       <div class="transaction-entry"><a class="transaction-row" [routerLink]="['/budget/transactions', item.id, 'edit']">
         <span class="category-icon" [style.background]="category(item.categoryId)?.colour || '#768bad'"><ion-icon [name]="category(item.categoryId)?.icon || 'wallet'" aria-hidden="true" /></span>
-        <span class="row-copy"><strong>{{ item.title }}</strong><small>{{ category(item.categoryId)?.name || 'Uncategorised' }} · {{ date(item.date) }}</small></span>
+        <span class="row-copy"><strong>{{ item.title }}</strong><small>{{ category(item.categoryId)?.name || 'Uncategorised' }}{{ accountLabel(item) }} · {{ date(item.date) }}</small></span>
         <strong class="amount" [class.positive]="item.type === 'income'" [class.negative]="item.type === 'expense'">{{ item.type === 'income' ? '+' : item.type === 'expense' ? '−' : '↗' }}{{ money(item.amount) }}</strong>
       </a>
       <button type="button" class="transaction-delete" [disabled]="deleting()" [attr.aria-label]="'Delete ' + item.title" (click)="requestDelete(item)"><ion-icon name="trash-outline" aria-hidden="true" /><span>Delete</span></button>
@@ -65,6 +65,11 @@ export class BudgetTransactions {
   }
   @Input() transactions: BudgetTransaction[] = [];
   @Input() categories: BudgetCategory[] = [];
+  accountLabel(item: BudgetTransaction): string {
+    if (item.account === 'savings') return ' ? Savings';
+    if (item.account?.startsWith('credit:')) return ' ? ' + (this.store.debts().find(debt => debt.id === item.account?.slice(7))?.name ?? 'Credit card');
+    return '';
+  }
   readonly money = money;
   category(id: string) { return this.categories.find(x => x.id === id); }
   date(value: string): string { return new Date(`${value}T12:00:00`).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' }); }

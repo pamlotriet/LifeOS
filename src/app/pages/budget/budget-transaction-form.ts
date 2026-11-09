@@ -42,7 +42,7 @@ export class BudgetTransactionForm {
       this.type.set(type); this.localReceipt.set(''); this.error.set(''); this.confirmDelete.set(false);
     }
   }
-  changeType(type: TransactionType): void { this.type.set(type); this.model.type = type; if (type !== 'expense') { this.model.debtId = ''; this.model.paymentStatus = 'paid'; } if (!this.categories().some(x => x.id === this.model.categoryId)) this.model.categoryId = this.categories()[0]?.id ?? ''; }
+  changeType(type: TransactionType): void { this.type.set(type); this.model.type = type; if (type !== 'expense') { this.model.account = ''; this.model.debtId = ''; this.model.paymentStatus = 'paid'; } if (!this.categories().some(x => x.id === this.model.categoryId)) this.model.categoryId = this.categories()[0]?.id ?? ''; }
   async pickFile(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];

@@ -69,7 +69,7 @@ const chartOptions = (currency = false): ChartConfiguration['options'] => ({
   maintainAspectRatio: false,
   animation: false,
   plugins: {
-    legend: { labels: { color: '#b5cbe2', usePointStyle: true, boxWidth: 8 } },
+    legend: { labels: { color: '#9e7eb5', usePointStyle: true, boxWidth: 8 } },
     tooltip: {
       callbacks: {
         label: (c) =>
@@ -78,15 +78,15 @@ const chartOptions = (currency = false): ChartConfiguration['options'] => ({
     },
   },
   scales: {
-    x: { ticks: { color: '#b5cbe2' }, grid: { color: '#315b7e55' }, border: { color: '#315b7e' } },
+    x: { ticks: { color: '#9e7eb5' }, grid: { color: '#7f5d9955' }, border: { color: '#7f5d99' } },
     y: {
       beginAtZero: true,
       ticks: {
-        color: '#b5cbe2',
+        color: '#9e7eb5',
         callback: currency ? (value) => `R${Number(value).toLocaleString('en-ZA')}` : undefined,
       },
-      grid: { color: '#315b7e55' },
-      border: { color: '#315b7e' },
+      grid: { color: '#7f5d9955' },
+      border: { color: '#7f5d99' },
     },
   },
 });
@@ -105,7 +105,7 @@ const categoryChart = (
       {
         label: title,
         data: rows.map((x) => x.value),
-        backgroundColor: ['#14ddea', '#2497ff', '#7b3cff', '#c23cff', '#20b875', '#efa62b'],
+        backgroundColor: ['#c4a4da', '#9e7eb5', '#7f5d99', '#4c2365'],
         borderWidth: 0,
       },
     ],
@@ -115,7 +115,7 @@ const categoryChart = (
     maintainAspectRatio: false,
     animation: false,
     plugins: {
-      legend: { labels: { color: '#b5cbe2', usePointStyle: true, boxWidth: 8 } },
+      legend: { labels: { color: '#9e7eb5', usePointStyle: true, boxWidth: 8 } },
       tooltip: {
         callbacks: { label: (c) => `${c.label}: ${Number(c.raw).toLocaleString('en-ZA')}` },
       },
@@ -238,7 +238,7 @@ export class StatsService {
       label,
       value,
       icon: 'restaurant-outline',
-      accent: '#14ddea',
+      accent: '#c4a4da',
     });
     const target = this.nutrition.profile().targets;
     return {
@@ -267,12 +267,12 @@ export class StatsService {
             {
               label: 'Consumed kcal',
               data: stats.daily.slice(-31).map((d) => d.nutrition.calories),
-              backgroundColor: '#14ddea',
+              backgroundColor: '#c4a4da',
             },
             {
               label: 'Recorded goal',
               data: stats.daily.slice(-31).map((d) => d.goal?.calories ?? null),
-              backgroundColor: '#7b3cff',
+              backgroundColor: '#7f5d99',
             },
           ],
         },
@@ -286,7 +286,7 @@ export class StatsService {
             {
               label: 'Consumed kcal',
               data: [...weekTotals.values()].slice(-16),
-              backgroundColor: '#2497ff',
+              backgroundColor: '#9e7eb5',
             },
           ],
         },
@@ -320,7 +320,7 @@ export class StatsService {
       emptyMessage: 'Choose another period or vehicle, or log a refuel to see your statistics.',
       action: '/fuel/history',
       kpis: [
-        this.kpi('Fuel spend', money(averages.totalSpent), 'cash', '#8c4bff'),
+        this.kpi('Fuel spend', money(averages.totalSpent), 'cash', '#9e7eb5'),
         this.kpi(
           'Distance tracked',
           `${Math.round(averages.totalRangeKm).toLocaleString('en-ZA')} km`,
@@ -331,7 +331,7 @@ export class StatsService {
           'Average consumption',
           averages.litersPer100Km ? `${averages.litersPer100Km.toFixed(1)} L/100 km` : 'N/A',
           'water-outline',
-          '#2497ff',
+          '#9e7eb5',
         ),
         this.kpi(
           'Fuel cost / km',
@@ -339,13 +339,13 @@ export class StatsService {
             ? `${money(entries.filter((x) => x.rangeKm !== null).reduce((sum, x) => sum + x.amountPaid, 0) / averages.totalRangeKm)} / km`
             : 'N/A',
           'cash',
-          '#8c4bff',
+          '#9e7eb5',
         ),
         this.kpi(
           'Fuel purchased',
           `${averages.totalLitres.toFixed(1)} L`,
           'water-outline',
-          '#2497ff',
+          '#9e7eb5',
         ),
         this.kpi(
           'Average fuel price',
@@ -353,12 +353,12 @@ export class StatsService {
           'cash',
           '#20b875',
         ),
-        this.kpi('Refuels', String(entries.length), 'car-sport-outline', '#14ddea'),
+        this.kpi('Refuels', String(entries.length), 'car-sport-outline', '#c4a4da'),
         this.kpi(
           'Average refill cost',
           entries.length ? money(averages.totalSpent / entries.length) : 'N/A',
           'cash',
-          '#8c4bff',
+          '#9e7eb5',
         ),
       ],
       primaryTitle: 'Fuel efficiency by vehicle (km/L)',
@@ -377,7 +377,7 @@ export class StatsService {
               data: economy.map((entry) =>
                 entry.vehicleId === vehicle.id ? entry.kmPerLiter : null,
               ),
-              borderColor: ['#14ddea', '#2497ff', '#efa62b', '#c23cff', '#20b875'][index % 5],
+              borderColor: ['#c4a4da', '#9e7eb5', '#7f5d99', '#4c2365'][index % 4],
               tension: 0.25,
               spanGaps: true,
             })),
@@ -392,7 +392,7 @@ export class StatsService {
             {
               label: 'Spend',
               data: spendMonths.map((month) => spendByMonth.get(month) ?? 0),
-              backgroundColor: '#2497ff',
+              backgroundColor: '#9e7eb5',
               borderRadius: 6,
             },
           ],
@@ -460,26 +460,26 @@ export class StatsService {
       kpis: [
         this.kpi('Recorded income', money(values.income), 'cash', '#20b875'),
         this.kpi('Actual spending', money(values.expenses), 'wallet', '#ef4f5f'),
-        this.kpi('Savings transfers', money(values.savings), 'lock-closed', '#8c4bff'),
-        this.kpi('Balance from records', money(values.remaining), 'card-outline', '#2497ff'),
+        this.kpi('Savings transfers', money(values.savings), 'lock-closed', '#9e7eb5'),
+        this.kpi('Balance from records', money(values.remaining), 'card-outline', '#9e7eb5'),
       ],
       debt: {
         cycleLabel: this.budgetReportCycle(range, selectedMonth),
         empty: !this.budget.debts().length,
         kpis: [
           this.kpi('Total outstanding', money(debt.outstanding), 'wallet', '#4774b6'),
-          this.kpi('Credit opening', money(debt.creditOpening), 'card-outline', '#7093c4'),
-          this.kpi('Credit payments this cycle', money(debt.creditPaid), 'checkmark', '#438c75'),
+          this.kpi('Credit opening', money(debt.creditOpening), 'card-outline', '#9e7eb5'),
+          this.kpi('Credit payments this cycle', money(debt.creditPaid), 'checkmark', '#c4a4da'),
           this.kpi(
             'Estimated credit interest',
             money(debt.creditInterest),
             'document-text',
             '#617085',
           ),
-          this.kpi('Credit remaining', money(debt.credit), 'card-outline', '#7093c4'),
-          this.kpi('Loans', money(debt.loans), 'cash', '#8a7ca8'),
+          this.kpi('Credit remaining', money(debt.credit), 'card-outline', '#9e7eb5'),
+          this.kpi('Loans', money(debt.loans), 'cash', '#7f5d99'),
           this.kpi('Other debt', money(debt.other), 'document-text', '#617085'),
-          this.kpi('Paid in selected period', money(debt.repaid), 'checkmark', '#438c75'),
+          this.kpi('Paid in selected period', money(debt.repaid), 'checkmark', '#c4a4da'),
           this.kpi('Planned payments', money(debt.planned), 'calendar', '#bd934d'),
         ],
         balances: {
@@ -490,7 +490,7 @@ export class StatsService {
               {
                 label: 'Outstanding',
                 data: debt.rows.map((row) => row.closing),
-                backgroundColor: '#7093c4',
+                backgroundColor: '#9e7eb5',
                 borderRadius: 5,
               },
             ],
@@ -502,7 +502,7 @@ export class StatsService {
           data: {
             labels: labels(months),
             datasets: [
-              { label: 'Paid', data: debt.monthly, backgroundColor: '#438c75', borderRadius: 5 },
+              { label: 'Paid', data: debt.monthly, backgroundColor: '#c4a4da', borderRadius: 5 },
             ],
           },
           options: chartOptions(true),
@@ -535,7 +535,7 @@ export class StatsService {
             {
               label: 'Savings transfers',
               data: grouped.map((x) => x.savings),
-              backgroundColor: '#8a7ca8',
+              backgroundColor: '#7f5d99',
               borderRadius: 5,
             },
           ],
@@ -555,8 +555,8 @@ export class StatsService {
             {
               label: 'Balance from records',
               data: grouped.map((x) => x.remaining),
-              borderColor: '#8a7ca8',
-              backgroundColor: '#8a7ca822',
+              borderColor: '#7f5d99',
+              backgroundColor: '#7f5d9922',
               fill: true,
               tension: 0.35,
             },
@@ -608,7 +608,7 @@ export class StatsService {
           {
             label,
             data: values.map((month) => grouped.get(month) ?? 0),
-            backgroundColor: '#2497ff',
+            backgroundColor: '#9e7eb5',
             borderRadius: 6,
           },
         ],

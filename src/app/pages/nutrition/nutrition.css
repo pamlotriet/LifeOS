@@ -198,17 +198,17 @@ progress::-webkit-progress-bar {
   background: var(--border);
 }
 progress::-webkit-progress-value {
-  background: #14b8a6;
+  background: var(--primary);
   border-radius: 8px;
 }
 progress::-moz-progress-bar {
-  background: #14b8a6;
+  background: var(--primary);
 }
 [data-macro='carbs'] progress::-webkit-progress-value {
-  background: #a78bfa;
+  background: var(--palette-purple);
 }
 [data-macro='fat'] progress::-webkit-progress-value {
-  background: #e9ad55;
+  background: var(--palette-mauve);
 }
 .meals-heading {
   margin: 28px 0 14px;

@@ -463,21 +463,125 @@ ion-app.lifeos-app ion-header[app-page-header]>div{height:64px;background:transp
 ion-app.lifeos-app ion-header[app-page-header] h1{font-size:1rem;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 ion-app.lifeos-app .wheel-back-control{width:44px;justify-content:center;padding:9px;}
 
-/* Purple reference theme: final shared palette and navigation rules. */
+/* Neutral surfaces with restrained plum accents. */
 :root {
-  --background:#f5f2fb;--foreground:#292237;--card:#fff;--primary:#7054d4;--primary-foreground:#fff;--secondary:#eee8fa;--muted:#eee9f5;--muted-foreground:#70677f;--accent:#eee8fa;--border:#ddd5e9;--ring:#8b73ed;--success:#168879;--warning:#a57529;--destructive:#c04766;
+  --palette-plum: #4c2365;
+  --palette-mauve: #7f5d99;
+  --palette-purple: #9e7eb5;
+  --palette-lavender: #c4a4da;
+  --background: #f6f7f9;
+  --foreground: #20232b;
+  --card: #ffffff;
+  --primary: var(--palette-plum);
+  --primary-foreground: #ffffff;
+  --secondary: #eceef2;
+  --muted: #f0f1f4;
+  --muted-foreground: #646b78;
+  --accent: #eceef2;
+  --border: #e0e3e9;
+  --ring: var(--palette-mauve);
+  --success: #168879;
+  --warning: #a57529;
+  --destructive: #c04766;
+  --ion-background-color-rgb: 246, 247, 249;
+  --ion-text-color-rgb: 32, 35, 43;
+  --ion-color-primary-rgb: 76, 35, 101;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #431f59;
+  --ion-color-primary-tint: #5e3974;
 }
 :root.dark {
-  --background:#211d30;--foreground:#f2edf9;--card:#302a42;--primary:#b6a4ff;--primary-foreground:#211534;--secondary:#3b334f;--muted:#372f49;--muted-foreground:#c5bdd5;--accent:#3b334f;--border:#544965;--ring:#9b87ff;--success:#49e3d0;--warning:#edc784;--destructive:#ff91ad;
+  --background: #111318;
+  --foreground: #f1f3f7;
+  --card: #1b1e25;
+  --primary: var(--palette-lavender);
+  --primary-foreground: #20232b;
+  --secondary: #292d37;
+  --muted: #242832;
+  --muted-foreground: #a9b0bd;
+  --accent: #292d37;
+  --border: #343945;
+  --ring: var(--palette-lavender);
+  --success: #77d8ba;
+  --warning: #edc784;
+  --destructive: #ff91ad;
+  --ion-background-color-rgb: 17, 19, 24;
+  --ion-text-color-rgb: 241, 243, 247;
+  --ion-color-primary-rgb: 196, 164, 218;
+  --ion-color-primary-contrast-rgb: 32, 35, 43;
+  --ion-color-primary-shade: #ac90c0;
+  --ion-color-primary-tint: #caadde;
 }
-:root,:root.dark {
-  --card-foreground:var(--foreground);--popover:var(--card);--popover-foreground:var(--foreground);--secondary-foreground:var(--foreground);--accent-foreground:var(--primary);--input:var(--border);--text-secondary:var(--muted-foreground);--text-muted:var(--muted-foreground);
-  --action-background:var(--primary);--action-foreground:var(--primary-foreground);--button-gradient:linear-gradient(var(--primary),var(--primary));--lifeos-cyan:#49e3d0;--lifeos-blue:#a3afff;--lifeos-indigo:var(--primary);--lifeos-violet:var(--primary);--lifeos-magenta:#d5a0e8;--hue-sky:#a3afff;--hue-mint:#49e3d0;--hue-pink:#d5a0e8;--hue-violet:var(--primary);
-  --nav-background:var(--background);--nav-active:var(--primary);--nav-inactive:var(--muted-foreground);--nav-active-foreground:var(--primary);--dashboard-background:var(--background);--dashboard-card:var(--card);--dashboard-border:var(--border);--dashboard-card-hover:var(--muted);
-  --ion-background-color:var(--background);--ion-text-color:var(--foreground);--ion-card-background:var(--card);--ion-toolbar-background:var(--background);--ion-item-background:var(--card);--ion-color-primary:var(--primary);--ion-color-primary-contrast:var(--primary-foreground);--ion-color-primary-rgb:155,135,255;--ion-color-primary-shade:#8875e0;--ion-color-primary-tint:#a593ff;
-  --chart-1:var(--primary);--chart-2:#49e3d0;--chart-3:#a3afff;--chart-4:#d5a0e8;--chart-5:#edc784;
+:root, :root.dark {
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --secondary-foreground: var(--foreground);
+  --accent-foreground: var(--primary);
+  --input: var(--border);
+  --text-secondary: var(--muted-foreground);
+  --text-muted: var(--muted-foreground);
+  --action-background: var(--primary);
+  --action-foreground: var(--primary-foreground);
+  --button-gradient: linear-gradient(var(--primary), var(--primary));
+  --lifeos-cyan: var(--primary);
+  --lifeos-blue: var(--primary);
+  --lifeos-indigo: var(--palette-mauve);
+  --lifeos-violet: var(--primary);
+  --lifeos-magenta: var(--palette-purple);
+  --hue-rose: var(--primary);
+  --hue-sky: var(--primary);
+  --hue-mint: var(--primary);
+  --hue-pink: var(--palette-purple);
+  --hue-violet: var(--primary);
+  --hue-amber: var(--primary);
+  --hue-cyan: var(--primary);
+  --area-color: var(--primary);
+  --nav-background: var(--card);
+  --nav-active: var(--primary);
+  --nav-inactive: var(--muted-foreground);
+  --nav-active-foreground: var(--primary);
+  --dashboard-background: var(--background);
+  --dashboard-card: var(--card);
+  --dashboard-border: var(--border);
+  --dashboard-card-hover: var(--muted);
+  --sidebar: var(--card);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--secondary);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  --action-gradient-start: var(--palette-plum);
+  --action-gradient-middle: var(--palette-mauve);
+  --action-gradient-end: var(--palette-purple);
+  --ion-background-color: var(--background);
+  --ion-text-color: var(--foreground);
+  --ion-card-background: var(--card);
+  --ion-toolbar-background: var(--background);
+  --ion-item-background: var(--card);
+  --ion-color-primary: var(--primary);
+  --ion-color-primary-contrast: var(--primary-foreground);
+  --ion-color-secondary: var(--palette-mauve);
+  --ion-color-secondary-rgb: 127, 93, 153;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #705287;
+  --ion-color-secondary-tint: #8c6da3;
+  --ion-color-tertiary: var(--palette-lavender);
+  --ion-color-tertiary-rgb: 196, 164, 218;
+  --ion-color-tertiary-contrast: #20232b;
+  --ion-color-tertiary-contrast-rgb: 32, 35, 43;
+  --ion-color-tertiary-shade: #ac90c0;
+  --ion-color-tertiary-tint: #caadde;
+  --chart-1: var(--palette-plum);
+  --chart-2: var(--palette-mauve);
+  --chart-3: var(--palette-purple);
+  --chart-4: var(--palette-lavender);
+  --chart-5: var(--primary);
 }
-ion-app.lifeos-app ion-content::part(background){background:radial-gradient(ellipse at 95% 0%,color-mix(in srgb,var(--primary) 13%,transparent),transparent 55%),var(--background)!important}
+ion-app.lifeos-app ion-content::part(background){background:var(--background)!important}
 ion-app.lifeos-app .lifeos-tab-bar{background:var(--nav-background)!important;--background:var(--nav-background)!important;border-color:var(--border)!important}
 ion-app.lifeos-app .lifeos-tab-button{color:var(--nav-inactive)!important;--color:var(--nav-inactive);--color-selected:var(--primary)}
 ion-app.lifeos-app .lifeos-tab-button ion-icon{color:inherit!important;font-size:20px!important;filter:none!important}
@@ -510,3 +614,20 @@ ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button::part(native)
     box-shadow:1px 0 0 var(--dashboard-border)!important;
   }
 }
+
+/* Modal editors share the active app palette. */
+ion-modal.add-book-sheet { --background: var(--card); }
+ion-modal.add-book-sheet::part(content) { border-color: var(--border); }
+ion-modal.add-book-sheet ion-content { --background: var(--card); }
+ion-modal.add-book-sheet app-select > div > button,
+ion-modal.add-book-sheet app-date-picker > div > button { border-color: var(--border); background: var(--secondary); }
+ion-modal.add-book-sheet app-select [role='listbox'] { border-color: var(--border); background: var(--card); }
+ion-modal.add-book-sheet app-select [role='option']:hover,
+ion-modal.add-book-sheet app-select [role='option'][aria-selected='true'] { background: var(--secondary); }
+
+/* Keep large content areas neutral; reserve the accent for interactions. */
+ion-app.lifeos-app :is(.cycle-selector, .balance-panel, .reading-section) { background: var(--card); }
+ion-app.lifeos-app .budget-title h1 span { color: var(--foreground); }
+ion-app.lifeos-app .lifeos-card { box-shadow: 0 2px 10px rgb(0 0 0 / 4%); }
+ion-app.lifeos-app .lifeos-tab-button.tab-selected { box-shadow: inset 3px 0 0 var(--primary) !important; }
+:root, :root.dark { --soft-shadow: 0 2px 10px rgb(0 0 0 / 4%); }
