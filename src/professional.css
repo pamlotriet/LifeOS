@@ -1112,13 +1112,16 @@ ion-app.lifeos-app .lifeos-tab-button[tab='planning'] > div > div {
 }
 @media (max-width: 767px) {
   ion-app.lifeos-app .lifeos-tab-bar {
-    margin: 0 12px calc(10px + env(safe-area-inset-bottom));
-    width: calc(100% - 24px) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: 19px !important;
-    padding: 7px 5px !important;
-    height: 72px !important;
-    box-shadow: 0 8px 30px #0003 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    flex-shrink: 0;
+    border: 0 !important;
+    border-top: 1px solid var(--border) !important;
+    border-radius: 0 !important;
+    padding: 7px 5px calc(7px + env(safe-area-inset-bottom, 0px)) !important;
+    height: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
   }
   ion-app.lifeos-app .lifeos-tab-button {
     border-radius: 14px !important;
@@ -1159,8 +1162,8 @@ ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button::part(native)
 }
 @media (max-width: 767px) {
   ion-app.lifeos-app app-tabs-shell ion-tab-bar.lifeos-tab-bar {
-    border-radius: 19px !important;
-    background: var(--background) !important;
+    border-radius: 0 !important;
+    background: var(--nav-background) !important;
     overflow: hidden !important;
   }
 }

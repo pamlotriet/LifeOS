@@ -4,6 +4,9 @@
 .lifeos-app .app-route-outlet {
   background: transparent;
 }
+ion-router-outlet.auth-route-hidden {
+  display: none !important;
+}
 
 .login-page {
   height: 100%;

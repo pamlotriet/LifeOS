@@ -1,5 +1,5 @@
-<ion-content class="[--background:transparent] [--color:#fff]"
-  ><main class="mx-auto max-w-xl px-4 pb-28 pt-[calc(env(safe-area-inset-top)+2rem)] text-white">
+<ion-content class="[--background:transparent]"
+  ><main class="wheel-page mx-auto max-w-xl px-4 pb-28 pt-[calc(env(safe-area-inset-top)+2rem)]">
     @if (store.loading()) {
       <div
         role="status"
@@ -14,7 +14,7 @@
       @if (mode() === 'wheel') {
         <header class="wheel-hero text-center">
           <ion-icon name="book" class="wheel-logo"></ion-icon>
-          <p class="text-xs font-semibold uppercase tracking-[.38em] text-cyan-300">
+          <p class="wheel-eyebrow text-xs font-semibold uppercase tracking-[.28em]">
             {{ 'LifeOS Books' | translate }}
           </p>
           <h1 class="mt-2 text-3xl font-bold sm:text-4xl">
@@ -42,24 +42,17 @@
             ><small>{{ 'Last picks' | translate }}</small>
           </div>
         </section>
-        <section
-          [attr.aria-label]="'Reading wheel' | translate"
-          class="relative mx-auto mt-9 aspect-square w-full max-w-[420px]"
-        >
-          <div
-            class="absolute left-1/2 top-[-9px] z-20 h-9 w-8 -translate-x-1/2 bg-cyan-300 shadow-[0_0_18px_#26d9f5] [clip-path:polygon(0_0,100%_0,50%_100%)]"
-          ></div>
-          <div
-            class="absolute inset-0 rounded-full border-[6px] border-[#37d8fb] bg-[var(--card)] p-2 shadow-[0_0_0_3px_var(--border),0_0_30px_#0abcf977]"
-          >
+        <section [attr.aria-label]="'Reading wheel' | translate" class="wheel-stage">
+          <div class="wheel-pointer" aria-hidden="true"></div>
+          <div class="wheel-rim">
             <div
-              class="relative h-full w-full overflow-hidden rounded-full border-2 border-[var(--card)] transition-transform duration-[4200ms] ease-out"
+              class="wheel-disc"
               [style.background]="wheelGradient()"
               [style.transform]="'rotate(' + rotation() + 'deg)'"
             >
               @for (book of spinBooks(); track book.id; let index = $index) {
                 <span
-                  class="wheel-label absolute left-1/2 top-1/2 w-[37%] origin-left -translate-y-1/2 text-center text-[10px] font-bold leading-tight text-white"
+                  class="wheel-label absolute left-1/2 top-1/2 w-[37%] origin-left -translate-y-1/2 text-center text-[10px] font-bold leading-tight"
                   [style.transform]="
                     'rotate(' +
                     (((index + 0.5) * 360) / spinBooks().length - 90) +
@@ -74,7 +67,7 @@
             type="button"
             (click)="spin()"
             [disabled]="spinning() || busy() || !selected().length"
-            class="wheel-spin absolute left-1/2 top-1/2 z-10 grid h-24 w-24 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[5px] border-cyan-300 bg-gradient-to-br from-[var(--card)] to-[var(--card)] text-xl font-black tracking-wider shadow-[0_0_0_4px_#0869ad,0_0_20px_#35dafa] disabled:opacity-75"
+            class="wheel-spin"
           >
             {{ (spinning() ? '...' : 'SPIN') | translate }}
           </button>
@@ -151,14 +144,14 @@
               type="button"
               (click)="selectAll()"
               [disabled]="busy() || selected().length === eligible().length"
-              class="font-semibold text-cyan-300"
+              class="font-semibold text-[var(--wheel-accent)]"
             >
               {{ 'Select all' | translate }}</button
             ><button
               type="button"
               (click)="deselectAll()"
               [disabled]="busy() || !selected().length"
-              class="font-semibold text-cyan-300"
+              class="font-semibold text-[var(--wheel-accent)]"
             >
               {{ 'Deselect all' | translate }}
             </button></span
@@ -176,7 +169,7 @@
             <button
               type="button"
               (click)="addBookSheet.open()"
-              class="mt-4 inline-block rounded-full bg-cyan-400 px-5 py-2 font-bold text-[var(--card)] no-underline"
+              class="mt-4 inline-block rounded-full bg-[var(--wheel-accent)] px-5 py-2 font-bold text-[var(--wheel-ink)] no-underline"
             >
               {{ 'Add Book' | translate }}
             </button>
@@ -201,7 +194,7 @@
                       class="h-full w-full object-cover"
                     />
                   } @else {
-                    <ion-icon name="book" class="text-cyan-300"></ion-icon>
+                    <ion-icon name="book" class="text-[var(--wheel-accent)]"></ion-icon>
                   }
                 </div>
                 <span class="min-w-0 flex-1"
@@ -215,7 +208,7 @@
                   class="relative h-7 w-12 shrink-0 rounded-full border"
                   [class]="
                     book.wheelSelected
-                      ? 'border-cyan-300 bg-cyan-400'
+                      ? 'border-[var(--wheel-accent)] bg-[var(--wheel-accent)]'
                       : 'border-[var(--border)] bg-[var(--card)]'
                   "
                   ><span
@@ -231,19 +224,19 @@
           type="button"
           (click)="showWheel()"
           [disabled]="busy() || spinning()"
-          class="mt-5 min-h-12 w-full rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 font-bold text-[var(--card)]"
+          class="mt-5 min-h-12 w-full rounded-2xl bg-[var(--primary)] font-bold text-[var(--wheel-ink)]"
         >
           {{ 'Done · View Wheel' | translate }}
         </button>
       } @else if (winner(); as book) {
         <div class="pt-7 text-center">
-          <p class="text-xs font-semibold uppercase tracking-[.25em] text-cyan-300">
+          <p class="text-xs font-semibold uppercase tracking-[.25em] text-[var(--wheel-accent)]">
             {{ 'The wheel has spoken' | translate }}
           </p>
           <h1 class="mt-2 text-3xl font-bold">{{ 'Your next read is...' | translate }}</h1>
         </div>
         <div
-          class="mx-auto mt-10 grid h-72 w-48 place-items-center overflow-hidden rounded-2xl border-2 border-cyan-300 bg-[var(--card)]"
+          class="mx-auto mt-10 grid h-72 w-48 place-items-center overflow-hidden rounded-2xl border-2 border-[var(--wheel-accent)] bg-[var(--card)]"
         >
           @if (book.coverUrl) {
             <img
@@ -252,14 +245,14 @@
               class="h-full w-full object-cover"
             />
           } @else {
-            <ion-icon name="book" class="text-6xl text-cyan-300"></ion-icon>
+            <ion-icon name="book" class="text-6xl text-[var(--wheel-accent)]"></ion-icon>
           }
         </div>
         <h2 class="mt-7 text-center text-2xl font-bold">{{ book.title | translate }}</h2>
         <p class="mt-1 text-center text-[var(--text-secondary)]">{{ book.author }}</p>
         <a
           [routerLink]="['/books', book.id, 'edit']"
-          class="mt-8 block rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-4 text-center font-bold text-[var(--card)] no-underline"
+          class="mt-8 block rounded-2xl bg-[var(--primary)] px-4 py-4 text-center font-bold text-[var(--wheel-ink)] no-underline"
           >{{ 'View Book' | translate }}</a
         ><button
           type="button"

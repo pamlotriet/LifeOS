@@ -52,13 +52,13 @@
       </div>
     </div>
   }
-  @if (authService.authReady() && authService.isAuthenticated()) {
-    <ion-router-outlet
-      class="app-route-outlet"
-      [animated]="false"
-      [swipeGesture]="false"
-    ></ion-router-outlet>
-  } @else if (authService.authReady()) {
+  <ion-router-outlet
+    class="app-route-outlet"
+    [class.auth-route-hidden]="authService.authReady() && !authService.isAuthenticated()"
+    [animated]="false"
+    [swipeGesture]="false"
+  ></ion-router-outlet>
+  @if (authService.authReady() && !authService.isAuthenticated()) {
     <main class="login-page">
       <div class="login-content">
         <header class="login-brand">

@@ -9,14 +9,14 @@ import { BookStore } from '@pages/books/state/book-store';
 import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 
 const COLORS = [
-  '#2477c6',
-  '#7437d0',
-  '#1aa89f',
-  '#edae28',
-  '#e45a53',
-  '#b12e83',
-  '#8b58e9',
-  '#12649f',
+  'var(--palette-plum)',
+  'var(--palette-mauve)',
+  'color-mix(in srgb, var(--palette-plum) 70%, var(--palette-purple))',
+  'color-mix(in srgb, var(--palette-plum) 80%, var(--palette-lavender))',
+  'color-mix(in srgb, var(--palette-plum) 50%, var(--palette-mauve))',
+  'color-mix(in srgb, var(--palette-plum) 65%, var(--palette-lavender))',
+  'color-mix(in srgb, var(--palette-mauve) 75%, var(--palette-plum))',
+  'color-mix(in srgb, var(--palette-plum) 85%, var(--palette-purple))',
 ];
 
 @Component({
@@ -53,7 +53,7 @@ export class ReadingWheel {
   );
   readonly wheelGradient = computed(() => {
     const count = this.spinBooks().length;
-    if (!count) return '#123451';
+    if (!count) return 'var(--muted)';
     return `conic-gradient(${this.spinBooks()
       .map(
         (_, index) =>
