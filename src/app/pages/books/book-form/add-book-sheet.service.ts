@@ -19,12 +19,14 @@ export class AddBookSheet {
         initialBreakpoint: 1,
         handle: false,
         backdropDismiss: false,
-        canDismiss: async (_data, role) => role === 'saved' || !modal.querySelector('app-book-form button[type="submit"]:disabled'),
+        canDismiss: async (_data, role) =>
+          role === 'saved' || !modal.querySelector('app-book-form button[type="submit"]:disabled'),
         htmlAttributes: { 'aria-label': 'Add book' },
       });
       await modal.present();
       await modal.onDidDismiss();
-    } finally { this.opening = false; }
+    } finally {
+      this.opening = false;
+    }
   }
 }
-

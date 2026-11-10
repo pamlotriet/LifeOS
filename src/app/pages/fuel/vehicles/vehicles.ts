@@ -19,5 +19,4 @@ export class Vehicles {
   reload(): void {
     void this.store.reload();
   }
-
 }

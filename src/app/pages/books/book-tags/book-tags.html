@@ -117,7 +117,8 @@
           >
             <circle cx="10" cy="10" r="7" />
             <path d="m15 15 6 6" /></svg
-          ><input appInput="field"
+          ><input
+            appInput="field"
             type="search"
             aria-label="Search tags"
             placeholder="Find a tag..."
@@ -258,7 +259,8 @@
         >
           <h2 class="text-lg font-bold">{{ editing() ? 'Edit Tag' : 'Create Tag' }}</h2>
           <label class="mt-3 block text-xs"
-            >Tag Name *<input appInput="field"
+            >Tag Name *<input
+              appInput="field"
               [value]="name()"
               (input)="name.set($any($event.target).value)"
               placeholder="e.g. Cozy"
@@ -299,7 +301,9 @@
               class="rounded-xl border border-[var(--border)] py-3"
             >
               Cancel</button
-            ><button appButton="primary" type="submit" [disabled]="busy()" class="tag-save">Save Tag</button>
+            ><button appButton="primary" type="submit" [disabled]="busy()" class="tag-save">
+              Save Tag
+            </button>
           </div>
         </form>
       </div>

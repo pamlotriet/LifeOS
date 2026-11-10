@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { BookRecord } from '../state/book.model';
 import { finishDateParts } from '../finished-books-filter';
 
-const book = (status: BookRecord['status'], finishDate: string) => ({ status, finishDate }) as BookRecord;
+const book = (status: BookRecord['status'], finishDate: string) =>
+  ({ status, finishDate }) as BookRecord;
 
 describe('finishDateParts', () => {
   it('returns the completion year and month for a finished book', () => {

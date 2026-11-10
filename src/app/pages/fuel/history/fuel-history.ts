@@ -19,14 +19,23 @@ export class FuelHistory {
   readonly selectedDate = signal('');
   readonly page = signal(1);
   readonly pageSize = 5;
-  readonly vehicleOptions = computed(() => this.refuels.vehicleOptions().map((vehicle) => ({
-    value: vehicle.id, label: vehicle.name, description: `${vehicle.description} · ${vehicle.registration}`, image: vehicle.image,
-  })));
+  readonly vehicleOptions = computed(() =>
+    this.refuels.vehicleOptions().map((vehicle) => ({
+      value: vehicle.id,
+      label: vehicle.name,
+      description: `${vehicle.description} · ${vehicle.registration}`,
+      image: vehicle.image,
+    })),
+  );
   readonly filteredEntries = computed(() => {
     const selectedDate = this.selectedDate();
-    return this.refuels.newestFirst().filter((entry) => !selectedDate || entry.dop === selectedDate);
+    return this.refuels
+      .newestFirst()
+      .filter((entry) => !selectedDate || entry.dop === selectedDate);
   });
-  readonly totalPages = computed(() => Math.max(1, Math.ceil(this.filteredEntries().length / this.pageSize)));
+  readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.filteredEntries().length / this.pageSize)),
+  );
   readonly currentPage = computed(() => Math.min(this.page(), this.totalPages()));
   readonly visibleEntries = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize;
@@ -54,7 +63,11 @@ export class FuelHistory {
   }
 
   date(value: string): string {
-    return new Date(`${value}T12:00:00`).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' });
+    return new Date(`${value}T12:00:00`).toLocaleDateString('en-ZA', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
   }
 
   number(value: number | null, digits = 1): string {

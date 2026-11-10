@@ -11,5 +11,7 @@ import { Component, input } from '@angular/core';
   styleUrl: './app-button.css',
 })
 export class AppButton {
-  readonly appearance = input<'' | 'primary' | 'secondary' | 'danger'>('primary', { alias: 'appButton' });
+  readonly appearance = input<'' | 'primary' | 'secondary' | 'danger'>('primary', {
+    alias: 'appButton',
+  });
 }

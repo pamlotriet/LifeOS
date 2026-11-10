@@ -5,7 +5,10 @@ import { AppMonthPicker } from './app-month-picker';
 
 describe('Budget month picker', () => {
   it('preserves the selected year when switching months and emits ISO month values', () => {
-    const picker = runInInjectionContext(Injector.create({ providers: [] }), () => new AppMonthPicker());
+    const picker = runInInjectionContext(
+      Injector.create({ providers: [] }),
+      () => new AppMonthPicker(),
+    );
     const changed = vi.fn();
     picker.registerOnChange(changed);
     picker.writeValue('2026-12');
@@ -15,7 +18,7 @@ describe('Budget month picker', () => {
     expect(changed).toHaveBeenLastCalledWith('2027-01');
     expect(picker.years()).toContain(2027);
     picker.setDisabledState(true);
-    picker.choose('02','2027');
+    picker.choose('02', '2027');
     expect(changed).toHaveBeenCalledTimes(2);
   });
 });

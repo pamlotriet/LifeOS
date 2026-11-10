@@ -16,10 +16,14 @@ export class ReadingGoalService {
   }
 
   async save(year: number, target: number, exists: boolean): Promise<void> {
-    if (!Number.isInteger(target) || target < 1 || target > 1000) throw new Error('Choose a goal between 1 and 1000 books.');
+    if (!Number.isInteger(target) || target < 1 || target > 1000)
+      throw new Error('Choose a goal between 1 and 1000 books.');
     const { uid, token } = await this.auth.getSession();
     const path = `users/${uid}/readingGoals`;
-    const fields = { target: { integerValue: String(target) }, year: { integerValue: String(year) } };
+    const fields = {
+      target: { integerValue: String(target) },
+      year: { integerValue: String(year) },
+    };
     if (exists) await this.firestore.updateDocument(`${path}/${year}`, fields, token);
     else await this.firestore.createDocument(path, String(year), fields, token);
   }

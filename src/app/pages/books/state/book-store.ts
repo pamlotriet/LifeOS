@@ -13,7 +13,9 @@ export class BookStore {
   readonly tags = signal<BookTag[]>([]);
   readonly loading = signal(false);
   readonly error = signal('');
-  readonly sortedBooks = computed(() => [...this.books()].sort((a, b) => a.title.localeCompare(b.title)));
+  readonly sortedBooks = computed(() =>
+    [...this.books()].sort((a, b) => a.title.localeCompare(b.title)),
+  );
   private version = 0;
 
   constructor() {
@@ -61,55 +63,99 @@ export class BookStore {
     const uid = this.auth.userId();
     if (!uid) throw new Error('Sign in to save books.');
     const book = await this.service.saveBook(input, id);
-    if (this.auth.userId() === uid) this.books.update((books) => [...books.filter((item) => item.id !== book.id), book]);
+    if (this.auth.userId() === uid)
+      this.books.update((books) => [...books.filter((item) => item.id !== book.id), book]);
     return book;
   }
 
   async deleteBook(id: string): Promise<void> {
     const uid = this.auth.userId();
     await this.service.deleteBook(id);
-    if (this.auth.userId() === uid) this.books.update((books) => books.filter((book) => book.id !== id));
+    if (this.auth.userId() === uid)
+      this.books.update((books) => books.filter((book) => book.id !== id));
   }
 
   async setWheelSelected(id: string, selected: boolean): Promise<void> {
     const uid = this.auth.userId();
     if (!uid) throw new Error('Sign in to manage your reading wheel.');
     await this.service.setWheelSelected(id, selected);
-    if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book, wheelSelected: selected } : book));
+    if (this.auth.userId() === uid)
+      this.books.update((books) =>
+        books.map((book) => (book.id === id ? { ...book, wheelSelected: selected } : book)),
+      );
   }
   async setReadingProgress(id: string, progress: number): Promise<void> {
     const uid = this.auth.userId();
     if (!uid) throw new Error('Sign in to update reading progress.');
     const value = Math.max(0, Math.min(100, Math.round(progress)));
-    const pageCount=this.books().find(book=>book.id===id)?.pageCount??0;
+    const pageCount = this.books().find((book) => book.id === id)?.pageCount ?? 0;
     await this.service.setReadingProgress(id, value, pageCount);
-    if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book, progress: value,progressMode:'percent',pageProgress:Math.round(value/100*book.pageCount) } : book));
+    if (this.auth.userId() === uid)
+      this.books.update((books) =>
+        books.map((book) =>
+          book.id === id
+            ? {
+                ...book,
+                progress: value,
+                progressMode: 'percent',
+                pageProgress: Math.round((value / 100) * book.pageCount),
+              }
+            : book,
+        ),
+      );
   }
   async setReadingPosition(id: string, pageProgress: number, pageCount: number): Promise<void> {
     const uid = this.auth.userId();
     if (!uid) throw new Error('Sign in to update reading progress.');
-    const pages = Math.max(0, Math.round(pageCount)); const position = Math.max(0, Math.min(pages, Math.round(pageProgress)));
+    const pages = Math.max(0, Math.round(pageCount));
+    const position = Math.max(0, Math.min(pages, Math.round(pageProgress)));
     await this.service.setReadingPosition(id, position, pages);
-    if (this.auth.userId() === uid) this.books.update((books) => books.map((book) => book.id === id ? { ...book,progressMode:'pages', pageProgress: position, progress: pages ? Math.round(position / pages * 100) : 0 } : book));
+    if (this.auth.userId() === uid)
+      this.books.update((books) =>
+        books.map((book) =>
+          book.id === id
+            ? {
+                ...book,
+                progressMode: 'pages',
+                pageProgress: position,
+                progress: pages ? Math.round((position / pages) * 100) : 0,
+              }
+            : book,
+        ),
+      );
   }
 
   async setReadingLocation(id: string, currentLocation: number, finished = false): Promise<void> {
     const book = await this.getBook(id);
     const { id: bookId, ...input } = book;
     const fromLocation = book.currentLocation ?? 0;
-    const entry = { id: crypto.randomUUID(), date: new Date().toISOString(), fromLocation, toLocation: currentLocation };
+    const entry = {
+      id: crypto.randomUUID(),
+      date: new Date().toISOString(),
+      fromLocation,
+      toLocation: currentLocation,
+    };
     const now = new Date();
     const finishDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    await this.saveBook({ ...input, currentLocation,
-      locationEntries: currentLocation === fromLocation ? (book.locationEntries ?? []) : [...(book.locationEntries ?? []), entry],
-      ...(finished ? { status: 'Finished' as const, finishDate } : {}),
-    }, bookId);
+    await this.saveBook(
+      {
+        ...input,
+        currentLocation,
+        locationEntries:
+          currentLocation === fromLocation
+            ? (book.locationEntries ?? [])
+            : [...(book.locationEntries ?? []), entry],
+        ...(finished ? { status: 'Finished' as const, finishDate } : {}),
+      },
+      bookId,
+    );
   }
 
   async saveTag(input: Pick<BookTag, 'name' | 'type' | 'color'>, id?: string): Promise<void> {
     const uid = this.auth.userId();
     const tag = await this.service.saveTag(input, id);
-    if (this.auth.userId() === uid) this.tags.update((tags) => [...tags.filter((item) => item.id !== tag.id), tag]);
+    if (this.auth.userId() === uid)
+      this.tags.update((tags) => [...tags.filter((item) => item.id !== tag.id), tag]);
   }
 
   async deleteTag(tag: BookTag): Promise<void> {
@@ -117,11 +163,13 @@ export class BookStore {
     await this.service.deleteTag(tag, this.books());
     if (this.auth.userId() === uid) {
       this.tags.update((tags) => tags.filter((item) => item.id !== tag.id));
-      this.books.update((books) => books.map((book) => ({
-        ...book,
-        moodTagIds: book.moodTagIds.filter((id) => id !== tag.id),
-        genreTagIds: book.genreTagIds.filter((id) => id !== tag.id),
-      })));
+      this.books.update((books) =>
+        books.map((book) => ({
+          ...book,
+          moodTagIds: book.moodTagIds.filter((id) => id !== tag.id),
+          genreTagIds: book.genreTagIds.filter((id) => id !== tag.id),
+        })),
+      );
     }
   }
 }

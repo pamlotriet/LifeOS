@@ -59,7 +59,12 @@
             </p>
           }
           <section class="my-4 rounded-xl border border-[var(--border)] p-3 space-y-2">
-            <label>Date<input appInput="field" type="date" [(ngModel)]="date" class="lifeos-select" /></label
+            <label
+              >Date<input
+                appInput="field"
+                type="date"
+                [(ngModel)]="date"
+                class="lifeos-select" /></label
             ><label
               >Meal<select [(ngModel)]="meal" class="lifeos-select">
                 @for (category of categories; track category) {
@@ -67,7 +72,8 @@
                 }
               </select></label
             ><label
-              >Servings<input appInput="field"
+              >Servings<input
+                appInput="field"
                 type="number"
                 min="0.01"
                 step="any"

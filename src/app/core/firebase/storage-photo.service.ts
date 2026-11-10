@@ -10,19 +10,47 @@ export class StoragePhotoService {
   private readonly bucket = environment.firebaseConfig.storageBucket;
   private readonly baseUrl = `https://firebasestorage.googleapis.com/v0/b/${this.bucket}/o`;
 
-  async uploadVehiclePhoto(uid: string, vehicleId: string, localUrl: string, token: string, photoName = 'photo'): Promise<{ path: string; url: string }> {
+  async uploadVehiclePhoto(
+    uid: string,
+    vehicleId: string,
+    localUrl: string,
+    token: string,
+    photoName = 'photo',
+  ): Promise<{ path: string; url: string }> {
     return this.uploadPhoto(`users/${uid}/vehicles/${vehicleId}/${photoName}`, localUrl, token);
   }
 
-  async uploadRecipePhoto(uid: string, recipeId: string, localUrl: string, token: string): Promise<{ path: string; url: string }> {
-    return this.uploadPhoto(`users/${uid}/recipes/${recipeId}/photo-${crypto.randomUUID()}`, localUrl, token);
+  async uploadRecipePhoto(
+    uid: string,
+    recipeId: string,
+    localUrl: string,
+    token: string,
+  ): Promise<{ path: string; url: string }> {
+    return this.uploadPhoto(
+      `users/${uid}/recipes/${recipeId}/photo-${crypto.randomUUID()}`,
+      localUrl,
+      token,
+    );
   }
 
-  async uploadBudgetReceipt(uid: string, transactionId: string, localUrl: string, token: string): Promise<{ path: string; url: string }> {
-    return this.uploadPhoto(`users/${uid}/budget/${transactionId}/receipt-${crypto.randomUUID()}`, localUrl, token);
+  async uploadBudgetReceipt(
+    uid: string,
+    transactionId: string,
+    localUrl: string,
+    token: string,
+  ): Promise<{ path: string; url: string }> {
+    return this.uploadPhoto(
+      `users/${uid}/budget/${transactionId}/receipt-${crypto.randomUUID()}`,
+      localUrl,
+      token,
+    );
   }
 
-  private async uploadPhoto(path: string, localUrl: string, token: string): Promise<{ path: string; url: string }> {
+  private async uploadPhoto(
+    path: string,
+    localUrl: string,
+    token: string,
+  ): Promise<{ path: string; url: string }> {
     const photoResponse = await fetch(localUrl);
     if (!photoResponse.ok) throw new Error('Could not read the selected photo.');
     const photo = await photoResponse.blob();
@@ -34,12 +62,15 @@ export class StoragePhotoService {
     }
 
     const boundary = `lifeos-${crypto.randomUUID()}`;
-    const body = new Blob([
-      `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({ name: path, contentType: photo.type })}\r\n`,
-      `--${boundary}\r\nContent-Type: ${photo.type}\r\n\r\n`,
-      photo,
-      `\r\n--${boundary}--`,
-    ], { type: `multipart/related; boundary=${boundary}` });
+    const body = new Blob(
+      [
+        `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({ name: path, contentType: photo.type })}\r\n`,
+        `--${boundary}\r\nContent-Type: ${photo.type}\r\n\r\n`,
+        photo,
+        `\r\n--${boundary}--`,
+      ],
+      { type: `multipart/related; boundary=${boundary}` },
+    );
     const url = new URL(this.baseUrl);
     url.searchParams.set('name', path);
     const response = await fetch(url, {
@@ -52,7 +83,8 @@ export class StoragePhotoService {
       body,
     });
 
-    if (!response.ok) throw new Error(`Could not upload the photo to Firebase Storage (${response.status}).`);
+    if (!response.ok)
+      throw new Error(`Could not upload the photo to Firebase Storage (${response.status}).`);
     const metadata = (await response.json()) as StoredPhoto;
     const downloadToken = metadata.downloadTokens?.split(',')[0];
 
@@ -60,7 +92,7 @@ export class StoragePhotoService {
       await this.deletePhoto(path, token);
       throw new Error('Firebase Storage did not return a photo download link.');
     }
-    
+
     return {
       path,
       url: `${this.baseUrl}/${encodeURIComponent(path)}?alt=media&token=${encodeURIComponent(downloadToken)}`,
@@ -77,7 +109,9 @@ export class StoragePhotoService {
       headers: { Authorization: `Firebase ${token}` },
     });
     if (!response.ok && response.status !== 404) {
-      throw new Error(`Could not remove the vehicle photo from Firebase Storage (${response.status}).`);
+      throw new Error(
+        `Could not remove the vehicle photo from Firebase Storage (${response.status}).`,
+      );
     }
   }
 }

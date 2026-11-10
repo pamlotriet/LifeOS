@@ -154,7 +154,8 @@ export class PlanningMeals {
   }
   async copyDay(): Promise<void> {
     if (this.logging()) return;
-    this.logging.set(true); this.nutritionError.set('');
+    this.logging.set(true);
+    this.nutritionError.set('');
     try {
       if (this.copyDate === this.selectedDate())
         throw new Error('Choose a different destination date.');
@@ -165,7 +166,9 @@ export class PlanningMeals {
       this.nutritionError.set('Meals copied.');
     } catch (e) {
       this.nutritionError.set((e as Error).message);
-    } finally { this.logging.set(false); }
+    } finally {
+      this.logging.set(false);
+    }
   }
   async generateGroceries(): Promise<void> {
     if (this.logging() || this.store.loading() || this.store.error()) return;
@@ -260,21 +263,29 @@ export class PlanningMeals {
   }
   async copyMeal(item: MealPlanItem): Promise<void> {
     if (this.logging()) return;
-    this.logging.set(true); this.nutritionError.set('');
+    this.logging.set(true);
+    this.nutritionError.set('');
     try {
       const { id, ...input } = item;
       await this.store.saveMeal({ ...input, date: this.copyDate });
       this.nutritionError.set(`Meal copied to ${this.copyDate}.`);
     } catch (e) {
       this.nutritionError.set((e as Error).message);
-    } finally { this.logging.set(false); }
+    } finally {
+      this.logging.set(false);
+    }
   }
   async removeMeal(id: string): Promise<void> {
     if (this.logging()) return;
-    this.logging.set(true); this.nutritionError.set('');
-    try { await this.store.deleteMeal(id); }
-    catch (error) { this.nutritionError.set(error instanceof Error ? error.message : 'Could not remove meal.'); }
-    finally { this.logging.set(false); }
+    this.logging.set(true);
+    this.nutritionError.set('');
+    try {
+      await this.store.deleteMeal(id);
+    } catch (error) {
+      this.nutritionError.set(error instanceof Error ? error.message : 'Could not remove meal.');
+    } finally {
+      this.logging.set(false);
+    }
   }
   meals(date: string) {
     return this.store.meals().filter((item) => item.date === date);
@@ -337,19 +348,37 @@ export class PlanningMeals {
   }
   async addGrocery(): Promise<void> {
     if (!this.groceryName().trim() || this.logging()) return;
-    this.logging.set(true); this.nutritionError.set('');
+    this.logging.set(true);
+    this.nutritionError.set('');
     try {
-      await this.store.saveGrocery({ name: this.groceryName().trim(), section: this.grocerySection(), checked: false });
+      await this.store.saveGrocery({
+        name: this.groceryName().trim(),
+        section: this.grocerySection(),
+        checked: false,
+      });
       this.groceryName.set('');
-    } catch (error) { this.nutritionError.set(error instanceof Error ? error.message : 'Could not add shopping item.'); }
-    finally { this.logging.set(false); }
+    } catch (error) {
+      this.nutritionError.set(
+        error instanceof Error ? error.message : 'Could not add shopping item.',
+      );
+    } finally {
+      this.logging.set(false);
+    }
   }
   async changeGrocery(item: GroceryItem, remove = false): Promise<void> {
     if (this.logging()) return;
-    this.logging.set(true); this.nutritionError.set('');
-    try { if (remove) await this.store.deleteGrocery(item.id); else await this.store.toggleGrocery(item); }
-    catch (error) { this.nutritionError.set(error instanceof Error ? error.message : 'Could not update shopping item.'); }
-    finally { this.logging.set(false); }
+    this.logging.set(true);
+    this.nutritionError.set('');
+    try {
+      if (remove) await this.store.deleteGrocery(item.id);
+      else await this.store.toggleGrocery(item);
+    } catch (error) {
+      this.nutritionError.set(
+        error instanceof Error ? error.message : 'Could not update shopping item.',
+      );
+    } finally {
+      this.logging.set(false);
+    }
   }
   choose(date: string): void {
     this.selectedDate.set(date);

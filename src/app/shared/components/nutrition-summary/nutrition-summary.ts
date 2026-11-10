@@ -1,5 +1,8 @@
 import { Component, input } from '@angular/core';
-import { RecipeNutritionSummary, nutritionLabel } from '../../../pages/nutrition/state/nutrition.model';
+import {
+  RecipeNutritionSummary,
+  nutritionLabel,
+} from '../../../pages/nutrition/state/nutrition.model';
 @Component({
   selector: 'app-nutrition-summary',
   template: ` <section
@@ -10,7 +13,10 @@ import { RecipeNutritionSummary, nutritionLabel } from '../../../pages/nutrition
     <p><strong>Entire recipe:</strong> {{ label(summary().total) }}</p>
     @for (key of extras; track key) {
       @if (summary().perServing[key] !== undefined) {
-        <small class="block">{{ key }} per serving: {{ summary().perServing[key]?.toFixed(1) }} {{ key === 'sodium' ? 'mg' : 'g' }}</small>
+        <small class="block"
+          >{{ key }} per serving: {{ summary().perServing[key]?.toFixed(1) }}
+          {{ key === 'sodium' ? 'mg' : 'g' }}</small
+        >
       }
     }
     @if (!summary().complete) {

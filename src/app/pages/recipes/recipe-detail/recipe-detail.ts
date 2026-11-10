@@ -1,17 +1,10 @@
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { FormsModule } from '@angular/forms';
 import { NutritionService } from '../../nutrition/state/nutrition.service';
-import {
-  calculateRecipe,
-  scaleNutrition,
-} from '../../nutrition/state/nutrition.calculations';
+import { calculateRecipe, scaleNutrition } from '../../nutrition/state/nutrition.calculations';
 import { NutritionSummary } from '../../../shared/components/nutrition-summary/nutrition-summary';
 import { PlanningStore } from '../../planning/state/planning-store';
-import {
-  localDate,
-  MEAL_CATEGORIES,
-  MealCategory,
-} from '../../nutrition/state/nutrition.model';
+import { localDate, MEAL_CATEGORIES, MealCategory } from '../../nutrition/state/nutrition.model';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';

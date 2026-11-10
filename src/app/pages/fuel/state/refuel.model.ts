@@ -22,18 +22,19 @@ export interface RefuelEntry extends RefuelRecord {
 }
 
 export function calculateRefuels(records: RefuelRecord[]): RefuelEntry[] {
-  const ordered = [...records].sort((a, b) => a.odometer - b.odometer || a.dop.localeCompare(b.dop) || a.id.localeCompare(b.id));
+  const ordered = [...records].sort(
+    (a, b) => a.odometer - b.odometer || a.dop.localeCompare(b.dop) || a.id.localeCompare(b.id),
+  );
   return ordered.map((record, index) => {
-    const rangeKm = index === 0
-      ? record.initialRangeKm
-      : record.odometer - ordered[index - 1].odometer;
+    const rangeKm =
+      index === 0 ? record.initialRangeKm : record.odometer - ordered[index - 1].odometer;
     const validRange = rangeKm !== null && rangeKm > 0;
     return {
       ...record,
       rangeKm: validRange ? rangeKm : null,
       randPerLiter: record.amountPaid / record.qtyLiters,
       kmPerLiter: validRange ? rangeKm / record.qtyLiters : null,
-      litersPer100Km: validRange ? record.qtyLiters / rangeKm * 100 : null,
+      litersPer100Km: validRange ? (record.qtyLiters / rangeKm) * 100 : null,
     };
   });
 }
@@ -47,7 +48,7 @@ export function refuelAverages(entries: RefuelEntry[]) {
   return {
     randPerLiter: litres > 0 ? amount / litres : null,
     kmPerLiter: rangedLitres > 0 ? rangedKm / rangedLitres : null,
-    litersPer100Km: rangedKm > 0 ? rangedLitres / rangedKm * 100 : null,
+    litersPer100Km: rangedKm > 0 ? (rangedLitres / rangedKm) * 100 : null,
     totalRangeKm: rangedKm,
     totalSpent: amount,
     totalLitres: litres,

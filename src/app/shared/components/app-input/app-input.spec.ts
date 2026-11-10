@@ -8,7 +8,8 @@ import { AppButton } from '../app-button/app-button';
   imports: [ReactiveFormsModule, AppInput, AppButton],
   template: `
     <form id="shared-controls" [formGroup]="form" (ngSubmit)="submissions = submissions + 1">
-      <label for="name">Book title</label><input appInput id="name" formControlName="name" required />
+      <label for="name">Book title</label
+      ><input appInput id="name" formControlName="name" required />
       <input appInput type="number" formControlName="pages" />
       <textarea appInput formControlName="review" aria-label="Review"></textarea>
     </form>
@@ -36,7 +37,11 @@ describe('Shared native form controls', () => {
     const pages = page.querySelector<HTMLInputElement>('input[type="number"]')!;
     pages.value = '300';
     pages.dispatchEvent(new Event('input'));
-    expect(fixture.componentInstance.form.getRawValue()).toEqual({ name: 'A book', pages: 300, review: '' });
+    expect(fixture.componentInstance.form.getRawValue()).toEqual({
+      name: 'A book',
+      pages: 300,
+      review: '',
+    });
     fixture.componentInstance.form.controls.review.setValue('My review');
     await fixture.whenStable();
     expect(page.querySelector('textarea')?.value).toBe('My review');

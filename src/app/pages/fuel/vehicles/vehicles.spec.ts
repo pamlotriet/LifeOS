@@ -13,10 +13,15 @@ describe('Vehicles', () => {
       imports: [Vehicles],
       providers: [
         provideRouter([]),
-        { provide: VehicleStore, useValue: {
-          vehicles: signal([]), loading: signal(false), error: signal(''),
-          reload: vi.fn(),
-        } },
+        {
+          provide: VehicleStore,
+          useValue: {
+            vehicles: signal([]),
+            loading: signal(false),
+            error: signal(''),
+            reload: vi.fn(),
+          },
+        },
       ],
     }).compileComponents();
 

@@ -5,7 +5,14 @@ import { NgTemplateOutlet } from '@angular/common';
 @Component({
   selector: 'ion-modal',
   imports: [NgTemplateOutlet],
-  inputs: ['isOpen', 'keepContentsMounted', 'breakpoints', 'initialBreakpoint', 'handle', 'canDismiss'],
+  inputs: [
+    'isOpen',
+    'keepContentsMounted',
+    'breakpoints',
+    'initialBreakpoint',
+    'handle',
+    'canDismiss',
+  ],
   template: '<ng-container [ngTemplateOutlet]="content ?? null" />',
 })
 export class FuelModalStub {

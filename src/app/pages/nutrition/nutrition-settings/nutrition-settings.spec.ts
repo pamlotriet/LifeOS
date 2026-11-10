@@ -20,7 +20,7 @@ describe('Automatic targets in settings', () => {
     await TestBed.configureTestingModule({
       imports: [NutritionSettings],
       providers: [
-        {provide:AuthService,useValue:{displayName:signal('Pamela Lotriet')}},
+        { provide: AuthService, useValue: { displayName: signal('Pamela Lotriet') } },
         {
           provide: NutritionService,
           useValue: { profile, loading: signal(false), error: signal(''), saveProfile },
@@ -48,14 +48,22 @@ describe('Automatic targets in settings', () => {
     const input = fixture.nativeElement.querySelector(
       '[aria-label="Daily calories"]',
     ) as HTMLInputElement;
-    (fixture.nativeElement.querySelector('[aria-label="Set manual calories"], [aria-label="Calculate calories"]') as HTMLButtonElement).click();
+    (
+      fixture.nativeElement.querySelector(
+        '[aria-label="Set manual calories"], [aria-label="Calculate calories"]',
+      ) as HTMLButtonElement
+    ).click();
     await fixture.whenStable();
     expect(input.readOnly).toBe(false);
     input.value = '2000';
     input.dispatchEvent(new Event('input'));
     await fixture.whenStable();
     expect(fixture.componentInstance.preview()?.protein).toBe(125);
-    (fixture.nativeElement.querySelector('[aria-label="Set manual calories"], [aria-label="Calculate calories"]') as HTMLButtonElement).click();
+    (
+      fixture.nativeElement.querySelector(
+        '[aria-label="Set manual calories"], [aria-label="Calculate calories"]',
+      ) as HTMLButtonElement
+    ).click();
     await fixture.whenStable();
     expect(fixture.componentInstance.preview()?.calories).toBe(1915);
     expect(input.readOnly).toBe(true);
@@ -63,7 +71,9 @@ describe('Automatic targets in settings', () => {
   it('subtracts an explicit deficit from maintenance and saves it', async () => {
     const fixture = TestBed.createComponent(NutritionSettings);
     await fixture.whenStable();
-    const input = fixture.nativeElement.querySelector('[name="calorieDeficit"]') as HTMLInputElement;
+    const input = fixture.nativeElement.querySelector(
+      '[name="calorieDeficit"]',
+    ) as HTMLInputElement;
     input.value = '300';
     input.dispatchEvent(new Event('input'));
     await fixture.whenStable();
@@ -88,6 +98,4 @@ describe('Automatic targets in settings', () => {
     await fixture.componentInstance.save();
     expect(saveProfile.mock.calls[0][0].name).toBe('Pamela Lotriet');
   });
-
 });
-

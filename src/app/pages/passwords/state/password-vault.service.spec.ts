@@ -71,15 +71,13 @@ describe('PasswordVaultService', () => {
           {
             provide: FirestoreService,
             useValue: {
-              getDocument: vi
-                .fn()
-                .mockResolvedValue({
-                  fields: {
-                    salt: { stringValue: salt },
-                    verifierIv: { stringValue: verifier.iv },
-                    verifierCipher: { stringValue: verifier.cipherText },
-                  },
-                }),
+              getDocument: vi.fn().mockResolvedValue({
+                fields: {
+                  salt: { stringValue: salt },
+                  verifierIv: { stringValue: verifier.iv },
+                  verifierCipher: { stringValue: verifier.cipherText },
+                },
+              }),
             },
           },
           { provide: VaultCryptoService, useValue: cryptoService },

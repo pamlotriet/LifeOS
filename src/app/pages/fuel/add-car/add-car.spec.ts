@@ -15,7 +15,12 @@ describe('AddCar', () => {
     await TestBed.configureTestingModule({
       imports: [AddCar],
       providers: [provideRouter([]), { provide: VehicleStore, useValue: { add: addVehicle } }],
-    }).overrideComponent(AddCar, { remove: { imports: [IonModal] }, add: { imports: [FuelModalStub] } }).compileComponents();
+    })
+      .overrideComponent(AddCar, {
+        remove: { imports: [IonModal] },
+        add: { imports: [FuelModalStub] },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(AddCar);
     component = fixture.componentInstance;
@@ -55,17 +60,27 @@ describe('AddCar', () => {
     await component.submit();
 
     expect(addVehicle).toHaveBeenCalledWith(
-      expect.objectContaining({ make: 'Toyota', model: 'Corolla', year: '2024', registration: 'CAA 123 456', odometer: 12500 }),
+      expect.objectContaining({
+        make: 'Toyota',
+        model: 'Corolla',
+        year: '2024',
+        registration: 'CAA 123 456',
+        odometer: 12500,
+      }),
     );
-    expect(navigate).toHaveBeenCalledWith('/fuel/vehicles', { replaceUrl:true });
+    expect(navigate).toHaveBeenCalledWith('/fuel/vehicles', { replaceUrl: true });
   });
 
   it('stays on the form when Firebase cannot save the vehicle', async () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     addVehicle.mockRejectedValue(new Error('Could not save vehicle (403).'));
     component.vehicleForm.patchValue({
-      make: 'Toyota', model: 'Corolla', year: '2024', registration: 'CAA 123 456',
-      fuelType: 'Petrol', odometer: 12500,
+      make: 'Toyota',
+      model: 'Corolla',
+      year: '2024',
+      registration: 'CAA 123 456',
+      fuelType: 'Petrol',
+      odometer: 12500,
     });
 
     await component.submit();

@@ -3,7 +3,8 @@
     <h1 class="text-xl font-bold tracking-tight">My Vehicles</h1>
   </div>
 
-  @if (loading()) { <app-fuel-loading kind="vehicles" label="Loading vehicles" />
+  @if (loading()) {
+    <app-fuel-loading kind="vehicles" label="Loading vehicles" />
   } @else if (error()) {
     <div
       role="alert"
@@ -49,7 +50,11 @@
         <div
           class="grid h-[72px] w-24 shrink-0 place-items-center rounded-2xl border border-white/10 bg-[var(--card)]"
         >
-          <ion-icon name="car" class="text-4xl text-[var(--text-secondary)]" aria-hidden="true"></ion-icon>
+          <ion-icon
+            name="car"
+            class="text-4xl text-[var(--text-secondary)]"
+            aria-hidden="true"
+          ></ion-icon>
         </div>
       }
       <div class="min-w-0 flex-1 py-0.5">
@@ -82,7 +87,9 @@
     </span>
     <span class="flex flex-col">
       <span class="text-sm font-semibold text-[#4be9f6]">Add vehicle</span>
-      <span class="mt-0.5 text-xs text-[var(--text-secondary)]">Start tracking fuel consumption</span>
+      <span class="mt-0.5 text-xs text-[var(--text-secondary)]"
+        >Start tracking fuel consumption</span
+      >
     </span>
   </a>
 </div>

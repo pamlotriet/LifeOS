@@ -1,5 +1,7 @@
 /* Use the app theme directly, without a Stats-specific palette. */
-:host { display: block; }
+:host {
+  display: block;
+}
 .stats-page,
 .stats-page.budget-stats-page {
   max-width: 1208px;

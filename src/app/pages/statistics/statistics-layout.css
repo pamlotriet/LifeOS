@@ -1,66 +1,308 @@
 /* Consistent dashboard rhythm across every statistics module. */
-.stats-page,.stats-page.budget-stats-page{box-sizing:border-box;padding:28px 32px 48px}
-.stats-topbar{padding:0 0 16px;margin-bottom:24px;min-height:44px}
-.stats-header,.budget-stats-page .stats-header{gap:16px;align-items:center}
-.stats-header h1,.budget-stats-page .stats-header h1{font-size:clamp(28px,3vw,38px);font-weight:550;margin:0;letter-spacing:-1px}
-.stats-intro .eyebrow{font-size:10px;color:var(--primary);letter-spacing:1.3px}
-.stats-intro>p:last-child{font-size:13px;line-height:1.6;margin-top:8px}
-.module-trigger,.budget-stats-page .module-trigger{min-height:48px}
-.stats-period{justify-content:flex-start;gap:16px;margin:24px 0;padding:16px;border:1px solid var(--border);border-radius:16px;background:var(--card);align-items:end}
-.stats-period nav{border:0;background:var(--background);flex-wrap:wrap}
-.stats-period nav button{min-height:44px;min-width:44px;font-weight:600}
-.stats-period label,.stats-period .stats-filter-field{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:8px;flex:0 1 200px;min-width:0;font-size:12px;color:var(--text-secondary)}
-.stats-period .vehicle-filter{flex-basis:260px}
-.stats-period select{width:100%;height:48px;min-height:48px;box-sizing:border-box;padding:10px 36px 10px 12px;border:1px solid var(--border)!important;border-radius:10px;color:var(--foreground)!important;background:var(--background)!important;box-shadow:none;appearance:auto;font:inherit;font-size:14px}
-.stats-period .stats-range-field{flex-basis:auto}
-.stats-period nav{height:48px;box-sizing:border-box;padding:2px;gap:2px}
-.stats-date-range{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:24px}
-.stats-date-range label{display:grid;gap:6px;font-size:12px;color:var(--text-secondary)}
-.stats-date-range input{width:100%;min-width:0}
-.kpi-grid,.book-kpis{margin-bottom:16px}
-.kpi-card,.book-kpi{min-width:0;min-height:132px}
-.kpi-card>div{min-width:0}
-.kpi-card strong,.book-value{font-variant-numeric:tabular-nums;overflow-wrap:anywhere;font-size:clamp(22px,2vw,28px)}
-.kpi-card small{line-height:1.5}
-.book-kpi-label{letter-spacing:.06em;line-height:1.5}
-.stats-charts-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.stats-charts-grid>.stats-chart-card{margin-top:0;min-width:0}
-.chart-heading h2,.book-card h2{font-size:17px;font-weight:600;line-height:1.4}
-.chart-heading p{line-height:1.6;margin:6px 0 0}
-.stats-chart-card,.book-card{padding:20px}
-.book-main-grid,.book-lower-grid,.book-details{gap:16px}
-.book-main-grid{margin-bottom:16px}
-.book-heading{flex-wrap:wrap;gap:8px}
-.book-heading>span{line-height:1.5}
-.book-insights{margin-top:16px}
-.category-content{gap:16px;flex-wrap:wrap}
-.category-chart{max-width:100%;margin-inline:auto}
-.category-legend{min-width:160px}
-.category-legend>div{grid-template-columns:10px minmax(0,1fr) auto auto}
-.category-legend span{overflow-wrap:anywhere}
-.vehicle-filter{flex-wrap:wrap;gap:8px}
-.vehicle-filter select{max-width:100%}
-.module-trigger:focus-visible,.module-options button:focus-visible,.stats-period button:focus-visible,.stats-period select:focus-visible,.stats-date-range input:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
-@media(max-width:1100px){.book-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.book-main-grid,.book-lower-grid{grid-template-columns:1fr}.category-content{flex-direction:row}}
-@media(max-width:900px){.stats-charts-grid{grid-template-columns:1fr}}
-@media(max-width:600px){
- .stats-page,.stats-page.budget-stats-page{padding:20px 16px 32px}
- .stats-topbar{padding:0 0 12px;margin-bottom:20px;font-size:12px;gap:12px;flex-wrap:wrap}
- .stats-header,.budget-stats-page .stats-header{gap:16px}
- .stats-header h1,.budget-stats-page .stats-header h1{font-size:30px}
- .stats-period{margin:20px 0;gap:12px}
- .stats-period nav{width:100%;flex-wrap:nowrap}
- .stats-period nav button{flex:1;min-width:0;padding-inline:8px}
- .stats-period.stats-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:12px;gap:14px 12px}
- .stats-period label,.stats-period .stats-filter-field{width:100%;grid-template-columns:minmax(0,1fr)}
- .stats-period .stats-range-field{grid-column:1/-1}
- .book-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
- .book-kpi,.kpi-card{padding:16px;min-height:132px}
- .kpi-card{align-items:flex-start;flex-direction:column;gap:10px}
- .book-value{margin-top:10px}
- .book-card,.stats-chart-card{padding:16px;border-radius:17px}
- .category-content{flex-direction:column}
- .book-highlights{grid-template-columns:1fr}
- .book-insights p{font-size:13px}
- .stats-date-range{gap:10px}
+.stats-page,
+.stats-page.budget-stats-page {
+  box-sizing: border-box;
+  padding: 28px 32px 48px;
+}
+.stats-topbar {
+  padding: 0 0 16px;
+  margin-bottom: 24px;
+  min-height: 44px;
+}
+.stats-header,
+.budget-stats-page .stats-header {
+  gap: 16px;
+  align-items: center;
+}
+.stats-header h1,
+.budget-stats-page .stats-header h1 {
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 550;
+  margin: 0;
+  letter-spacing: -1px;
+}
+.stats-intro .eyebrow {
+  font-size: 10px;
+  color: var(--primary);
+  letter-spacing: 1.3px;
+}
+.stats-intro > p:last-child {
+  font-size: 13px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+.module-trigger,
+.budget-stats-page .module-trigger {
+  min-height: 48px;
+}
+.stats-period {
+  justify-content: flex-start;
+  gap: 16px;
+  margin: 24px 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  align-items: end;
+}
+.stats-period nav {
+  border: 0;
+  background: var(--background);
+  flex-wrap: wrap;
+}
+.stats-period nav button {
+  min-height: 44px;
+  min-width: 44px;
+  font-weight: 600;
+}
+.stats-period label,
+.stats-period .stats-filter-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  flex: 0 1 200px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.stats-period .vehicle-filter {
+  flex-basis: 260px;
+}
+.stats-period select {
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  box-sizing: border-box;
+  padding: 10px 36px 10px 12px;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px;
+  color: var(--foreground) !important;
+  background: var(--background) !important;
+  box-shadow: none;
+  appearance: auto;
+  font: inherit;
+  font-size: 14px;
+}
+.stats-period .stats-range-field {
+  flex-basis: auto;
+}
+.stats-period nav {
+  height: 48px;
+  box-sizing: border-box;
+  padding: 2px;
+  gap: 2px;
+}
+.stats-date-range {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stats-date-range label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.stats-date-range input {
+  width: 100%;
+  min-width: 0;
+}
+.kpi-grid,
+.book-kpis {
+  margin-bottom: 16px;
+}
+.kpi-card,
+.book-kpi {
+  min-width: 0;
+  min-height: 132px;
+}
+.kpi-card > div {
+  min-width: 0;
+}
+.kpi-card strong,
+.book-value {
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  font-size: clamp(22px, 2vw, 28px);
+}
+.kpi-card small {
+  line-height: 1.5;
+}
+.book-kpi-label {
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+}
+.stats-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.stats-charts-grid > .stats-chart-card {
+  margin-top: 0;
+  min-width: 0;
+}
+.chart-heading h2,
+.book-card h2 {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.chart-heading p {
+  line-height: 1.6;
+  margin: 6px 0 0;
+}
+.stats-chart-card,
+.book-card {
+  padding: 20px;
+}
+.book-main-grid,
+.book-lower-grid,
+.book-details {
+  gap: 16px;
+}
+.book-main-grid {
+  margin-bottom: 16px;
+}
+.book-heading {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.book-heading > span {
+  line-height: 1.5;
+}
+.book-insights {
+  margin-top: 16px;
+}
+.category-content {
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.category-chart {
+  max-width: 100%;
+  margin-inline: auto;
+}
+.category-legend {
+  min-width: 160px;
+}
+.category-legend > div {
+  grid-template-columns: 10px minmax(0, 1fr) auto auto;
+}
+.category-legend span {
+  overflow-wrap: anywhere;
+}
+.vehicle-filter {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.vehicle-filter select {
+  max-width: 100%;
+}
+.module-trigger:focus-visible,
+.module-options button:focus-visible,
+.stats-period button:focus-visible,
+.stats-period select:focus-visible,
+.stats-date-range input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+@media (max-width: 1100px) {
+  .book-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .book-main-grid,
+  .book-lower-grid {
+    grid-template-columns: 1fr;
+  }
+  .category-content {
+    flex-direction: row;
+  }
+}
+@media (max-width: 900px) {
+  .stats-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .stats-page,
+  .stats-page.budget-stats-page {
+    padding: 20px 16px 32px;
+  }
+  .stats-topbar {
+    padding: 0 0 12px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .stats-header,
+  .budget-stats-page .stats-header {
+    gap: 16px;
+  }
+  .stats-header h1,
+  .budget-stats-page .stats-header h1 {
+    font-size: 30px;
+  }
+  .stats-period {
+    margin: 20px 0;
+    gap: 12px;
+  }
+  .stats-period nav {
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+  .stats-period nav button {
+    flex: 1;
+    min-width: 0;
+    padding-inline: 8px;
+  }
+  .stats-period.stats-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 12px;
+    gap: 14px 12px;
+  }
+  .stats-period label,
+  .stats-period .stats-filter-field {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .stats-period .stats-range-field {
+    grid-column: 1/-1;
+  }
+  .book-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .book-kpi,
+  .kpi-card {
+    padding: 16px;
+    min-height: 132px;
+  }
+  .kpi-card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .book-value {
+    margin-top: 10px;
+  }
+  .book-card,
+  .stats-chart-card {
+    padding: 16px;
+    border-radius: 17px;
+  }
+  .category-content {
+    flex-direction: column;
+  }
+  .book-highlights {
+    grid-template-columns: 1fr;
+  }
+  .book-insights p {
+    font-size: 13px;
+  }
+  .stats-date-range {
+    gap: 10px;
+  }
 }

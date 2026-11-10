@@ -5,7 +5,10 @@ import { AppSelect } from './app-select';
 
 describe('AppSelect', () => {
   it('passes the selected option to a reactive form', () => {
-    const select = runInInjectionContext(Injector.create({ providers: [] }), () => new AppSelect(new ElementRef({ contains: () => false } as unknown as HTMLElement)));
+    const select = runInInjectionContext(
+      Injector.create({ providers: [] }),
+      () => new AppSelect(new ElementRef({ contains: () => false } as unknown as HTMLElement)),
+    );
     const changed = vi.fn();
     select.registerOnChange(changed);
     select.writeValue('');

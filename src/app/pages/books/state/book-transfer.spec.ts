@@ -45,10 +45,18 @@ const book: BookRecord = {
 };
 describe('Book backups', () => {
   it('round trips Kindle tracking and raw location sessions', () => {
-    const kindle: BookRecord = {...book, progressMode: 'locations', totalLocations: 4500, currentLocation: 900, pageCount: 0, locationsPerPage: 15.5, locationEntries: [{id: 'session', date: '2026-10-21', fromLocation: 0, toLocation: 900}]};
+    const kindle: BookRecord = {
+      ...book,
+      progressMode: 'locations',
+      totalLocations: 4500,
+      currentLocation: 900,
+      pageCount: 0,
+      locationsPerPage: 15.5,
+      locationEntries: [{ id: 'session', date: '2026-10-21', fromLocation: 0, toLocation: 900 }],
+    };
     const backup = createBookBackup([kindle], tags);
     expect(parseBookBackup(JSON.stringify(backup))).toEqual(backup);
-    const merged = mergeBookInformation(kindle, {...book, pageCount: 300});
+    const merged = mergeBookInformation(kindle, { ...book, pageCount: 300 });
     expect(merged.locationEntries).toEqual(kindle.locationEntries);
     expect(merged.currentLocation).toBe(900);
   });
@@ -191,8 +199,12 @@ describe('Book backups', () => {
     ).toBe(1);
   });
   it('accepts legacy tags with no colour without changing their metadata', () => {
-    const backup=createBookBackup([book],tags.map(tag=>({...tag,color:''})));
-    expect(parseBookBackup(JSON.stringify(backup)).tags.every(tag=>tag.color==='')).toBe(true);
+    const backup = createBookBackup(
+      [book],
+      tags.map((tag) => ({ ...tag, color: '' })),
+    );
+    expect(parseBookBackup(JSON.stringify(backup)).tags.every((tag) => tag.color === '')).toBe(
+      true,
+    );
   });
-
 });

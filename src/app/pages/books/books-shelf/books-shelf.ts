@@ -4,7 +4,15 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { addOutline, arrowBackOutline, bookmarkOutline, bookOutline, checkmarkOutline, heartOutline, searchOutline } from 'ionicons/icons';
+import {
+  addOutline,
+  arrowBackOutline,
+  bookmarkOutline,
+  bookOutline,
+  checkmarkOutline,
+  heartOutline,
+  searchOutline,
+} from 'ionicons/icons';
 import { kindleSummary } from '../state/book.model';
 import { BookStore } from '../state/book-store';
 
@@ -24,13 +32,30 @@ export class BooksShelf {
   readonly filtered = computed(() => {
     const query = this.search().trim().toLowerCase();
     const status = this.status();
-    return this.store.sortedBooks().filter((book) =>
-      (status === 'All books' || (status === 'Favourites' ? book.favourite : book.status === (status === 'Want to read' ? 'Not Started' : status))) &&
-      (!query || [book.title, book.author, book.category, book.seriesName].some((part) => part.toLowerCase().includes(query))),
-    );
+    return this.store
+      .sortedBooks()
+      .filter(
+        (book) =>
+          (status === 'All books' ||
+            (status === 'Favourites'
+              ? book.favourite
+              : book.status === (status === 'Want to read' ? 'Not Started' : status))) &&
+          (!query ||
+            [book.title, book.author, book.category, book.seriesName].some((part) =>
+              part.toLowerCase().includes(query),
+            )),
+      );
   });
 
   constructor() {
-    addIcons({ addOutline, arrowBackOutline, bookmarkOutline, bookOutline, checkmarkOutline, heartOutline, searchOutline });
+    addIcons({
+      addOutline,
+      arrowBackOutline,
+      bookmarkOutline,
+      bookOutline,
+      checkmarkOutline,
+      heartOutline,
+      searchOutline,
+    });
   }
 }

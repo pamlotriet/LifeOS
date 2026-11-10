@@ -83,14 +83,18 @@ export class VehicleStore {
     const uid = this.auth.userId();
     if (!uid) throw new Error('Sign in to update a vehicle.');
     const updated = await this.service.update(id, changes);
-    if (this.auth.userId() === uid) this.saved.update((vehicles) => vehicles.map((vehicle) => vehicle.id === id ? updated : vehicle));
+    if (this.auth.userId() === uid)
+      this.saved.update((vehicles) =>
+        vehicles.map((vehicle) => (vehicle.id === id ? updated : vehicle)),
+      );
   }
 
   async delete(id: string): Promise<void> {
     const uid = this.auth.userId();
     if (!uid) throw new Error('Sign in to delete a vehicle.');
     await this.service.delete(id);
-    if (this.auth.userId() === uid) this.saved.update((vehicles) => vehicles.filter((vehicle) => vehicle.id !== id));
+    if (this.auth.userId() === uid)
+      this.saved.update((vehicles) => vehicles.filter((vehicle) => vehicle.id !== id));
   }
 
   private async load(uid: string): Promise<void> {
@@ -104,7 +108,9 @@ export class VehicleStore {
         const loadedIds = new Set(vehicles.map((vehicle) => vehicle.id));
         this.saved.update((current) => {
           const next = [
-            ...current.filter((vehicle) => !existingIds.has(vehicle.id) && !loadedIds.has(vehicle.id)),
+            ...current.filter(
+              (vehicle) => !existingIds.has(vehicle.id) && !loadedIds.has(vehicle.id),
+            ),
             ...vehicles,
           ];
           return next;

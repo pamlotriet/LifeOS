@@ -15,9 +15,18 @@
       </div>
     </header>
     <section class="stats-period stats-filters" aria-label="Statistics filters">
-      <label class="stats-filter-field"><span>Statistics</span><select class="lifeos-select" [value]="selected()" (change)="choose($any($event.target).value)">
-        @for (module of modules; track module.id) {<option [value]="module.id">{{ module.label }}</option>}
-      </select></label>
+      <label class="stats-filter-field"
+        ><span>Statistics</span
+        ><select
+          class="lifeos-select"
+          [value]="selected()"
+          (change)="choose($any($event.target).value)"
+        >
+          @for (module of modules; track module.id) {
+            <option [value]="module.id">{{ module.label }}</option>
+          }
+        </select></label
+      >
       @if (selected() === 'fuel') {
         <label class="vehicle-filter"
           ><span>Vehicle</span
@@ -33,19 +42,20 @@
           </select></label
         >
       }
-      <div class="stats-filter-field stats-range-field"><span>Time range</span>
-      <nav aria-label="Time range">
-        @for (item of ranges; track item) {
-          <button
-            type="button"
-            [class.active]="range() === item"
-            [attr.aria-pressed]="range() === item"
-            (click)="range.set(item)"
-          >
-            {{ item }}
-          </button>
-        }
-      </nav>
+      <div class="stats-filter-field stats-range-field">
+        <span>Time range</span>
+        <nav aria-label="Time range">
+          @for (item of ranges; track item) {
+            <button
+              type="button"
+              [class.active]="range() === item"
+              [attr.aria-pressed]="range() === item"
+              (click)="range.set(item)"
+            >
+              {{ item }}
+            </button>
+          }
+        </nav>
       </div>
       @if (range() === '1M') {
         <label
@@ -64,13 +74,15 @@
     @if (selected() === 'nutrition' && range() !== '1M') {
       <div class="stats-date-range">
         <label
-          >From<input appInput="field"
+          >From<input
+            appInput="field"
             type="date"
             class="lifeos-select"
             [ngModel]="nutritionStart()"
             (ngModelChange)="nutritionStart.set($event)" /></label
         ><label
-          >Through<input appInput="field"
+          >Through<input
+            appInput="field"
             type="date"
             class="lifeos-select"
             [ngModel]="nutritionEnd()"
@@ -114,11 +126,7 @@
                 <h2>Books read by month</h2>
                 <span>{{ book.totalFinished }} books ï¿½ {{ range() }}</span>
               </div>
-              <app-chart
-                [config]="data.primary"
-                [height]="240"
-                label="Books finished each month"
-              />
+              <app-chart [config]="data.primary" [height]="240" label="Books finished each month" />
               <div class="book-divider"></div>
               <div class="book-heading">
                 <h3>Pages read</h3>
@@ -267,30 +275,26 @@
             }
           </section>
           <div class="stats-charts-grid">
-          <section class="stats-chart-card">
-            <div class="chart-heading">
-              <div>
-                <h2>{{ data.primaryTitle }}</h2>
-                <p>
-                  {{ option().label }} &middot; {{ range() === '1M' ? selectedMonth() : range() }}
-                </p>
+            <section class="stats-chart-card">
+              <div class="chart-heading">
+                <div>
+                  <h2>{{ data.primaryTitle }}</h2>
+                  <p>
+                    {{ option().label }} &middot; {{ range() === '1M' ? selectedMonth() : range() }}
+                  </p>
+                </div>
               </div>
-            </div>
-            <app-chart [config]="data.primary" [height]="230" [label]="data.primaryTitle" />
-          </section>
-          <section class="stats-chart-card">
-            <div class="chart-heading">
-              <div>
-                <h2>{{ data.secondaryTitle }}</h2>
-                <p>Actual recorded data</p>
+              <app-chart [config]="data.primary" [height]="230" [label]="data.primaryTitle" />
+            </section>
+            <section class="stats-chart-card">
+              <div class="chart-heading">
+                <div>
+                  <h2>{{ data.secondaryTitle }}</h2>
+                  <p>Actual recorded data</p>
+                </div>
               </div>
-            </div>
-            <app-chart
-              [config]="data.secondary"
-              [height]="230"
-              [label]="data.secondaryTitle"
-            />
-          </section>
+              <app-chart [config]="data.secondary" [height]="230" [label]="data.secondaryTitle" />
+            </section>
           </div>
           @if (data.debt; as debt) {
             <section class="stats-chart-card" aria-labelledby="debt-stats-title">

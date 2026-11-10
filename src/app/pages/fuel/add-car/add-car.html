@@ -98,7 +98,8 @@
                     class="shrink-0 text-base text-[var(--text-secondary)]"
                     aria-hidden="true"
                   ></ion-icon>
-                  <input appInput="inline"
+                  <input
+                    appInput="inline"
                     id="vehicle-make"
                     formControlName="make"
                     type="text"
@@ -122,7 +123,8 @@
                     class="shrink-0 text-base text-[var(--text-secondary)]"
                     aria-hidden="true"
                   ></ion-icon>
-                  <input appInput="inline"
+                  <input
+                    appInput="inline"
                     id="vehicle-model"
                     formControlName="model"
                     type="text"
@@ -164,7 +166,8 @@
                     class="shrink-0 text-base text-[var(--text-secondary)]"
                     aria-hidden="true"
                   ></ion-icon>
-                  <input appInput="inline"
+                  <input
+                    appInput="inline"
                     id="vehicle-registration"
                     formControlName="registration"
                     type="text"
@@ -221,7 +224,8 @@
                     class="shrink-0 text-base text-[var(--text-secondary)]"
                     aria-hidden="true"
                   ></ion-icon>
-                  <input appInput="inline"
+                  <input
+                    appInput="inline"
                     id="vehicle-tank-capacity"
                     formControlName="tankCapacity"
                     type="number"
@@ -249,7 +253,8 @@
                 class="shrink-0 text-base text-[var(--text-secondary)]"
                 aria-hidden="true"
               ></ion-icon>
-              <input appInput="inline"
+              <input
+                appInput="inline"
                 id="vehicle-odometer"
                 formControlName="odometer"
                 type="number"
@@ -285,7 +290,8 @@
           }
 
           <div class="flex flex-col gap-2.5 pb-4">
-            <button appButton="primary"
+            <button
+              appButton="primary"
               type="submit"
               [disabled]="saving() || deleting() || loadingVehicle()"
               class="w-full font-bold"

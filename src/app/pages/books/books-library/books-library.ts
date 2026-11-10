@@ -18,7 +18,10 @@ import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon, IonModal } from '@ionic/angular';
 import {
-  bookProgressMode, kindleSummary, locationProgress, locationSessionPages,
+  bookProgressMode,
+  kindleSummary,
+  locationProgress,
+  locationSessionPages,
   BookRecord,
   BOOK_CATEGORIES,
   BOOK_FORMATS,
@@ -100,20 +103,46 @@ export class BooksLibrary {
   readonly progressNotice = signal('');
 
   readonly kindleSummary = kindleSummary;
-  readonly estimatedPagesLogged = computed(() => Math.round(this.store.books().reduce((sum, book) => sum + (book.locationEntries ?? []).reduce((subtotal, entry) => subtotal + locationSessionPages(book, entry), 0), 0)));
+  readonly estimatedPagesLogged = computed(() =>
+    Math.round(
+      this.store
+        .books()
+        .reduce(
+          (sum, book) =>
+            sum +
+            (book.locationEntries ?? []).reduce(
+              (subtotal, entry) => subtotal + locationSessionPages(book, entry),
+              0,
+            ),
+          0,
+        ),
+    ),
+  );
   readonly trackingMode = bookProgressMode;
   openProgress(book: BookRecord): void {
     this.progressBook.set(book);
     this.progressMode.set(bookProgressMode(book));
     this.progressInput.set(
-      String(bookProgressMode(book) === 'locations' ? book.currentLocation ?? 0 : bookProgressMode(book) === 'pages' ? book.pageProgress : book.progress),
+      String(
+        bookProgressMode(book) === 'locations'
+          ? (book.currentLocation ?? 0)
+          : bookProgressMode(book) === 'pages'
+            ? book.pageProgress
+            : book.progress,
+      ),
     );
     this.progressError.set('');
     this.progressNotice.set('');
   }
   changeProgressMode(mode: 'pages' | 'percent'): void {
     const book = this.progressBook();
-    if (!book || book.progressMode === 'locations' || mode === this.progressMode() || (mode === 'pages' && !book.pageCount)) return;
+    if (
+      !book ||
+      book.progressMode === 'locations' ||
+      mode === this.progressMode() ||
+      (mode === 'pages' && !book.pageCount)
+    )
+      return;
     const value = Number(this.progressInput());
     this.progressInput.set(
       this.progressInput().trim() && Number.isFinite(value)
@@ -129,9 +158,22 @@ export class BooksLibrary {
   }
   locationSessionPreview(book: BookRecord): string {
     const value = Number(this.progressInput());
-    if (!this.progressInput().trim() || !Number.isSafeInteger(value) || value < 0 || value > (book.totalLocations ?? 0)) return '';
-    const updated = {...book, currentLocation: value};
-    const pages = Math.round(locationSessionPages(book, {id: '', date: '', fromLocation: book.currentLocation ?? 0, toLocation: value}));
+    if (
+      !this.progressInput().trim() ||
+      !Number.isSafeInteger(value) ||
+      value < 0 ||
+      value > (book.totalLocations ?? 0)
+    )
+      return '';
+    const updated = { ...book, currentLocation: value };
+    const pages = Math.round(
+      locationSessionPages(book, {
+        id: '',
+        date: '',
+        fromLocation: book.currentLocation ?? 0,
+        toLocation: value,
+      }),
+    );
     return `${kindleSummary(updated)}. Estimated pages read this session: ${pages}.`;
   }
   closeProgress(): void {
@@ -145,7 +187,12 @@ export class BooksLibrary {
       this.progressError.set('This book is no longer in your library.');
       return;
     }
-    const max = book.progressMode === 'locations' ? book.totalLocations ?? 0 : this.progressMode() === 'pages' ? book.pageCount : 100;
+    const max =
+      book.progressMode === 'locations'
+        ? (book.totalLocations ?? 0)
+        : this.progressMode() === 'pages'
+          ? book.pageCount
+          : 100;
     const value = Number(this.progressInput());
     if (
       !finished &&
@@ -158,7 +205,11 @@ export class BooksLibrary {
     this.progressError.set('');
     try {
       if (book.progressMode === 'locations') {
-        await this.store.setReadingLocation(book.id, finished ? book.totalLocations! : value, finished);
+        await this.store.setReadingLocation(
+          book.id,
+          finished ? book.totalLocations! : value,
+          finished,
+        );
       } else if (finished) {
         const now = new Date();
         const finishDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;

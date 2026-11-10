@@ -8,10 +8,15 @@ import { BudgetOverview } from './budget-overview';
 describe('Budget cycle navigation', () => {
   const create = () => {
     const store = { month: signal('2026-01'), cycleStartDay: signal(25) };
-    const page = runInInjectionContext(Injector.create({ providers: [
-      { provide: BudgetStore, useValue: store },
-      { provide: ActivatedRoute, useValue: { snapshot: { data: {} } } },
-    ] }), () => new BudgetOverview());
+    const page = runInInjectionContext(
+      Injector.create({
+        providers: [
+          { provide: BudgetStore, useValue: store },
+          { provide: ActivatedRoute, useValue: { snapshot: { data: {} } } },
+        ],
+      }),
+      () => new BudgetOverview(),
+    );
     return { page, store };
   };
   it('opens the native month picker on the first click', () => {
@@ -38,7 +43,12 @@ describe('Budget cycle navigation', () => {
   it('keeps the field usable when a browser refuses to open the picker', () => {
     const { page } = create();
     const focus = vi.fn();
-    page.openCyclePicker({ showPicker: () => { throw new Error('Unsupported'); }, focus } as unknown as HTMLInputElement);
+    page.openCyclePicker({
+      showPicker: () => {
+        throw new Error('Unsupported');
+      },
+      focus,
+    } as unknown as HTMLInputElement);
     expect(focus).toHaveBeenCalledOnce();
   });
   it('confirms numeric values emitted by the amount field, including zero', async () => {
@@ -58,7 +68,10 @@ describe('Budget cycle navigation', () => {
   });
   it('shows validation and save errors and allows retrying', async () => {
     const { page, store } = create();
-    const setSpendingBalance = vi.fn().mockRejectedValueOnce(new Error('Offline')).mockResolvedValue(undefined);
+    const setSpendingBalance = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Offline'))
+      .mockResolvedValue(undefined);
     Object.assign(store, { setSpendingBalance });
     page.balanceInput.set(NaN);
     await page.saveSpendingBalance();
@@ -72,5 +85,4 @@ describe('Budget cycle navigation', () => {
     await page.saveSpendingBalance();
     expect(page.balanceSaved()).toBe(true);
   });
-
 });

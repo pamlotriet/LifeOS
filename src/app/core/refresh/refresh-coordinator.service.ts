@@ -16,7 +16,9 @@ export class RefreshCoordinator {
     if (this.refreshing()) return;
     this.refreshing.set(true);
     try {
-      await Promise.allSettled([...this.handlers].map((handler) => Promise.resolve().then(handler)));
+      await Promise.allSettled(
+        [...this.handlers].map((handler) => Promise.resolve().then(handler)),
+      );
     } finally {
       this.refreshing.set(false);
     }

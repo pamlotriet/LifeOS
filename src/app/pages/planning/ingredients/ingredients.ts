@@ -5,10 +5,7 @@ import { IonContent, IonModal } from '@ionic/angular';
 import { PlanningHeader } from '../components/planning-header/planning-header';
 import { NutritionService } from '../../nutrition/state/nutrition.service';
 import { Food, nutritionLabel, zeroMacros } from '../../nutrition/state/nutrition.model';
-import {
-  normalizeNutrition,
-  scaleNutrition,
-} from '../../nutrition/state/nutrition.calculations';
+import { normalizeNutrition, scaleNutrition } from '../../nutrition/state/nutrition.calculations';
 @Component({
   selector: 'app-ingredients',
   imports: [AppInput, FormsModule, IonContent, IonModal, PlanningHeader],
@@ -68,7 +65,14 @@ export class Ingredients {
     }
   }
   addPortion(): void {
-    if (!this.portionName.trim() || !Number.isFinite(this.portionAmount) || this.portionAmount <= 0) { this.error.set('Enter a portion name and a positive weight or volume.'); return; }
+    if (
+      !this.portionName.trim() ||
+      !Number.isFinite(this.portionAmount) ||
+      this.portionAmount <= 0
+    ) {
+      this.error.set('Enter a portion name and a positive weight or volume.');
+      return;
+    }
     this.error.set('');
     this.food.portions = [
       ...(this.food.portions ?? []),

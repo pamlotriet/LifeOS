@@ -44,7 +44,16 @@ function decimalMin(minimum: number, required = false): ValidatorFn {
 
 @Component({
   selector: 'app-refuel-form',
-  imports: [AppInput, AppButton, IonModal, ReactiveFormsModule, IonIcon, AppSelect, AppDatePicker, FuelLoading],
+  imports: [
+    AppInput,
+    AppButton,
+    IonModal,
+    ReactiveFormsModule,
+    IonIcon,
+    AppSelect,
+    AppDatePicker,
+    FuelLoading,
+  ],
   templateUrl: './refuel-form.html',
 })
 export class RefuelForm {

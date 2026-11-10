@@ -68,7 +68,8 @@
               </div>
               <label class="grid gap-1 text-xs"
                 >Place of purchase
-                <input appInput="field"
+                <input
+                  appInput="field"
                   formControlName="pop"
                   type="text"
                   placeholder="e.g. Shell"
@@ -86,7 +87,8 @@
               </div>
               <label class="grid gap-1 text-xs"
                 >Area / Town
-                <input appInput="field"
+                <input
+                  appInput="field"
                   formControlName="areaTown"
                   type="text"
                   placeholder="e.g. Sandton"
@@ -95,7 +97,8 @@
               </label>
               <label class="grid gap-1 text-xs"
                 >Odometer reading (km)
-                <input appInput="field"
+                <input
+                  appInput="field"
                   formControlName="odometer"
                   type="text"
                   inputmode="decimal"
@@ -105,7 +108,8 @@
               </label>
               <label class="grid gap-1 text-xs"
                 >Quantity refueled (L)
-                <input appInput="field"
+                <input
+                  appInput="field"
                   formControlName="qtyLiters"
                   type="text"
                   inputmode="decimal"
@@ -115,7 +119,8 @@
               </label>
               <label class="grid gap-1 text-xs"
                 >Amount paid (R)
-                <input appInput="field"
+                <input
+                  appInput="field"
                   formControlName="amountPaid"
                   type="text"
                   inputmode="decimal"
@@ -125,7 +130,8 @@
               </label>
               <label class="grid gap-1 text-xs"
                 >Initial range driven (km)
-                <input appInput="field"
+                <input
+                  appInput="field"
                   formControlName="initialRangeKm"
                   type="text"
                   inputmode="decimal"
@@ -167,7 +173,8 @@
             >
               Cancel
             </button>
-            <button appButton="primary"
+            <button
+              appButton="primary"
               type="submit"
               [disabled]="saving() || deleting() || loading()"
               class="font-bold"

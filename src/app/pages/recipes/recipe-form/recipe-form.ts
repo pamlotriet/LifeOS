@@ -1,9 +1,6 @@
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
-import {
-  calculateRecipe,
-  ingredientNutrition,
-} from '../../nutrition/state/nutrition.calculations';
+import { calculateRecipe, ingredientNutrition } from '../../nutrition/state/nutrition.calculations';
 import { NutritionSummary } from '../../../shared/components/nutrition-summary/nutrition-summary';
 import { NutritionService } from '../../nutrition/state/nutrition.service';
 import { NutritionIngredient } from '../../nutrition/state/nutrition.model';
@@ -13,7 +10,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonIcon, IonModal } from '@ionic/angular';
 import { AppSelect, SelectOption } from '../../../shared/components/app-select/app-select';
 import { addIcons } from 'ionicons';
-import { heart, heartOutline, lockClosedOutline, globeOutline, closeOutline, cameraOutline } from 'ionicons/icons';
+import {
+  heart,
+  heartOutline,
+  lockClosedOutline,
+  globeOutline,
+  closeOutline,
+  cameraOutline,
+} from 'ionicons/icons';
 import {
   RECIPE_CATEGORIES,
   RecipeCategory,
@@ -27,19 +31,40 @@ import { pickImage } from '../../../shared/utils/pick-image';
 
 @Component({
   selector: 'app-recipe-form',
-  imports: [AppInput, AppButton, NutritionSummary, IonContent, IonIcon, IonModal, FormsModule, AppSelect],
+  imports: [
+    AppInput,
+    AppButton,
+    NutritionSummary,
+    IonContent,
+    IonIcon,
+    IonModal,
+    FormsModule,
+    AppSelect,
+  ],
   templateUrl: './recipe-form.html',
 })
 export class RecipeForm {
-  readonly icons = { heart, heartOutline, lockClosedOutline, globeOutline, closeOutline, cameraOutline };
+  readonly icons = {
+    heart,
+    heartOutline,
+    lockClosedOutline,
+    globeOutline,
+    closeOutline,
+    cameraOutline,
+  };
   readonly embedded = input(false);
   readonly dismissed = output<void>();
   readonly saved = output<void>();
   readonly modalOpen = signal(true);
-  close(): void { if (!this.saving()) this.modalOpen.set(false); }
+  close(): void {
+    if (!this.saving()) this.modalOpen.set(false);
+  }
   onDismiss(): void {
     if (this.embedded()) this.dismissed.emit();
-    else void this.router.navigateByUrl(this.id ? `/recipes/${this.id}` : '/recipes', { replaceUrl: true });
+    else
+      void this.router.navigateByUrl(this.id ? `/recipes/${this.id}` : '/recipes', {
+        replaceUrl: true,
+      });
   }
   readonly nutrition = inject(NutritionService);
   readonly nutritionIngredients = signal<NutritionIngredient[]>([]);

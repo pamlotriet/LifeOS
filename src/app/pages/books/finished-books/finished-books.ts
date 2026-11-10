@@ -7,7 +7,20 @@ import { AppSkeleton } from '../../../shared/components/app-skeleton/app-skeleto
 import { BookStore } from '../state/book-store';
 import { finishDateParts } from '../finished-books-filter';
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 
 @Component({
   selector: 'app-finished-books',
@@ -20,26 +33,36 @@ export class FinishedBooks {
   readonly selectedYear = signal(String(this.currentYear));
   readonly selectedMonth = signal('all');
   readonly view = signal<'covers' | 'list'>('covers');
-  readonly monthOptions: SelectOption[] = [{ value: 'all', label: 'All months' }, ...MONTHS.map((label, index) => ({ value: String(index + 1), label }))];
+  readonly monthOptions: SelectOption[] = [
+    { value: 'all', label: 'All months' },
+    ...MONTHS.map((label, index) => ({ value: String(index + 1), label })),
+  ];
   readonly yearOptions = computed<SelectOption[]>(() => {
     const years = new Set<number>([this.currentYear]);
     for (const book of this.store.books()) {
       const parts = finishDateParts(book);
       if (parts) years.add(parts.year);
     }
-    return [...years].sort((a, b) => b - a).map((year) => ({ value: String(year), label: String(year) }));
+    return [...years]
+      .sort((a, b) => b - a)
+      .map((year) => ({ value: String(year), label: String(year) }));
   });
   readonly books = computed(() => {
     const year = Number(this.selectedYear());
     const month = this.selectedMonth() === 'all' ? null : Number(this.selectedMonth());
-    return this.store.books().filter((book) => {
-      const parts = finishDateParts(book);
-      return parts?.year === year && (month === null || parts.month === month);
-    }).sort((a, b) => b.finishDate.localeCompare(a.finishDate));
+    return this.store
+      .books()
+      .filter((book) => {
+        const parts = finishDateParts(book);
+        return parts?.year === year && (month === null || parts.month === month);
+      })
+      .sort((a, b) => b.finishDate.localeCompare(a.finishDate));
   });
 
   selectedPeriod(): string {
-    return this.selectedMonth() === 'all' ? this.selectedYear() : `${MONTHS[Number(this.selectedMonth()) - 1]} ${this.selectedYear()}`;
+    return this.selectedMonth() === 'all'
+      ? this.selectedYear()
+      : `${MONTHS[Number(this.selectedMonth()) - 1]} ${this.selectedYear()}`;
   }
 
   formatDate(date: string): string {

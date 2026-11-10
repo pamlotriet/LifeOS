@@ -21,8 +21,24 @@ export interface FirestoreDocument {
 }
 
 export type FirestoreWrite =
-  | { transform: { document: string; fieldTransforms: Array<{ fieldPath: string; removeAllFromArray: { values: FirestoreValue[] } }> } }
-  | { update: FirestoreDocument; updateMask?: { fieldPaths: string[] }; updateTransforms?: Array<{ fieldPath: string; appendMissingElements?: { values: FirestoreValue[] } }>; currentDocument?: { exists?: boolean; updateTime?: string } }
+  | {
+      transform: {
+        document: string;
+        fieldTransforms: Array<{
+          fieldPath: string;
+          removeAllFromArray: { values: FirestoreValue[] };
+        }>;
+      };
+    }
+  | {
+      update: FirestoreDocument;
+      updateMask?: { fieldPaths: string[] };
+      updateTransforms?: Array<{
+        fieldPath: string;
+        appendMissingElements?: { values: FirestoreValue[] };
+      }>;
+      currentDocument?: { exists?: boolean; updateTime?: string };
+    }
   | { delete: string; currentDocument?: { exists?: boolean; updateTime?: string } };
 
 interface FirestoreList {
@@ -30,7 +46,9 @@ interface FirestoreList {
   nextPageToken?: string;
 }
 
-interface FirestoreRunQueryResult { document?: FirestoreDocument; }
+interface FirestoreRunQueryResult {
+  document?: FirestoreDocument;
+}
 
 @Injectable({ providedIn: 'root' })
 export class FirestoreService {
@@ -45,7 +63,9 @@ export class FirestoreService {
     const existing = await this.request(`${this.baseUrl}/users/${encodeURIComponent(uid)}`, token);
     if (existing.ok) return;
     if (existing.status === 403) {
-      throw new Error('Firestore denied access to your profile. Publish the project Firestore rules for the (default) database.');
+      throw new Error(
+        'Firestore denied access to your profile. Publish the project Firestore rules for the (default) database.',
+      );
     }
     if (existing.status !== 404) {
       throw new Error(`Could not check the Firebase user profile (${existing.status}).`);
@@ -109,17 +129,26 @@ export class FirestoreService {
     return document;
   }
 
-  async queryDocuments(collectionId: string, field: string, value: FirestoreValue, token: string): Promise<FirestoreDocument[]> {
+  async queryDocuments(
+    collectionId: string,
+    field: string,
+    value: FirestoreValue,
+    token: string,
+  ): Promise<FirestoreDocument[]> {
     const response = await this.request(`${this.baseUrl}:runQuery`, token, {
       method: 'POST',
-      body: JSON.stringify({ structuredQuery: {
-        from: [{ collectionId }],
-        where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value } },
-        limit: 100,
-      } }),
+      body: JSON.stringify({
+        structuredQuery: {
+          from: [{ collectionId }],
+          where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value } },
+          limit: 100,
+        },
+      }),
     });
     if (!response.ok) throw new Error(`Could not query Firestore documents (${response.status}).`);
-    return ((await response.json()) as FirestoreRunQueryResult[]).flatMap((result) => result.document ? [result.document] : []);
+    return ((await response.json()) as FirestoreRunQueryResult[]).flatMap((result) =>
+      result.document ? [result.document] : [],
+    );
   }
 
   async getDocument(path: string, token: string): Promise<FirestoreDocument> {
@@ -135,9 +164,14 @@ export class FirestoreService {
     return (await response.json()) as FirestoreDocument;
   }
 
-  async updateDocument(path: string, fields: Record<string, FirestoreValue>, token: string): Promise<void> {
+  async updateDocument(
+    path: string,
+    fields: Record<string, FirestoreValue>,
+    token: string,
+  ): Promise<void> {
     const url = new URL(`${this.baseUrl}/${path}`);
-    for (const field of Object.keys(fields)) url.searchParams.append('updateMask.fieldPaths', field);
+    for (const field of Object.keys(fields))
+      url.searchParams.append('updateMask.fieldPaths', field);
     const response = await this.request(url.toString(), token, {
       method: 'PATCH',
       body: JSON.stringify({ fields }),
@@ -181,8 +215,10 @@ export class FirestoreService {
       method: 'POST',
       body: JSON.stringify({ writes }),
     });
-    if (!response.ok) throw new Error(`Could not save Firestore documents together (${response.status}).`);
-    if (notify) this.feedback.success(writes.some(write=>'delete' in write)?'delete':'save');
+    if (!response.ok)
+      throw new Error(`Could not save Firestore documents together (${response.status}).`);
+    if (notify)
+      this.feedback.success(writes.some((write) => 'delete' in write) ? 'delete' : 'save');
   }
 
   documentName(path: string): string {

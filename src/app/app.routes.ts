@@ -16,27 +16,26 @@ export const routes: Routes = [
       { path: 'home', component: Home },
       {
         path: 'stats',
-        loadComponent: () =>
-          import('./pages/statistics/statistics').then((m) => m.Statistics),
+        loadComponent: () => import('./pages/statistics/statistics').then((m) => m.Statistics),
         canActivate: [authGuard],
       },
       {
         path: 'planning/ingredients',
-        loadComponent: () => import('./pages/planning/ingredients/ingredients').then((m) => m.Ingredients),
+        loadComponent: () =>
+          import('./pages/planning/ingredients/ingredients').then((m) => m.Ingredients),
         canActivate: [authGuard],
       },
       {
         path: 'planning',
         pathMatch: 'full',
-        loadComponent: () => import('./pages/planning/planning-meals/planning-meals').then((m) => m.PlanningMeals),
+        loadComponent: () =>
+          import('./pages/planning/planning-meals/planning-meals').then((m) => m.PlanningMeals),
         canActivate: [authGuard],
       },
       {
         path: 'wheel',
         loadComponent: () =>
-          import('./pages/books/reading-wheel/reading-wheel').then(
-            (m) => m.ReadingWheel,
-          ),
+          import('./pages/books/reading-wheel/reading-wheel').then((m) => m.ReadingWheel),
         canActivate: [authGuard],
       },
       { path: 'search', redirectTo: 'wheel' },
@@ -48,7 +47,10 @@ export const routes: Routes = [
 
   {
     path: 'nutrition/profile',
-    loadComponent: () => import('./pages/nutrition/nutrition-profile/nutrition-profile').then((m) => m.NutritionProfile),
+    loadComponent: () =>
+      import('./pages/nutrition/nutrition-profile/nutrition-profile').then(
+        (m) => m.NutritionProfile,
+      ),
     canActivate: [authGuard],
   },
   {
@@ -63,7 +65,8 @@ export const routes: Routes = [
   },
   {
     path: 'budget',
-    loadComponent: () => import('./pages/budget/budget-overview/budget-overview').then((m) => m.BudgetOverview),
+    loadComponent: () =>
+      import('./pages/budget/budget-overview/budget-overview').then((m) => m.BudgetOverview),
     canActivate: [authGuard],
   },
 
@@ -100,67 +103,81 @@ export const routes: Routes = [
       },
       {
         path: 'refuels/add',
-        loadComponent: () => import('./pages/fuel/refuel-form/refuel-form').then((m) => m.RefuelForm),
+        loadComponent: () =>
+          import('./pages/fuel/refuel-form/refuel-form').then((m) => m.RefuelForm),
       },
       {
         path: 'refuels/:vehicleId/:id/edit',
-        loadComponent: () => import('./pages/fuel/refuel-form/refuel-form').then((m) => m.RefuelForm),
+        loadComponent: () =>
+          import('./pages/fuel/refuel-form/refuel-form').then((m) => m.RefuelForm),
       },
     ],
   },
   { path: 'add/car', redirectTo: 'fuel/add-car' },
   {
     path: 'budget/month',
-    loadComponent: () => import('./pages/budget/budget-overview/budget-overview').then((m) => m.BudgetOverview),
+    loadComponent: () =>
+      import('./pages/budget/budget-overview/budget-overview').then((m) => m.BudgetOverview),
     data: { monthly: true },
     canActivate: [authGuard],
   },
   {
     path: 'budget/transactions/add',
     loadComponent: () =>
-      import('./pages/budget/budget-transaction-form/budget-transaction-form').then((m) => m.BudgetTransactionForm),
+      import('./pages/budget/budget-transaction-form/budget-transaction-form').then(
+        (m) => m.BudgetTransactionForm,
+      ),
     canActivate: [authGuard],
   },
   {
     path: 'budget/transactions/:id/edit',
     loadComponent: () =>
-      import('./pages/budget/budget-transaction-form/budget-transaction-form').then((m) => m.BudgetTransactionForm),
+      import('./pages/budget/budget-transaction-form/budget-transaction-form').then(
+        (m) => m.BudgetTransactionForm,
+      ),
     canActivate: [authGuard],
   },
   {
     path: 'budget/planned',
-    loadComponent: () => import('./pages/budget/budget-planned/budget-planned').then((m) => m.BudgetPlanned),
+    loadComponent: () =>
+      import('./pages/budget/budget-planned/budget-planned').then((m) => m.BudgetPlanned),
     canActivate: [authGuard],
   },
   {
     path: 'budget/comparison',
-    loadComponent: () => import('./pages/budget/budget-comparison/budget-comparison').then((m) => m.BudgetComparison),
+    loadComponent: () =>
+      import('./pages/budget/budget-comparison/budget-comparison').then((m) => m.BudgetComparison),
     canActivate: [authGuard],
   },
   {
     path: 'budget/categories',
-    loadComponent: () => import('./pages/budget/budget-categories/budget-categories').then((m) => m.BudgetCategories),
+    loadComponent: () =>
+      import('./pages/budget/budget-categories/budget-categories').then((m) => m.BudgetCategories),
     canActivate: [authGuard],
   },
   {
     path: 'budget/debts',
-    loadComponent: () => import('./pages/budget/budget-debts/budget-debts').then((m) => m.BudgetDebts),
+    loadComponent: () =>
+      import('./pages/budget/budget-debts/budget-debts').then((m) => m.BudgetDebts),
     canActivate: [authGuard],
   },
   {
     path: 'budget/insights',
-    loadComponent: () => import('./pages/budget/budget-insights/budget-insights').then((m) => m.BudgetInsights),
+    loadComponent: () =>
+      import('./pages/budget/budget-insights/budget-insights').then((m) => m.BudgetInsights),
     canActivate: [authGuard],
   },
   { path: 'vehicles', redirectTo: 'fuel/vehicles' },
   {
     path: 'books',
-    loadComponent: () => import('./pages/books/books-library/books-library').then((m) => m.BooksLibrary),
+    loadComponent: () =>
+      import('./pages/books/books-library/books-library').then((m) => m.BooksLibrary),
     canActivate: [authGuard],
   },
   {
     path: 'books/transfer',
-    loadComponent: () => import('./pages/books/book-transfer/book-transfer').then((m) => m.BookTransfer),
+    loadComponent: () =>
+      import('./pages/books/book-transfer/book-transfer').then((m) => m.BookTransfer),
     canActivate: [authGuard],
   },
   {
@@ -170,7 +187,8 @@ export const routes: Routes = [
   },
   {
     path: 'books/finished',
-    loadComponent: () => import('./pages/books/finished-books/finished-books').then((m) => m.FinishedBooks),
+    loadComponent: () =>
+      import('./pages/books/finished-books/finished-books').then((m) => m.FinishedBooks),
     canActivate: [authGuard],
   },
   {
@@ -201,17 +219,20 @@ export const routes: Routes = [
   },
   {
     path: 'recipes/add',
-    loadComponent: () => import('./pages/recipes/recipe-form/recipe-form').then((m) => m.RecipeForm),
+    loadComponent: () =>
+      import('./pages/recipes/recipe-form/recipe-form').then((m) => m.RecipeForm),
     canActivate: [authGuard],
   },
   {
     path: 'recipes/:id/edit',
-    loadComponent: () => import('./pages/recipes/recipe-form/recipe-form').then((m) => m.RecipeForm),
+    loadComponent: () =>
+      import('./pages/recipes/recipe-form/recipe-form').then((m) => m.RecipeForm),
     canActivate: [authGuard],
   },
   {
     path: 'recipes/:id',
-    loadComponent: () => import('./pages/recipes/recipe-detail/recipe-detail').then((m) => m.RecipeDetail),
+    loadComponent: () =>
+      import('./pages/recipes/recipe-detail/recipe-detail').then((m) => m.RecipeDetail),
     canActivate: [authGuard],
   },
 
@@ -223,23 +244,29 @@ export const routes: Routes = [
   {
     path: 'passwords/settings',
     loadComponent: () =>
-      import('./pages/passwords/password-settings/password-settings').then((m) => m.PasswordSettings),
+      import('./pages/passwords/password-settings/password-settings').then(
+        (m) => m.PasswordSettings,
+      ),
     canActivate: [authGuard],
   },
   {
     path: 'settings',
     loadComponent: () =>
-      import('./pages/passwords/password-settings/password-settings').then((m) => m.PasswordSettings),
+      import('./pages/passwords/password-settings/password-settings').then(
+        (m) => m.PasswordSettings,
+      ),
     canActivate: [authGuard],
   },
   {
     path: 'passwords/add',
-    loadComponent: () => import('./pages/passwords/password-form/password-form').then((m) => m.PasswordForm),
+    loadComponent: () =>
+      import('./pages/passwords/password-form/password-form').then((m) => m.PasswordForm),
     canActivate: [authGuard],
   },
   {
     path: 'passwords/:id/edit',
-    loadComponent: () => import('./pages/passwords/password-form/password-form').then((m) => m.PasswordForm),
+    loadComponent: () =>
+      import('./pages/passwords/password-form/password-form').then((m) => m.PasswordForm),
     canActivate: [authGuard],
   },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },

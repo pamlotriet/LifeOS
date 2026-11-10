@@ -76,8 +76,7 @@ describe('Attached five-day gym plan', () => {
     const remaining = buildWeeklyPlan(first.exercises, saved);
     expect(remaining.exercises).toEqual([]);
     expect(remaining.entries).toHaveLength(84);
-    expect(remaining.entries.every(e => !saved.some(s => s.id === e.id))).toBe(true);
+    expect(remaining.entries.every((e) => !saved.some((s) => s.id === e.id))).toBe(true);
     expect(buildWeeklyPlan(first.exercises, [...saved, ...remaining.entries]).entries).toEqual([]);
   });
-
 });

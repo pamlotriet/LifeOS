@@ -2,7 +2,10 @@ import { ThemeService } from './theme.service';
 
 describe('ThemeService', () => {
   beforeEach(() => localStorage.clear());
-  afterEach(() => {localStorage.clear();document.documentElement.classList.remove('dark');});
+  afterEach(() => {
+    localStorage.clear();
+    document.documentElement.classList.remove('dark');
+  });
 
   it('migrates the old forced-dark default to the light palette once', () => {
     localStorage.setItem('lifeos.theme', 'dark');
@@ -26,4 +29,3 @@ describe('ThemeService', () => {
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 });
-

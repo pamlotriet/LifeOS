@@ -5,7 +5,10 @@ import { AppDatePicker } from './app-date-picker';
 
 describe('AppDatePicker', () => {
   it('uses local calendar dates without changing the selected day for time zones', () => {
-    const picker = runInInjectionContext(Injector.create({ providers: [] }), () => new AppDatePicker());
+    const picker = runInInjectionContext(
+      Injector.create({ providers: [] }),
+      () => new AppDatePicker(),
+    );
     const changed = vi.fn();
     picker.registerOnChange(changed);
     picker.selectYear(2026);

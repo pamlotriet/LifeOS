@@ -14,9 +14,30 @@
   line-height: 1.5;
   box-shadow: none !important;
 }
-:host::placeholder { color: var(--text-secondary); opacity: .8; }
-:host:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
-:host:disabled { opacity: .55; cursor: not-allowed; }
-:host[aria-invalid='true'], :host.ng-invalid.ng-touched { border-color: var(--destructive) !important; }
-:host(textarea) { min-height: 100px !important; resize: vertical; }
-:host(.inline-input) { min-height: 32px !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; }
+:host::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+:host:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+:host:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+:host[aria-invalid='true'],
+:host.ng-invalid.ng-touched {
+  border-color: var(--destructive) !important;
+}
+:host(textarea) {
+  min-height: 100px !important;
+  resize: vertical;
+}
+:host(.inline-input) {
+  min-height: 32px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}

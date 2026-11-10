@@ -5,7 +5,7 @@ import { budgetSnapshot } from '../budget-snapshot';
 import { BackButton } from '../../../shared/components/back-button/back-button';
 import { BudgetNav } from '../components/budget-nav/budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms'
+import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { BudgetStore } from '../state/budget.store';
 import {

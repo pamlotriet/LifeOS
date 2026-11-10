@@ -17,8 +17,25 @@
   cursor: pointer;
   box-shadow: none !important;
 }
-:host(.secondary-action) { border-color: var(--border) !important; background: var(--card) !important; color: var(--foreground) !important; }
-:host(.danger-action) { background: var(--destructive) !important; color: white !important; }
-:host:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
-:host:disabled { opacity: .55; cursor: not-allowed; }
-@media(hover:hover) { :host:hover:not(:disabled) { filter: brightness(.95); } }
+:host(.secondary-action) {
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+}
+:host(.danger-action) {
+  background: var(--destructive) !important;
+  color: white !important;
+}
+:host:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+:host:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+@media (hover: hover) {
+  :host:hover:not(:disabled) {
+    filter: brightness(0.95);
+  }
+}

@@ -17,13 +17,15 @@ export class AppUpdates {
 
   constructor() {
     if (!this.enabled) return;
-    this.sw.versionUpdates.pipe(takeUntilDestroyed()).subscribe(event => {
+    this.sw.versionUpdates.pipe(takeUntilDestroyed()).subscribe((event) => {
       if (event.type === 'VERSION_READY') this.available.set(true);
-      if (event.type === 'VERSION_INSTALLATION_FAILED') this.message.set('Update download failed. Try again when online.');
+      if (event.type === 'VERSION_INSTALLATION_FAILED')
+        this.message.set('Update download failed. Try again when online.');
     });
     this.sw.unrecoverable.pipe(takeUntilDestroyed()).subscribe(() => this.available.set(true));
     const resume = () => {
-      if (this.document.visibilityState === 'visible' && Date.now() - this.lastCheck > 60000) void this.check();
+      if (this.document.visibilityState === 'visible' && Date.now() - this.lastCheck > 60000)
+        void this.check();
     };
     this.document.addEventListener('visibilitychange', resume);
     this.document.defaultView?.addEventListener('online', resume);
@@ -31,18 +33,29 @@ export class AppUpdates {
       this.document.removeEventListener('visibilitychange', resume);
       this.document.defaultView?.removeEventListener('online', resume);
     });
-    inject(ApplicationRef).isStable.pipe(filter(Boolean), take(1), takeUntilDestroyed()).subscribe(() => void this.check());
+    inject(ApplicationRef)
+      .isStable.pipe(filter(Boolean), take(1), takeUntilDestroyed())
+      .subscribe(() => void this.check());
   }
 
   async check(): Promise<void> {
     if (!this.enabled || this.checking()) return;
-    this.checking.set(true); this.message.set(''); this.lastCheck = Date.now();
+    this.checking.set(true);
+    this.message.set('');
+    this.lastCheck = Date.now();
     try {
       if (await this.sw.checkForUpdate()) this.available.set(true);
-      this.message.set(this.available() ? 'An update is ready.' : 'You’re using the latest version.');
-    } catch { this.message.set('Could not check for updates. Check your connection and try again.'); }
-    finally { this.checking.set(false); }
+      this.message.set(
+        this.available() ? 'An update is ready.' : 'You’re using the latest version.',
+      );
+    } catch {
+      this.message.set('Could not check for updates. Check your connection and try again.');
+    } finally {
+      this.checking.set(false);
+    }
   }
 
-  refresh(): void { this.document.defaultView?.location.reload(); }
+  refresh(): void {
+    this.document.defaultView?.location.reload();
+  }
 }

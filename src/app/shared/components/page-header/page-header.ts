@@ -9,7 +9,9 @@ import { Component, inject, input } from '@angular/core';
   template: `
     <div class="relative z-10 flex h-[72px] items-center px-4">
       <app-back-button [fallback]="backUrl()" />
-      <h1 class="ml-4 text-xl font-semibold tracking-tight text-[var(--foreground)]">{{ title() }}</h1>
+      <h1 class="ml-4 text-xl font-semibold tracking-tight text-[var(--foreground)]">
+        {{ title() }}
+      </h1>
     </div>
     <ng-content></ng-content>
   `,

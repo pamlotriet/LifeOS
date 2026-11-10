@@ -10,39 +10,70 @@ describe('Reading wheel selections', () => {
   const books = signal<BookRecord[]>([]);
   const loading = signal(false);
   const setWheelSelected = vi.fn();
-  const book = (id: string, selected: boolean, status = 'Not Started') => ({ id, title: id, author: 'Author', category: 'Fiction', status, wheelSelected: selected } as BookRecord);
+  const book = (id: string, selected: boolean, status = 'Not Started') =>
+    ({
+      id,
+      title: id,
+      author: 'Author',
+      category: 'Fiction',
+      status,
+      wheelSelected: selected,
+    }) as BookRecord;
 
   beforeEach(async () => {
-    books.set([book('one', true), book('two', true), book('three', false), book('finished', true, 'Finished')]);
+    books.set([
+      book('one', true),
+      book('two', true),
+      book('three', false),
+      book('finished', true, 'Finished'),
+    ]);
     loading.set(false);
     setWheelSelected.mockReset().mockImplementation(async (id: string, selected: boolean) => {
-      books.update(items => items.map(item => item.id === id ? { ...item, wheelSelected: selected } : item));
+      books.update((items) =>
+        items.map((item) => (item.id === id ? { ...item, wheelSelected: selected } : item)),
+      );
     });
-    await TestBed.configureTestingModule({ imports: [ReadingWheel], providers: [provideRouter([]),
-      { provide: BookStore, useValue: { books, sortedBooks: books, loading, error: signal(''), setWheelSelected } },
-    ] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [ReadingWheel],
+      providers: [
+        provideRouter([]),
+        {
+          provide: BookStore,
+          useValue: { books, sortedBooks: books, loading, error: signal(''), setWheelSelected },
+        },
+      ],
+    }).compileComponents();
   });
 
   it('deselects every selected eligible book and clears the wheel', async () => {
     const fixture = TestBed.createComponent(ReadingWheel);
     await fixture.whenStable();
     await fixture.componentInstance.deselectAll();
-    expect(setWheelSelected.mock.calls).toEqual([['one', false], ['two', false]]);
+    expect(setWheelSelected.mock.calls).toEqual([
+      ['one', false],
+      ['two', false],
+    ]);
     expect(fixture.componentInstance.selected()).toEqual([]);
     expect(fixture.componentInstance.spinBooks()).toEqual([]);
-    expect(books().find(item => item.id === 'finished')?.wheelSelected).toBe(true);
+    expect(books().find((item) => item.id === 'finished')?.wheelSelected).toBe(true);
   });
 
   it('shows saving feedback and prevents another action while adding a book', async () => {
     let finish!: () => void;
-    setWheelSelected.mockReturnValue(new Promise<void>(resolve => { finish = resolve; }));
+    setWheelSelected.mockReturnValue(
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      }),
+    );
     const fixture = TestBed.createComponent(ReadingWheel);
     await fixture.whenStable();
     const page = fixture.componentInstance;
     page.showManage();
     const pending = page.setSelected(books()[2], true);
     await fixture.whenStable();
-    expect(fixture.nativeElement.querySelector('.wheel-saving')?.textContent).toContain('Adding three');
+    expect(fixture.nativeElement.querySelector('.wheel-saving')?.textContent).toContain(
+      'Adding three',
+    );
     page.showWheel();
     expect(page.mode()).toBe('manage');
     await page.deselectAll();

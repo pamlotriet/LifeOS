@@ -18,10 +18,23 @@ describe('Statistics', () => {
     reload.mockClear();
     await TestBed.configureTestingModule({
       imports: [Statistics],
-      providers: [provideRouter([]), { provide: StatsService, useValue: {
-        loading, error, reload, ensureFuelLoaded: vi.fn(),
-        dashboard: () => ({ empty: true, emptyTitle: 'No records yet', emptyMessage: 'Add records to see your progress.' }),
-      } }],
+      providers: [
+        provideRouter([]),
+        {
+          provide: StatsService,
+          useValue: {
+            loading,
+            error,
+            reload,
+            ensureFuelLoaded: vi.fn(),
+            dashboard: () => ({
+              empty: true,
+              emptyTitle: 'No records yet',
+              emptyMessage: 'Add records to see your progress.',
+            }),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Statistics);
@@ -38,19 +51,25 @@ describe('Statistics', () => {
   it('matches skeletons to the selected module without rendering charts', async () => {
     const page = fixture.nativeElement as HTMLElement;
     expect(page.querySelectorAll('.loading-kpis .metric')).toHaveLength(6);
-    expect(page.querySelector('[role="status"]')?.textContent).toContain('Loading Books statistics');
+    expect(page.querySelector('[role="status"]')?.textContent).toContain(
+      'Loading Books statistics',
+    );
     expect(page.querySelector('app-chart')).toBeNull();
     component.choose('budget');
     await fixture.whenStable();
     expect(page.querySelectorAll('.loading-kpis .metric')).toHaveLength(4);
-    expect(page.querySelector('[role="status"]')?.textContent).toContain('Loading Budget statistics');
+    expect(page.querySelector('[role="status"]')?.textContent).toContain(
+      'Loading Budget statistics',
+    );
   });
 
   it('replaces skeletons with the empty state once loading completes', async () => {
     loading.set(false);
     await fixture.whenStable();
     expect(fixture.nativeElement.querySelector('app-statistics-skeleton')).toBeNull();
-    expect(fixture.nativeElement.querySelector('.stats-empty')?.textContent).toContain('No records yet');
+    expect(fixture.nativeElement.querySelector('.stats-empty')?.textContent).toContain(
+      'No records yet',
+    );
   });
 
   it('shows an actionable error after loading fails', async () => {
@@ -59,7 +78,9 @@ describe('Statistics', () => {
     await fixture.whenStable();
     const page = fixture.nativeElement as HTMLElement;
     expect(page.querySelector('app-statistics-skeleton')).toBeNull();
-    expect(page.querySelector('[role="alert"]')?.textContent).toContain('Could not load statistics');
+    expect(page.querySelector('[role="alert"]')?.textContent).toContain(
+      'Could not load statistics',
+    );
     page.querySelector<HTMLButtonElement>('[role="alert"] button')!.click();
     expect(reload).toHaveBeenCalledWith('books');
   });

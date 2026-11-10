@@ -21,16 +21,12 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { AppChart } from '../../shared/components/app-chart/app-chart';
 import { StatisticsSkeleton } from './components/statistics-skeleton/statistics-skeleton';
-import {
-  StatsModule,
-  StatsRange,
-  StatsService,
-  STATS_MODULES,
-} from './state/stats.service';
+import { StatsModule, StatsRange, StatsService, STATS_MODULES } from './state/stats.service';
 
 @Component({
   selector: 'app-statistics',
-  imports: [AppInput, 
+  imports: [
+    AppInput,
     FormsModule,
     IonContent,
     IonIcon,

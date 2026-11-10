@@ -14,21 +14,33 @@ import { calculateTargets, normalizeProfile } from '../state/nutrition.model';
   >
     <h2 class="font-bold">Nutrition profile & daily targets</h2>
     <p class="text-sm">
-      Daily targets are calculated from your profile and deficit. Calculated fields are read-only. Choose manual entry for any target you want to set yourself. Your details are private to your account.
+      Daily targets are calculated from your profile and deficit. Calculated fields are read-only.
+      Choose manual entry for any target you want to set yourself. Your details are private to your
+      account.
     </p>
     @if (store.loading()) {
       <p>Loading nutrition settings...</p>
     }
     @if (store.error()) {
-      <div class="settings-error" role="alert"><p>{{ store.error() }}</p><button type="button" class="retry-button" (click)="store.reload()">Retry</button></div>
+      <div class="settings-error" role="alert">
+        <p>{{ store.error() }}</p>
+        <button type="button" class="retry-button" (click)="store.reload()">Retry</button>
+      </div>
     }
     <form (ngSubmit)="save()" class="space-y-3">
       <label class="block"
-        >Name<input appInput="field" class="lifeos-select" name="nutritionName" [value]="auth.displayName()" readonly placeholder="No name on your account"
+        >Name<input
+          appInput="field"
+          class="lifeos-select"
+          name="nutritionName"
+          [value]="auth.displayName()"
+          readonly
+          placeholder="No name on your account"
       /></label>
       <div class="settings-fields">
         <label
-          >Age (years)<input appInput="field"
+          >Age (years)<input
+            appInput="field"
             class="lifeos-select"
             type="number"
             min="18"
@@ -36,7 +48,8 @@ import { calculateTargets, normalizeProfile } from '../state/nutrition.model';
             [(ngModel)]="model.age"
         /></label>
         <label
-          >Height (cm)<input appInput="field"
+          >Height (cm)<input
+            appInput="field"
             class="lifeos-select"
             type="number"
             min="1"
@@ -45,7 +58,8 @@ import { calculateTargets, normalizeProfile } from '../state/nutrition.model';
             [(ngModel)]="model.height"
         /></label>
         <label
-          >Weight (kg)<input appInput="field"
+          >Weight (kg)<input
+            appInput="field"
             class="lifeos-select"
             type="number"
             min="1"
@@ -54,7 +68,8 @@ import { calculateTargets, normalizeProfile } from '../state/nutrition.model';
             [(ngModel)]="model.weight"
         /></label>
         <label
-          >Goal weight (kg)<input appInput="field"
+          >Goal weight (kg)<input
+            appInput="field"
             class="lifeos-select"
             type="number"
             min="1"
@@ -82,21 +97,34 @@ import { calculateTargets, normalizeProfile } from '../state/nutrition.model';
             <option value="active">Active (6?7 days/week)</option>
           </select></label
         >
-        <label>Daily calorie deficit (kcal)
-          <input appInput="field" class="lifeos-select" type="number" min="0" step="1" name="calorieDeficit"
-            [(ngModel)]="model.calorieDeficit" placeholder="Auto from goal weight" />
-          <small>Subtracts from estimated maintenance calories. Enter 0 for maintenance; leave blank to use goal weight. A manual calorie target takes priority.</small>
+        <label
+          >Daily calorie deficit (kcal)
+          <input
+            appInput="field"
+            class="lifeos-select"
+            type="number"
+            min="0"
+            step="1"
+            name="calorieDeficit"
+            [(ngModel)]="model.calorieDeficit"
+            placeholder="Auto from goal weight"
+          />
+          <small
+            >Subtracts from estimated maintenance calories. Enter 0 for maintenance; leave blank to
+            use goal weight. A manual calorie target takes priority.</small
+          >
         </label>
         @for (key of keys; track key) {
           <label class="capitalize"
             >Daily {{ key }} ({{ key === 'calories' ? 'kcal' : 'g' }})
-            <input appInput="field"
+            <input
+              appInput="field"
               class="lifeos-select"
               type="number"
               min="0"
               step="any"
               [name]="'target' + key"
-                [attr.aria-label]="'Daily ' + key"
+              [attr.aria-label]="'Daily ' + key"
               [readonly]="model.targetOverrides![key] == null"
               [(ngModel)]="model.targetOverrides![key]"
               [placeholder]="preview() ? 'Auto: ' + preview()![key] : 'Auto'"
@@ -107,7 +135,14 @@ import { calculateTargets, normalizeProfile } from '../state/nutrition.model';
                 {{ targets[key] }} {{ key === 'calories' ? 'kcal' : 'g' }}</small
               >
             }
-            <button type="button" class="target-mode" [attr.aria-label]="(model.targetOverrides![key] == null ? 'Set manual ' : 'Calculate ') + key" (click)="toggleTarget(key)">
+            <button
+              type="button"
+              class="target-mode"
+              [attr.aria-label]="
+                (model.targetOverrides![key] == null ? 'Set manual ' : 'Calculate ') + key
+              "
+              (click)="toggleTarget(key)"
+            >
               {{ model.targetOverrides![key] == null ? 'Set manually' : 'Use calculated target' }}
             </button>
           </label>
@@ -126,11 +161,12 @@ import { calculateTargets, normalizeProfile } from '../state/nutrition.model';
           >Mifflin-St Jeor equation</a
         >
         and your activity level. A lower or higher goal weight adjusts estimated maintenance
-        calories by 10% when no deficit is entered. A custom deficit replaces that adjustment. Automatic macros split calorie energy into 25% protein, 45% carbs and 30%
-        fat; manual macros leave the remaining calories for automatic fields. These are starting
-        estimates for adults.
+        calories by 10% when no deficit is entered. A custom deficit replaces that adjustment.
+        Automatic macros split calorie energy into 25% protein, 45% carbs and 30% fat; manual macros
+        leave the remaining calories for automatic fields. These are starting estimates for adults.
       </p>
-      <button appButton="primary"
+      <button
+        appButton="primary"
         type="submit"
         class="primary-button nutrition-save"
         [disabled]="saving() || store.loading() || !!store.error() || !!calculationError()"
@@ -155,7 +191,7 @@ export class NutritionSettings {
       this.model = normalizeProfile(structuredClone(this.store.profile()));
     });
   }
-  toggleTarget(key: typeof this.keys[number]): void {
+  toggleTarget(key: (typeof this.keys)[number]): void {
     const overrides = this.model.targetOverrides!;
     overrides[key] = overrides[key] == null ? (this.preview()?.[key] ?? 0) : null;
   }
@@ -180,7 +216,6 @@ export class NutritionSettings {
     this.message.set('');
     try {
       await this.store.saveProfile({ ...this.model, name: this.auth.displayName() });
-
     } catch (e) {
       this.message.set(e instanceof Error ? e.message : 'Could not save settings.');
     } finally {

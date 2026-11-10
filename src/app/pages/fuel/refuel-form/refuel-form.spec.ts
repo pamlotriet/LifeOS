@@ -20,15 +20,27 @@ describe('RefuelForm', () => {
     refuelsLoading.set(false);
     await TestBed.configureTestingModule({
       imports: [RefuelForm],
-      providers: [provideRouter([]), { provide: VehicleStore, useValue: { loading: vehiclesLoading } }, { provide: RefuelStore, useValue: {
-        selectedVehicleId,
-        vehicleOptions: signal([{ id: 'car-1', name: 'Suzuki Swift' }]),
-        entries: signal([]),
-        loading: refuelsLoading,
-        save,
-        selectVehicle: vi.fn(),
-      } }],
-    }).overrideComponent(RefuelForm, { remove: { imports: [IonModal] }, add: { imports: [FuelModalStub] } }).compileComponents();
+      providers: [
+        provideRouter([]),
+        { provide: VehicleStore, useValue: { loading: vehiclesLoading } },
+        {
+          provide: RefuelStore,
+          useValue: {
+            selectedVehicleId,
+            vehicleOptions: signal([{ id: 'car-1', name: 'Suzuki Swift' }]),
+            entries: signal([]),
+            loading: refuelsLoading,
+            save,
+            selectVehicle: vi.fn(),
+          },
+        },
+      ],
+    })
+      .overrideComponent(RefuelForm, {
+        remove: { imports: [IonModal] },
+        add: { imports: [FuelModalStub] },
+      })
+      .compileComponents();
     fixture = TestBed.createComponent(RefuelForm);
     await fixture.whenStable();
   });
@@ -59,25 +71,48 @@ describe('RefuelForm', () => {
   it('saves a first refuel with its manual range', async () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     fixture.componentInstance.form.patchValue({
-      dop: '2026-09-22', pop: 'Shell', fuelType: 'Petrol', areaTown: 'Sandton',
-      odometer: 13600, qtyLiters: 40, amountPaid: 900, initialRangeKm: 600,
+      dop: '2026-09-22',
+      pop: 'Shell',
+      fuelType: 'Petrol',
+      areaTown: 'Sandton',
+      odometer: 13600,
+      qtyLiters: 40,
+      amountPaid: 900,
+      initialRangeKm: 600,
     });
     await fixture.componentInstance.submit();
-    expect(save).toHaveBeenCalledWith('car-1', expect.objectContaining({ qtyLiters: 40, initialRangeKm: 600 }), undefined);
-    expect(navigate).toHaveBeenCalledWith('/fuel/history', { replaceUrl:true });
+    expect(save).toHaveBeenCalledWith(
+      'car-1',
+      expect.objectContaining({ qtyLiters: 40, initialRangeKm: 600 }),
+      undefined,
+    );
+    expect(navigate).toHaveBeenCalledWith('/fuel/history', { replaceUrl: true });
   });
 
   it('accepts decimal commas and saves numeric values', async () => {
     vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     fixture.componentInstance.form.patchValue({
-      dop: '2026-09-22', pop: 'Shell', fuelType: 'Petrol', areaTown: 'Sandton',
-      odometer: '13600,5', qtyLiters: '24,54', amountPaid: '600,25', initialRangeKm: '510,2',
+      dop: '2026-09-22',
+      pop: 'Shell',
+      fuelType: 'Petrol',
+      areaTown: 'Sandton',
+      odometer: '13600,5',
+      qtyLiters: '24,54',
+      amountPaid: '600,25',
+      initialRangeKm: '510,2',
     });
 
     await fixture.componentInstance.submit();
 
-    expect(save).toHaveBeenCalledWith('car-1', expect.objectContaining({
-      odometer: 13600.5, qtyLiters: 24.54, amountPaid: 600.25, initialRangeKm: 510.2,
-    }), undefined);
+    expect(save).toHaveBeenCalledWith(
+      'car-1',
+      expect.objectContaining({
+        odometer: 13600.5,
+        qtyLiters: 24.54,
+        amountPaid: 600.25,
+        initialRangeKm: 510.2,
+      }),
+      undefined,
+    );
   });
 });
