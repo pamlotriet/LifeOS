@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { WriteFeedback } from './core/firebase/write-feedback.service';
 import { DOCUMENT } from '@angular/common';
 import { AppNavigation } from './core/navigation/app-navigation.service';
@@ -10,7 +11,7 @@ import { ThemeService } from './core/theme/theme.service';
 import { ClearZeroOnFocus } from './shared/directives/clear-zero-on-focus';
 
 @Component({
-  imports: [IonApp, IonRouterOutlet, ClearZeroOnFocus],
+  imports: [TranslatePipe, IonApp, IonRouterOutlet, ClearZeroOnFocus],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

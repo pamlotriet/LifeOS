@@ -1,11 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
+import { inject, Component, Input } from '@angular/core';
 import { BudgetCategory, BudgetTransaction, money, summary } from '../../state/budget.model';
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-budget-summary',
-  template: `<div class="budget-kpis" aria-label="Recorded budget figures">
+  template: `<div class="budget-kpis" [attr.aria-label]="'Recorded budget figures' | translate">
     @for (card of cards(); track card.label) {
       <article [class.balance-kpi]="card.balance">
-        <span>{{ card.label }}</span
+        <span>{{ card.label | translate }}</span
         ><strong [class.deficit]="card.balance && card.amount < 0">{{ money(card.amount) }}</strong
         ><small>{{ card.note }}</small>
       </article>
@@ -68,6 +71,8 @@ import { BudgetCategory, BudgetTransaction, money, summary } from '../../state/b
   `,
 })
 export class BudgetSummary {
+  private readonly i18n = inject(TranslateService);
+
   @Input() transactions: BudgetTransaction[] = [];
   @Input() categories: BudgetCategory[] = [];
   readonly money = money;
@@ -83,7 +88,9 @@ export class BudgetSummary {
       {
         label: 'Actual spending',
         amount: v.expenses,
-        note: `Includes ${money(v.bills)} bills; includes debt payments`,
+        note: this.i18n.instant('Includes {{p0}} bills; includes debt payments', {
+          p0: money(v.bills),
+        }),
         balance: false,
       },
       {

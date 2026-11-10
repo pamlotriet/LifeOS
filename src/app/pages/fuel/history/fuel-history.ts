@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
@@ -8,7 +9,7 @@ import { AppSelect } from '../../../shared/components/app-select/app-select';
 import { AppDatePicker } from '../../../shared/components/app-date-picker/app-date-picker';
 
 @Component({
-  imports: [IonIcon, RouterLink, AppSelect, AppDatePicker, FuelLoading],
+  imports: [TranslatePipe, IonIcon, RouterLink, AppSelect, AppDatePicker, FuelLoading],
   selector: 'app-fuel-history',
   styleUrl: './fuel-history.css',
   templateUrl: './fuel-history.html',

@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, inject, Input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -8,7 +9,7 @@ import { fuelAnalytics } from '../fuel-analytics';
 import { FuelLoading } from '../components/fuel-loading/fuel-loading';
 @Component({
   selector: 'app-fuel-dashboard',
-  imports: [FormsModule, RouterLink, FuelChart, FuelLoading],
+  imports: [TranslatePipe, FormsModule, RouterLink, FuelChart, FuelLoading],
   templateUrl: './fuel-dashboard.html',
   styleUrl: './fuel-dashboard.css',
 })

@@ -1,3 +1,4 @@
+import { TranslateService } from '@ngx-translate/core';
 import { BookBackup, createBookBackup, parseBookBackup, planBookImport } from './book-transfer';
 import { FirestoreWrite } from '../../../core/firebase/firestore.service';
 import { inject, Injectable } from '@angular/core';
@@ -26,6 +27,8 @@ const strings = (values: string[]): FirestoreValue => ({
 
 @Injectable({ providedIn: 'root' })
 export class BookService {
+  private readonly i18n = inject(TranslateService);
+
   private readonly auth = inject(AuthService);
   private readonly firestore = inject(FirestoreService);
   private readonly covers = inject(OpenLibraryCoverService);
@@ -107,7 +110,10 @@ export class BookService {
       }
     } catch (error) {
       throw new Error(
-        `Import stopped after saving ${saved} of ${plan.books.length} books. Saved records are kept; retrying merges missing information into existing books without duplicating them. ${error instanceof Error ? error.message : ''}`,
+        this.i18n.instant(
+          'Import stopped after saving {{p0}} of {{p1}} books. Saved records are kept; retrying merges missing information into existing books without duplicating them. {{p2}}',
+          { p0: saved, p1: plan.books.length, p2: error instanceof Error ? error.message : '' },
+        ),
       );
     }
     return { added: plan.added, updated: plan.updated, skipped: plan.skipped };

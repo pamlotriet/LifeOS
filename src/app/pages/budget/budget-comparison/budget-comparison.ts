@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { AppMonthPicker } from '../../../shared/components/app-month-picker/app-month-picker';
 import { budgetSnapshot } from '../budget-snapshot';
@@ -18,7 +19,16 @@ import { compareBudgetCategories } from './budget-comparison.model';
 
 @Component({
   selector: 'app-budget-comparison',
-  imports: [AppInput, AppMonthPicker, BackButton, FormsModule, RouterLink, IonContent, BudgetNav],
+  imports: [
+    TranslatePipe,
+    AppInput,
+    AppMonthPicker,
+    BackButton,
+    FormsModule,
+    RouterLink,
+    IonContent,
+    BudgetNav,
+  ],
   templateUrl: './budget-comparison.html',
   styleUrls: ['../budget.css', '../budget-layout.css', './budget-comparison.css'],
 })

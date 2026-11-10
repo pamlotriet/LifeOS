@@ -12,7 +12,7 @@
           aria-hidden="true"
         >
           <path d="m12 5-7 7 7 7M5 12h14" /></svg
-        >LifeOS</a
+        >{{ 'LifeOS' | translate }}</a
       ><span
         ><svg
           viewBox="0 0 24 24"
@@ -24,14 +24,18 @@
           aria-hidden="true"
         >
           <path d="M12 5v16M12 5C8 2 4 3 2 4v15c4-2 7-1 10 2 3-3 6-4 10-2V4c-3-1-7-2-10 1Z" /></svg
-        >Reading space</span
+        >{{ 'Reading space' | translate }}</span
       >
     </div>
     <header class="tags-hero">
       <div>
-        <p class="tags-eyebrow">YOUR LIBRARY, YOUR LANGUAGE</p>
-        <h1>Book <span>tags</span></h1>
-        <p class="tags-subtitle">Stories have a genre. Reading has a feeling.</p>
+        <p class="tags-eyebrow">{{ 'YOUR LIBRARY, YOUR LANGUAGE' | translate }}</p>
+        <h1>
+          {{ 'Book' | translate }} <span>{{ 'tags' | translate }}</span>
+        </h1>
+        <p class="tags-subtitle">
+          {{ 'Stories have a genre. Reading has a feeling.' | translate }}
+        </p>
       </div>
       <button
         type="button"
@@ -49,11 +53,11 @@
           aria-hidden="true"
         >
           <path d="M12 5v14M5 12h14" /></svg
-        >New tag
+        >{{ 'New tag' | translate }}
       </button>
     </header>
     <div class="tags-navigation">
-      <nav class="tag-tabs" aria-label="Tag type">
+      <nav class="tag-tabs" [attr.aria-label]="'Tag type' | translate">
         <button
           type="button"
           [class.active]="type() === 'mood'"
@@ -70,7 +74,7 @@
             aria-hidden="true"
           >
             <path d="M20 4c-3-2-6 0-8 2-2-2-5-4-8-2-6 5 2 12 8 17 6-5 14-12 8-17Z" /></svg
-          >Moods <small>{{ moodCount() }}</small></button
+          >{{ 'Moods' | translate }} <small>{{ moodCount() }}</small></button
         ><button
           type="button"
           [class.active]="type() === 'genre'"
@@ -87,20 +91,23 @@
             aria-hidden="true"
           >
             <path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5" /></svg
-          >Genres
+          >{{ 'Genres' | translate }}
           <small>{{ genreCount() }}</small>
         </button>
       </nav>
-      <span class="collection-count">{{ store.tags().length }} tags in your collection</span>
+      <span class="collection-count">{{
+        'messages.count_tags_in_your_collection_b8b259' | translate: { p0: store.tags().length }
+      }}</span>
     </div>
-    <section class="tags-tools" aria-label="Find and sort tags">
+    <section class="tags-tools" [attr.aria-label]="'Find and sort tags' | translate">
       <div class="tags-heading">
-        <h2>{{ type() === 'mood' ? 'Reading moods' : 'Your genres' }}</h2>
+        <h2>{{ (type() === 'mood' ? 'Reading moods' : 'Your genres') | translate }}</h2>
         <p>
           {{
-            type() === 'mood'
+            (type() === 'mood'
               ? 'The feelings that stay after the last page.'
               : 'A place for every kind of story.'
+            ) | translate
           }}
         </p>
       </div>
@@ -120,8 +127,8 @@
           ><input
             appInput="field"
             type="search"
-            aria-label="Search tags"
-            placeholder="Find a tag..."
+            [attr.aria-label]="'Search tags' | translate"
+            [placeholder]="'Find a tag...' | translate"
             [value]="search()"
             (input)="search.set($any($event.target).value)" /></label
         ><label class="tag-sort"
@@ -136,20 +143,20 @@
           >
             <path d="M7 3v18m-4-4 4 4 4-4M17 21V3m-4 4 4-4 4 4" /></svg
           ><select
-            aria-label="Sort tags"
+            [attr.aria-label]="'Sort tags' | translate"
             [value]="sort()"
             (change)="sort.set($any($event.target).value)"
           >
-            <option value="az">A&ndash;Z</option>
-            <option value="za">Z&ndash;A</option>
-            <option value="books">Most books</option>
+            <option value="az">{{ 'A–Z' | translate }}</option>
+            <option value="za">{{ 'Z–A' | translate }}</option>
+            <option value="books">{{ 'Most books' | translate }}</option>
           </select></label
         >
       </div>
     </section>
     @if (store.loading()) {
-      <div role="status" aria-label="Loading tags and book counts">
-        <span class="sr-only">Loading tags and book counts...</span>
+      <div role="status" [attr.aria-label]="'Loading tags and book counts' | translate">
+        <span class="sr-only">{{ 'Loading tags and book counts...' | translate }}</span>
         <div class="tags-list-heading" aria-hidden="true">
           <i class="books-placeholder books-loading-line short"></i>
         </div>
@@ -165,11 +172,13 @@
       </div>
     } @else if (store.error()) {
       <p role="alert" class="tags-empty">
-        {{ store.error() }} <button type="button" (click)="store.reload()">Retry</button>
+        {{ store.error() | translate }}
+        <button type="button" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </p>
     } @else {
       <div class="tags-list-heading">
-        <span>{{ visible().length }} {{ visible().length === 1 ? 'tag' : 'tags' }}</span
+        <span
+          >{{ visible().length }} {{ (visible().length === 1 ? 'tag' : 'tags') | translate }}</span
         ><span
           ><svg
             viewBox="0 0 24 24"
@@ -181,7 +190,7 @@
             aria-hidden="true"
           >
             <path d="M5 3h7l9 9-9 9-9-9V5M7 7h.01M2 10v5l7 7" /></svg
-          >{{ type() === 'mood' ? 'Moods' : 'Genres' }}</span
+          >{{ (type() === 'mood' ? 'Moods' : 'Genres') | translate }}</span
         >
       </div>
       <div class="tag-grid">
@@ -192,6 +201,7 @@
             (click)="openEdit(tag)"
             [attr.aria-label]="
               'Edit ' + tag.name + ', ' + count(tag) + (count(tag) === 1 ? ' book' : ' books')
+                | translate
             "
             [style.--tag-color]="tag.color"
           >
@@ -221,7 +231,7 @@
                   <path
                     d="M12 5v16M12 5C8 2 4 3 2 4v15c4-2 7-1 10 2 3-3 6-4 10-2V4c-3-1-7-2-10 1Z"
                   /></svg
-                >{{ count(tag) }} {{ count(tag) === 1 ? 'book' : 'books' }}</span
+                >{{ count(tag) }} {{ (count(tag) === 1 ? 'book' : 'books') | translate }}</span
               ></span
             ><svg
               class="tag-edit"
@@ -239,10 +249,13 @@
         } @empty {
           <div class="tags-empty">
             <p>
-              {{ search() ? 'No tags match your search.' : 'Your collection starts with a tag.' }}
+              {{
+                (search() ? 'No tags match your search.' : 'Your collection starts with a tag.')
+                  | translate
+              }}
             </p>
             <button type="button" (click)="search() ? search.set('') : openNew()">
-              {{ search() ? 'Clear search' : 'Create your first tag' }}
+              {{ (search() ? 'Clear search' : 'Create your first tag') | translate }}
             </button>
           </div>
         }
@@ -254,25 +267,28 @@
           (submit)="$event.preventDefault(); save()"
           role="dialog"
           aria-modal="true"
-          aria-label="Tag editor"
+          [attr.aria-label]="'Tag editor' | translate"
           class="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
         >
-          <h2 class="text-lg font-bold">{{ editing() ? 'Edit Tag' : 'Create Tag' }}</h2>
+          <h2 class="text-lg font-bold">
+            {{ (editing() ? 'Edit Tag' : 'Create Tag') | translate }}
+          </h2>
           <label class="mt-3 block text-xs"
-            >Tag Name *<input
+            >{{ 'Tag Name *' | translate
+            }}<input
               appInput="field"
               [value]="name()"
               (input)="name.set($any($event.target).value)"
-              placeholder="e.g. Cozy"
+              [placeholder]="'e.g. Cozy' | translate"
               class="mt-1 block w-full"
           /></label>
-          <p class="mt-3 text-xs">Color *</p>
+          <p class="mt-3 text-xs">{{ 'Color *' | translate }}</p>
           <div class="mt-2 flex flex-wrap gap-2">
             @for (option of colors; track option) {
               <button
                 type="button"
                 (click)="color.set(option)"
-                [attr.aria-label]="'Select color ' + option"
+                [attr.aria-label]="'Select color ' + option | translate"
                 class="h-8 w-8 rounded-full"
                 [style.background]="option"
                 [class.ring-2]="color() === option"
@@ -281,7 +297,7 @@
             }
           </div>
           @if (error()) {
-            <p role="alert" class="mt-3 text-sm text-rose-300">{{ error() }}</p>
+            <p role="alert" class="mt-3 text-sm text-rose-300">{{ error() | translate }}</p>
           }
           @if (editing(); as tag) {
             <button
@@ -290,7 +306,9 @@
               [disabled]="busy()"
               (click)="formOpen.set(false); deleting.set(tag); error.set('')"
             >
-              <ion-icon name="trash-outline" aria-hidden="true" /><span>Delete tag</span>
+              <ion-icon name="trash-outline" aria-hidden="true" /><span>{{
+                'Delete tag' | translate
+              }}</span>
             </button>
           }
           <div class="mt-5 grid grid-cols-2 gap-2">
@@ -300,9 +318,9 @@
               [disabled]="busy()"
               class="rounded-xl border border-[var(--border)] py-3"
             >
-              Cancel</button
+              {{ 'Cancel' | translate }}</button
             ><button appButton="primary" type="submit" [disabled]="busy()" class="tag-save">
-              Save Tag
+              {{ 'Save Tag' | translate }}
             </button>
           </div>
         </form>
@@ -313,16 +331,17 @@
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Delete tag"
+          [attr.aria-label]="'Delete tag' | translate"
           class="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 text-center"
         >
-          <h2 class="text-lg font-bold">Delete tag “{{ tag.name }}”?</h2>
+          <h2 class="text-lg font-bold">
+            {{ 'messages.delete_tag_count_19f5b7' | translate: { p0: tag.name } }}
+          </h2>
           <p class="mt-2 text-sm text-[var(--text-secondary)]">
-            Used by {{ count(tag) }} books. It will be removed from those books without deleting
-            them.
+            {{ 'messages.used_by_count_books_it_will_be_421151' | translate: { p0: count(tag) } }}
           </p>
           @if (error()) {
-            <p role="alert" class="mt-2 text-sm text-rose-300">{{ error() }}</p>
+            <p role="alert" class="mt-2 text-sm text-rose-300">{{ error() | translate }}</p>
           }
           <div class="mt-5 grid grid-cols-2 gap-2">
             <button
@@ -331,14 +350,14 @@
               [disabled]="busy()"
               class="rounded-xl border border-[var(--border)] py-3"
             >
-              Cancel</button
+              {{ 'Cancel' | translate }}</button
             ><button
               type="button"
               (click)="remove()"
               [disabled]="busy()"
               class="tag-delete-confirm"
             >
-              Delete
+              {{ 'Delete' | translate }}
             </button>
           </div>
         </div>

@@ -1,3 +1,5 @@
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import { AppButton } from '../../shared/components/app-button/app-button';
 import { AppInput } from '../../shared/components/app-input/app-input';
 import { GymExercisePicker } from './components/gym-exercise-picker/gym-exercise-picker';
@@ -14,11 +16,22 @@ type WorkoutDraft = Omit<GymEntry, 'id' | 'sets' | 'rest'> & {
 
 @Component({
   selector: 'app-gym',
-  imports: [AppInput, AppButton, IonContent, IonModal, FormsModule, RouterLink, GymExercisePicker],
+  imports: [
+    TranslatePipe,
+    AppInput,
+    AppButton,
+    IonContent,
+    IonModal,
+    FormsModule,
+    RouterLink,
+    GymExercisePicker,
+  ],
   templateUrl: './gym.html',
   styleUrls: ['./gym.css', './gym-workflow.css', './gym-popup.css'],
 })
 export class Gym {
+  private readonly i18n = inject(TranslateService);
+
   readonly mobileSheet = signal(
     typeof window !== 'undefined' &&
       typeof window.matchMedia === 'function' &&
@@ -124,7 +137,11 @@ export class Gym {
   editEntry(day: number, item?: GymEntry, exerciseId?: string): void {
     if (!this.store.exercises().length) {
       this.editExercise(undefined, day);
-      this.notice.set(`Create an exercise first, then set up your ${this.days[day]} workout.`);
+      this.notice.set(
+        this.i18n.instant('Create an exercise first, then set up your {{p0}} workout.', {
+          p0: this.days[day],
+        }),
+      );
       return;
     }
     this.selectedDay.set(day);
@@ -151,7 +168,11 @@ export class Gym {
       this.createForDay.set(null);
       if (day !== null) {
         this.editEntry(day, undefined, saved.id);
-        this.notice.set(`Exercise created. Set your workout details for ${this.days[day]}.`);
+        this.notice.set(
+          this.i18n.instant('Exercise created. Set your workout details for {{p0}}.', {
+            p0: this.days[day],
+          }),
+        );
       } else this.notice.set('Exercise saved. Choose a day to set its sets, reps and rest.');
     } catch (error) {
       this.fail(error);
@@ -214,7 +235,10 @@ export class Gym {
       this.copySource.set(null);
       this.showDay(this.copyTarget);
       this.notice.set(
-        `Copied ${this.days[source]} to ${this.days[this.copyTarget]}. Existing exercises were kept.`,
+        this.i18n.instant('Copied {{p0}} to {{p1}}. Existing exercises were kept.', {
+          p0: this.days[source],
+          p1: this.days[this.copyTarget],
+        }),
       );
     } catch (error) {
       this.fail(error);

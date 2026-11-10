@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -42,7 +43,9 @@ describe('Debt payment workflow', () => {
   };
   const create = () =>
     runInInjectionContext(
-      Injector.create({ providers: [{ provide: BudgetStore, useValue: store }] }),
+      Injector.create({
+        providers: [...translationTestProviders, { provide: BudgetStore, useValue: store }],
+      }),
       () => new BudgetDebts(),
     );
   beforeEach(() => {

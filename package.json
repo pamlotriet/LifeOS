@@ -11,7 +11,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "i18n:check": "node scripts/check-translations.mjs"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
@@ -24,17 +25,18 @@
     "@angular/router": "^22.1.0",
     "@angular/service-worker": "22.1.6",
     "@ionic/angular": "^9.0.3",
+    "@ngx-translate/core": "^18.1.0",
     "@spartan-ng/brain": "^1.4.1",
     "chart.js": "^4.5.1",
     "firebase": "^12.19.0",
     "html5-qrcode": "^2.3.8",
+    "ionicons": "^8.1.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.9",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "^0.16.3",
-    "zxing-wasm": "^3.1.5",
-    "ionicons": "^8.1.0"
+    "zxing-wasm": "^3.1.5"
   },
   "devDependencies": {
     "@angular/build": "^22.1.8",

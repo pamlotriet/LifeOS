@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
@@ -42,7 +43,12 @@ describe('Recipe category filters', () => {
       },
     ]);
     const page = runInInjectionContext(
-      Injector.create({ providers: [{ provide: RecipeStore, useValue: { sorted: recipes } }] }),
+      Injector.create({
+        providers: [
+          ...translationTestProviders,
+          { provide: RecipeStore, useValue: { sorted: recipes } },
+        ],
+      }),
       () => new Recipes(),
     );
     for (const category of ['Lunch', 'Dinner']) {

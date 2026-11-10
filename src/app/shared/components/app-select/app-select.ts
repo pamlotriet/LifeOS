@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   Component,
   computed,
@@ -20,7 +21,7 @@ export interface SelectOption {
 
 @Component({
   selector: 'app-select',
-  imports: [IonIcon],
+  imports: [TranslatePipe, IonIcon],
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => AppSelect), multi: true },
   ],
@@ -28,7 +29,7 @@ export interface SelectOption {
     <div class="relative" [class.z-50]="open()">
       <button
         type="button"
-        [attr.aria-label]="ariaLabel()"
+        [attr.aria-label]="ariaLabel() | translate"
         aria-haspopup="listbox"
         [attr.aria-expanded]="open()"
         [disabled]="disabled()"
@@ -52,10 +53,12 @@ export interface SelectOption {
         }
         <span class="min-w-0 flex-1"
           ><span class="block truncate" [class.text-[#91aecd]]="!selected()">{{
-            selected()?.label || placeholder()
+            selected()?.label || placeholder() | translate
           }}</span>
           @if (selected()?.description) {
-            <span class="block truncate text-xs text-[#a9c2db]">{{ selected()?.description }}</span>
+            <span class="block truncate text-xs text-[#a9c2db]">{{
+              selected()?.description | translate
+            }}</span>
           }
         </span>
         <ion-icon
@@ -67,7 +70,7 @@ export interface SelectOption {
       @if (open()) {
         <div
           role="listbox"
-          [attr.aria-label]="ariaLabel()"
+          [attr.aria-label]="ariaLabel() | translate"
           class="absolute top-full left-0 z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-xl border border-[#7f5d99] bg-[#123451] p-1 shadow-[0_14px_32px_rgba(0,0,0,0.35)]"
         >
           @for (option of options(); track option.value) {
@@ -95,10 +98,10 @@ export interface SelectOption {
                 ></span>
               }
               <span class="min-w-0 flex-1"
-                ><span class="block truncate font-semibold">{{ option.label }}</span>
+                ><span class="block truncate font-semibold">{{ option.label | translate }}</span>
                 @if (option.description) {
                   <span class="block truncate text-xs text-[#a9c2db]">{{
-                    option.description
+                    option.description | translate
                   }}</span>
                 }
               </span>

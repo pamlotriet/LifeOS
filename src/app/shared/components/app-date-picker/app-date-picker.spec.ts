@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
@@ -6,7 +7,7 @@ import { AppDatePicker } from './app-date-picker';
 describe('AppDatePicker', () => {
   it('uses local calendar dates without changing the selected day for time zones', () => {
     const picker = runInInjectionContext(
-      Injector.create({ providers: [] }),
+      Injector.create({ providers: [...translationTestProviders] }),
       () => new AppDatePicker(),
     );
     const changed = vi.fn();

@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject, signal, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
@@ -6,7 +7,7 @@ import { BudgetCategory, BudgetTransaction, money } from '../../state/budget.mod
 import { AppButton } from '../../../../shared/components/app-button/app-button';
 @Component({
   selector: 'app-budget-transactions',
-  imports: [AppButton, RouterLink, IonIcon],
+  imports: [TranslatePipe, AppButton, RouterLink, IonIcon],
   styleUrls: ['../../budget.css', '../../budget-layout.css', './budget-transactions.css'],
   template: ` <div class="transaction-list">
     @for (item of transactions; track item.id) {
@@ -18,17 +19,17 @@ import { AppButton } from '../../../../shared/components/app-button/app-button';
             ><ion-icon [name]="category(item.categoryId)?.icon || 'wallet'" aria-hidden="true"
           /></span>
           <span class="row-copy"
-            ><strong>{{ item.title }}</strong
+            ><strong>{{ item.title | translate }}</strong
             ><small
-              >{{ category(item.categoryId)?.name || 'Uncategorised' }}{{ accountLabel(item) }} ·
-              {{ date(item.date) }}</small
+              >{{ category(item.categoryId)?.name || 'Uncategorised' | translate
+              }}{{ accountLabel(item) | translate }} · {{ date(item.date) }}</small
             ></span
           >
           <strong
             class="amount"
             [class.positive]="item.type === 'income'"
             [class.negative]="item.type === 'expense'"
-            >{{ item.type === 'income' ? '+' : item.type === 'expense' ? '−' : '↗'
+            >{{ (item.type === 'income' ? '+' : item.type === 'expense' ? '−' : '↗') | translate
             }}{{ money(item.amount) }}</strong
           >
         </a>
@@ -36,32 +37,36 @@ import { AppButton } from '../../../../shared/components/app-button/app-button';
           type="button"
           class="transaction-delete"
           [disabled]="deleting()"
-          [attr.aria-label]="'Delete ' + item.title"
+          [attr.aria-label]="'Delete ' + item.title | translate"
           (click)="requestDelete(item)"
         >
-          <ion-icon name="trash-outline" aria-hidden="true" /><span>Delete</span>
+          <ion-icon name="trash-outline" aria-hidden="true" /><span>{{
+            'Delete' | translate
+          }}</span>
         </button>
       </div>
       @if (pending()?.id === item.id) {
         <section
           class="transaction-confirm"
           role="alert"
-          [attr.aria-label]="'Confirm deletion of ' + item.title"
+          [attr.aria-label]="'Confirm deletion of ' + item.title | translate"
         >
           <div class="confirm-heading">
-            <ion-icon name="trash-outline" aria-hidden="true" /><strong
-              >Delete {{ item.title }}?</strong
-            >
+            <ion-icon name="trash-outline" aria-hidden="true" /><strong>{{
+              'messages.delete_count_c61c87' | translate: { p0: item.title }
+            }}</strong>
           </div>
           <p>
-            {{ money(item.amount) }} &middot; {{ date(item.date) }}. This removes the transaction
-            and its receipt and updates your budget totals.
+            {{
+              'messages.count_count_this_removes_the_transaction_and_b86061'
+                | translate: { p0: money(item.amount), p1: date(item.date) }
+            }}
             @if (item.debtId) {
-              The debt balance will also be updated.
+              {{ 'The debt balance will also be updated.' | translate }}
             }
           </p>
           @if (deleteError()) {
-            <p class="negative">{{ deleteError() }}</p>
+            <p class="negative">{{ deleteError() | translate }}</p>
           }
           <div class="confirm-actions">
             <button
@@ -71,7 +76,7 @@ import { AppButton } from '../../../../shared/components/app-button/app-button';
               [disabled]="deleting()"
               (click)="pending.set(null)"
             >
-              Keep transaction</button
+              {{ 'Keep transaction' | translate }}</button
             ><button
               appButton="danger"
               type="button"
@@ -79,7 +84,7 @@ import { AppButton } from '../../../../shared/components/app-button/app-button';
               [disabled]="deleting()"
               (click)="remove()"
             >
-              {{ deleting() ? 'Deleting...' : 'Delete transaction' }}
+              {{ (deleting() ? 'Deleting...' : 'Delete transaction') | translate }}
             </button>
           </div>
         </section>
@@ -87,9 +92,11 @@ import { AppButton } from '../../../../shared/components/app-button/app-button';
     } @empty {
       <div class="empty-state">
         <ion-icon name="wallet" aria-hidden="true" />
-        <h3>No transactions yet</h3>
-        <p>Add a transaction to start tracking this period.</p>
-        <a class="text-link" routerLink="/budget/transactions/add">Add your first transaction</a>
+        <h3>{{ 'No transactions yet' | translate }}</h3>
+        <p>{{ 'Add a transaction to start tracking this period.' | translate }}</p>
+        <a class="text-link" routerLink="/budget/transactions/add">{{
+          'Add your first transaction' | translate
+        }}</a>
       </div>
     }
   </div>`,

@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { fuelEditorSheet } from '../fuel-editor-sheet';
@@ -45,6 +46,7 @@ function decimalMin(minimum: number, required = false): ValidatorFn {
 @Component({
   selector: 'app-refuel-form',
   imports: [
+    TranslatePipe,
     AppInput,
     AppButton,
     IonModal,

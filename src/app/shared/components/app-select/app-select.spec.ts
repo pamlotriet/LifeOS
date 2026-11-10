@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { ElementRef, Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
@@ -6,7 +7,7 @@ import { AppSelect } from './app-select';
 describe('AppSelect', () => {
   it('passes the selected option to a reactive form', () => {
     const select = runInInjectionContext(
-      Injector.create({ providers: [] }),
+      Injector.create({ providers: [...translationTestProviders] }),
       () => new AppSelect(new ElementRef({ contains: () => false } as unknown as HTMLElement)),
     );
     const changed = vi.fn();

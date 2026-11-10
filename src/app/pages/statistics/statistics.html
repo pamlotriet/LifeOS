@@ -4,38 +4,43 @@
     class="stats-page mx-auto min-h-full max-w-3xl px-4 pb-10 pt-5"
   >
     <div class="stats-topbar">
-      <a routerLink="/home"><ion-icon name="arrow-back-outline" /> LifeOS</a
-      ><span><ion-icon name="bar-chart-outline" /> Signals &amp; trends</span>
+      <a routerLink="/home"><ion-icon name="arrow-back-outline" /> {{ 'LifeOS' | translate }}</a
+      ><span><ion-icon name="bar-chart-outline" /> {{ 'Signals & trends' | translate }}</span>
     </div>
     <header class="stats-header">
       <div class="stats-intro">
-        <p class="eyebrow">Numbers worth keeping</p>
-        <h1>Stats <span>&amp; progress</span></h1>
-        <p>A quiet look at how the year is actually going.</p>
+        <p class="eyebrow">{{ 'Numbers worth keeping' | translate }}</p>
+        <h1>
+          {{ 'Stats' | translate }} <span>{{ '& progress' | translate }}</span>
+        </h1>
+        <p>{{ 'A quiet look at how the year is actually going.' | translate }}</p>
       </div>
     </header>
-    <section class="stats-period stats-filters" aria-label="Statistics filters">
+    <section
+      class="stats-period stats-filters"
+      [attr.aria-label]="'Statistics filters' | translate"
+    >
       <label class="stats-filter-field"
-        ><span>Statistics</span
+        ><span>{{ 'Statistics' | translate }}</span
         ><select
           class="lifeos-select"
           [value]="selected()"
           (change)="choose($any($event.target).value)"
         >
           @for (module of modules; track module.id) {
-            <option [value]="module.id">{{ module.label }}</option>
+            <option [value]="module.id">{{ module.label | translate }}</option>
           }
         </select></label
       >
       @if (selected() === 'fuel') {
         <label class="vehicle-filter"
-          ><span>Vehicle</span
+          ><span>{{ 'Vehicle' | translate }}</span
           ><select
             class="lifeos-select"
             [value]="service.selectedVehicleId()"
             (change)="service.selectVehicle($any($event.target).value)"
           >
-            <option value="all">All cars</option>
+            <option value="all">{{ 'All cars' | translate }}</option>
             @for (vehicle of service.vehicleOptions(); track vehicle.id) {
               <option [value]="vehicle.id">{{ vehicle.name }} ({{ vehicle.registration }})</option>
             }
@@ -43,8 +48,8 @@
         >
       }
       <div class="stats-filter-field stats-range-field">
-        <span>Time range</span>
-        <nav aria-label="Time range">
+        <span>{{ 'Time range' | translate }}</span>
+        <nav [attr.aria-label]="'Time range' | translate">
           @for (item of ranges; track item) {
             <button
               type="button"
@@ -59,13 +64,14 @@
       </div>
       @if (range() === '1M') {
         <label
-          >Month<select
+          >{{ 'Month' | translate
+          }}<select
             class="lifeos-select"
             [ngModel]="selectedMonth()"
             (ngModelChange)="selectedMonth.set($event)"
           >
             @for (month of monthOptions; track month.value) {
-              <option [value]="month.value">{{ month.label }}</option>
+              <option [value]="month.value">{{ month.label | translate }}</option>
             }
           </select></label
         >
@@ -74,14 +80,16 @@
     @if (selected() === 'nutrition' && range() !== '1M') {
       <div class="stats-date-range">
         <label
-          >From<input
+          >{{ 'From' | translate
+          }}<input
             appInput="field"
             type="date"
             class="lifeos-select"
             [ngModel]="nutritionStart()"
             (ngModelChange)="nutritionStart.set($event)" /></label
         ><label
-          >Through<input
+          >{{ 'Through' | translate
+          }}<input
             appInput="field"
             type="date"
             class="lifeos-select"
@@ -91,66 +99,80 @@
       </div>
     }
     @if (loading()) {
-      <app-statistics-skeleton [module]="selected()" [label]="option().label" />
+      <app-statistics-skeleton [module]="selected()" [label]="option().label | translate" />
     } @else if (error()) {
       <div role="alert" class="stats-message error">
-        {{ error() }} <button type="button" (click)="service.reload(selected())">Retry</button>
+        {{ error() | translate }}
+        <button type="button" (click)="service.reload(selected())">
+          {{ 'Retry' | translate }}
+        </button>
       </div>
     } @else {
       @let data = dashboard();
       @if (data.empty) {
         <section class="stats-empty">
           <ion-icon [name]="option().icon"></ion-icon>
-          <h2>{{ data.emptyTitle }}</h2>
-          <p>{{ data.emptyMessage }}</p>
+          <h2>{{ data.emptyTitle | translate }}</h2>
+          <p>{{ data.emptyMessage | translate }}</p>
           @if (data.action) {
-            <a [routerLink]="data.action" class="stats-primary">Get started</a>
+            <a [routerLink]="data.action" class="stats-primary">{{ 'Get started' | translate }}</a>
           }
         </section>
       } @else {
         @if (data.books; as book) {
-          <section class="book-kpis" aria-label="Book statistics">
+          <section class="book-kpis" [attr.aria-label]="'Book statistics' | translate">
             @for (card of book.cards; track card.label) {
               <article class="book-card book-kpi">
-                <div class="book-kpi-label"><ion-icon [name]="card.icon" />{{ card.label }}</div>
-                <div class="book-value">
-                  {{ card.value }} <span>{{ card.unit }}</span>
+                <div class="book-kpi-label">
+                  <ion-icon [name]="card.icon" />{{ card.label | translate }}
                 </div>
-                <p>{{ card.note }}</p>
+                <div class="book-value">
+                  {{ card.value }} <span>{{ card.unit | translate }}</span>
+                </div>
+                <p>{{ card.note | translate }}</p>
               </article>
             }
           </section>
           <div class="book-main-grid">
             <section class="book-card reading-chart">
               <div class="book-heading">
-                <h2>Books read by month</h2>
-                <span>{{ book.totalFinished }} books ï¿½ {{ range() }}</span>
+                <h2>{{ 'Books read by month' | translate }}</h2>
+                <span>{{
+                  'messages.count_books_count_714b38'
+                    | translate: { p0: book.totalFinished, p1: range() }
+                }}</span>
               </div>
-              <app-chart [config]="data.primary" [height]="240" label="Books finished each month" />
+              <app-chart
+                [config]="data.primary"
+                [height]="240"
+                [label]="'Books finished each month' | translate"
+              />
               <div class="book-divider"></div>
               <div class="book-heading">
-                <h3>Pages read</h3>
-                <span>{{ book.totalPages }} pages</span>
+                <h3>{{ 'Pages read' | translate }}</h3>
+                <span>{{
+                  'messages.count_pages_e7f389' | translate: { p0: book.totalPages }
+                }}</span>
               </div>
               <app-chart
                 [config]="book.pages"
                 [height]="150"
-                label="Pages in books finished each month"
+                [label]="'Pages in books finished each month' | translate"
               />
               <p class="chart-note">
-                Pages in finished books
+                {{ 'Pages in finished books' | translate }}
                 @if (range() === 'All') {
-                  ? Charts show the latest 24 months; totals include all books.
+                  {{ '? Charts show the latest 24 months; totals include all books.' | translate }}
                 }
               </p>
             </section>
             <section class="book-card">
-              <h2>Top authors</h2>
-              <p class="book-subtitle">Most finished books</p>
+              <h2>{{ 'Top authors' | translate }}</h2>
+              <p class="book-subtitle">{{ 'Most finished books' | translate }}</p>
               @for (row of book.authors; track row.label) {
                 <div class="book-bar-row">
                   <div>
-                    <span>{{ row.label }}</span
+                    <span>{{ row.label | translate }}</span
                     ><span>{{ row.value }}</span>
                   </div>
                   <div class="book-track">
@@ -158,13 +180,17 @@
                   </div>
                 </div>
               } @empty {
-                <p class="book-subtitle">Finish a book to see your top authors.</p>
+                <p class="book-subtitle">
+                  {{ 'Finish a book to see your top authors.' | translate }}
+                </p>
               }
               <div class="book-divider"></div>
-              <h3 class="rating-heading"><ion-icon name="star-outline" /> Ratings spread</h3>
+              <h3 class="rating-heading">
+                <ion-icon name="star-outline" /> {{ 'Ratings spread' | translate }}
+              </h3>
               @for (row of book.ratings; track row.label) {
                 <div class="rating-row">
-                  <span>{{ row.label }}</span>
+                  <span>{{ row.label | translate }}</span>
                   <div class="book-track">
                     <i
                       [style.width.%]="(row.value / (book.totalFinished || 1)) * 100"
@@ -178,25 +204,27 @@
           </div>
           <div class="book-lower-grid">
             <section class="book-card">
-              <h2>Books by category</h2>
-              <p class="book-subtitle">Across everything finished in this period</p>
+              <h2>{{ 'Books by category' | translate }}</h2>
+              <p class="book-subtitle">
+                {{ 'Across everything finished in this period' | translate }}
+              </p>
               <div class="category-content">
                 <div class="category-chart">
                   <app-chart
                     [config]="data.secondary"
                     [height]="200"
-                    label="Finished books by category"
+                    [label]="'Finished books by category' | translate"
                   />
                 </div>
                 <div class="category-legend">
                   @for (row of book.categories; track row.label) {
                     <div>
-                      <i [style.background]="row.color"></i><span>{{ row.label }}</span
+                      <i [style.background]="row.color"></i><span>{{ row.label | translate }}</span
                       ><strong>{{ row.value }}</strong
                       ><span>{{ row.percent }}%</span>
                     </div>
                   } @empty {
-                    <p>No finished books in this period.</p>
+                    <p>{{ 'No finished books in this period.' | translate }}</p>
                   }
                 </div>
               </div>
@@ -206,23 +234,30 @@
                 <article class="book-card">
                   <ion-icon name="trophy-outline" />
                   <div class="book-value">
-                    {{ book.bestMonth }} <span>ï¿½ {{ book.bestCount }} books</span>
+                    {{ book.bestMonth }}
+                    <span>{{
+                      'messages.count_books_4eaf31' | translate: { p0: book.bestCount }
+                    }}</span>
                   </div>
-                  <p>Best month in this period</p>
+                  <p>{{ 'Best month in this period' | translate }}</p>
                 </article>
                 <article class="book-card">
                   <ion-icon name="flame-outline" />
-                  <div class="book-value">{{ book.streak }} <span>in a row</span></div>
-                  <p>Consecutive days finishing books</p>
+                  <div class="book-value">
+                    {{ book.streak }} <span>{{ 'in a row' | translate }}</span>
+                  </div>
+                  <p>{{ 'Consecutive days finishing books' | translate }}</p>
                 </article>
               </div>
               <section class="book-card">
-                <h2>Formats on the shelf</h2>
-                <p class="book-subtitle">How you own them ï¿½ all recorded copies</p>
+                <h2>{{ 'Formats on the shelf' | translate }}</h2>
+                <p class="book-subtitle">
+                  {{ 'How you own them ï¿½ all recorded copies' | translate }}
+                </p>
                 @for (row of book.formats; track row.label) {
                   <div class="book-bar-row">
                     <div>
-                      <span>{{ row.label }}</span
+                      <span>{{ row.label | translate }}</span
                       ><span>{{ row.value }}</span>
                     </div>
                     <div class="book-track">
@@ -230,45 +265,54 @@
                     </div>
                   </div>
                 } @empty {
-                  <p class="book-subtitle">Add a format to your books to see the breakdown.</p>
+                  <p class="book-subtitle">
+                    {{ 'Add a format to your books to see the breakdown.' | translate }}
+                  </p>
                 }
               </section>
             </div>
           </div>
           <section class="book-card book-insights">
-            <h2><ion-icon name="bulb-outline" /> Insights</h2>
+            <h2><ion-icon name="bulb-outline" /> {{ 'Insights' | translate }}</h2>
             <div>
               @for (insight of book.insights; track insight) {
-                <p><ion-icon name="trending-up-outline" />{{ insight }}</p>
+                <p><ion-icon name="trending-up-outline" />{{ insight | translate }}</p>
               }
             </div>
           </section>
         } @else if (selected() === 'budget') {
           <div class="budget-report-toolbar">
             <div>
-              <h2>Budget report</h2>
+              <h2>{{ 'Budget report' | translate }}</h2>
               <p>
-                Cycles ending {{ service.budgetReportCycle(range(), selectedMonth()) }} &middot;
                 {{
-                  range() === 'All'
-                    ? 'All recorded totals; charts show latest 24 cycles'
-                    : range() === '1M'
-                      ? 'Selected budget cycle only'
-                      : 'Last ' + range() + ' of recorded activity'
+                  'messages.cycles_ending_count_count_bc2c27'
+                    | translate
+                      : {
+                          p0: service.budgetReportCycle(range(), selectedMonth()),
+                          p1:
+                            range() === 'All'
+                              ? 'All
+                recorded totals; charts show latest 24 cycles'
+                              : range() === '1M'
+                                ? 'Selected budget
+                cycle only'
+                                : 'Last ' + range() + ' of recorded activity',
+                        }
                 }}
               </p>
             </div>
           </div>
           <app-budget-statistics [data]="data" />
         } @else {
-          <section class="kpi-grid" aria-label="Key statistics">
+          <section class="kpi-grid" [attr.aria-label]="'Key statistics' | translate">
             @for (item of data.kpis; track item.label) {
               <article class="kpi-card">
                 <span [style.background]="item.accent"
                   ><ion-icon [name]="item.icon"></ion-icon
                 ></span>
                 <div>
-                  <small>{{ item.label }}</small
+                  <small>{{ item.label | translate }}</small
                   ><strong>{{ item.value }}</strong>
                 </div>
               </article>
@@ -278,75 +322,93 @@
             <section class="stats-chart-card">
               <div class="chart-heading">
                 <div>
-                  <h2>{{ data.primaryTitle }}</h2>
+                  <h2>{{ data.primaryTitle | translate }}</h2>
                   <p>
-                    {{ option().label }} &middot; {{ range() === '1M' ? selectedMonth() : range() }}
+                    {{
+                      'messages.count_count_6ff1e6'
+                        | translate
+                          : { p0: option().label, p1: range() === '1M' ? selectedMonth() : range() }
+                    }}
                   </p>
                 </div>
               </div>
-              <app-chart [config]="data.primary" [height]="230" [label]="data.primaryTitle" />
+              <app-chart
+                [config]="data.primary"
+                [height]="230"
+                [label]="data.primaryTitle | translate"
+              />
             </section>
             <section class="stats-chart-card">
               <div class="chart-heading">
                 <div>
-                  <h2>{{ data.secondaryTitle }}</h2>
-                  <p>Actual recorded data</p>
+                  <h2>{{ data.secondaryTitle | translate }}</h2>
+                  <p>{{ 'Actual recorded data' | translate }}</p>
                 </div>
               </div>
-              <app-chart [config]="data.secondary" [height]="230" [label]="data.secondaryTitle" />
+              <app-chart
+                [config]="data.secondary"
+                [height]="230"
+                [label]="data.secondaryTitle | translate"
+              />
             </section>
           </div>
           @if (data.debt; as debt) {
             <section class="stats-chart-card" aria-labelledby="debt-stats-title">
               <div class="chart-heading">
                 <div>
-                  <h2 id="debt-stats-title">Credit, loans &amp; debt</h2>
+                  <h2 id="debt-stats-title">{{ 'Credit, loans & debt' | translate }}</h2>
                   <p>
-                    Budget cycle: {{ debt.cycleLabel }} &middot; repayments follow the selected time
-                    range
+                    {{
+                      'messages.budget_cycle_count_repayments_follow_the_selected_87e81c'
+                        | translate: { p0: debt.cycleLabel }
+                    }}
                   </p>
                 </div>
-                <a routerLink="/budget/debts">Manage debts</a>
+                <a routerLink="/budget/debts">{{ 'Manage debts' | translate }}</a>
               </div>
               @if (debt.empty) {
                 <p class="stats-message">
-                  Add a credit card, loan or other debt account to see its statistics.
+                  {{
+                    'Add a credit card, loan or other debt account to see its statistics.'
+                      | translate
+                  }}
                 </p>
               } @else {
-                <div class="kpi-grid" aria-label="Debt statistics">
+                <div class="kpi-grid" [attr.aria-label]="'Debt statistics' | translate">
                   @for (item of debt.kpis; track item.label) {
                     <article class="kpi-card">
                       <span [style.background]="item.accent"
                         ><ion-icon [name]="item.icon"></ion-icon
                       ></span>
                       <div>
-                        <small>{{ item.label }}</small
+                        <small>{{ item.label | translate }}</small
                         ><strong>{{ item.value }}</strong>
                       </div>
                     </article>
                   }
                 </div>
-                <h3 class="mt-5 mb-3">Outstanding by account</h3>
+                <h3 class="mt-5 mb-3">{{ 'Outstanding by account' | translate }}</h3>
                 <app-chart
                   [config]="debt.balances"
                   [height]="230"
-                  label="Outstanding debt by account"
+                  [label]="'Outstanding debt by account' | translate"
                 />
                 <h3 class="mt-5 mb-3">
-                  Monthly repayments
+                  {{ 'Monthly repayments' | translate }}
                   @if (range() === 'All') {
-                    &middot; latest 24 months
+                    {{ '· latest 24 months' | translate }}
                   }
                 </h3>
                 <app-chart
                   [config]="debt.repayments"
                   [height]="230"
-                  label="Monthly debt repayments"
+                  [label]="'Monthly debt repayments' | translate"
                 />
                 <p class="mt-4 text-sm text-[var(--text-secondary)]">
-                  Credit remaining = cycle opening + estimated interest &minus; paid repayments.
-                  Deleting a payment recalculates these figures. Planned payments do not reduce
-                  outstanding balances or count as paid.
+                  {{
+                    'Credit remaining = cycle opening + estimated interest − paid repayments. Deleting a payment recalculates these figures. Planned payments do not reduce outstanding balances or count as paid.'
+                      | translate
+                  }}
                 </p>
               }
             </section>
@@ -354,8 +416,8 @@
           <section class="stats-insight">
             <ion-icon name="bulb-outline"></ion-icon>
             <div>
-              <h2>Insights</h2>
-              <p>{{ data.insight }}</p>
+              <h2>{{ 'Insights' | translate }}</h2>
+              <p>{{ data.insight | translate }}</p>
             </div>
           </section>
         }

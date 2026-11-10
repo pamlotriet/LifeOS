@@ -3,12 +3,16 @@
     <app-back-button fallback="/home" />
     <header class="mb-4 flex items-end justify-between">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[.22em] text-cyan-300">Your kitchen</p>
-        <h1 class="mt-1 text-3xl font-bold">Recipes</h1>
-        <p class="text-sm text-[var(--text-secondary)]">Save the meals you love.</p>
+        <p class="text-xs font-semibold uppercase tracking-[.22em] text-cyan-300">
+          {{ 'Your kitchen' | translate }}
+        </p>
+        <h1 class="mt-1 text-3xl font-bold">{{ 'Recipes' | translate }}</h1>
+        <p class="text-sm text-[var(--text-secondary)]">
+          {{ 'Save the meals you love.' | translate }}
+        </p>
       </div>
       <button type="button" (click)="editorOpen.set(true)" class="recipe-add">
-        <ion-icon name="add" aria-hidden="true" /> Add recipe
+        <ion-icon name="add" aria-hidden="true" /> {{ 'Add recipe' | translate }}
       </button>
     </header>
     <label
@@ -17,13 +21,16 @@
       ><input
         appInput="inline"
         type="search"
-        aria-label="Search recipes"
-        placeholder="Search recipes..."
+        [attr.aria-label]="'Search recipes' | translate"
+        [placeholder]="'Search recipes...' | translate"
         [value]="search()"
         (input)="search.set($any($event.target).value)"
         class="w-full"
     /></label>
-    <nav aria-label="Recipe filters" class="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+    <nav
+      [attr.aria-label]="'Recipe filters' | translate"
+      class="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-none"
+    >
       <button
         type="button"
         (click)="category.set('All'); favouritesOnly.set(false)"
@@ -34,7 +41,7 @@
             : 'border-[var(--border)] text-[var(--text-secondary)]'
         "
       >
-        All</button
+        {{ 'All' | translate }}</button
       ><button
         type="button"
         (click)="favouritesOnly.set(!favouritesOnly())"
@@ -45,7 +52,7 @@
             : 'border-[var(--border)] text-[var(--text-secondary)]'
         "
       >
-        â™¥ Favourites
+        {{ 'â™¥ Favourites' | translate }}
       </button>
       @for (item of categories; track item) {
         <button
@@ -64,27 +71,37 @@
     </nav>
     <div class="my-3 flex items-center justify-between">
       <h2 class="text-lg font-bold">
-        {{ favouritesOnly() ? 'Favourites' : category() === 'All' ? 'All recipes' : category() }}
+        {{
+          (favouritesOnly() ? 'Favourites' : category() === 'All' ? 'All recipes' : category())
+            | translate
+        }}
       </h2>
-      <span class="text-xs text-[var(--text-secondary)]">{{ filtered().length }} recipes</span>
+      <span class="text-xs text-[var(--text-secondary)]">{{
+        'messages.count_recipes_178419' | translate: { p0: filtered().length }
+      }}</span>
     </div>
     @if (store.loading() && !store.recipes().length) {
       <app-skeleton variant="grid" [count]="6" />
     } @else if (store.error()) {
       <p role="alert" class="rounded-2xl border border-rose-400/50 bg-[var(--card)] p-4 text-sm">
-        {{ store.error() }}
-        <button (click)="store.reload()" class="text-cyan-300 underline">Retry</button>
+        {{ store.error() | translate }}
+        <button (click)="store.reload()" class="text-cyan-300 underline">
+          {{ 'Retry' | translate }}
+        </button>
       </p>
     } @else if (!filtered().length) {
       <div class="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
         <ion-icon name="restaurant-outline" class="text-4xl text-cyan-300"></ion-icon>
-        <h2 class="mt-3 font-bold">No recipes found</h2>
+        <h2 class="mt-3 font-bold">{{ 'No recipes found' | translate }}</h2>
         <p class="mt-1 text-sm text-[var(--text-secondary)]">
-          Add your first recipe or change the filters.
+          {{ 'Add your first recipe or change the filters.' | translate }}
         </p>
       </div>
     } @else {
-      <section aria-label="Recipes" class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <section
+        [attr.aria-label]="'Recipes' | translate"
+        class="grid grid-cols-2 gap-3 sm:grid-cols-3"
+      >
         @for (recipe of filtered(); track recipe.id) {
           <a
             [routerLink]="['/recipes', recipe.id]"
@@ -95,7 +112,7 @@
               @if (recipe.photoUrl) {
                 <img
                   [src]="recipe.photoUrl"
-                  [alt]="recipe.title"
+                  [alt]="recipe.title | translate"
                   class="h-full w-full object-cover"
                   loading="lazy"
                 />
@@ -108,10 +125,18 @@
                 <span class="absolute right-2 top-2 text-xl text-pink-400">â™¥</span>
               }</span
             ><span class="block p-3"
-              ><strong class="block line-clamp-2 text-sm">{{ recipe.title }}</strong
-              ><span class="mt-1 block text-[11px] text-[var(--text-secondary)]"
-                >{{ recipeCategories(recipe).join(' / ') }} Â· {{ recipe.cookTime }} mins</span
-              ></span
+              ><strong class="block line-clamp-2 text-sm">{{ recipe.title | translate }}</strong
+              ><span class="mt-1 block text-[11px] text-[var(--text-secondary)]">{{
+                'messages.count_count_mins_8342be'
+                  | translate
+                    : {
+                        p0: recipeCategories(recipe).join(
+                          ' /
+                '
+                        ),
+                        p1: recipe.cookTime,
+                      }
+              }}</span></span
             ></a
           >
         }

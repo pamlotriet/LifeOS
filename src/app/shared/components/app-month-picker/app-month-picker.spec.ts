@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
@@ -6,7 +7,7 @@ import { AppMonthPicker } from './app-month-picker';
 describe('Budget month picker', () => {
   it('preserves the selected year when switching months and emits ISO month values', () => {
     const picker = runInInjectionContext(
-      Injector.create({ providers: [] }),
+      Injector.create({ providers: [...translationTestProviders] }),
       () => new AppMonthPicker(),
     );
     const changed = vi.fn();

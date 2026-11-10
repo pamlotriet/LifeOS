@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { calculateRecipe, ingredientNutrition } from '../../nutrition/state/nutrition.calculations';
@@ -32,6 +33,7 @@ import { pickImage } from '../../../shared/utils/pick-image';
 @Component({
   selector: 'app-recipe-form',
   imports: [
+    TranslatePipe,
     AppInput,
     AppButton,
     NutritionSummary,

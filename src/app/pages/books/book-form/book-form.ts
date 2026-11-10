@@ -1,3 +1,5 @@
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { Component, inject, signal, Input } from '@angular/core';
@@ -29,6 +31,7 @@ import { AppSkeleton } from '../../../shared/components/app-skeleton/app-skeleto
 @Component({
   selector: 'app-book-form',
   imports: [
+    TranslatePipe,
     AppInput,
     AppButton,
     IonContent,
@@ -44,6 +47,8 @@ import { AppSkeleton } from '../../../shared/components/app-skeleton/app-skeleto
   styleUrl: './book-form.css',
 })
 export class BookForm {
+  private readonly i18n = inject(TranslateService);
+
   @Input() embedded = false;
   private readonly modal = inject(ModalController);
   private readonly fb = inject(FormBuilder);
@@ -67,7 +72,7 @@ export class BookForm {
     { value: '0', label: 'Not rated' },
     ...[1, 2, 3, 4, 5].map((item) => ({
       value: String(item),
-      label: `${item} star${item === 1 ? '' : 's'}`,
+      label: this.i18n.instant('{{p0}} star{{p1}}', { p0: item, p1: item === 1 ? '' : 's' }),
     })),
   ];
   readonly copies = signal<BookCopy[]>([
@@ -79,7 +84,8 @@ export class BookForm {
   trackingByPages(): boolean {
     return this.hasPageFormat() && this.trackingMode() === 'pages';
   }
-  readonly kindleSummary = kindleSummary;
+  readonly kindleSummary = (book: Parameters<typeof kindleSummary>[0]) =>
+    kindleSummary(book, (key, params) => this.i18n.instant(key, params));
   readonly sessionPages = (
     book: BookRecord,
     entry: NonNullable<BookRecord['locationEntries']>[number],
@@ -207,7 +213,10 @@ export class BookForm {
       const book = await this.covers.lookupByIsbn(isbn);
       if (!book || !book.title) {
         throw new Error(
-          `No book details were found for ISBN ${isbn}. You can still enter it manually.`,
+          this.i18n.instant(
+            'No book details were found for ISBN {{p0}}. You can still enter it manually.',
+            { p0: isbn },
+          ),
         );
       }
       // An earlier title lookup must not overwrite the scanned edition's cover.
@@ -228,8 +237,8 @@ export class BookForm {
       );
       this.scanMessage.set(
         book.author
-          ? `Book details filled from ISBN ${isbn}.`
-          : `ISBN ${isbn} found. Please add the missing author.`,
+          ? this.i18n.instant('Book details filled from ISBN {{p0}}.', { p0: isbn })
+          : this.i18n.instant('ISBN {{p0}} found. Please add the missing author.', { p0: isbn }),
       );
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not scan this book.');

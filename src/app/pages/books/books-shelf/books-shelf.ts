@@ -1,3 +1,4 @@
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { AddBookSheet } from '../book-form/add-book-sheet.service';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -18,12 +19,14 @@ import { BookStore } from '../state/book-store';
 
 @Component({
   selector: 'app-books-shelf',
-  imports: [AppInput, IonContent, IonIcon, RouterLink],
+  imports: [TranslatePipe, AppInput, IonContent, IonIcon, RouterLink],
   templateUrl: './books-shelf.html',
   styleUrls: ['../books-loading.css', './books-shelf.css'],
 })
 export class BooksShelf {
-  readonly kindleSummary = kindleSummary;
+  private readonly i18n = inject(TranslateService);
+  readonly kindleSummary = (book: Parameters<typeof kindleSummary>[0]) =>
+    kindleSummary(book, (key, params) => this.i18n.instant(key, params));
   readonly addBookSheet = inject(AddBookSheet);
   readonly store = inject(BookStore);
   readonly search = signal('');

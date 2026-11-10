@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it } from 'vitest';
 import { StatsService } from './stats.service';
@@ -10,6 +11,7 @@ describe('Vehicle statistics', () => {
     const year = new Date().getFullYear();
     const injector = Injector.create({
       providers: [
+        ...translationTestProviders,
         { provide: AuthService, useValue: { userId: () => 'user' } },
         {
           provide: VehicleStore,

@@ -1,3 +1,5 @@
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import { AppInput } from '../../shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { NutritionService } from '../nutrition/state/nutrition.service';
@@ -27,12 +29,14 @@ import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 
 @Component({
-  imports: [AppInput, IonContent, IonIcon, RouterLink],
+  imports: [TranslatePipe, AppInput, IonContent, IonIcon, RouterLink],
   selector: 'app-home',
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home {
+  private readonly i18n = inject(TranslateService);
+
   readonly nutrition = inject(NutritionService);
   readonly gym = inject(GymStore);
   readonly budget = inject(BudgetStore);
@@ -79,7 +83,9 @@ export class Home {
         hint: !this.nutrition.logs().some((log) => log.date === this.isoToday)
           ? 'No food logged today'
           : goal > 0
-            ? `${Math.round(Math.abs(difference))} ${difference >= 0 ? 'under' : 'over'} goal`
+            ? this.i18n.instant(difference >= 0 ? '{{p0}} under goal' : '{{p0}} over goal', {
+                p0: Math.round(Math.abs(difference)),
+              })
             : 'Set your daily goal',
         route: '/nutrition',
         loading: this.nutrition.loading(),
@@ -89,7 +95,9 @@ export class Home {
         title: 'Workouts',
         value: String(this.trainingDays()),
         unit: 'planned days',
-        hint: gymToday ? `${gymToday} exercises planned today` : 'No workout planned today',
+        hint: gymToday
+          ? this.i18n.instant('{{p0}} exercises planned today', { p0: gymToday })
+          : 'No workout planned today',
         route: '/gym',
         loading: this.gym.loading(),
         error: this.gym.error(),
@@ -107,7 +115,13 @@ export class Home {
         title: 'Reading',
         value: String(this.reading()),
         unit: 'in progress',
-        hint: `${this.books.books().filter((b) => b.status === 'Finished' && b.finishDate.startsWith(this.isoToday.slice(0, 7))).length} finished this month`,
+        hint: this.i18n.instant('{{p0}} finished this month', {
+          p0: this.books
+            .books()
+            .filter(
+              (b) => b.status === 'Finished' && b.finishDate.startsWith(this.isoToday.slice(0, 7)),
+            ).length,
+        }),
         route: '/books',
         loading: this.books.loading(),
         error: this.books.error(),
@@ -151,25 +165,27 @@ export class Home {
         ? 'Loading balance...'
         : this.budget.error()
           ? 'Open budget'
-          : `${money(this.balance())} balance`;
+          : this.i18n.instant('{{p0}} balance', { p0: money(this.balance()) });
     if (route === '/books')
       return this.books.loading()
         ? 'Loading library...'
         : this.books.error()
           ? 'Open library'
-          : `${this.reading()} in progress`;
+          : this.i18n.instant('{{p0}} in progress', { p0: this.reading() });
     if (route === '/planning')
       return this.planning.loading()
         ? 'Loading plans...'
         : this.planning.error()
           ? 'Open planning'
-          : `${this.planning.meals().filter((meal) => meal.date >= this.isoToday).length} planned meals`;
+          : this.i18n.instant('{{p0}} planned meals', {
+              p0: this.planning.meals().filter((meal) => meal.date >= this.isoToday).length,
+            });
     if (route === '/fuel/vehicles')
       return this.vehicles.loading()
         ? 'Loading vehicles...'
         : this.vehicles.error()
           ? 'Open vehicles'
-          : `${this.vehicles.vehicles().length} vehicles`;
+          : this.i18n.instant('{{p0}} vehicles', { p0: this.vehicles.vehicles().length });
     return '';
   }
   readonly today = new Intl.DateTimeFormat('en-US', {

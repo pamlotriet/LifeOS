@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
@@ -13,9 +14,9 @@ import {
 
 @Component({
   selector: 'app-budget-nav',
-  imports: [RouterLink, RouterLinkActive, IonIcon],
+  imports: [TranslatePipe, RouterLink, RouterLinkActive, IonIcon],
   template: `
-    <nav aria-label="Budget sections">
+    <nav [attr.aria-label]="'Budget sections' | translate">
       @for (item of sections; track item.route) {
         <a
           [routerLink]="item.route"
@@ -26,8 +27,8 @@ import {
         >
           <ion-icon [name]="item.icon" aria-hidden="true" />
           <span
-            ><strong>{{ item.label }}</strong
-            ><small>{{ item.description }}</small></span
+            ><strong>{{ item.label | translate }}</strong
+            ><small>{{ item.description | translate }}</small></span
           >
         </a>
       }

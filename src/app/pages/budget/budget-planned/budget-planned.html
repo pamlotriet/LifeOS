@@ -4,32 +4,35 @@
     <header class="page-header planning-header">
       <div class="planning-title">
         <div>
-          <p class="planning-eyebrow">Personal finance / Planning</p>
-          <h1>Plan your <span>cycle</span></h1>
-          <p class="muted">Give every rand a purpose.</p>
+          <p class="planning-eyebrow">{{ 'Personal finance / Planning' | translate }}</p>
+          <h1>
+            {{ 'Plan your' | translate }} <span>{{ 'cycle' | translate }}</span>
+          </h1>
+          <p class="muted">{{ 'Give every rand a purpose.' | translate }}</p>
         </div>
       </div>
     </header>
-    <section class="planning-cycle" aria-label="Planning cycle">
+    <section class="planning-cycle" [attr.aria-label]="'Planning cycle' | translate">
       <div class="planning-cycle-controls">
         <button
           type="button"
           class="icon-button"
-          aria-label="Previous budget cycle"
+          [attr.aria-label]="'Previous budget cycle' | translate"
           [disabled]="savingPlanItem() || savingDebtPlan()"
           (click)="shiftMonth(-1)"
         >
           <ion-icon name="chevron-back" /></button
         ><label
-          >Budget cycle<app-month-picker
-            ariaLabel="Planning cycle month"
+          >{{ 'Budget cycle' | translate
+          }}<app-month-picker
+            [ariaLabel]="'Planning cycle month' | translate"
             [disabled]="savingPlanItem() || savingDebtPlan()"
             [ngModel]="store.month()"
             (ngModelChange)="setMonth($event)" /></label
         ><button
           type="button"
           class="icon-button"
-          aria-label="Next budget cycle"
+          [attr.aria-label]="'Next budget cycle' | translate"
           [disabled]="savingPlanItem() || savingDebtPlan()"
           (click)="shiftMonth(1)"
         >
@@ -37,72 +40,89 @@
         </button>
       </div>
       <div class="planning-cycle-details">
-        <p aria-live="polite">{{ store.cycleLabel() }}</p>
+        <p aria-live="polite">{{ store.cycleLabel() | translate }}</p>
         <button
           type="button"
           class="text-link"
           [disabled]="savingPlanItem() || savingDebtPlan()"
           (click)="goToCurrentCycle()"
         >
-          Current cycle
+          {{ 'Current cycle' | translate }}
         </button>
       </div>
     </section>
     <app-budget-nav />
     @if (store.loading()) {
-      <p class="status" role="status">Loading planned transactions...</p>
+      <p class="status" role="status">{{ 'Loading planned transactions...' | translate }}</p>
     } @else if (store.error()) {
       <p class="status error" role="alert">
-        {{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button>
+        {{ store.error() | translate }}
+        <button class="text-link" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </p>
     } @else {
-      <section class="planning-summary" aria-label="Cycle plan forecast">
+      <section class="planning-summary" [attr.aria-label]="'Cycle plan forecast' | translate">
         <article>
-          <span>Recorded income</span><strong>{{ money(income()) }}</strong
-          ><small>Income entered for this cycle</small>
+          <span>{{ 'Recorded income' | translate }}</span
+          ><strong>{{ money(income()) }}</strong
+          ><small>{{ 'Income entered for this cycle' | translate }}</small>
         </article>
         <article>
-          <span>Total planned</span><strong>{{ money(plannedTotal()) }}</strong
-          ><small>Expenses, savings and debt payments</small>
+          <span>{{ 'Total planned' | translate }}</span
+          ><strong>{{ money(plannedTotal()) }}</strong
+          ><small>{{ 'Expenses, savings and debt payments' | translate }}</small>
         </article>
         <article class="forecast-card">
-          <span>Planned spending money</span
+          <span>{{ 'Planned spending money' | translate }}</span
           ><strong [class.negative]="predictedBalance() < 0" aria-live="polite">{{
             money(predictedBalance())
           }}</strong
-          ><small>Recorded income minus planned values; excludes unplanned spending</small>
+          ><small>{{
+            'Recorded income minus planned values; excludes unplanned spending' | translate
+          }}</small>
         </article>
         <article class="forecast-card">
           <span>{{
-            outlook().leftOver.confirmed ? 'Spending account balance' : 'Estimated spending left'
+            (outlook().leftOver.confirmed ? 'Spending account balance' : 'Estimated spending left')
+              | translate
           }}</span
           ><strong [class.negative]="outlook().leftOver.actual < 0" aria-live="polite">{{
             money(outlook().leftOver.actual)
           }}</strong
-          ><small
-            >Confirm the actual account balance on Budget. Transfers into Spending increase it;
-            Spending purchases reduce it.</small
-          >
+          ><small>{{
+            'Confirm the actual account balance on Budget. Transfers into Spending increase it; Spending purchases reduce it.'
+              | translate
+          }}</small>
         </article>
         <article class="forecast-card">
-          <span>After spending &amp; remaining plans</span
+          <span>{{ 'After spending & remaining plans' | translate }}</span
           ><strong [class.negative]="outlook().afterPlans < 0" aria-live="polite">{{
             money(outlook().afterPlans)
           }}</strong
-          ><small>Recorded balance less unspent category plans and unpaid debt plans</small>
+          ><small>{{
+            'Recorded balance less unspent category plans and unpaid debt plans' | translate
+          }}</small>
         </article>
       </section>
       @if (!income()) {
-        <p class="planning-hint">Add income for this cycle to complete your forecast.</p>
+        <p class="planning-hint">
+          {{ 'Add income for this cycle to complete your forecast.' | translate }}
+        </p>
       }
       @if (predictedBalance() < 0) {
         <p class="planning-hint negative">
-          Your plan exceeds recorded income by {{ money(-predictedBalance()) }}.
+          {{
+            'messages.your_plan_exceeds_recorded_income_by_count_687373'
+              | translate: { p0: money(-predictedBalance()) }
+          }}
         </p>
       }
       <p class="planning-hint">
-        This forecast uses planned values. Compare your plans with actual spending in
-        <a routerLink="/budget/comparison">Planned vs actual</a>.
+        {{
+          'This forecast uses planned values. Compare your plans with actual spending in'
+            | translate
+        }}
+        <a routerLink="/budget/comparison">{{ 'Planned vs actual' | translate }}</a
+        >.
       </p>
       <section class="panel plan-panel" aria-labelledby="plan-title">
         <div class="planning-copy">
@@ -113,71 +133,96 @@
             [disabled]="savingPlanItem() || !hasPlannedItems()"
             (click)="copyPlans()"
           >
-            {{ savingPlanItem() ? 'Saving changes...' : 'Copy category plans to next cycle' }}
+            {{
+              (savingPlanItem() ? 'Saving changes...' : 'Copy category plans to next cycle')
+                | translate
+            }}
           </button>
-          <p>Copies category items only. Plan debt payments separately for each cycle.</p>
+          <p>
+            {{
+              'Copies category items only. Plan debt payments separately for each cycle.'
+                | translate
+            }}
+          </p>
         </div>
         <div class="plan-section-toolbar">
           <div>
-            <h2 id="plan-title">Category plans</h2>
+            <h2 id="plan-title">{{ 'Category plans' | translate }}</h2>
             <p>
-              Changes save when you leave a field. Copying keeps existing plans and skips previously
-              copied items.
+              {{
+                'Changes save when you leave a field. Copying keeps existing plans and skips previously copied items.'
+                  | translate
+              }}
             </p>
           </div>
-          <div class="plan-filters" role="group" aria-label="Filter categories">
+          <div
+            class="plan-filters"
+            role="group"
+            [attr.aria-label]="'Filter categories' | translate"
+          >
             <button
               type="button"
               [class.active]="!plannedOnly()"
               [attr.aria-pressed]="!plannedOnly()"
               (click)="plannedOnly.set(false)"
             >
-              All categories</button
+              {{ 'All categories' | translate }}</button
             ><button
               type="button"
               [class.active]="plannedOnly()"
               [attr.aria-pressed]="plannedOnly()"
               (click)="plannedOnly.set(true)"
             >
-              With plans
+              {{ 'With plans' | translate }}
             </button>
           </div>
         </div>
         @if (copyNotice()) {
-          <p class="status" role="status">{{ copyNotice() }}</p>
+          <p class="status" role="status">{{ copyNotice() | translate }}</p>
         }
         @if (planItemError()) {
-          <p class="status error" role="alert">{{ planItemError() }}</p>
+          <p class="status error" role="alert">{{ planItemError() | translate }}</p>
         }
         <div class="planning-categories">
           @for (item of visibleCategories(); track item.id) {
-            <section class="category-plan" [attr.aria-label]="item.name + ' planned items'">
+            <section
+              class="category-plan"
+              [attr.aria-label]="item.name + ' planned items' | translate"
+            >
               <div class="plan-row">
                 <span class="category-icon" [style.background]="item.colour"
                   ><ion-icon [name]="item.icon" /></span
                 ><span class="row-copy"
                   ><strong>{{ item.name }}</strong
-                  ><small>Actual {{ money(item.actual) }}</small></span
+                  ><small>{{
+                    'messages.actual_count_ed8ff8' | translate: { p0: money(item.actual) }
+                  }}</small></span
                 ><span class="plan-category-total"
-                  ><small>Planned total</small><strong>{{ money(item.planned) }}</strong></span
+                  ><small>{{ 'Planned total' | translate }}</small
+                  ><strong>{{ money(item.planned) }}</strong></span
                 >
               </div>
               @if (item.items.length) {
                 <div class="plan-column-labels" aria-hidden="true">
-                  <span>Payment / item</span><span>Amount (R)</span><span></span>
+                  <span>{{ 'Payment / item' | translate }}</span
+                  ><span>{{ 'Amount (R)' | translate }}</span
+                  ><span></span>
                 </div>
               }
               @if (item.type === 'savings' && item.items.length) {
                 <label class="savings-transfer-date"
-                  >Transfer date<app-date-picker
-                    ariaLabel="Transfer date"
+                  >{{ 'Transfer date' | translate
+                  }}<app-date-picker
+                    [ariaLabel]="'Transfer date' | translate"
                     [ngModel]="savingsDate()"
                     (ngModelChange)="savingsDate.set($event)"
                     [disabled]="savingPlanItem()"
                 /></label>
                 <p class="muted">
-                  Mark savings after transferring the money. This deducts it from your actual
-                  balance.
+                  {{
+                    'Mark savings after transferring the money. This deducts it from your actual balance.'
+                      | translate
+                  }}
                 </p>
               }
               @for (entry of item.items; track entry.id) {
@@ -186,7 +231,7 @@
                     appInput="field"
                     type="text"
                     maxlength="80"
-                    [attr.aria-label]="'Item name in ' + item.name"
+                    [attr.aria-label]="'Item name in ' + item.name | translate"
                     [ngModel]="entry.name || 'Existing plan'"
                     [disabled]="savingPlanItem() || !!movedTransaction(entry.id)"
                     (change)="saveItem(item.id, $any($event.target).value, entry.amount, entry.id)"
@@ -199,7 +244,9 @@
                     min="0"
                     max="999999999"
                     step="0.01"
-                    [attr.aria-label]="'Planned amount for ' + (entry.name || 'Existing plan')"
+                    [attr.aria-label]="
+                      'Planned amount for ' + (entry.name || 'Existing plan') | translate
+                    "
                     [ngModel]="entry.amount"
                     [disabled]="savingPlanItem() || !!movedTransaction(entry.id)"
                     (change)="
@@ -215,7 +262,7 @@
                     type="button"
                     class="text-link"
                     [disabled]="savingPlanItem() || !!movedTransaction(entry.id)"
-                    [attr.aria-label]="'Remove ' + (entry.name || 'Existing plan')"
+                    [attr.aria-label]="'Remove ' + (entry.name || 'Existing plan') | translate"
                     (click)="removeItem(entry)"
                   >
                     <ion-icon name="trash-outline" />
@@ -224,7 +271,10 @@
                 @if (item.type === 'savings') {
                   <div class="savings-moved-action">
                     @if (movedTransaction(entry.id); as moved) {
-                      <span>Moved {{ money(moved.amount) }} on {{ moved.date }}</span>
+                      <span>{{
+                        'messages.moved_count_on_count_784bf6'
+                          | translate: { p0: money(moved.amount), p1: moved.date }
+                      }}</span>
                     }
                     <button
                       type="button"
@@ -232,12 +282,14 @@
                       [disabled]="savingPlanItem() || entry.amount <= 0"
                       (click)="toggleSavingsMoved(entry)"
                     >
-                      {{ movedTransaction(entry.id) ? 'Undo moved' : 'Mark as moved' }}
+                      {{
+                        (movedTransaction(entry.id) ? 'Undo moved' : 'Mark as moved') | translate
+                      }}
                     </button>
                   </div>
                 }
               } @empty {
-                <p class="category-empty">No payments planned.</p>
+                <p class="category-empty">{{ 'No payments planned.' | translate }}</p>
               }
               <div class="category-actions">
                 <button
@@ -246,16 +298,18 @@
                   [disabled]="savingPlanItem()"
                   (click)="saveItem(item.id, 'New item', 0)"
                 >
-                  <ion-icon name="add" /> Add item
+                  <ion-icon name="add" /> {{ 'Add item' | translate }}
                 </button>
                 <button
                   type="button"
                   class="text-link plan-add-item"
                   [disabled]="savingPlanItem() || !item.items.length"
                   (click)="copyPlans(item.id)"
-                  [attr.aria-label]="'Copy ' + item.name + ' planned items to next cycle'"
+                  [attr.aria-label]="
+                    'Copy ' + item.name + ' planned items to next cycle' | translate
+                  "
                 >
-                  Copy to next cycle
+                  {{ 'Copy to next cycle' | translate }}
                 </button>
               </div>
             </section>
@@ -263,21 +317,26 @@
         </div>
         @if (!visibleCategories().length) {
           <p class="category-empty">
-            No category plans yet. Choose All categories to add your first item.
+            {{ 'No category plans yet. Choose All categories to add your first item.' | translate }}
           </p>
         }
       </section>
-      <section class="panel debt-planning-panel" aria-label="Plan debt payments">
+      <section
+        class="panel debt-planning-panel"
+        [attr.aria-label]="'Plan debt payments' | translate"
+      >
         <div class="section-heading">
-          <h2>Debt payments</h2>
-          <a class="text-link" routerLink="/budget/debts">Manage debts</a>
+          <h2>{{ 'Debt payments' | translate }}</h2>
+          <a class="text-link" routerLink="/budget/debts">{{ 'Manage debts' | translate }}</a>
         </div>
         <p class="muted">
-          Set a payment for each account. These amounts are included in Total planned. Mark
-          completed payments in Manage debt.
+          {{
+            'Set a payment for each account. These amounts are included in Total planned. Mark completed payments in Manage debt.'
+              | translate
+          }}
         </p>
         @if (debtPlanError()) {
-          <p class="status error" role="alert">{{ debtPlanError() }}</p>
+          <p class="status error" role="alert">{{ debtPlanError() | translate }}</p>
         }
         <div class="debt-plan-grid">
           @for (item of debtPlans(); track item.id) {
@@ -288,14 +347,14 @@
               <span class="row-copy"
                 ><strong>{{ item.name }}</strong
                 ><small
-                  >Actual {{ money(item.actual) }}
+                  >{{ 'messages.actual_count_ed8ff8' | translate: { p0: money(item.actual) } }}
                   @if (item.paid) {
-                    · Paid
+                    {{ '· Paid' | translate }}
                   }
                 </small></span
               >
               <label
-                ><span>{{ item.paid ? 'Recorded' : 'Planned' }}</span
+                ><span>{{ (item.paid ? 'Recorded' : 'Planned') | translate }}</span
                 ><input
                   appInput="field"
                   type="text"
@@ -303,7 +362,7 @@
                   inputmode="decimal"
                   min="0"
                   step="0.01"
-                  [attr.aria-label]="'Planned payment for ' + item.name"
+                  [attr.aria-label]="'Planned payment for ' + item.name | translate"
                   [disabled]="savingDebtPlan() || item.paid"
                   [ngModel]="item.planned"
                   (change)="saveDebtPlan(item.id, parseNumber($any($event.target).value))"
@@ -311,26 +370,35 @@
             </div>
           } @empty {
             <p class="muted">
-              Add named accounts such as Flixprime or Oom Martin in Manage debts to plan their
-              payments here.
+              {{
+                'Add named accounts such as Flixprime or Oom Martin in Manage debts to plan their payments here.'
+                  | translate
+              }}
             </p>
           }
         </div>
       </section>
 
       <details class="panel budget-content-card planned-transactions">
-        <summary>Planned debt transactions ({{ pending().length }})</summary>
+        <summary>
+          {{
+            'messages.planned_debt_transactions_count_5c08d8' | translate: { p0: pending().length }
+          }}
+        </summary>
         <div class="section-heading">
-          <h2>Planned debt transactions</h2>
-          <a class="text-link" routerLink="/budget/debts">Manage debts</a>
+          <h2>{{ 'Planned debt transactions' | translate }}</h2>
+          <a class="text-link" routerLink="/budget/debts">{{ 'Manage debts' | translate }}</a>
         </div>
         <p class="muted">
-          Payments planned for the selected cycle. Open a transaction to edit it or mark it paid.
+          {{
+            'Payments planned for the selected cycle. Open a transaction to edit it or mark it paid.'
+              | translate
+          }}
         </p>
         @if (pending().length) {
           <app-budget-transactions [transactions]="pending()" [categories]="store.categories()" />
         } @else {
-          <p class="muted">No planned debt transactions for this cycle.</p>
+          <p class="muted">{{ 'No planned debt transactions for this cycle.' | translate }}</p>
         }
       </details>
     }

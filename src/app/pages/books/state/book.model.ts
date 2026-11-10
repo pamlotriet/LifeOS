@@ -1,3 +1,4 @@
+import { englishText, TranslateText } from '../../../core/i18n/translation-text';
 export const BOOK_CATEGORIES = [
   'Fantasy',
   'Romantasy',
@@ -139,7 +140,16 @@ export function locationPagesRead(book: BookRecord): number {
     (book.locationEntries ?? []).reduce((sum, entry) => sum + locationSessionPages(book, entry), 0),
   );
 }
-export function kindleSummary(book: BookRecord): string {
+export function kindleSummary(book: BookRecord, translate: TranslateText = englishText): string {
   const number = (value: number) => value.toLocaleString('en-US');
-  return `Location ${number(book.currentLocation ?? 0)} of ${number(book.totalLocations ?? 0)} \u00b7 \u2248 Page ${number(Math.round(locationProgress(book) * effectiveTotalPages(book)))} of ${number(effectiveTotalPages(book))} (estimated) \u00b7 ${Math.round(locationProgress(book) * 100)}% complete`;
+  return translate(
+    'Location {{p0}} of {{p1}} · ≈ Page {{p2}} of {{p3}} (estimated) · {{p4}}% complete',
+    {
+      p0: number(book.currentLocation ?? 0),
+      p1: number(book.totalLocations ?? 0),
+      p2: number(Math.round(locationProgress(book) * effectiveTotalPages(book))),
+      p3: number(effectiveTotalPages(book)),
+      p4: Math.round(locationProgress(book) * 100),
+    },
+  );
 }

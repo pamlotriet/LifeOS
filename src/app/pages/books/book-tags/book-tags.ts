@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -8,7 +9,7 @@ import { BookStore } from '../state/book-store';
 
 @Component({
   selector: 'app-book-tags',
-  imports: [AppInput, AppButton, IonContent, IonIcon, RouterLink],
+  imports: [TranslatePipe, AppInput, AppButton, IonContent, IonIcon, RouterLink],
   templateUrl: './book-tags.html',
   styleUrls: ['./book-tags.css', '../books-loading.css'],
 })

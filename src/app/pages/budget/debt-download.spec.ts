@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -26,7 +27,9 @@ describe('Debt export download', () => {
   };
   const create = () =>
     runInInjectionContext(
-      Injector.create({ providers: [{ provide: BudgetStore, useValue: store }] }),
+      Injector.create({
+        providers: [...translationTestProviders, { provide: BudgetStore, useValue: store }],
+      }),
       () => new BudgetDebts(),
     );
   it('saves a named PDF directly for the selected account', async () => {

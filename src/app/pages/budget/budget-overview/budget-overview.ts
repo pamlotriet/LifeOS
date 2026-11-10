@@ -1,3 +1,5 @@
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { AppMonthPicker } from '../../../shared/components/app-month-picker/app-month-picker';
@@ -21,6 +23,7 @@ import { AppSkeleton } from '../../../shared/components/app-skeleton/app-skeleto
 @Component({
   selector: 'app-budget-overview',
   imports: [
+    TranslatePipe,
     AppInput,
     AppButton,
     AppMonthPicker,
@@ -40,6 +43,8 @@ import { AppSkeleton } from '../../../shared/components/app-skeleton/app-skeleto
   styleUrls: ['../budget.css', '../budget-layout.css', './budget-overview.css'],
 })
 export class BudgetOverview {
+  private readonly i18n = inject(TranslateService);
+
   readonly store = inject(BudgetStore);
   readonly monthlyView = !!inject(ActivatedRoute).snapshot.data['monthly'];
   readonly selectedDate = signal('');
@@ -147,7 +152,10 @@ export class BudgetOverview {
         month: 'short',
         year: 'numeric',
       });
-    return `${format(this.store.cycle().start)} to ${format(this.store.cycle().end)}`;
+    return this.i18n.instant('{{p0}} to {{p1}}', {
+      p0: format(this.store.cycle().start),
+      p1: format(this.store.cycle().end),
+    });
   });
   openCyclePicker(input: HTMLInputElement): void {
     try {

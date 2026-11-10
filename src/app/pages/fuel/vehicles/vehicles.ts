@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
@@ -5,7 +6,7 @@ import { VehicleStore } from './state/vehicle-store';
 import { FuelLoading } from '../components/fuel-loading/fuel-loading';
 
 @Component({
-  imports: [IonIcon, RouterLink, FuelLoading],
+  imports: [TranslatePipe, IonIcon, RouterLink, FuelLoading],
   selector: 'app-vehicles',
   styleUrl: './vehicles.css',
   templateUrl: './vehicles.html',

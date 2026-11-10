@@ -1,3 +1,4 @@
+import { withTranslations } from '../../../../test-providers';
 import '@angular/compiler';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { OpenLibraryCoverService } from './open-library-cover.service';
@@ -25,7 +26,9 @@ describe('OpenLibraryCoverService', () => {
         .mockResolvedValueOnce({ ok: true, json: async () => ({ name: 'Roald Dahl' }) }),
     );
 
-    await expect(new OpenLibraryCoverService().lookupByIsbn('9780140328721')).resolves.toEqual({
+    await expect(
+      withTranslations(() => new OpenLibraryCoverService()).lookupByIsbn('9780140328721'),
+    ).resolves.toEqual({
       isbn: '9780140328721',
       title: 'Matilda',
       author: 'Roald Dahl',
@@ -54,14 +57,14 @@ describe('OpenLibraryCoverService', () => {
       });
     vi.stubGlobal('fetch', request);
     await expect(
-      new OpenLibraryCoverService().lookupByIsbn('9780140328721'),
+      withTranslations(() => new OpenLibraryCoverService()).lookupByIsbn('9780140328721'),
     ).resolves.toMatchObject({ title: 'Matilda', author: 'Roald Dahl' });
   });
   it('reports unavailable catalogues instead of claiming a book does not exist', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Network error')));
-    await expect(new OpenLibraryCoverService().lookupByIsbn('9780140328721')).rejects.toThrow(
-      'lookup could not be completed',
-    );
+    await expect(
+      withTranslations(() => new OpenLibraryCoverService()).lookupByIsbn('9780140328721'),
+    ).rejects.toThrow('lookup could not be completed');
   });
   it('preserves partial book details when author metadata is unavailable', async () => {
     vi.stubGlobal(
@@ -75,13 +78,15 @@ describe('OpenLibraryCoverService', () => {
         .mockResolvedValue({ ok: true, json: async () => ({}) }),
     );
     await expect(
-      new OpenLibraryCoverService().lookupByIsbn('9780140328721'),
+      withTranslations(() => new OpenLibraryCoverService()).lookupByIsbn('9780140328721'),
     ).resolves.toMatchObject({ title: 'Matilda', author: '' });
   });
   it('queries Google without a Firebase API key and distinguishes a genuine miss', async () => {
     const request = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) });
     vi.stubGlobal('fetch', request);
-    await expect(new OpenLibraryCoverService().lookupByIsbn('9780140328721')).resolves.toBeNull();
+    await expect(
+      withTranslations(() => new OpenLibraryCoverService()).lookupByIsbn('9780140328721'),
+    ).resolves.toBeNull();
     const url = request.mock.calls
       .map((call) => String(call[0]))
       .find((url) => url.includes('googleapis'))!;
@@ -98,7 +103,7 @@ describe('OpenLibraryCoverService', () => {
       }),
     });
     vi.stubGlobal('fetch', request);
-    const cover = await new OpenLibraryCoverService().find(
+    const cover = await withTranslations(() => new OpenLibraryCoverService()).find(
       'Mexican Gothic',
       'Silvia Moreno-Garcia',
     );
@@ -116,7 +121,9 @@ describe('OpenLibraryCoverService', () => {
         }),
       }),
     );
-    expect(await new OpenLibraryCoverService().find('My Book', 'Author')).toBeNull();
+    expect(
+      await withTranslations(() => new OpenLibraryCoverService()).find('My Book', 'Author'),
+    ).toBeNull();
   });
 
   it('uses another edition cover when an exact title and author edition has no cover', async () => {
@@ -136,42 +143,46 @@ describe('OpenLibraryCoverService', () => {
         }),
       }),
     );
-    expect(await new OpenLibraryCoverService().find('White Nights', 'Fyodor Dostoevsky')).toBe(
-      'https://covers.openlibrary.org/b/id/14598226-L.jpg?default=false',
-    );
+    expect(
+      await withTranslations(() => new OpenLibraryCoverService()).find(
+        'White Nights',
+        'Fyodor Dostoevsky',
+      ),
+    ).toBe('https://covers.openlibrary.org/b/id/14598226-L.jpg?default=false');
   });
 
   it('falls back to Google Books when Open Library has no matching cover', async () => {
-    const request = vi
-      .fn()
-      .mockImplementation(async (url: string) => ({
-        ok: true,
-        json: async () =>
-          url.includes('googleapis')
-            ? {
-                items: [
-                  {
-                    volumeInfo: {
-                      title: 'Wrong Book',
-                      authors: ['Andy Weir'],
-                      imageLinks: { thumbnail: 'http://books.google.com/wrong' },
-                    },
+    const request = vi.fn().mockImplementation(async (url: string) => ({
+      ok: true,
+      json: async () =>
+        url.includes('googleapis')
+          ? {
+              items: [
+                {
+                  volumeInfo: {
+                    title: 'Wrong Book',
+                    authors: ['Andy Weir'],
+                    imageLinks: { thumbnail: 'http://books.google.com/wrong' },
                   },
-                  {
-                    volumeInfo: {
-                      title: 'Project Hail Mary',
-                      authors: ['Andy Weir'],
-                      imageLinks: { thumbnail: 'http://books.google.com/cover' },
-                    },
+                },
+                {
+                  volumeInfo: {
+                    title: 'Project Hail Mary',
+                    authors: ['Andy Weir'],
+                    imageLinks: { thumbnail: 'http://books.google.com/cover' },
                   },
-                ],
-              }
-            : { docs: [] },
-      }));
+                },
+              ],
+            }
+          : { docs: [] },
+    }));
     vi.stubGlobal('fetch', request);
-    expect(await new OpenLibraryCoverService().find('Project Hail Mary', 'Andy Weir')).toBe(
-      'https://books.google.com/cover',
-    );
+    expect(
+      await withTranslations(() => new OpenLibraryCoverService()).find(
+        'Project Hail Mary',
+        'Andy Weir',
+      ),
+    ).toBe('https://books.google.com/cover');
     expect(request.mock.calls.some((call) => String(call[0]).includes('books/v1/volumes'))).toBe(
       true,
     );
@@ -195,7 +206,10 @@ describe('OpenLibraryCoverService', () => {
     );
 
     expect(
-      await new OpenLibraryCoverService().find('The Book of Lost Things', 'John Connolly'),
+      await withTranslations(() => new OpenLibraryCoverService()).find(
+        'The Book of Lost Things',
+        'John Connolly',
+      ),
     ).toBe('https://covers.openlibrary.org/b/id/456-L.jpg?default=false');
   });
 });

@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { FuelDashboard } from './fuel-dashboard/fuel-dashboard';
 import { Vehicles } from './vehicles/vehicles';
 import { BackButton } from '../../shared/components/back-button/back-button';
@@ -8,21 +9,33 @@ import { IonContent } from '@ionic/angular';
 import { filter, map } from 'rxjs';
 @Component({
   selector: 'app-fuel',
-  imports: [FuelDashboard, Vehicles, BackButton, IonContent, RouterLink, RouterOutlet],
+  imports: [
+    TranslatePipe,
+    FuelDashboard,
+    Vehicles,
+    BackButton,
+    IonContent,
+    RouterLink,
+    RouterOutlet,
+  ],
   template: `<ion-content
     ><main class="fuel-workspace">
       <header class="fuel-heading">
-        <app-back-button /><span class="fuel-eyebrow">Every kilometre, accounted for.</span>
-        <h1>Fuel <span>&amp; vehicles</span></h1>
-        <p>A clearer view of what it costs to keep moving.</p>
+        <app-back-button /><span class="fuel-eyebrow">{{
+          'Every kilometre, accounted for.' | translate
+        }}</span>
+        <h1>
+          {{ 'Fuel' | translate }} <span>{{ '& vehicles' | translate }}</span>
+        </h1>
+        <p>{{ 'A clearer view of what it costs to keep moving.' | translate }}</p>
       </header>
-      <nav class="fuel-navigation" aria-label="Fuel sections">
+      <nav class="fuel-navigation" [attr.aria-label]="'Fuel sections' | translate">
         @for (option of sections; track option.route) {
           <a
             [routerLink]="option.route"
             [class.active]="selected() === option.route"
             [attr.aria-current]="selected() === option.route ? 'page' : null"
-            >{{ option.label }}</a
+            >{{ option.label | translate }}</a
           >
         }
       </nav>

@@ -2,7 +2,9 @@
   ><main class="budget-page">
     <header class="page-header">
       <app-back-button fallback="/budget" />
-      <h1 class="compact-title">{{ id ? 'Edit' : 'Add' }} Transaction</h1>
+      <h1 class="compact-title">
+        {{ 'messages.count_transaction_41d434' | translate: { p0: id ? 'Edit' : 'Add' } }}
+      </h1>
       <button
         appButton="primary"
         class="primary-button"
@@ -10,29 +12,31 @@
         form="transaction-form"
         [disabled]="busy() || store.loading() || !!store.error() || (!!id && !loaded())"
       >
-        {{ busy() ? 'Saving...' : 'Save' }}
+        {{ (busy() ? 'Saving...' : 'Save') | translate }}
       </button>
     </header>
     @if (store.loading()) {
-      <p class="status" role="status">Loading your budget...</p>
+      <p class="status" role="status">{{ 'Loading your budget...' | translate }}</p>
     }
     @if (store.error()) {
       <div class="status error" role="alert">
-        {{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button>
+        {{ store.error() | translate }}
+        <button class="text-link" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </div>
     }
     @if (error()) {
-      <p class="status error" role="alert">{{ error() }}</p>
+      <p class="status error" role="alert">{{ error() | translate }}</p>
     }
     @if (id && !loaded() && !store.loading() && !store.error()) {
       <p class="status error">
-        Transaction not found. <a routerLink="/budget">Return to Budget</a>
+        {{ 'Transaction not found.' | translate }}
+        <a routerLink="/budget">{{ 'Return to Budget' | translate }}</a>
       </p>
     }
     @if ((!id || loaded()) && !store.loading() && !store.error()) {
       <form id="transaction-form" (ngSubmit)="save()">
         <fieldset [disabled]="busy()" style="border: 0; padding: 0; margin: 0; min-width: 0">
-          <div class="segments" aria-label="Transaction type">
+          <div class="segments" [attr.aria-label]="'Transaction type' | translate">
             @for (item of types; track item) {
               <button
                 type="button"
@@ -42,31 +46,36 @@
                 (click)="changeType(item)"
               >
                 {{
-                  item === 'expense'
+                  (item === 'expense'
                     ? 'Expense'
                     : item === 'income'
                       ? 'Income'
                       : item === 'spending-transfer'
                         ? 'To Spending'
                         : 'To savings'
+                  ) | translate
                 }}
               </button>
             }
           </div>
           @if (type() === 'spending-transfer') {
             <p class="status">
-              Record money moved from your main account to Spending. This increases your Spending
-              balance without counting as income or an expense.
+              {{
+                'Record money moved from your main account to Spending. This increases your Spending balance without counting as income or an expense.'
+                  | translate
+              }}
             </p>
           }
           @if (type() === 'transfer') {
             <p class="status">
-              Transfers move money into savings. They reduce your remaining balance and are excluded
-              from expenses.
+              {{
+                'Transfers move money into savings. They reduce your remaining balance and are excluded from expenses.'
+                  | translate
+              }}
             </p>
           }
           <label class="field"
-            ><span>Amount (R) <em>*</em></span
+            ><span>{{ 'Amount (R)' | translate }} <em>*</em></span
             ><input
               appInput="field"
               name="amount"
@@ -81,39 +90,44 @@
               [(ngModel)]="model.amount"
           /></label>
           <label class="field"
-            ><span>Date <em>*</em></span
-            ><app-date-picker name="date" ariaLabel="Transaction date" [(ngModel)]="model.date"
+            ><span>{{ 'Date' | translate }} <em>*</em></span
+            ><app-date-picker
+              name="date"
+              [ariaLabel]="'Transaction date' | translate"
+              [(ngModel)]="model.date"
           /></label>
           <label class="field"
-            ><span>Category <em>*</em></span
+            ><span>{{ 'Category' | translate }} <em>*</em></span
             ><select class="lifeos-select" name="category" required [(ngModel)]="model.categoryId">
-              <option value="" disabled>Choose a category</option>
+              <option value="" disabled>{{ 'Choose a category' | translate }}</option>
               @for (category of categories(); track category.id) {
                 <option [value]="category.id">
-                  {{ category.name }}{{ category.type === 'bills' ? ' (Bill)' : '' }}
+                  {{ category.name }}{{ (category.type === 'bills' ? ' (Bill)' : '') | translate }}
                 </option>
               }
             </select></label
           >
           @if (!categories().length) {
             <p class="status">
-              Create a category before saving.
-              <a class="text-link" routerLink="/budget/categories">Manage categories</a>
+              {{ 'Create a category before saving.' | translate }}
+              <a class="text-link" routerLink="/budget/categories">{{
+                'Manage categories' | translate
+              }}</a>
             </p>
           }
           <label class="field"
-            ><span>Title / Description <em>*</em></span
+            ><span>{{ 'Title / Description' | translate }} <em>*</em></span
             ><input
               appInput="field"
               name="title"
               required
               maxlength="120"
-              placeholder="e.g. Checkers groceries"
+              [placeholder]="'e.g. Checkers groceries' | translate"
               [(ngModel)]="model.title"
           /></label>
           @if (type() === 'expense') {
             <label class="field"
-              ><span>Pay from account</span
+              ><span>{{ 'Pay from account' | translate }}</span
               ><select
                 class="lifeos-select"
                 name="account"
@@ -122,22 +136,26 @@
                   model.account = $event; model.debtId = ''; model.paymentStatus = 'paid'
                 "
               >
-                <option value="">Main / Spending account</option>
-                <option value="savings">Savings</option>
+                <option value="">{{ 'Main / Spending account' | translate }}</option>
+                <option value="savings">{{ 'Savings' | translate }}</option>
                 @for (card of store.debts(); track card.id) {
                   @if (card.type === 'credit-card') {
-                    <option [value]="'credit:' + card.id">{{ card.name }} (credit card)</option>
+                    <option [value]="'credit:' + card.id">
+                      {{ 'messages.count_credit_card_cca662' | translate: { p0: card.name } }}
+                    </option>
                   }
                 }
               </select></label
             >
             <p class="muted">
-              Savings purchases reduce your savings balance. Credit card purchases increase the
-              amount owed. Add cards under Debts.
+              {{
+                'Savings purchases reduce your savings balance. Credit card purchases increase the amount owed. Add cards under Debts.'
+                  | translate
+              }}
             </p>
           }
           <label class="field"
-            ><span>Payment Method</span
+            ><span>{{ 'Payment Method' | translate }}</span
             ><select class="lifeos-select" name="payment" [(ngModel)]="model.paymentMethod">
               @for (
                 method of ['Card', 'Cash', 'Bank transfer', 'Debit order', 'Other'];
@@ -151,9 +169,9 @@
             type() === 'expense' && !model.account?.startsWith('credit:') && store.debts().length
           ) {
             <label class="field"
-              ><span>Debt payment</span
+              ><span>{{ 'Debt payment' | translate }}</span
               ><select class="lifeos-select" name="debtId" [(ngModel)]="model.debtId">
-                <option value="">Not a debt payment</option>
+                <option value="">{{ 'Not a debt payment' | translate }}</option>
                 @for (debt of store.debts(); track debt.id) {
                   <option [value]="debt.id">{{ debt.name }}</option>
                 }
@@ -162,33 +180,39 @@
           }
           @if (type() === 'expense' && model.debtId) {
             <label class="field"
-              ><span>Payment status</span
+              ><span>{{ 'Payment status' | translate }}</span
               ><select
                 class="lifeos-select"
                 name="paymentStatus"
                 [ngModel]="model.paymentStatus || 'paid'"
                 (ngModelChange)="model.paymentStatus = $event"
               >
-                <option value="paid">Already paid</option>
-                <option value="planned">Planned</option>
+                <option value="paid">{{ 'Already paid' | translate }}</option>
+                <option value="planned">{{ 'Planned' | translate }}</option>
               </select></label
             >
           }
           <label class="field"
-            ><span>Notes</span
+            ><span>{{ 'Notes' | translate }}</span
             ><textarea
               appInput="field"
               name="notes"
               maxlength="2000"
-              placeholder="Any additional notes..."
+              [placeholder]="'Any additional notes...' | translate"
               [(ngModel)]="model.notes"
             ></textarea>
           </label>
           <section class="panel receipt-panel">
-            <h2><ion-icon name="camera-outline" aria-hidden="true" /> Receipt photo</h2>
-            <p class="muted">Optional · up to 5 MB</p>
+            <h2>
+              <ion-icon name="camera-outline" aria-hidden="true" />
+              {{ 'Receipt photo' | translate }}
+            </h2>
+            <p class="muted">{{ 'Optional · up to 5 MB' | translate }}</p>
             @if (localReceipt() || model.receiptUrl) {
-              <img [src]="localReceipt() || model.receiptUrl" alt="Transaction receipt" />
+              <img
+                [src]="localReceipt() || model.receiptUrl"
+                [attr.alt]="'Transaction receipt' | translate"
+              />
             }
             <div class="receipt-actions">
               <button
@@ -197,14 +221,14 @@
                 type="button"
                 (click)="receiptCamera.click()"
               >
-                Take photo</button
+                {{ 'Take photo' | translate }}</button
               ><button
                 appButton="secondary"
                 class="secondary-button"
                 type="button"
                 (click)="receiptFile.click()"
               >
-                Choose photo</button
+                {{ 'Choose photo' | translate }}</button
               ><input
                 #receiptCamera
                 hidden
@@ -221,25 +245,27 @@
               />
               @if (localReceipt() || model.receiptUrl) {
                 <button class="text-link" type="button" (click)="removeReceipt()">
-                  Remove photo
+                  {{ 'Remove photo' | translate }}
                 </button>
               }
             </div>
           </section>
           <div class="form-actions">
-            <a class="secondary-button" routerLink="/budget">Cancel</a
+            <a class="secondary-button" routerLink="/budget">{{ 'Cancel' | translate }}</a
             ><button appButton="primary" class="primary-button" type="submit">
-              Save transaction
+              {{ 'Save transaction' | translate }}
             </button>
           </div>
           @if (id) {
             <button class="text-link negative" type="button" (click)="confirmDelete.set(true)">
-              Delete transaction
+              {{ 'Delete transaction' | translate }}
             </button>
           }
           @if (confirmDelete()) {
             <div class="status error" role="alert">
-              <p>Delete this transaction and its receipt? This cannot be undone.</p>
+              <p>
+                {{ 'Delete this transaction and its receipt? This cannot be undone.' | translate }}
+              </p>
               <div class="form-actions">
                 <button
                   appButton="secondary"
@@ -247,14 +273,14 @@
                   class="secondary-button"
                   (click)="confirmDelete.set(false)"
                 >
-                  Keep it</button
+                  {{ 'Keep it' | translate }}</button
                 ><button
                   appButton="danger"
                   type="button"
                   class="secondary-button danger-button"
                   (click)="remove()"
                 >
-                  Delete
+                  {{ 'Delete' | translate }}
                 </button>
               </div>
             </div>

@@ -1,3 +1,5 @@
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { FormsModule } from '@angular/forms';
 import { NutritionService } from '../../nutrition/state/nutrition.service';
@@ -14,10 +16,21 @@ import { RecipeStore } from '../state/recipe-store';
 
 @Component({
   selector: 'app-recipe-detail',
-  imports: [AppInput, FormsModule, NutritionSummary, IonContent, IonIcon, RouterLink, PageHeader],
+  imports: [
+    TranslatePipe,
+    AppInput,
+    FormsModule,
+    NutritionSummary,
+    IonContent,
+    IonIcon,
+    RouterLink,
+    PageHeader,
+  ],
   templateUrl: './recipe-detail.html',
 })
 export class RecipeDetail {
+  private readonly i18n = inject(TranslateService);
+
   readonly recipeCategories = recipeCategories;
   readonly nutrition = inject(NutritionService);
   readonly planning = inject(PlanningStore);
@@ -51,7 +64,7 @@ export class RecipeDetail {
         name: r.title,
         quantity: this.amount,
         unit: 'servings',
-        amount: `${this.amount} servings`,
+        amount: this.i18n.instant('{{p0}} servings', { p0: this.amount }),
         nutrition: scaleNutrition(summary.perServing, this.amount),
       });
       this.status = 'Saved to your personal diary.';

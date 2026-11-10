@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { AppMonthPicker } from '../../../shared/components/app-month-picker/app-month-picker';
@@ -22,6 +23,7 @@ import {
 @Component({
   selector: 'app-budget-categories',
   imports: [
+    TranslatePipe,
     AppInput,
     AppButton,
     AppMonthPicker,

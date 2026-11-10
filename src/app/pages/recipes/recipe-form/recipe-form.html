@@ -3,19 +3,19 @@
   [isOpen]="modalOpen()"
   [canDismiss]="!saving()"
   (didDismiss)="onDismiss()"
-  [attr.aria-label]="id ? 'Edit recipe' : 'Add recipe'"
+  [attr.aria-label]="(id ? 'Edit recipe' : 'Add recipe') | translate"
 >
   <ng-template
     ><ion-content>
       <main class="mx-auto max-w-2xl px-4 pb-16 pt-4">
         <header class="recipe-modal-heading">
           <div>
-            <h1>{{ id ? 'Edit recipe' : 'Add recipe' }}</h1>
-            <p>Ingredients, instructions and the details that make it yours.</p>
+            <h1>{{ (id ? 'Edit recipe' : 'Add recipe') | translate }}</h1>
+            <p>{{ 'Ingredients, instructions and the details that make it yours.' | translate }}</p>
           </div>
           <button
             type="button"
-            aria-label="Close recipe editor"
+            [attr.aria-label]="'Close recipe editor' | translate"
             [disabled]="saving()"
             (click)="close()"
           >
@@ -24,7 +24,7 @@
         </header>
         @if (loading()) {
           <p class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
-            Loading recipe...
+            {{ 'Loading recipe...' | translate }}
           </p>
         } @else {
           <form (ngSubmit)="save()" class="space-y-4">
@@ -36,44 +36,48 @@
               @if (model.photoUrl) {
                 <img
                   [src]="model.photoUrl"
-                  alt="Recipe preview"
+                  [attr.alt]="'Recipe preview' | translate"
                   class="absolute inset-0 h-full w-full object-cover"
-                /><span class="absolute inset-x-0 bottom-0 bg-black/60 py-2 text-sm"
-                  >Change photo</span
-                >
+                /><span class="absolute inset-x-0 bottom-0 bg-black/60 py-2 text-sm">{{
+                  'Change photo' | translate
+                }}</span>
               } @else {
                 <span class="text-center text-sm text-[var(--text-secondary)]"
                   ><ion-icon
                     [icon]="icons.cameraOutline"
                     class="mb-2 block text-4xl text-cyan-300"
                   ></ion-icon
-                  >Add a recipe photo</span
+                  >{{ 'Add a recipe photo' | translate }}</span
                 >
               }
             </button>
             <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
-              <h2 class="mb-3 font-bold">Basics</h2>
+              <h2 class="mb-3 font-bold">{{ 'Basics' | translate }}</h2>
               <label class="block text-xs"
-                >Title *<input
+                >{{ 'Title *' | translate
+                }}<input
                   appInput="field"
                   name="title"
                   [(ngModel)]="model.title"
-                  placeholder="e.g. Creamy chicken pasta"
+                  [placeholder]="'e.g. Creamy chicken pasta' | translate"
                   class="mt-1 block w-full" /></label
               ><label class="mt-3 block text-xs"
-                >Description<textarea
+                >{{ 'Description' | translate
+                }}<textarea
                   appInput="field"
                   name="description"
                   [(ngModel)]="model.description"
                   rows="3"
-                  placeholder="A short description..."
+                  [placeholder]="'A short description...' | translate"
                   class="mt-1 block w-full"
                 ></textarea>
               </label>
               <div class="mt-3 grid grid-cols-2 gap-2">
                 <fieldset class="col-span-2 min-w-0">
-                  <legend class="text-xs">Categories</legend>
-                  <p class="mt-1 text-xs text-[var(--text-secondary)]">Choose all that apply.</p>
+                  <legend class="text-xs">{{ 'Categories' | translate }}</legend>
+                  <p class="mt-1 text-xs text-[var(--text-secondary)]">
+                    {{ 'Choose all that apply.' | translate }}
+                  </p>
                   <div class="mt-2 flex flex-wrap gap-2">
                     @for (category of categories; track category) {
                       <label
@@ -89,9 +93,10 @@
                   </div>
                 </fieldset>
                 <label class="min-w-0 text-xs"
-                  >Difficulty<app-select
+                  >{{ 'Difficulty' | translate
+                  }}<app-select
                     class="mt-1 block"
-                    ariaLabel="Recipe difficulty"
+                    [ariaLabel]="'Recipe difficulty' | translate"
                     [options]="difficultyOptions"
                     [selectedValue]="model.difficulty"
                     (valueChange)="setDifficulty($event)"
@@ -99,7 +104,8 @@
               </div>
               <div class="mt-3 grid grid-cols-2 gap-2">
                 <label class="text-xs"
-                  >Cook time (mins)<input
+                  >{{ 'Cook time (mins)' | translate
+                  }}<input
                     appInput="field"
                     type="number"
                     min="0"
@@ -107,7 +113,8 @@
                     [(ngModel)]="model.cookTime"
                     class="mt-1 block w-full" /></label
                 ><label class="text-xs"
-                  >Servings<input
+                  >{{ 'Servings' | translate
+                  }}<input
                     appInput="field"
                     type="number"
                     min="0.01"
@@ -120,13 +127,13 @@
             </section>
             <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
               <div class="mb-3 flex items-center justify-between">
-                <h2 class="font-bold">Ingredients</h2>
+                <h2 class="font-bold">{{ 'Ingredients' | translate }}</h2>
                 <button
                   type="button"
                   (click)="addIngredient()"
                   class="rounded-full border border-cyan-400/60 px-3 py-1 text-xs text-cyan-200"
                 >
-                  + Add
+                  {{ '+ Add' | translate }}
                 </button>
               </div>
               @for (ingredient of ingredients(); track $index; let index = $index) {
@@ -135,13 +142,13 @@
                     appInput="field"
                     [value]="ingredient"
                     (input)="updateIngredient(index, $any($event.target).value)"
-                    [attr.aria-label]="'Ingredient ' + (index + 1)"
-                    placeholder="e.g. 2 chicken breasts"
+                    [attr.aria-label]="'Ingredient ' + (index + 1) | translate"
+                    [placeholder]="'e.g. 2 chicken breasts' | translate"
                     class="min-w-0 flex-1"
                   /><button
                     type="button"
                     (click)="removeIngredient(index)"
-                    aria-label="Remove ingredient"
+                    [attr.aria-label]="'Remove ingredient' | translate"
                     class="px-2 text-rose-300"
                   >
                     <ion-icon [icon]="icons.closeOutline" aria-hidden="true" />
@@ -152,15 +159,16 @@
             <section
               class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3 space-y-3"
             >
-              <h2 class="font-bold">Nutrition ingredients</h2>
+              <h2 class="font-bold">{{ 'Nutrition ingredients' | translate }}</h2>
               <a
                 href="/planning/ingredients"
                 target="_blank"
                 rel="noopener"
                 class="text-sm text-cyan-300"
-                >Open ingredient library</a
+                >{{ 'Open ingredient library' | translate }}</a
               ><label
-                >Optional serving weight (g)<input
+                >{{ 'Optional serving weight (g)' | translate
+                }}<input
                   appInput="field"
                   name="servingWeight"
                   class="lifeos-select"
@@ -170,15 +178,20 @@
                   [(ngModel)]="model.servingWeight"
               /></label>
               <p class="text-sm">
-                Choose from your food database. Only these ingredients count towards nutrition;
-                include every ingredient for complete totals.
+                {{
+                  'Choose from your food database. Only these ingredients count towards nutrition; include every ingredient for complete totals.'
+                    | translate
+                }}
               </p>
               <p>
-                Changing servings divides the same total ingredients into portions. Use Scale
-                ingredients to change recipe quantities.
+                {{
+                  'Changing servings divides the same total ingredients into portions. Use Scale ingredients to change recipe quantities.'
+                    | translate
+                }}
               </p>
               <label
-                >Scale factor<input
+                >{{ 'Scale factor' | translate
+                }}<input
                   appInput="field"
                   name="scaleFactor"
                   type="number"
@@ -186,60 +199,73 @@
                   step="any"
                   [(ngModel)]="scaleFactor"
                   class="lifeos-select" /></label
-              ><button type="button" (click)="scaleRecipe()">Scale ingredients and servings</button>
+              ><button type="button" (click)="scaleRecipe()">
+                {{ 'Scale ingredients and servings' | translate }}
+              </button>
               <label
-                >Search ingredients<input
+                >{{ 'Search ingredients' | translate
+                }}<input
                   appInput="field"
                   name="foodQuery"
                   [(ngModel)]="foodQuery"
                   class="lifeos-select"
               /></label>
               <details>
-                <summary>Create missing ingredient without leaving recipe</summary>
+                <summary>
+                  {{ 'Create missing ingredient without leaving recipe' | translate }}
+                </summary>
                 <label
-                  >Name<input
+                  >{{ 'Name' | translate
+                  }}<input
                     appInput="field"
                     name="quickName"
                     [(ngModel)]="quickFoodName"
                     class="lifeos-select"
                 /></label>
-                <p>Label values per 100 g</p>
+                <p>{{ 'Label values per 100 g' | translate }}</p>
                 <label
-                  >Calories<input
+                  >{{ 'Calories' | translate
+                  }}<input
                     appInput="field"
                     name="quickCalories"
                     type="number"
                     [(ngModel)]="quickCalories"
                     class="lifeos-select" /></label
                 ><label
-                  >Protein<input
+                  >{{ 'Protein' | translate
+                  }}<input
                     appInput="field"
                     name="quickProtein"
                     type="number"
                     [(ngModel)]="quickProtein"
                     class="lifeos-select" /></label
                 ><label
-                  >Carbohydrates<input
+                  >{{ 'Carbohydrates' | translate
+                  }}<input
                     appInput="field"
                     name="quickCarbs"
                     type="number"
                     [(ngModel)]="quickCarbs"
                     class="lifeos-select" /></label
                 ><label
-                  >Fat<input
+                  >{{ 'Fat' | translate
+                  }}<input
                     appInput="field"
                     name="quickFat"
                     type="number"
                     [(ngModel)]="quickFat"
                     class="lifeos-select" /></label
-                ><button type="button" (click)="createMissing()">Create ingredient</button>
+                ><button type="button" (click)="createMissing()">
+                  {{ 'Create ingredient' | translate }}
+                </button>
               </details>
               @if (nutrition.error()) {
-                <p role="alert">{{ nutrition.error() }}</p>
+                <p role="alert">{{ nutrition.error() | translate }}</p>
               }
               <label class="block"
-                >Food<select name="nutritionFood" [(ngModel)]="foodId" class="lifeos-select">
-                  <option value="">Select food</option>
+                >{{ 'Food' | translate
+                }}<select name="nutritionFood" [(ngModel)]="foodId" class="lifeos-select">
+                  <option value="">{{ 'Select food' | translate }}</option>
                   @for (food of filteredFoods(); track food.id) {
                     <option [value]="food.id">
                       {{ food.name }} | {{ food.brand }} | {{ food.preparation }}
@@ -248,7 +274,8 @@
                 </select></label
               >
               <label class="block"
-                >Quantity<input
+                >{{ 'Quantity' | translate
+                }}<input
                   appInput="field"
                   class="lifeos-select"
                   name="foodGrams"
@@ -258,18 +285,19 @@
                   [(ngModel)]="foodGrams"
               /></label>
               <label
-                >Unit<select name="foodUnit" [(ngModel)]="foodUnit" class="lifeos-select">
+                >{{ 'Unit' | translate
+                }}<select name="foodUnit" [(ngModel)]="foodUnit" class="lifeos-select">
                   @for (unit of units(); track unit) {
-                    <option>{{ unit }}</option>
+                    <option>{{ unit | translate }}</option>
                   }
                 </select></label
               ><button type="button" (click)="addFood()" class="text-cyan-300">
-                Add food to recipe
+                {{ 'Add food to recipe' | translate }}
               </button>
               @for (item of nutritionIngredients(); track $index) {
                 <div class="flex justify-between gap-2">
                   <label
-                    >{{ item.name }} ({{ item.unit || 'g' }})<input
+                    >{{ item.name }} ({{ item.unit || 'g' | translate }})<input
                       appInput="field"
                       type="number"
                       step="any"
@@ -282,27 +310,29 @@
                     type="button"
                     (click)="removeFood($index)"
                     class="text-rose-300"
-                    [attr.aria-label]="'Remove ' + item.name"
+                    [attr.aria-label]="'Remove ' + item.name | translate"
                   >
-                    Remove
+                    {{ 'Remove' | translate }}
                   </button>
                 </div>
               }
               <app-nutrition-summary [summary]="summary()" />
               <p>
-                To link an old text ingredient, add its library match above, then remove its text
-                row when fully represented. Existing text is preserved until you remove it.
+                {{
+                  'To link an old text ingredient, add its library match above, then remove its text row when fully represented. Existing text is preserved until you remove it.'
+                    | translate
+                }}
               </p>
             </section>
             <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
               <div class="mb-3 flex items-center justify-between">
-                <h2 class="font-bold">Steps</h2>
+                <h2 class="font-bold">{{ 'Steps' | translate }}</h2>
                 <button
                   type="button"
                   (click)="addStep()"
                   class="rounded-full border border-cyan-400/60 px-3 py-1 text-xs text-cyan-200"
                 >
-                  + Add
+                  {{ '+ Add' | translate }}
                 </button>
               </div>
               @for (step of steps(); track step.id; let index = $index) {
@@ -315,12 +345,12 @@
                       appInput="inline"
                       [value]="step.title"
                       (input)="updateStep(index, 'title', $any($event.target).value)"
-                      placeholder="Step title"
+                      [placeholder]="'Step title' | translate"
                       class="min-w-0 flex-1 font-semibold"
                     /><button
                       type="button"
                       (click)="removeStep(index)"
-                      aria-label="Remove step"
+                      [attr.aria-label]="'Remove step' | translate"
                       class="px-2 text-rose-300"
                     >
                       <ion-icon [icon]="icons.closeOutline" aria-hidden="true" />
@@ -331,21 +361,21 @@
                     [value]="step.instruction"
                     (input)="updateStep(index, 'instruction', $any($event.target).value)"
                     rows="2"
-                    placeholder="Describe this step..."
+                    [placeholder]="'Describe this step...' | translate"
                     class="mt-2 block w-full resize-none"
                   ></textarea>
                 </div>
               }
             </section>
             <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
-              <h2 class="font-bold">Extras</h2>
+              <h2 class="font-bold">{{ 'Extras' | translate }}</h2>
               <div class="mt-2 flex gap-2">
                 <input
                   appInput="field"
                   [value]="tagInput()"
                   (input)="tagInput.set($any($event.target).value)"
                   (keydown.enter)="$event.preventDefault(); addTag()"
-                  placeholder="Add a tag"
+                  [placeholder]="'Add a tag' | translate"
                   class="min-w-0 flex-1"
                 /><button
                   type="button"
@@ -360,7 +390,7 @@
                   <button
                     type="button"
                     (click)="removeTag(tag)"
-                    [attr.aria-label]="'Remove tag ' + tag"
+                    [attr.aria-label]="'Remove tag ' + tag | translate"
                     class="rounded-full border border-[var(--border)] px-3 py-1 text-xs"
                   >
                     {{ tag }} <ion-icon [icon]="icons.closeOutline" aria-hidden="true" />
@@ -368,22 +398,25 @@
                 }
               </div>
               <label class="mt-3 block text-xs"
-                >Source<input
+                >{{ 'Source' | translate
+                }}<input
                   appInput="field"
                   name="source"
                   [(ngModel)]="model.source"
-                  placeholder="Website, cookbook, family"
+                  [placeholder]="'Website, cookbook, family' | translate"
                   class="mt-1 block w-full" /></label
               ><label class="mt-3 block text-xs"
-                >Source link<input
+                >{{ 'Source link' | translate
+                }}<input
                   appInput="field"
                   type="url"
                   name="sourceLink"
                   [(ngModel)]="model.sourceLink"
-                  placeholder="https://..."
+                  [placeholder]="'https://...' | translate"
                   class="mt-1 block w-full" /></label
               ><label class="mt-3 block text-xs"
-                >Notes<textarea
+                >{{ 'Notes' | translate
+                }}<textarea
                   appInput="field"
                   name="notes"
                   [(ngModel)]="model.notes"
@@ -407,7 +440,7 @@
                     [icon]="model.favourite ? icons.heart : icons.heartOutline"
                     aria-hidden="true"
                   />
-                  Favourite</button
+                  {{ 'Favourite' | translate }}</button
                 ><button
                   type="button"
                   (click)="model.private = !model.private"
@@ -418,7 +451,7 @@
                     [icon]="model.private ? icons.lockClosedOutline : icons.globeOutline"
                     aria-hidden="true"
                   />
-                  {{ model.private ? 'Private' : 'Public' }}
+                  {{ (model.private ? 'Private' : 'Public') | translate }}
                 </button>
               </div>
             </section>
@@ -427,7 +460,7 @@
                 role="alert"
                 class="rounded-xl border border-rose-400/50 bg-[var(--card)] p-3 text-sm text-rose-200"
               >
-                {{ error() }}
+                {{ error() | translate }}
               </p>
             }
             <button
@@ -436,7 +469,7 @@
               [disabled]="saving()"
               class="w-full font-bold"
             >
-              {{ saving() ? 'Saving...' : id ? 'Update Recipe' : 'Save Recipe' }}
+              {{ (saving() ? 'Saving...' : id ? 'Update Recipe' : 'Save Recipe') | translate }}
             </button>
           </form>
         }

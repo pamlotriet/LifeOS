@@ -1,3 +1,5 @@
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { AddBookSheet } from '../book-form/add-book-sheet.service';
@@ -32,11 +34,13 @@ import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.se
 
 @Component({
   selector: 'app-books-library',
-  imports: [AppInput, AppButton, IonContent, IonIcon, IonModal, RouterLink],
+  imports: [TranslatePipe, AppInput, AppButton, IonContent, IonIcon, IonModal, RouterLink],
   templateUrl: './books-library.html',
   styleUrls: ['./books-library.css', '../books-layout.css'],
 })
 export class BooksLibrary {
+  private readonly i18n = inject(TranslateService);
+
   readonly addBookSheet = inject(AddBookSheet);
   readonly store = inject(BookStore);
   private readonly router = inject(Router);
@@ -102,7 +106,8 @@ export class BooksLibrary {
   readonly progressError = signal('');
   readonly progressNotice = signal('');
 
-  readonly kindleSummary = kindleSummary;
+  readonly kindleSummary = (book: Parameters<typeof kindleSummary>[0]) =>
+    kindleSummary(book, (key, params) => this.i18n.instant(key, params));
   readonly estimatedPagesLogged = computed(() =>
     Math.round(
       this.store
@@ -174,7 +179,10 @@ export class BooksLibrary {
         toLocation: value,
       }),
     );
-    return `${kindleSummary(updated)}. Estimated pages read this session: ${pages}.`;
+    return this.i18n.instant('{{p0}}. Estimated pages read this session: {{p1}}.', {
+      p0: this.kindleSummary(updated),
+      p1: pages,
+    });
   }
   closeProgress(): void {
     if (!this.progressSaving()) this.progressBook.set(null);
@@ -198,7 +206,9 @@ export class BooksLibrary {
       !finished &&
       (!this.progressInput().trim() || !Number.isInteger(value) || value < 0 || value > max)
     ) {
-      this.progressError.set(`Enter a whole number between 0 and ${max}.`);
+      this.progressError.set(
+        this.i18n.instant('Enter a whole number between 0 and {{p0}}.', { p0: max }),
+      );
       return;
     }
     this.progressSaving.set(true);
@@ -235,8 +245,10 @@ export class BooksLibrary {
       }
       this.progressNotice.set(
         finished
-          ? `Finished ${book.title}. Your reading goal has been updated.`
-          : `Progress saved for ${book.title}.`,
+          ? this.i18n.instant('Finished {{p0}}. Your reading goal has been updated.', {
+              p0: book.title,
+            })
+          : this.i18n.instant('Progress saved for {{p0}}.', { p0: book.title }),
       );
       this.progressBook.set(null);
       if (finished) {

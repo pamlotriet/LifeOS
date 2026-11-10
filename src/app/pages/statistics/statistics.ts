@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '../../shared/components/app-input/app-input';
 import { addIcons } from 'ionicons';
 import {
@@ -26,6 +27,7 @@ import { StatsModule, StatsRange, StatsService, STATS_MODULES } from './state/st
 @Component({
   selector: 'app-statistics',
   imports: [
+    TranslatePipe,
     AppInput,
     FormsModule,
     IonContent,

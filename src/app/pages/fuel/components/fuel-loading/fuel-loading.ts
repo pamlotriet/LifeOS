@@ -1,17 +1,18 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, input } from '@angular/core';
 import { AppSkeleton } from '../../../../shared/components/app-skeleton/app-skeleton';
 export type FuelLoadingKind =
   'dashboard' | 'insights' | 'vehicles' | 'history' | 'vehicle-form' | 'refuel-form';
 @Component({
   selector: 'app-fuel-loading',
-  imports: [AppSkeleton],
+  imports: [TranslatePipe, AppSkeleton],
   template: `<section
     class="fuel-loading"
     role="status"
     aria-busy="true"
-    [attr.aria-label]="label()"
+    [attr.aria-label]="label() | translate"
   >
-    <span class="loading-copy">{{ label() }}</span>
+    <span class="loading-copy">{{ label() | translate }}</span>
     <div aria-hidden="true">
       @if (kind() === 'dashboard' || kind() === 'insights') {
         <div class="loading-toolbar"><app-skeleton variant="form" [count]="1" /></div>

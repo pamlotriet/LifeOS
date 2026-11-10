@@ -1,3 +1,4 @@
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { BackButton } from '../../../shared/components/back-button/back-button';
@@ -20,6 +21,7 @@ import {
 @Component({
   selector: 'app-budget-debts',
   imports: [
+    TranslatePipe,
     AppInput,
     AppButton,
     BackButton,
@@ -34,6 +36,7 @@ import {
   styleUrls: ['../budget.css', '../budget-layout.css', './budget-debts.css'],
 })
 export class BudgetDebts {
+  private readonly i18n = inject(TranslateService);
   @ViewChild(IonContent) private content?: IonContent;
   readonly store = inject(BudgetStore);
   readonly money = money;
@@ -56,7 +59,9 @@ export class BudgetDebts {
     this.busy.set(true);
     try {
       const { createDebtPdf } = await import('../debt-pdf');
-      createDebtPdf(debts, transactions, month, startDay).save(`LifeOS-Debt-Report-${month}.pdf`);
+      createDebtPdf(debts, transactions, month, startDay, (key, params) =>
+        this.i18n.instant(key, params),
+      ).save(`LifeOS-Debt-Report-${month}.pdf`);
     } catch {
       this.error.set('Could not download the PDF. Please try Export PDF again.');
     } finally {

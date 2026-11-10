@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
@@ -14,6 +15,7 @@ describe('Progress tracking persistence', () => {
     const service = runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           {
             provide: AuthService,
             useValue: { getSession: async () => ({ uid: 'me', token: 'token' }) },

@@ -1,3 +1,4 @@
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppMonthPicker } from '../../../shared/components/app-month-picker/app-month-picker';
 import { BackButton } from '../../../shared/components/back-button/back-button';
 import { budgetInsights } from './budget-insights.model';
@@ -14,6 +15,7 @@ import { AppChart } from '../../../shared/components/app-chart/app-chart';
 @Component({
   selector: 'app-budget-insights',
   imports: [
+    TranslatePipe,
     AppMonthPicker,
     BackButton,
     BudgetNav,
@@ -27,6 +29,7 @@ import { AppChart } from '../../../shared/components/app-chart/app-chart';
   styleUrls: ['../budget.css', '../budget-layout.css', './budget-insights.css'],
 })
 export class BudgetInsights {
+  private readonly i18n = inject(TranslateService);
   readonly store = inject(BudgetStore);
   readonly tab = signal('highlights');
   readonly money = money;
@@ -39,6 +42,7 @@ export class BudgetInsights {
       this.store.month(),
       this.store.cycleStartDay(),
       localDate(),
+      (key, params) => this.i18n.instant(key, params),
     ),
   );
   readonly breakdown = computed(() => {

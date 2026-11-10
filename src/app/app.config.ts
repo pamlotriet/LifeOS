@@ -63,6 +63,7 @@ import {
   shieldCheckmark,
 } from 'ionicons/icons';
 import { routes } from './app.routes';
+import { provideAppTranslations } from './core/i18n/translation.providers';
 
 addIcons({
   barbell,
@@ -126,6 +127,7 @@ addIcons({
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAppTranslations(),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideServiceWorker('ngsw-worker.js', {

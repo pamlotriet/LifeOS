@@ -2,37 +2,46 @@
   @if (vehicles.loading() || refuels.loading()) {
     <app-fuel-loading
       [kind]="insights ? 'insights' : 'dashboard'"
-      [label]="insights ? 'Loading fuel insights' : 'Loading fuel overview'"
+      [label]="(insights ? 'Loading fuel insights' : 'Loading fuel overview') | translate"
     />
   } @else if (vehicles.error() || refuels.error()) {
     <p class="fuel-message error" role="alert">
-      {{ vehicles.error() || refuels.error() }}
+      {{ vehicles.error() || refuels.error() | translate }}
       <button type="button" (click)="vehicles.error() ? vehicles.reload() : refuels.reload()">
-        Retry
+        {{ 'Retry' | translate }}
       </button>
     </p>
   } @else if (!refuels.vehicleOptions().length) {
     <section class="fuel-empty">
-      <h2>Your first journey starts here</h2>
-      <p>Add your vehicle, then log a fill-up to start tracking costs and consumption.</p>
-      <a class="fuel-button primary" routerLink="/fuel/add-car">+ Add vehicle</a>
+      <h2>{{ 'Your first journey starts here' | translate }}</h2>
+      <p>
+        {{
+          'Add your vehicle, then log a fill-up to start tracking costs and consumption.'
+            | translate
+        }}
+      </p>
+      <a class="fuel-button primary" routerLink="/fuel/add-car">{{
+        '+ Add vehicle' | translate
+      }}</a>
     </section>
   } @else {
     <header class="fuel-toolbar">
       <div>
-        <h2>{{ insights ? 'Trends & insights' : 'Your fuel overview' }}</h2>
+        <h2>{{ (insights ? 'Trends & insights' : 'Your fuel overview') | translate }}</h2>
         <p>
           {{
-            insights
+            (insights
               ? 'See what changed across your fill-ups.'
               : 'Costs, consumption and recent fill-ups in one place.'
+            ) | translate
           }}
         </p>
       </div>
       <div class="fuel-controls">
         <label
-          >Vehicle<select
-            aria-label="Select fuel vehicle"
+          >{{ 'Vehicle' | translate
+          }}<select
+            [attr.aria-label]="'Select fuel vehicle' | translate"
             [ngModel]="refuels.selectedVehicleId()"
             (ngModelChange)="refuels.selectVehicle($event)"
           >
@@ -40,65 +49,106 @@
               <option [value]="vehicle.id">{{ vehicle.name }} · {{ vehicle.registration }}</option>
             }
           </select></label
-        ><a class="fuel-button primary" routerLink="/fuel/refuels/add">+ Log fill-up</a>
+        ><a class="fuel-button primary" routerLink="/fuel/refuels/add">{{
+          '+ Log fill-up' | translate
+        }}</a>
       </div>
     </header>
     @if (!refuels.entries().length) {
       <section class="fuel-empty">
-        <h3>No fill-ups for this vehicle yet</h3>
-        <p>Log the date, litres, price and odometer reading. Your charts will appear here.</p>
-        <a routerLink="/fuel/refuels/add" class="fuel-button primary">Log first fill-up</a>
+        <h3>{{ 'No fill-ups for this vehicle yet' | translate }}</h3>
+        <p>
+          {{
+            'Log the date, litres, price and odometer reading. Your charts will appear here.'
+              | translate
+          }}
+        </p>
+        <a routerLink="/fuel/refuels/add" class="fuel-button primary">{{
+          'Log first fill-up' | translate
+        }}</a>
       </section>
     } @else {
       @let data = analytics();
-      <section class="fuel-metrics" aria-label="Fuel summary">
+      <section class="fuel-metrics" [attr.aria-label]="'Fuel summary' | translate">
         <article>
-          <span>Logged fuel spend</span><strong>{{ money(data.averages.totalSpent) }}</strong
-          ><small>{{ refuels.entries().length }} fill-ups · all records</small>
+          <span>{{ 'Logged fuel spend' | translate }}</span
+          ><strong>{{ money(data.averages.totalSpent) }}</strong
+          ><small>{{
+            'messages.count_fill_ups_all_records_95e2c5'
+              | translate: { p0: refuels.entries().length }
+          }}</small>
         </article>
         <article>
-          <span>Average price / litre</span><strong>{{ money(data.averages.randPerLiter) }}</strong
-          ><small>Weighted by litres purchased</small>
+          <span>{{ 'Average price / litre' | translate }}</span
+          ><strong>{{ money(data.averages.randPerLiter) }}</strong
+          ><small>{{ 'Weighted by litres purchased' | translate }}</small>
         </article>
         <article>
-          <span>Consumption</span
-          ><strong>{{ number(data.averages.litersPer100Km) }} <em>L/100 km</em></strong
-          ><small>{{ data.rangeCount }} fill-ups with distance</small>
+          <span>{{ 'Consumption' | translate }}</span
+          ><strong
+            >{{ number(data.averages.litersPer100Km) }}
+            <em>{{ 'L/100 km' | translate }}</em></strong
+          ><small>{{
+            'messages.count_fill_ups_with_distance_6738f1' | translate: { p0: data.rangeCount }
+          }}</small>
         </article>
         <article>
-          <span>Estimated cost / km</span><strong>{{ money(data.costPerKm) }}</strong
-          ><small>For fill-ups with known distance</small>
+          <span>{{ 'Estimated cost / km' | translate }}</span
+          ><strong>{{ money(data.costPerKm) }}</strong
+          ><small>{{ 'For fill-ups with known distance' | translate }}</small>
         </article>
       </section>
       @if (insights) {
-        <section class="fuel-insight-grid" aria-label="Fuel insights">
+        <section class="fuel-insight-grid" [attr.aria-label]="'Fuel insights' | translate">
           <article class="fuel-panel">
-            <h3>Your latest fuel price</h3>
-            <strong>{{ money(data.latest?.randPerLiter ?? null) }}/L</strong>
+            <h3>{{ 'Your latest fuel price' | translate }}</h3>
+            <strong>{{
+              'messages.count_l_5418f7'
+                | translate: { p0: money(data.latest?.randPerLiter ?? null) }
+            }}</strong>
             <p>
               @if (data.priceChange !== null) {
                 {{
-                  data.priceChange === 0
-                    ? 'Unchanged'
-                    : number(data.priceChange < 0 ? -data.priceChange : data.priceChange, 1) +
-                      '% ' +
-                      (data.priceChange > 0 ? 'higher' : 'lower')
+                  'messages.count_compared_with_the_previous_fill_up_ffe854'
+                    | translate
+                      : {
+                          p0:
+                            data.priceChange === 0
+                              ? 'Unchanged'
+                              : number(
+                                  data.priceChange < 0 ? -data.priceChange : data.priceChange,
+                                  1
+                                ) +
+                                '% ' +
+                                (data.priceChange > 0 ? 'higher' : 'lower'),
+                        }
                 }}
-                compared with the previous fill-up.
               } @else {
-                Add another fill-up to compare prices.
+                {{ 'Add another fill-up to compare prices.' | translate }}
               }
             </p>
-            <small>Price changes can reflect different fuel types or stations.</small>
+            <small>{{
+              'Price changes can reflect different fuel types or stations.' | translate
+            }}</small>
           </article>
           <article class="fuel-panel">
-            <h3>Distance &amp; fuel</h3>
-            <strong>{{ number(data.averages.totalRangeKm, 0) }} km</strong>
+            <h3>{{ 'Distance & fuel' | translate }}</h3>
+            <strong>{{
+              'messages.count_km_53d401' | translate: { p0: number(data.averages.totalRangeKm, 0) }
+            }}</strong>
             <p>
-              {{ number(data.averages.totalLitres, 1) }} litres purchased across all records.
-              Weighted economy: {{ number(data.averages.kmPerLiter) }} km/L.
+              {{
+                'messages.count_litres_purchased_across_all_records_weighted_975a7e'
+                  | translate
+                    : {
+                        p0: number(data.averages.totalLitres, 1),
+                        p1: number(data.averages.kmPerLiter),
+                      }
+              }}
             </p>
-            <small>Only fill-ups with a known distance contribute to economy.</small>
+            <small>{{
+              'Only fill-ups with a known distance contribute to economy.' | translate
+            }}</small>
           </article>
         </section>
       }
@@ -107,64 +157,71 @@
           <div class="fuel-panel-heading">
             <div>
               <h3>
-                {{ metric() === 'consumption' ? 'Consumption per fill-up' : 'Price per litre' }}
+                {{
+                  (metric() === 'consumption' ? 'Consumption per fill-up' : 'Price per litre')
+                    | translate
+                }}
               </h3>
               <p>
                 {{
-                  metric() === 'consumption'
+                  (metric() === 'consumption'
                     ? 'Litres per 100 km · lower is better'
                     : 'Actual price paid · ZAR per litre'
+                  ) | translate
                 }}
               </p>
             </div>
             <label class="chart-range"
-              >Show<select
-                aria-label="Number of recent fill-ups"
+              >{{ 'Show' | translate
+              }}<select
+                [attr.aria-label]="'Number of recent fill-ups' | translate"
                 [ngModel]="limit()"
                 (ngModelChange)="limit.set(+$event)"
               >
-                <option [ngValue]="6">Last 6</option>
-                <option [ngValue]="12">Last 12</option>
-                <option [ngValue]="24">Last 24</option>
+                <option [ngValue]="6">{{ 'Last 6' | translate }}</option>
+                <option [ngValue]="12">{{ 'Last 12' | translate }}</option>
+                <option [ngValue]="24">{{ 'Last 24' | translate }}</option>
               </select></label
             >
           </div>
-          <div class="fuel-chart-tabs" aria-label="Fuel chart metric">
+          <div class="fuel-chart-tabs" [attr.aria-label]="'Fuel chart metric' | translate">
             <button
               type="button"
               [class.active]="metric() === 'consumption'"
               [attr.aria-pressed]="metric() === 'consumption'"
               (click)="metric.set('consumption')"
             >
-              Consumption</button
+              {{ 'Consumption' | translate }}</button
             ><button
               type="button"
               [class.active]="metric() === 'price'"
               [attr.aria-pressed]="metric() === 'price'"
               (click)="metric.set('price')"
             >
-              Fuel price
+              {{ 'Fuel price' | translate }}
             </button>
           </div>
           @if (hasTrend()) {
             <app-fuel-chart
               [points]="trend()"
               [unit]="metric() === 'consumption' ? 'L/100 km' : 'ZAR/L'"
-              [label]="metric() + ' for recent fill-ups; exact values available below'"
+              [label]="metric() + ' for recent fill-ups; exact values available below' | translate"
             />
             <details>
-              <summary>View chart values</summary>
+              <summary>{{ 'View chart values' | translate }}</summary>
               <table>
                 <thead>
                   <tr>
-                    <th scope="col">Fill-up date</th>
-                    <th scope="col">{{ metric() === 'consumption' ? 'L/100 km' : 'ZAR/L' }}</th>
+                    <th scope="col">{{ 'Fill-up date' | translate }}</th>
+                    <th scope="col">
+                      {{ (metric() === 'consumption' ? 'L/100 km' : 'ZAR/L') | translate }}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   @for (point of trend(); track $index) {
                     <tr>
-                      <td>{{ point.label }}</td>
+                      <td>{{ point.label | translate }}</td>
                       <td>{{ number(point.value, 2) }}</td>
                     </tr>
                   }
@@ -173,13 +230,15 @@
             </details>
           } @else {
             <div class="fuel-chart-empty">
-              <h4>Distance is needed for consumption</h4>
+              <h4>{{ 'Distance is needed for consumption' | translate }}</h4>
               <p>
-                Record a second fill-up with a higher odometer, or add the first fill-up's distance.
-                You can view fuel prices already.
+                {{
+                  "Record a second fill-up with a higher odometer, or add the first fill-up's distance. You can view fuel prices already."
+                    | translate
+                }}
               </p>
               <button type="button" class="fuel-button" (click)="metric.set('price')">
-                Show fuel prices
+                {{ 'Show fuel prices' | translate }}
               </button>
             </div>
           }
@@ -187,12 +246,12 @@
         <article class="fuel-panel">
           <div class="fuel-panel-heading">
             <div>
-              <h3>Monthly fuel spend</h3>
-              <p>Six calendar months ending with your latest fill-up</p>
+              <h3>{{ 'Monthly fuel spend' | translate }}</h3>
+              <p>{{ 'Six calendar months ending with your latest fill-up' | translate }}</p>
             </div>
           </div>
           <div class="fuel-month-caption">
-            <span>Latest recorded month</span
+            <span>{{ 'Latest recorded month' | translate }}</span
             ><strong>{{ money(data.months.at(-1)?.value ?? null) }}</strong>
           </div>
           <app-fuel-chart
@@ -200,21 +259,21 @@
             kind="bar"
             unit="ZAR"
             color="--primary"
-            label="Monthly fuel spend; exact values available below"
+            [label]="'Monthly fuel spend; exact values available below' | translate"
           />
           <details>
-            <summary>View monthly totals</summary>
+            <summary>{{ 'View monthly totals' | translate }}</summary>
             <table>
               <thead>
                 <tr>
-                  <th scope="col">Month</th>
-                  <th scope="col">Fuel spend</th>
+                  <th scope="col">{{ 'Month' | translate }}</th>
+                  <th scope="col">{{ 'Fuel spend' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
                 @for (month of data.months; track month.label) {
                   <tr>
-                    <td>{{ month.label }}</td>
+                    <td>{{ month.label | translate }}</td>
                     <td>{{ money(month.value) }}</td>
                   </tr>
                 }
@@ -224,17 +283,18 @@
         </article>
       </section>
       <p class="fuel-footnote">
-        Consumption is an estimate based on odometer differences and litres purchased. Comparable
-        fill levels give better results; partial top-ups can distort individual points. Missing
-        distances appear as gaps, not zero consumption.
+        {{
+          'Consumption is an estimate based on odometer differences and litres purchased. Comparable fill levels give better results; partial top-ups can distort individual points. Missing distances appear as gaps, not zero consumption.'
+            | translate
+        }}
       </p>
       <section class="fuel-panel">
         <div class="fuel-panel-heading">
           <div>
-            <h3>Recent fill-ups</h3>
-            <p>Select a fill-up to edit its details.</p>
+            <h3>{{ 'Recent fill-ups' | translate }}</h3>
+            <p>{{ 'Select a fill-up to edit its details.' | translate }}</p>
           </div>
-          <a routerLink="/fuel/history">View all history &rarr;</a>
+          <a routerLink="/fuel/history">{{ 'View all history →' | translate }}</a>
         </div>
         <div class="fuel-records">
           @for (entry of refuels.newestFirst().slice(0, 5); track entry.id) {
@@ -242,19 +302,23 @@
               class="fuel-record"
               [routerLink]="['/fuel/refuels', entry.vehicleId, entry.id, 'edit']"
               ><div>
-                <strong>{{ entry.pop || 'Fill-up' }}</strong
+                <strong>{{ entry.pop || 'Fill-up' | translate }}</strong
                 ><small>{{ date(entry.dop) }} · {{ entry.areaTown }}</small>
               </div>
               <span
-                >{{ number(entry.qtyLiters) }} L<small
-                  >{{ money(entry.randPerLiter) }}/L</small
-                ></span
+                >{{ 'messages.count_l_5be18b' | translate: { p0: number(entry.qtyLiters) }
+                }}<small>{{
+                  'messages.count_l_5418f7' | translate: { p0: money(entry.randPerLiter) }
+                }}</small></span
               ><span
                 >{{
-                  entry.litersPer100Km === null
+                  (entry.litersPer100Km === null
                     ? 'No distance'
                     : number(entry.litersPer100Km) + ' L/100 km'
-                }}<small>{{ number(entry.odometer, 0) }} km odometer</small></span
+                  ) | translate
+                }}<small>{{
+                  'messages.count_km_odometer_4e8d62' | translate: { p0: number(entry.odometer, 0) }
+                }}</small></span
               ><strong>{{ money(entry.amountPaid) }}</strong></a
             >
           }

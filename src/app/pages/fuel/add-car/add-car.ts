@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { fuelEditorSheet } from '../fuel-editor-sheet';
@@ -12,7 +13,16 @@ import { AppSelect } from '../../../shared/components/app-select/app-select';
 import { pickImage } from '../../../shared/utils/pick-image';
 import { FuelLoading } from '../components/fuel-loading/fuel-loading';
 @Component({
-  imports: [AppInput, AppButton, IonModal, IonIcon, ReactiveFormsModule, AppSelect, FuelLoading],
+  imports: [
+    TranslatePipe,
+    AppInput,
+    AppButton,
+    IonModal,
+    IonIcon,
+    ReactiveFormsModule,
+    AppSelect,
+    FuelLoading,
+  ],
   selector: 'app-add-car',
   styleUrl: './add-car.css',
   templateUrl: './add-car.html',

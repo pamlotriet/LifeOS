@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +9,7 @@ import { Food, nutritionLabel, zeroMacros } from '../../nutrition/state/nutritio
 import { normalizeNutrition, scaleNutrition } from '../../nutrition/state/nutrition.calculations';
 @Component({
   selector: 'app-ingredients',
-  imports: [AppInput, FormsModule, IonContent, IonModal, PlanningHeader],
+  imports: [TranslatePipe, AppInput, FormsModule, IonContent, IonModal, PlanningHeader],
   templateUrl: './ingredients.html',
   styleUrls: ['../../nutrition/nutrition.css', './ingredients.css'],
 })

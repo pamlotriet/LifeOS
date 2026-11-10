@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
@@ -22,7 +23,9 @@ describe('Weekly gym planner', () => {
       saveExercise: vi.fn().mockResolvedValue(undefined),
     };
     const page = runInInjectionContext(
-      Injector.create({ providers: [{ provide: GymStore, useValue: store }] }),
+      Injector.create({
+        providers: [...translationTestProviders, { provide: GymStore, useValue: store }],
+      }),
       () => new Gym(),
     );
     return { page, store };

@@ -1,14 +1,16 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, input } from '@angular/core';
 
 export type SkeletonVariant = 'cards' | 'list' | 'grid' | 'form' | 'chart';
 
 /** A layout-preserving placeholder for every async LifeOS screen. */
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-skeleton',
   template: `<section
     class="skeleton"
     [class]="'skeleton ' + variant()"
-    aria-label="Loading content"
+    [attr.aria-label]="'Loading content' | translate"
     aria-busy="true"
   >
     @if (variant() === 'chart') {

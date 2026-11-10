@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -24,7 +25,7 @@ const MONTHS = [
 
 @Component({
   selector: 'app-finished-books',
-  imports: [IonContent, IonIcon, RouterLink, AppSelect, PageHeader, AppSkeleton],
+  imports: [TranslatePipe, IonContent, IonIcon, RouterLink, AppSelect, PageHeader, AppSkeleton],
   templateUrl: './finished-books.html',
 })
 export class FinishedBooks {

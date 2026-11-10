@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
@@ -23,6 +24,7 @@ describe('Fuel dashboard interactions', () => {
     const page = runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           { provide: RefuelStore, useValue: { entries } },
           { provide: VehicleStore, useValue: {} },
         ],
@@ -42,6 +44,7 @@ describe('Fuel dashboard interactions', () => {
     const page = runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           { provide: RefuelStore, useValue: { entries } },
           { provide: VehicleStore, useValue: {} },
         ],

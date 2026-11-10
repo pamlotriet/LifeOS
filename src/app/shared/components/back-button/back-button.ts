@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline } from 'ionicons/icons';
 import { Component, computed, inject, input } from '@angular/core';
@@ -6,12 +7,12 @@ import { AppNavigation, pageName } from '../../../core/navigation/app-navigation
 
 @Component({
   selector: 'app-back-button',
-  imports: [IonIcon],
+  imports: [TranslatePipe, IonIcon],
   template: `<button
     type="button"
     class="app-back-control"
-    [attr.aria-label]="label()"
-    [title]="label()"
+    [attr.aria-label]="label() | translate"
+    [title]="label() | translate"
     (click)="navigation.back(fallback())"
   >
     <ion-icon name="arrow-back-outline" aria-hidden="true" />

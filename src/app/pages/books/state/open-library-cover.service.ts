@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { inject, Injectable } from '@angular/core';
 
 interface SearchDocument {
   title?: string;
@@ -76,6 +77,8 @@ export function normalizedAuthorText(value: string): string {
 
 @Injectable({ providedIn: 'root' })
 export class OpenLibraryCoverService {
+  private readonly i18n = inject(TranslateService);
+
   private readonly cache = new Map<string, Promise<string | null>>();
 
   find(title: string, author: string, isbn?: string): Promise<string | null> {
@@ -464,7 +467,10 @@ export class OpenLibraryCoverService {
   private async searchGoogleBooks(title: string, author: string): Promise<string | null> {
     try {
       const queries = [
-        `intitle:${title.trim()} inauthor:${author.trim()}`,
+        this.i18n.instant('intitle:{{p0}} inauthor:{{p1}}', {
+          p0: title.trim(),
+          p1: author.trim(),
+        }),
         `"${title.trim()}" "${author.trim()}"`,
         `${title.trim()} ${author.trim()}`,
         `intitle:${title.trim()}`,

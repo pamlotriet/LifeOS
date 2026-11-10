@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { DestroyRef, Injector, runInInjectionContext, signal } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -30,6 +31,7 @@ describe('Reading progress editor', () => {
     runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           { provide: AddBookSheet, useValue: { open: vi.fn() } },
           { provide: Router, useValue: { navigate } },
           {

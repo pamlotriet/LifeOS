@@ -10,8 +10,12 @@
     <div class="write-toast" role="status" aria-live="polite" aria-atomic="true">
       <span class="toast-check" aria-hidden="true"
         ><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg></span
-      ><span>{{ writeFeedback.message() }}</span>
-      <button type="button" aria-label="Dismiss notification" (click)="writeFeedback.dismiss()">
+      ><span>{{ writeFeedback.message() | translate }}</span>
+      <button
+        type="button"
+        [attr.aria-label]="'Dismiss notification' | translate"
+        (click)="writeFeedback.dismiss()"
+      >
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
       </button>
     </div>
@@ -19,10 +23,10 @@
   @if (updates.available()) {
     <aside class="app-update-banner" role="status">
       <div>
-        <strong>Update available</strong
-        ><span>Save any changes, then refresh for the latest LifeOS.</span>
+        <strong>{{ 'Update available' | translate }}</strong
+        ><span>{{ 'Save any changes, then refresh for the latest LifeOS.' | translate }}</span>
       </div>
-      <button type="button" (click)="updates.refresh()">Refresh</button>
+      <button type="button" (click)="updates.refresh()">{{ 'Refresh' | translate }}</button>
     </aside>
   }
   @if (authService.isAuthenticated() && (pullDistance() || refreshCoordinator.refreshing())) {
@@ -38,11 +42,12 @@
           [class.animate-spin]="refreshCoordinator.refreshing()"
         ></span>
         {{
-          refreshCoordinator.refreshing()
+          (refreshCoordinator.refreshing()
             ? 'Refreshing...'
             : pullDistance() >= 58
               ? 'Release to refresh'
               : 'Pull to refresh'
+          ) | translate
         }}
       </div>
     </div>
@@ -58,13 +63,15 @@
       <div class="login-content">
         <header class="login-brand">
           <img class="login-logo" src="/icons/lifeos-plum-192.png" alt="" />
-          <h1>Life<span>OS</span></h1>
-          <p>Organize your life beautifully.</p>
+          <h1>
+            {{ 'Life' | translate }}<span>{{ 'OS' | translate }}</span>
+          </h1>
+          <p>{{ 'Organize your life beautifully.' | translate }}</p>
         </header>
 
         <section class="login-card" aria-labelledby="login-title" [attr.aria-busy]="signingIn()">
-          <h2 id="login-title">Sign in with Google</h2>
-          <p class="login-subtitle">to continue to LifeOS</p>
+          <h2 id="login-title">{{ 'Sign in with Google' | translate }}</h2>
+          <p class="login-subtitle">{{ 'to continue to LifeOS' | translate }}</p>
           <button
             class="login-button google-button"
             type="button"
@@ -89,39 +96,43 @@
                 d="M24 12.2c2.9 0 5.5 1 7.5 2.9l5.6-5.6A19.3 19.3 0 0 0 24 4 20.2 20.2 0 0 0 5.9 15l6.9 5.4c1.6-4.7 6-8.2 11.2-8.2Z"
               />
             </svg>
-            <span>{{ signingIn() ? 'Checking account...' : 'Continue with Google' }}</span>
+            <span>{{
+              (signingIn() ? 'Checking account...' : 'Continue with Google') | translate
+            }}</span>
             <svg class="button-chevron" viewBox="0 0 24 24" aria-hidden="true">
               <path d="m9 5 7 7-7 7" />
             </svg>
           </button>
 
           @if (signInError()) {
-            <p class="login-error" role="alert">{{ signInError() }}</p>
+            <p class="login-error" role="alert">{{ signInError() | translate }}</p>
           }
-          <div class="login-security" aria-label="Security features">
+          <div class="login-security" [attr.aria-label]="'Security features' | translate">
             <div>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <rect x="4" y="10" width="16" height="12" rx="3" />
                 <path d="M7 10V7a5 5 0 0 1 10 0v3m-5 5v3" /></svg
-              ><span>Encrypted<br />data</span>
+              ><span>{{ 'Encrypted' | translate }}<br />{{ 'data' | translate }}</span>
             </div>
             <div>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 2c3 3 6 3 9 4 0 8-3 12-9 16C6 18 3 14 3 6c3-1 6-1 9-4Z" />
                 <path d="m8 12 3 3 5-6" /></svg
-              ><span>Secure<br />access</span>
+              ><span>{{ 'Secure' | translate }}<br />{{ 'access' | translate }}</span>
             </div>
             <div>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   d="m3 3 18 18M10 5c5-1 9 3 12 7a22 22 0 0 1-4 4M6 6a22 22 0 0 0-4 6c5 7 10 9 16 6M9 9a4 4 0 0 0 6 6"
                 /></svg
-              ><span>Private<br />by design</span>
+              ><span>{{ 'Private' | translate }}<br />{{ 'by design' | translate }}</span>
             </div>
           </div>
         </section>
         <footer class="login-footer">
-          No account creation required.<br />Sign in with Google only.
+          {{ 'No account creation required.' | translate }}<br />{{
+            'Sign in with Google only.' | translate
+          }}
         </footer>
       </div>
     </main>

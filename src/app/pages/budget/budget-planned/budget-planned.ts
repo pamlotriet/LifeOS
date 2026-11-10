@@ -1,3 +1,5 @@
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { AppDatePicker } from '../../../shared/components/app-date-picker/app-date-picker';
@@ -28,6 +30,7 @@ import { BudgetTransactions } from '../components/budget-transactions/budget-tra
 @Component({
   selector: 'app-budget-planned',
   imports: [
+    TranslatePipe,
     AppInput,
     AppButton,
     AppDatePicker,
@@ -45,6 +48,8 @@ import { BudgetTransactions } from '../components/budget-transactions/budget-tra
   styleUrls: ['../budget.css', '../budget-layout.css', './budget-planned.css'],
 })
 export class BudgetPlanned {
+  private readonly i18n = inject(TranslateService);
+
   readonly store = inject(BudgetStore);
   readonly money = money;
   readonly parseNumber = (value: string): number => parseBudgetNumber(value) ?? NaN;
@@ -148,7 +153,12 @@ export class BudgetPlanned {
         year: 'numeric',
       });
       this.copyNotice.set(
-        `${result.copied} planned item${result.copied === 1 ? '' : 's'} copied to ${label}.${result.skipped ? ` ${result.skipped} already copied; kept unchanged.` : ''}`,
+        this.i18n.instant('{{p0}} planned item{{p1}} copied to {{p2}}.{{p3}}', {
+          p0: result.copied,
+          p1: result.copied === 1 ? '' : 's',
+          p2: label,
+          p3: result.skipped ? ` ${result.skipped} already copied; kept unchanged.` : '',
+        }),
       );
     } catch (error) {
       this.planItemError.set(

@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it } from 'vitest';
 import { StatsService } from './stats.service';
@@ -12,6 +13,7 @@ describe('Selected month reports', () => {
     runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           {
             provide: NutritionService,
             useValue: {

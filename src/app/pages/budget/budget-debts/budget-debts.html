@@ -2,7 +2,7 @@
   <main class="budget-page">
     <header class="page-header">
       <app-back-button fallback="/budget" />
-      <h1 class="compact-title">Manage debt</h1>
+      <h1 class="compact-title">{{ 'Manage debt' | translate }}</h1>
       <div class="debt-header-actions">
         <button
           appButton="secondary"
@@ -11,77 +11,87 @@
           (click)="exportPdf()"
           [disabled]="busy() || store.loading() || !!store.error() || !rows().length"
         >
-          Export PDF</button
+          {{ 'Export PDF' | translate }}</button
         ><button
           class="primary-button"
           type="button"
           (click)="edit()"
           [disabled]="busy() || store.loading() || !!store.error()"
         >
-          Add debt
+          {{ 'Add debt' | translate }}
         </button>
       </div>
     </header>
     @if (!store.loading() && !store.error()) {
-      <section class="debt-summary" aria-label="Debt totals">
+      <section class="debt-summary" [attr.aria-label]="'Debt totals' | translate">
         <div class="panel">
-          <span>Remaining balance</span><strong>{{ money(totals().remaining) }}</strong>
+          <span>{{ 'Remaining balance' | translate }}</span
+          ><strong>{{ money(totals().remaining) }}</strong>
         </div>
         <div class="panel">
-          <span>Payments made</span><strong class="positive">{{ money(totals().paid) }}</strong>
+          <span>{{ 'Payments made' | translate }}</span
+          ><strong class="positive">{{ money(totals().paid) }}</strong>
         </div>
         <div class="panel">
-          <span>Payments planned</span><strong>{{ money(totals().planned) }}</strong>
+          <span>{{ 'Payments planned' | translate }}</span
+          ><strong>{{ money(totals().planned) }}</strong>
         </div>
       </section>
     }
     <app-budget-nav />
     @if (store.loading()) {
-      <p class="status" role="status">Loading debts and payments...</p>
+      <p class="status" role="status">{{ 'Loading debts and payments...' | translate }}</p>
     }
     @if (store.error()) {
       <p class="status error" role="alert">
-        {{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button>
+        {{ store.error() | translate }}
+        <button class="text-link" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </p>
     }
     @if (error()) {
-      <p class="status error" role="alert">{{ error() }}</p>
+      <p class="status error" role="alert">{{ error() | translate }}</p>
     }
     @if (!store.loading() && !store.error()) {
       <p class="status">
-        Record payments you've already made or plan your next ones. Planned payments only reduce
-        your debt and budget balance once you mark them paid.
+        {{
+          "Record payments you've already made or plan your next ones. Planned payments only reduce your debt and budget balance once you mark them paid."
+            | translate
+        }}
       </p>
       <p class="muted help-text">
-        Export PDF downloads a report with account balances, recorded payments through the selected
-        budget cycle, and all planned payments.
+        {{
+          'Export PDF downloads a report with account balances, recorded payments through the selected budget cycle, and all planned payments.'
+            | translate
+        }}
       </p>
 
       @if (editing()) {
         <form class="panel editor" (ngSubmit)="save()">
-          <h2>{{ editing() === 'new' ? 'Add debt account' : 'Edit debt account' }}</h2>
+          <h2>
+            {{ (editing() === 'new' ? 'Add debt account' : 'Edit debt account') | translate }}
+          </h2>
           <fieldset [disabled]="busy()" class="form-fields">
             <label class="field"
-              ><span>Name</span
+              ><span>{{ 'Name' | translate }}</span
               ><input
                 appInput="field"
                 name="name"
                 required
                 maxlength="80"
                 [(ngModel)]="model.name"
-                placeholder="e.g. Oom Martin"
+                [placeholder]="'e.g. Oom Martin' | translate"
             /></label>
             <label class="field"
-              ><span>Type</span
+              ><span>{{ 'Type' | translate }}</span
               ><select class="lifeos-select" name="type" [(ngModel)]="model.type">
-                <option value="credit-card">Credit card</option>
-                <option value="loan">Loan</option>
-                <option value="other">Other</option>
+                <option value="credit-card">{{ 'Credit card' | translate }}</option>
+                <option value="loan">{{ 'Loan' | translate }}</option>
+                <option value="other">{{ 'Other' | translate }}</option>
               </select></label
             >
             <div class="field-grid">
               <label class="field"
-                ><span>Starting balance (R)</span
+                ><span>{{ 'Starting balance (R)' | translate }}</span
                 ><input
                   appInput="field"
                   name="opening"
@@ -93,7 +103,7 @@
                   [(ngModel)]="model.openingBalance"
               /></label>
               <label class="field"
-                ><span>Annual interest rate (%)</span
+                ><span>{{ 'Annual interest rate (%)' | translate }}</span
                 ><input
                   appInput="field"
                   name="rate"
@@ -107,10 +117,13 @@
               /></label>
             </div>
             <p class="muted help-text">
-              Use the balance before the payments you will enter, so they are not deducted twice.
+              {{
+                'Use the balance before the payments you will enter, so they are not deducted twice.'
+                  | translate
+              }}
             </p>
             <label class="field"
-              ><span>Adjusted starting balance (optional)</span
+              ><span>{{ 'Adjusted starting balance (optional)' | translate }}</span
               ><input
                 appInput="field"
                 name="override"
@@ -118,7 +131,7 @@
                 appBudgetNumber
                 min="0"
                 step="0.01"
-                placeholder="Use starting balance"
+                [placeholder]="'Use starting balance' | translate"
                 [(ngModel)]="model.openingOverride"
             /></label>
             <div class="form-actions">
@@ -128,9 +141,9 @@
                 class="secondary-button"
                 (click)="editing.set(null)"
               >
-                Cancel</button
+                {{ 'Cancel' | translate }}</button
               ><button appButton="primary" type="submit" class="primary-button">
-                {{ busy() ? 'Saving...' : 'Save debt' }}
+                {{ (busy() ? 'Saving...' : 'Save debt') | translate }}
               </button>
             </div>
           </fieldset>
@@ -138,16 +151,16 @@
       }
       @if (paymentDebt()) {
         <form class="panel editor payment-editor" (ngSubmit)="savePayment()">
-          <h2>{{ paymentId() ? 'Edit payment' : 'Add payment' }}</h2>
+          <h2>{{ (paymentId() ? 'Edit payment' : 'Add payment') | translate }}</h2>
           <fieldset [disabled]="busy()" class="form-fields">
-            <div class="segments" aria-label="Payment status">
+            <div class="segments" [attr.aria-label]="'Payment status' | translate">
               <button
                 type="button"
                 [class.active]="payment.paymentStatus === 'paid'"
                 [attr.aria-pressed]="payment.paymentStatus === 'paid'"
                 (click)="payment.paymentStatus = 'paid'"
               >
-                Already paid
+                {{ 'Already paid' | translate }}
               </button>
               <button
                 type="button"
@@ -155,12 +168,12 @@
                 [attr.aria-pressed]="payment.paymentStatus === 'planned'"
                 (click)="payment.paymentStatus = 'planned'"
               >
-                Planned
+                {{ 'Planned' | translate }}
               </button>
             </div>
             <div class="field-grid">
               <label class="field"
-                ><span>Amount (R)</span
+                ><span>{{ 'Amount (R)' | translate }}</span
                 ><input
                   appInput="field"
                   name="amount"
@@ -174,12 +187,18 @@
                   [(ngModel)]="payment.amount"
               /></label>
               <div class="field">
-                <span>{{ payment.paymentStatus === 'planned' ? 'Planned date' : 'Date paid' }}</span
-                ><app-date-picker name="date" ariaLabel="Payment date" [(ngModel)]="payment.date" />
+                <span>{{
+                  (payment.paymentStatus === 'planned' ? 'Planned date' : 'Date paid') | translate
+                }}</span
+                ><app-date-picker
+                  name="date"
+                  [ariaLabel]="'Payment date' | translate"
+                  [(ngModel)]="payment.date"
+                />
               </div>
             </div>
             <label class="field"
-              ><span>Description</span
+              ><span>{{ 'Description' | translate }}</span
               ><input
                 appInput="field"
                 name="title"
@@ -189,7 +208,7 @@
             /></label>
             <div class="field-grid">
               <label class="field"
-                ><span>Budget category</span
+                ><span>{{ 'Budget category' | translate }}</span
                 ><select
                   class="lifeos-select"
                   name="category"
@@ -202,7 +221,7 @@
                 </select></label
               >
               <label class="field"
-                ><span>Payment method</span
+                ><span>{{ 'Payment method' | translate }}</span
                 ><select class="lifeos-select" name="method" [(ngModel)]="payment.paymentMethod">
                   @for (
                     method of ['Card', 'Cash', 'Bank transfer', 'Debit order', 'Other'];
@@ -214,7 +233,7 @@
               >
             </div>
             <label class="field"
-              ><span>Notes (optional)</span
+              ><span>{{ 'Notes (optional)' | translate }}</span
               ><textarea
                 appInput="field"
                 name="notes"
@@ -224,9 +243,10 @@
             </label>
             <p class="muted help-text">
               {{
-                payment.paymentStatus === 'planned'
+                (payment.paymentStatus === 'planned'
                   ? 'This stays in your payment plan until you mark it paid.'
                   : 'This appears once as an expense in the month it was paid.'
+                ) | translate
               }}
             </p>
             <div class="form-actions">
@@ -236,14 +256,15 @@
                 class="secondary-button"
                 (click)="paymentDebt.set(null)"
               >
-                Cancel</button
+                {{ 'Cancel' | translate }}</button
               ><button appButton="primary" type="submit" class="primary-button">
                 {{
-                  busy()
+                  (busy()
                     ? 'Saving...'
                     : payment.paymentStatus === 'planned'
                       ? 'Save planned payment'
                       : 'Save payment'
+                  ) | translate
                 }}
               </button>
             </div>
@@ -253,8 +274,10 @@
       @if (deleting(); as item) {
         <section class="status" role="alert">
           <p>
-            Delete {{ money(item.amount) }} for {{ item.title }}? Paid entries will also be removed
-            from budget expenses.
+            {{
+              'messages.delete_count_for_count_paid_entries_will_d6202b'
+                | translate: { p0: money(item.amount), p1: item.title }
+            }}
           </p>
           <div class="form-actions">
             <button
@@ -263,14 +286,14 @@
               [disabled]="busy()"
               (click)="deleting.set(null)"
             >
-              Keep payment</button
+              {{ 'Keep payment' | translate }}</button
             ><button
               appButton="danger"
               class="secondary-button danger-button"
               [disabled]="busy()"
               (click)="removePayment()"
             >
-              Delete payment
+              {{ 'Delete payment' | translate }}
             </button>
           </div>
         </section>
@@ -282,11 +305,12 @@
               <div>
                 <p class="eyebrow">
                   {{
-                    row.debt.type === 'credit-card'
+                    (row.debt.type === 'credit-card'
                       ? 'Credit card'
                       : row.debt.type === 'loan'
                         ? 'Loan'
                         : 'Other debt'
+                    ) | translate
                   }}
                 </p>
                 <h2>{{ row.debt.name }}</h2>
@@ -298,9 +322,9 @@
                   class="secondary-button"
                   [disabled]="busy()"
                   (click)="exportPdf(row.debt.id)"
-                  [attr.aria-label]="'Export PDF for ' + row.debt.name"
+                  [attr.aria-label]="'Export PDF for ' + row.debt.name | translate"
                 >
-                  Export PDF</button
+                  {{ 'Export PDF' | translate }}</button
                 ><button
                   appButton="secondary"
                   type="button"
@@ -308,31 +332,34 @@
                   [disabled]="busy()"
                   (click)="edit(row.debt.id)"
                 >
-                  Edit debt
+                  {{ 'Edit debt' | translate }}
                 </button>
               </div>
             </div>
             <div class="debt-balance">
-              <span class="muted">Remaining balance</span><strong>{{ money(row.closing) }}</strong>
+              <span class="muted">{{ 'Remaining balance' | translate }}</span
+              ><strong>{{ money(row.closing) }}</strong>
             </div>
             <dl class="debt-metrics">
               <div>
-                <dt>Paid so far</dt>
+                <dt>{{ 'Paid so far' | translate }}</dt>
                 <dd class="positive">{{ money(row.paid) }}</dd>
               </div>
               <div>
-                <dt>Planned</dt>
+                <dt>{{ 'Planned' | translate }}</dt>
                 <dd>{{ money(row.planned) }}</dd>
               </div>
               <div>
-                <dt>After planned payments</dt>
+                <dt>{{ 'After planned payments' | translate }}</dt>
                 <dd>{{ money(row.projected) }}</dd>
               </div>
             </dl>
             @if (row.debt.type === 'credit-card') {
               <p class="muted help-text">
-                Includes {{ money(row.interest) }} estimated interest for this month. Prior interest
-                and lender fees are not calculated.
+                {{
+                  'messages.includes_count_estimated_interest_for_this_month_2b6754'
+                    | translate: { p0: money(row.interest) }
+                }}
               </p>
             }
             <div class="debt-actions">
@@ -342,7 +369,7 @@
                 [disabled]="busy()"
                 (click)="editPayment(row.debt.id, 'paid')"
               >
-                Record payment</button
+                {{ 'Record payment' | translate }}</button
               ><button
                 appButton="secondary"
                 class="secondary-button"
@@ -350,21 +377,20 @@
                 [disabled]="busy()"
                 (click)="editPayment(row.debt.id, 'planned')"
               >
-                Plan payment</button
+                {{ 'Plan payment' | translate }}</button
               ><button
                 class="text-link"
                 type="button"
                 [attr.aria-expanded]="expanded() === row.debt.id"
                 (click)="expanded.set(expanded() === row.debt.id ? null : row.debt.id)"
               >
-                {{ expanded() === row.debt.id ? 'Hide payments' : 'View payments' }} ({{
-                  row.history.length + row.upcoming.length
-                }})
+                {{ (expanded() === row.debt.id ? 'Hide payments' : 'View payments') | translate }}
+                ({{ row.history.length + row.upcoming.length }})
               </button>
             </div>
             @if (expanded() === row.debt.id) {
               <section class="payment-section">
-                <h3>Planned payments</h3>
+                <h3>{{ 'Planned payments' | translate }}</h3>
                 @for (item of row.upcoming; track item.id) {
                   <div class="payment-row">
                     <div class="row-copy">
@@ -372,9 +398,9 @@
                       ><small
                         >{{ date(item.date) }}
                         <span class="payment-badge" [class.overdue]="item.date < today">{{
-                          item.date < today ? 'Overdue' : 'Planned'
+                          (item.date < today ? 'Overdue' : 'Planned') | translate
                         }}</span></small
-                      ><small>{{ item.title }}</small>
+                      ><small>{{ item.title | translate }}</small>
                       @if (item.notes) {
                         <p class="payment-notes">{{ item.notes }}</p>
                       }
@@ -387,38 +413,43 @@
                         [disabled]="busy()"
                         (click)="editPayment(row.debt.id, 'paid', item)"
                       >
-                        Mark paid</button
+                        {{ 'Mark paid' | translate }}</button
                       ><button
                         class="text-link"
                         type="button"
                         [disabled]="busy()"
                         (click)="editPayment(row.debt.id, 'planned', item)"
                       >
-                        Edit</button
+                        {{ 'Edit' | translate }}</button
                       ><button
                         class="text-link"
                         type="button"
                         [disabled]="busy()"
                         (click)="confirmDelete(item)"
                       >
-                        Delete
+                        {{ 'Delete' | translate }}
                       </button>
                     </div>
                   </div>
                 } @empty {
                   <p class="muted help-text">
-                    No planned payments. Add one with its expected date and amount.
+                    {{
+                      'No planned payments. Add one with its expected date and amount.' | translate
+                    }}
                   </p>
                 }
               </section>
               <section class="payment-section">
-                <h3>Payment history</h3>
+                <h3>{{ 'Payment history' | translate }}</h3>
                 @for (item of row.history; track item.id) {
                   <div class="payment-row">
                     <div class="row-copy">
                       <strong>{{ money(item.amount) }}</strong
-                      ><small>{{ date(item.date) }} &middot; {{ item.paymentMethod }}</small
-                      ><small>{{ item.title }}</small>
+                      ><small>{{
+                        'messages.count_count_6ff1e6'
+                          | translate: { p0: date(item.date), p1: item.paymentMethod }
+                      }}</small
+                      ><small>{{ item.title | translate }}</small>
                       @if (item.notes) {
                         <p class="payment-notes">{{ item.notes }}</p>
                       }
@@ -430,20 +461,23 @@
                         [disabled]="busy()"
                         (click)="editPayment(row.debt.id, 'paid', item)"
                       >
-                        Edit</button
+                        {{ 'Edit' | translate }}</button
                       ><button
                         class="text-link"
                         type="button"
                         [disabled]="busy()"
                         (click)="confirmDelete(item)"
                       >
-                        Delete
+                        {{ 'Delete' | translate }}
                       </button>
                     </div>
                   </div>
                 } @empty {
                   <p class="muted help-text">
-                    No payments recorded yet. You can add payments from earlier months.
+                    {{
+                      'No payments recorded yet. You can add payments from earlier months.'
+                        | translate
+                    }}
                   </p>
                 }
               </section>
@@ -452,8 +486,8 @@
         } @empty {
           <section class="panel empty-state">
             <ion-icon name="wallet" />
-            <h2>No debts yet</h2>
-            <p>Add a debt, then record past payments and plan future ones.</p>
+            <h2>{{ 'No debts yet' | translate }}</h2>
+            <p>{{ 'Add a debt, then record past payments and plan future ones.' | translate }}</p>
           </section>
         }
       </div>

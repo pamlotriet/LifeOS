@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -25,6 +26,7 @@ describe('BookService', () => {
     runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           { provide: AuthService, useValue: { getSession } },
           {
             provide: FirestoreService,

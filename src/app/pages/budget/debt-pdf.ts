@@ -1,3 +1,4 @@
+import { englishText, TranslateText } from '../../core/i18n/translation-text';
 import { jsPDF } from 'jspdf';
 import { autoTable } from 'jspdf-autotable';
 import { BudgetDebt, BudgetTransaction, money } from './state/budget.model';
@@ -8,10 +9,14 @@ export function createDebtPdf(
   transactions: BudgetTransaction[],
   month: string,
   startDay: number,
+  translate: TranslateText = englishText,
 ): jsPDF {
   const { cycle, rows } = debtReportData(debts, transactions, month, startDay);
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  doc.setProperties({ title: `LifeOS Debt Report ${month}`, author: 'LifeOS' });
+  doc.setProperties({
+    title: translate('LifeOS Debt Report {{p0}}', { p0: month }),
+    author: 'LifeOS',
+  });
   const cash = (value: number) => money(value).replace(/\s/g, ' ');
   const date = (value: string) =>
     new Date(`${value}T12:00:00`).toLocaleDateString('en-ZA', {
@@ -23,7 +28,7 @@ export function createDebtPdf(
   const text = (value: string, size = 10, bold = false) => {
     doc.setFont('helvetica', bold ? 'bold' : 'normal');
     doc.setFontSize(size);
-    const lines: string[] = doc.splitTextToSize(value, 178);
+    const lines: string[] = doc.splitTextToSize(translate(value), 178);
     for (const line of lines) {
       if (y > 275) {
         doc.addPage();
@@ -37,8 +42,8 @@ export function createDebtPdf(
   const table = (head: string[], body: string[][], moneyColumns: number[]) => {
     autoTable(doc, {
       startY: y,
-      head: [head],
-      body,
+      head: [head.map((value) => translate(value))],
+      body: body.map((row) => row.map((value) => translate(value))),
       margin: { left: 16, right: 16, top: 20, bottom: 20 },
       styles: {
         font: 'helvetica',
@@ -63,7 +68,12 @@ export function createDebtPdf(
     rows.reduce((sum, row) => sum + Math.round(row[key] * 100), 0) / 100;
   text('LIFEOS', 11, true);
   text('Debt & payment report', 22, true);
-  text(`Budget cycle: ${date(cycle.start)} - ${date(cycle.end)}. All amounts in ZAR.`);
+  text(
+    translate('Budget cycle: {{p0}} - {{p1}}. All amounts in ZAR.', {
+      p0: date(cycle.start),
+      p1: date(cycle.end),
+    }),
+  );
   table(
     ['Remaining balances', 'Paid through cycle end', 'All planned payments', 'After plans'],
     [[cash(sum('closing')), cash(sum('paid')), cash(sum('planned')), cash(sum('projected'))]],
@@ -99,7 +109,7 @@ export function createDebtPdf(
       [1],
     );
     for (const [label, payments] of [
-      [`Recorded payments through ${date(cycle.end)}`, row.history],
+      [translate('Recorded payments through {{p0}}', { p0: date(cycle.end) }), row.history],
       ['Planned payments - all dates', row.upcoming],
     ] as const) {
       if (y > 250) {
@@ -122,7 +132,9 @@ export function createDebtPdf(
         [3],
       );
       text(
-        `Section total: ${cash(payments.reduce((sum, item) => sum + Math.round(item.amount * 100), 0) / 100)}`,
+        translate('Section total: {{p0}}', {
+          p0: cash(payments.reduce((sum, item) => sum + Math.round(item.amount * 100), 0) / 100),
+        }),
         10,
         true,
       );
@@ -138,8 +150,10 @@ export function createDebtPdf(
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(97, 112, 133);
-    doc.text(`LifeOS | ${month}`, 16, 287);
-    doc.text(`Page ${page} of ${pages}`, 194, 287, { align: 'right' });
+    doc.text(translate('LifeOS | {{p0}}', { p0: month }), 16, 287);
+    doc.text(translate('Page {{p0}} of {{p1}}', { p0: page, p1: pages }), 194, 287, {
+      align: 'right',
+    });
   }
   return doc;
 }

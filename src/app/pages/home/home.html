@@ -4,68 +4,80 @@
       <div>
         <p class="home-date">{{ today }}</p>
         <h1>
-          Good <span>{{ greeting.replace('Good ', '') }}</span>
+          <span>{{ greeting | translate }}</span>
         </h1>
-        <p class="home-subtitle">Your plans, progress and everyday essentials.</p>
+        <p class="home-subtitle">
+          {{ 'Your plans, progress and everyday essentials.' | translate }}
+        </p>
       </div>
       <div class="home-header-tools">
         <label class="space-search"
           ><ion-icon name="search-outline" aria-hidden="true" /><input
             appInput="field"
             type="search"
-            placeholder="Search spaces"
-            aria-label="Search spaces"
+            [placeholder]="'Search spaces' | translate"
+            [attr.aria-label]="'Search spaces' | translate"
             [value]="query()"
             (input)="query.set($any($event.target).value)"
         /></label>
       </div>
     </header>
-    <nav class="home-favourites" aria-label="Your favourites">
+    <nav class="home-favourites" [attr.aria-label]="'Your favourites' | translate">
       <a routerLink="/books" class="favourite-link"
         ><span class="favourite-icon"><ion-icon name="book" aria-hidden="true" /></span
-        ><span><strong>Books</strong><small>Open your library</small></span
+        ><span
+          ><strong>{{ 'Books' | translate }}</strong
+          ><small>{{ 'Open your library' | translate }}</small></span
         ><ion-icon class="favourite-arrow" name="arrow-forward-outline" aria-hidden="true"
       /></a>
       <a routerLink="/gym" class="favourite-link"
         ><span class="favourite-icon"><ion-icon name="barbell" aria-hidden="true" /></span
-        ><span><strong>Gym</strong><small>Open your workouts</small></span
+        ><span
+          ><strong>{{ 'Gym' | translate }}</strong
+          ><small>{{ 'Open your workouts' | translate }}</small></span
         ><ion-icon class="favourite-arrow" name="arrow-forward-outline" aria-hidden="true"
       /></a>
     </nav>
-    <section class="home-metrics" aria-label="Your daily overview">
+    <section class="home-metrics" [attr.aria-label]="'Your daily overview' | translate">
       @for (metric of metrics(); track metric.title) {
         <a [routerLink]="metric.route" class="metric-card" [attr.aria-busy]="metric.loading"
-          ><h2>{{ metric.title }}</h2>
+          ><h2>{{ metric.title | translate }}</h2>
           @if (metric.loading) {
             <span class="home-skeleton skeleton-value" aria-hidden="true"></span
             ><span class="home-skeleton skeleton-caption" aria-hidden="true"></span
-            ><span class="sr-only">Loading {{ metric.title }}</span>
+            ><span class="sr-only">{{
+              'messages.loading_count_a92419' | translate: { p0: (metric.title | translate) }
+            }}</span>
           } @else {
             <div class="metric-value">
-              <strong>{{ metric.error ? 'Unavailable' : metric.value }}</strong>
+              <strong>{{ (metric.error ? 'Unavailable' : metric.value) | translate }}</strong>
               @if (!metric.loading && !metric.error) {
-                <span>{{ metric.unit }}</span>
+                <span>{{ metric.unit | translate }}</span>
               }
             </div>
-            <p>{{ metric.error ? 'Open this space to retry' : metric.hint }}</p>
+            <p>{{ (metric.error ? 'Open this space to retry' : metric.hint) | translate }}</p>
           }
         </a>
       }
     </section>
     <section class="quick-section" aria-labelledby="quick-actions-title">
-      <h2 id="quick-actions-title">Quick actions</h2>
+      <h2 id="quick-actions-title">{{ 'Quick actions' | translate }}</h2>
       <div class="home-quick-grid">
         @for (action of quickActions; track action.label) {
           <a [routerLink]="action.route" class="home-action"
-            ><ion-icon [name]="action.icon" aria-hidden="true" /><span>{{ action.label }}</span></a
+            ><ion-icon [name]="action.icon" aria-hidden="true" /><span>{{
+              action.label | translate
+            }}</span></a
           >
         }
       </div>
     </section>
     <section class="spaces-section" aria-labelledby="spaces-title">
       <div class="section-label">
-        <h2 id="spaces-title">Your spaces</h2>
-        <span>{{ featured().length + rows().length }} spaces</span>
+        <h2 id="spaces-title">{{ 'Your spaces' | translate }}</h2>
+        <span>{{
+          'messages.count_spaces_c42641' | translate: { p0: featured().length + rows().length }
+        }}</span>
       </div>
       <div class="featured-spaces">
         @for (item of featured(); track item.id) {
@@ -77,8 +89,8 @@
             ><div class="space-heading">
               <span class="home-card-icon"><ion-icon [name]="item.icon" aria-hidden="true" /></span>
               <div>
-                <h3>{{ item.title }}</h3>
-                <p>{{ item.description }}</p>
+                <h3>{{ item.title | translate }}</h3>
+                <p>{{ item.description | translate }}</p>
               </div>
               <span class="space-arrow" aria-hidden="true">&nearr;</span>
             </div>
@@ -88,25 +100,30 @@
                 ><span class="home-skeleton skeleton-caption"></span>
               </div>
               <span class="home-skeleton skeleton-progress" aria-hidden="true"></span
-              ><span class="sr-only">Loading {{ item.title }}</span>
+              ><span class="sr-only">{{
+                'messages.loading_count_a92419' | translate: { p0: (item.title | translate) }
+              }}</span>
             } @else if (item.id === 8) {
               <div class="space-summary">
                 <div>
                   <strong>{{
-                    nutrition.loading()
+                    (nutrition.loading()
                       ? '...'
                       : nutrition.error()
                         ? 'Unavailable'
                         : calories().toFixed(0)
+                    ) | translate
                   }}</strong
-                  ><span>kcal today</span>
+                  ><span>{{ 'kcal today' | translate }}</span>
                 </div>
                 <small>{{
-                  calorieGoal() > 0 ? calorieGoal() + ' kcal goal' : 'Set a daily goal'
+                  calorieGoal() > 0
+                    ? ('messages.count_kcal_goal_aa33a7' | translate: { p0: calorieGoal() })
+                    : ('Set a daily goal' | translate)
                 }}</small>
               </div>
               <progress
-                aria-label="Calories against daily goal"
+                [attr.aria-label]="'Calories against daily goal' | translate"
                 [value]="progress(calories(), calorieGoal())"
                 max="100"
               ></progress>
@@ -114,14 +131,18 @@
               <div class="space-summary">
                 <div>
                   <strong>{{
-                    gym.loading() ? '...' : gym.error() ? 'Unavailable' : trainingDays()
+                    gym.loading()
+                      ? '...'
+                      : gym.error()
+                        ? ('Unavailable' | translate)
+                        : trainingDays()
                   }}</strong
-                  ><span>workout days planned</span>
+                  ><span>{{ 'workout days planned' | translate }}</span>
                 </div>
-                <small>Weekly routine</small>
+                <small>{{ 'Weekly routine' | translate }}</small>
               </div>
               <progress
-                aria-label="Days with planned workouts"
+                [attr.aria-label]="'Days with planned workouts' | translate"
                 [value]="trainingDays()"
                 max="7"
               ></progress>
@@ -134,16 +155,18 @@
           <a [routerLink]="item.route" class="space-row" [attr.data-accent]="item.accent"
             ><span class="home-card-icon"><ion-icon [name]="item.icon" aria-hidden="true" /></span>
             <div>
-              <h3>{{ item.title }}</h3>
-              <p>{{ item.description }}</p>
+              <h3>{{ item.title | translate }}</h3>
+              <p>{{ item.description | translate }}</p>
             </div>
             @if (spaceLoading(item.route)) {
               <small class="row-loading" aria-busy="true"
                 ><span class="home-skeleton skeleton-caption" aria-hidden="true"></span
-                ><span class="sr-only">Loading {{ item.title }}</span></small
+                ><span class="sr-only">{{
+                  'messages.loading_count_a92419' | translate: { p0: (item.title | translate) }
+                }}</span></small
               >
             } @else {
-              <small>{{ detail(item.route) }}</small>
+              <small>{{ detail(item.route) | translate }}</small>
             }
             <span class="space-arrow" aria-hidden="true">&nearr;</span></a
           >
@@ -151,7 +174,8 @@
       </div>
       @if (!featured().length && !rows().length) {
         <p class="home-empty" role="status">
-          No spaces match “{{ query() }}”. <button (click)="query.set('')">Clear search</button>
+          {{ 'messages.no_spaces_match_count_3154a8' | translate: { p0: query() } }}
+          <button (click)="query.set('')">{{ 'Clear search' | translate }}</button>
         </p>
       }
     </section>

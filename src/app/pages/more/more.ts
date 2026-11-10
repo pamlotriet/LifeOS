@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { nutritionOutline } from 'ionicons/icons';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -6,7 +7,7 @@ import { AuthService } from '../../core/authentication/authentication.service';
 import { AppUpdates } from '../../core/updates/app-updates.service';
 
 @Component({
-  imports: [IonContent, IonIcon, RouterLink],
+  imports: [TranslatePipe, IonContent, IonIcon, RouterLink],
   selector: 'app-more',
   styleUrl: './more.css',
   templateUrl: './more.html',

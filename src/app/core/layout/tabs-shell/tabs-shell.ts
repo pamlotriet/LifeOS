@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import {
   homeOutline,
@@ -11,7 +12,7 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
 
 @Component({
   selector: 'app-tabs-shell',
-  imports: [IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs],
+  imports: [TranslatePipe, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs],
   template: `
     <ion-tabs>
       <ion-tab-bar
@@ -20,7 +21,9 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
       >
         <div class="desktop-nav-brand">
           <img src="/icons/lifeos-plum-192.png" width="32" height="32" alt="" />
-          <span>LifeOS<small>Everyday workspace</small></span>
+          <span
+            >{{ 'LifeOS' | translate }}<small>{{ 'Everyday workspace' | translate }}</small></span
+          >
         </div>
         <ion-tab-button
           tab="home"
@@ -28,7 +31,7 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
         >
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
             <ion-icon size="large" name="home-outline" class="mb-1"></ion-icon>
-            <ion-label>Home</ion-label>
+            <ion-label>{{ 'Home' | translate }}</ion-label>
           </div>
         </ion-tab-button>
         <ion-tab-button
@@ -37,7 +40,7 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
         >
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
             <ion-icon size="large" name="stats-chart-outline" class="mb-1"></ion-icon>
-            <ion-label>Stats</ion-label>
+            <ion-label>{{ 'Stats' | translate }}</ion-label>
           </div>
         </ion-tab-button>
         <ion-tab-button
@@ -54,7 +57,7 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
                 class="text-[var(--primary)]"
               ></ion-icon>
             </div>
-            <ion-label>Planning</ion-label>
+            <ion-label>{{ 'Planning' | translate }}</ion-label>
           </div>
         </ion-tab-button>
         <ion-tab-button
@@ -63,7 +66,7 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
         >
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
             <ion-icon size="large" name="disc-outline" class="mb-1"></ion-icon>
-            <ion-label>Wheel</ion-label>
+            <ion-label>{{ 'Wheel' | translate }}</ion-label>
           </div>
         </ion-tab-button>
         <ion-tab-button
@@ -72,7 +75,7 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
         >
           <div class="flex h-full w-full flex-col items-center justify-center text-center">
             <ion-icon size="large" name="ellipsis-horizontal" class="mb-1"></ion-icon>
-            <ion-label>More</ion-label>
+            <ion-label>{{ 'More' | translate }}</ion-label>
           </div>
         </ion-tab-button>
       </ion-tab-bar>

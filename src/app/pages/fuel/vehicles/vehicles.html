@@ -1,22 +1,22 @@
 <div class="vehicles-page">
   <div class="mb-1 flex items-center justify-between px-0.5">
-    <h1 class="text-xl font-bold tracking-tight">My Vehicles</h1>
+    <h1 class="text-xl font-bold tracking-tight">{{ 'My Vehicles' | translate }}</h1>
   </div>
 
   @if (loading()) {
-    <app-fuel-loading kind="vehicles" label="Loading vehicles" />
+    <app-fuel-loading kind="vehicles" [label]="'Loading vehicles' | translate" />
   } @else if (error()) {
     <div
       role="alert"
       class="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 py-6 text-center"
     >
-      <p class="text-sm text-[var(--text-secondary)]">{{ error() }}</p>
+      <p class="text-sm text-[var(--text-secondary)]">{{ error() | translate }}</p>
       <button
         type="button"
         (click)="reload()"
         class="mt-3 rounded-full border border-[#1ce0f2] px-5 py-2 text-sm font-semibold text-[#4be9f6]"
       >
-        Try again
+        {{ 'Try again' | translate }}
       </button>
     </div>
   } @else if (vehicles().length === 0) {
@@ -28,9 +28,9 @@
         class="text-5xl text-[#70ddec]"
         aria-hidden="true"
       ></ion-icon>
-      <h2 class="mt-3 text-base font-semibold">No vehicles yet</h2>
+      <h2 class="mt-3 text-base font-semibold">{{ 'No vehicles yet' | translate }}</h2>
       <p class="mt-1 text-sm text-[var(--text-secondary)]">
-        Add your first vehicle to start tracking fuel consumption.
+        {{ 'Add your first vehicle to start tracking fuel consumption.' | translate }}
       </p>
     </div>
   }
@@ -43,7 +43,7 @@
       @if (vehicle.image) {
         <img
           [src]="vehicle.image"
-          [alt]="vehicle.name"
+          [alt]="vehicle.name | translate"
           class="h-[72px] w-24 shrink-0 rounded-2xl border border-white/10 object-cover object-center"
         />
       } @else {
@@ -59,7 +59,9 @@
       }
       <div class="min-w-0 flex-1 py-0.5">
         <h2 class="truncate text-[15px] font-semibold leading-tight">{{ vehicle.name }}</h2>
-        <p class="mt-1 truncate text-xs text-[var(--text-secondary)]">{{ vehicle.description }}</p>
+        <p class="mt-1 truncate text-xs text-[var(--text-secondary)]">
+          {{ vehicle.description | translate }}
+        </p>
         <span
           class="mt-1.5 inline-flex max-w-full truncate rounded-full border border-[var(--border)] bg-[var(--card)] px-2 py-0.5 text-[10px] leading-tight text-[var(--text-secondary)]"
           >{{ vehicle.registration }}</span
@@ -69,7 +71,7 @@
         @if (vehicle.consumption) {
           <div class="text-right">
             <p class="text-lg font-bold leading-none">{{ vehicle.consumption }}</p>
-            <p class="mt-1 text-[10px] text-[var(--text-secondary)]">L/100km</p>
+            <p class="mt-1 text-[10px] text-[var(--text-secondary)]">{{ 'L/100km' | translate }}</p>
           </div>
         }
       </div>
@@ -86,10 +88,10 @@
       <ion-icon name="add" class="text-2xl" aria-hidden="true"></ion-icon>
     </span>
     <span class="flex flex-col">
-      <span class="text-sm font-semibold text-[#4be9f6]">Add vehicle</span>
-      <span class="mt-0.5 text-xs text-[var(--text-secondary)]"
-        >Start tracking fuel consumption</span
-      >
+      <span class="text-sm font-semibold text-[#4be9f6]">{{ 'Add vehicle' | translate }}</span>
+      <span class="mt-0.5 text-xs text-[var(--text-secondary)]">{{
+        'Start tracking fuel consumption' | translate
+      }}</span>
     </span>
   </a>
 </div>

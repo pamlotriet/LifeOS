@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { AppDatePicker } from '../../../shared/components/app-date-picker/app-date-picker';
@@ -19,6 +20,7 @@ import {
 @Component({
   selector: 'app-budget-transaction-form',
   imports: [
+    TranslatePipe,
     AppInput,
     AppButton,
     AppDatePicker,

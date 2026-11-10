@@ -1,3 +1,4 @@
+import { TranslateService } from '@ngx-translate/core';
 import { WriteFeedback } from './write-feedback.service';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
@@ -52,6 +53,8 @@ interface FirestoreRunQueryResult {
 
 @Injectable({ providedIn: 'root' })
 export class FirestoreService {
+  private readonly i18n = inject(TranslateService);
+
   constructor(private readonly feedback: WriteFeedback = inject(WriteFeedback)) {}
   private readonly baseUrl = `https://firestore.googleapis.com/v1/projects/${environment.firebaseConfig.projectId}/databases/(default)/documents`;
 
@@ -102,7 +105,12 @@ export class FirestoreService {
       if (pageToken) url.searchParams.set('pageToken', pageToken);
 
       const response = await this.request(url.toString(), token);
-      if (!response.ok) throw new Error(`Could not list Firestore documents (${response.status}).`);
+      if (!response.ok)
+        throw new Error(
+          this.i18n.instant('Could not list Firestore documents ({{p0}}).', {
+            p0: response.status,
+          }),
+        );
 
       const page = (await response.json()) as FirestoreList;
       documents.push(...(page.documents ?? []));
@@ -123,7 +131,10 @@ export class FirestoreService {
       token,
       { method: 'POST', body: JSON.stringify({ fields }) },
     );
-    if (!response.ok) throw new Error(`Could not create Firestore document (${response.status}).`);
+    if (!response.ok)
+      throw new Error(
+        this.i18n.instant('Could not create Firestore document ({{p0}}).', { p0: response.status }),
+      );
     const document = (await response.json()) as FirestoreDocument;
     this.feedback.success('save');
     return document;
@@ -145,7 +156,10 @@ export class FirestoreService {
         },
       }),
     });
-    if (!response.ok) throw new Error(`Could not query Firestore documents (${response.status}).`);
+    if (!response.ok)
+      throw new Error(
+        this.i18n.instant('Could not query Firestore documents ({{p0}}).', { p0: response.status }),
+      );
     return ((await response.json()) as FirestoreRunQueryResult[]).flatMap((result) =>
       result.document ? [result.document] : [],
     );
@@ -153,14 +167,20 @@ export class FirestoreService {
 
   async getDocument(path: string, token: string): Promise<FirestoreDocument> {
     const response = await this.request(`${this.baseUrl}/${path}`, token);
-    if (!response.ok) throw new Error(`Could not get Firestore document (${response.status}).`);
+    if (!response.ok)
+      throw new Error(
+        this.i18n.instant('Could not get Firestore document ({{p0}}).', { p0: response.status }),
+      );
     return (await response.json()) as FirestoreDocument;
   }
 
   async tryGetDocument(path: string, token: string): Promise<FirestoreDocument | null> {
     const response = await this.request(`${this.baseUrl}/${path}`, token);
     if (response.status === 404) return null;
-    if (!response.ok) throw new Error(`Could not get Firestore document (${response.status}).`);
+    if (!response.ok)
+      throw new Error(
+        this.i18n.instant('Could not get Firestore document ({{p0}}).', { p0: response.status }),
+      );
     return (await response.json()) as FirestoreDocument;
   }
 
@@ -176,7 +196,10 @@ export class FirestoreService {
       method: 'PATCH',
       body: JSON.stringify({ fields }),
     });
-    if (!response.ok) throw new Error(`Could not update Firestore document (${response.status}).`);
+    if (!response.ok)
+      throw new Error(
+        this.i18n.instant('Could not update Firestore document ({{p0}}).', { p0: response.status }),
+      );
     this.feedback.success('save');
   }
 
@@ -193,7 +216,10 @@ export class FirestoreService {
       method: 'PATCH',
       body: JSON.stringify({ fields: { [field]: value } }),
     });
-    if (!response.ok) throw new Error(`Could not update Firestore document (${response.status}).`);
+    if (!response.ok)
+      throw new Error(
+        this.i18n.instant('Could not update Firestore document ({{p0}}).', { p0: response.status }),
+      );
     this.feedback.success('save');
   }
 
@@ -204,7 +230,9 @@ export class FirestoreService {
       { method: 'DELETE' },
     );
     if (!response.ok && response.status !== 404) {
-      throw new Error(`Could not delete Firestore document (${response.status}).`);
+      throw new Error(
+        this.i18n.instant('Could not delete Firestore document ({{p0}}).', { p0: response.status }),
+      );
     }
     this.feedback.success('delete');
   }
@@ -216,7 +244,11 @@ export class FirestoreService {
       body: JSON.stringify({ writes }),
     });
     if (!response.ok)
-      throw new Error(`Could not save Firestore documents together (${response.status}).`);
+      throw new Error(
+        this.i18n.instant('Could not save Firestore documents together ({{p0}}).', {
+          p0: response.status,
+        }),
+      );
     if (notify)
       this.feedback.success(writes.some((write) => 'delete' in write) ? 'delete' : 'save');
   }

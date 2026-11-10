@@ -1,3 +1,4 @@
+import { englishText, TranslateText } from '../../../core/i18n/translation-text';
 import { ChartConfiguration } from 'chart.js';
 import { BookRecord, effectiveTotalPages } from '../../books/state/book.model';
 import type { StatsDashboard, StatsRange } from './stats.service';
@@ -29,6 +30,7 @@ export function buildBookStats(
   range: StatsRange,
   selectedMonth?: string,
   now = new Date(),
+  translate: TranslateText = englishText,
 ): StatsDashboard {
   const months = statsMonths(range, statsAnchor(range, selectedMonth, now));
   const completed = books.filter((b) => b.status === 'Finished');
@@ -164,15 +166,26 @@ export function buildBookStats(
   ).length;
   const insights = [
     bestCount
-      ? `Best stretch: ${monthLabels[bestIndex]} with ${bestCount} books finished.`
+      ? translate('Best stretch: {{p0}} with {{p1}} books finished.', {
+          p0: monthLabels[bestIndex],
+          p1: bestCount,
+        })
       : 'Finish a book to start your monthly reading story.',
     finished.length
-      ? `You read ${Math.round(totalPages / finished.length).toLocaleString('en-US')} pages per finished book on average.`
+      ? translate('You read {{p0}} pages per finished book on average.', {
+          p0: Math.round(totalPages / finished.length).toLocaleString('en-US'),
+        })
       : 'Your average book length will appear here.',
     categories.length
-      ? `${categories[0].label} leads your reading with ${categories[0].value} finished books.`
+      ? translate('{{p0}} leads your reading with {{p1}} finished books.', {
+          p0: categories[0].label,
+          p1: categories[0].value,
+        })
       : 'Your finished books will reveal your favourite categories.',
-    `${reading.length} book${reading.length === 1 ? '' : 's'} currently in progress. Keep your next chapter going.`,
+    translate('{{p0}} book{{p1}} currently in progress. Keep your next chapter going.', {
+      p0: reading.length,
+      p1: reading.length === 1 ? '' : 's',
+    }),
   ];
   return {
     empty: !books.length,

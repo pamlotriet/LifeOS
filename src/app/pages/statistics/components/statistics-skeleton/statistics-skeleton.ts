@@ -1,6 +1,8 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, input } from '@angular/core';
 
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-statistics-skeleton',
   template: `
     <section
@@ -11,7 +13,9 @@ import { Component, input } from '@angular/core';
       aria-busy="true"
       aria-live="polite"
     >
-      <span class="sr-only">Loading {{ label() }} statistics</span>
+      <span class="sr-only">{{
+        'messages.loading_count_statistics_3aba7c' | translate: { p0: label() }
+      }}</span>
       <div class="loading-content" aria-hidden="true">
         @if (module() === 'budget') {
           <div class="report-title"><i class="line heading"></i><i class="line caption"></i></div>

@@ -6,7 +6,9 @@ import {
   OnChanges,
   OnDestroy,
   ViewChild,
+  inject,
 } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   BarController,
   BarElement,
@@ -34,12 +36,14 @@ Chart.register(
 );
 @Component({
   selector: 'app-fuel-chart',
+  imports: [TranslatePipe],
   template:
-    '<div class="fuel-chart-frame"><canvas #canvas role="img" [attr.aria-label]="label"></canvas></div>',
+    '<div class="fuel-chart-frame"><canvas #canvas role="img" [attr.aria-label]="label | translate"></canvas></div>',
   styles:
     ':host{display:block;min-width:0}.fuel-chart-frame{position:relative;width:100%;height:260px;min-width:0}@media(max-width:600px){.fuel-chart-frame{height:220px}}',
 })
 export class FuelChart implements AfterViewInit, OnChanges, OnDestroy {
+  private readonly i18n = inject(TranslateService);
   @Input() points: FuelPoint[] = [];
   @Input() label = 'Fuel chart';
   @Input() kind: 'bar' | 'line' = 'line';
@@ -73,7 +77,7 @@ export class FuelChart implements AfterViewInit, OnChanges, OnDestroy {
         labels: this.points.map((p) => p.label),
         datasets: [
           {
-            label: this.unit,
+            label: this.i18n.instant(this.unit),
             data: this.points.map((p) => p.value),
             borderColor: accent,
             backgroundColor: this.kind === 'line' ? colorFill(accent) : accent,
@@ -97,7 +101,7 @@ export class FuelChart implements AfterViewInit, OnChanges, OnDestroy {
           tooltip: {
             callbacks: {
               label: (ctx) =>
-                `${Number(ctx.raw).toLocaleString('en-ZA', { maximumFractionDigits: 2 })} ${this.unit}`,
+                `${Number(ctx.raw).toLocaleString('en-ZA', { maximumFractionDigits: 2 })} ${this.i18n.instant(this.unit)}`,
             },
           },
         },

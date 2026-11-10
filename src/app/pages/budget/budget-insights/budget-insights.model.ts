@@ -1,3 +1,4 @@
+import { englishText, TranslateText } from '../../../core/i18n/translation-text';
 import { cycleBounds, inCycle } from '../state/budget-cycle';
 import {
   BudgetCategory,
@@ -32,6 +33,7 @@ export function budgetInsights(
   month: string,
   startDay: number,
   today: string,
+  translate: TranslateText = englishText,
 ): BudgetInsight[] {
   const cycle = cycleBounds(month, startDay);
   const current = today >= cycle.start && today < cycle.endExclusive;
@@ -92,7 +94,10 @@ export function budgetInsights(
       'plan',
       'Balance after your plan',
       money(left),
-      `${money(values.income)} recorded income minus ${money(plannedTotal)} category plans and scheduled debt payments. Actual spending is not subtracted again.`,
+      translate(
+        '{{p0}} recorded income minus {{p1}} category plans and scheduled debt payments. Actual spending is not subtracted again.',
+        { p0: money(values.income), p1: money(plannedTotal) },
+      ),
       left < 0 ? 'attention' : 'good',
       'Review planned payments',
       '/budget/planned',
@@ -125,7 +130,10 @@ export function budgetInsights(
       'available',
       'After remaining commitments',
       money(available),
-      `${money(values.remaining)} actual balance less ${money(outstanding)} unspent category plans and unpaid debt payments in this cycle. Unplanned future costs are excluded.`,
+      translate(
+        '{{p0}} actual balance less {{p1}} unspent category plans and unpaid debt payments in this cycle. Unplanned future costs are excluded.',
+        { p0: money(values.remaining), p1: money(outstanding) },
+      ),
       available < 0 ? 'attention' : 'neutral',
       'Review your plan',
       '/budget/planned',
@@ -136,7 +144,16 @@ export function budgetInsights(
         'daily',
         'Daily spending room',
         money(Math.max(0, round(available / days))),
-        `Across ${days} days including today, after remaining planned commitments. Assumes no more income or unplanned costs.${available < 0 ? ` Cover the ${money(-available)} shortfall first.` : ''}`,
+        translate(
+          'Across {{p0}} days including today, after remaining planned commitments. Assumes no more income or unplanned costs.{{p1}}',
+          {
+            p0: days,
+            p1:
+              available < 0
+                ? translate(' Cover the {{p0}} shortfall first.', { p0: money(-available) })
+                : '',
+          },
+        ),
         available < 0 ? 'attention' : 'neutral',
         'Adjust your plan',
         '/budget/planned',
@@ -146,7 +163,10 @@ export function budgetInsights(
       'savings',
       'Income moved to savings',
       `${Math.round((values.savings / values.income) * 100)}%`,
-      `${money(values.savings)} in recorded savings transfers from ${money(values.income)} income. Savings transfers are separate from expenses.`,
+      translate(
+        '{{p0}} in recorded savings transfers from {{p1}} income. Savings transfers are separate from expenses.',
+        { p0: money(values.savings), p1: money(values.income) },
+      ),
       values.savings > 0 ? 'good' : 'neutral',
       'Plan your savings',
       '/budget/planned',
@@ -159,9 +179,19 @@ export function budgetInsights(
     const first = over[0];
     add(
       'over',
-      `${first.category.name} is over plan`,
+      translate('{{p0}} is over plan', { p0: first.category.name }),
       money(round(first.actual - first.amount)),
-      `${money(first.actual)} recorded against ${money(first.amount)} planned.${over.length > 1 ? ` ${over.length - 1} other categories are also over plan.` : ''} Review the items before adding more spending.`,
+      translate(
+        '{{p0}} recorded against {{p1}} planned.{{p2}} Review the items before adding more spending.',
+        {
+          p0: money(first.actual),
+          p1: money(first.amount),
+          p2:
+            over.length > 1
+              ? translate(' {{p0}} other categories are also over plan.', { p0: over.length - 1 })
+              : '',
+        },
+      ),
       'attention',
       'Review category plans',
       '/budget/planned',
@@ -179,7 +209,13 @@ export function budgetInsights(
       'largest',
       'Largest spending category',
       spending[0].name,
-      `${money(spending[0].amount)} accounts for ${Math.round((spending[0].amount / values.expenses) * 100)}% of recorded expenses this cycle. Start here when looking for costs to review.`,
+      translate(
+        '{{p0}} accounts for {{p1}}% of recorded expenses this cycle. Start here when looking for costs to review.',
+        {
+          p0: money(spending[0].amount),
+          p1: Math.round((spending[0].amount / values.expenses) * 100),
+        },
+      ),
       'neutral',
       'View transactions',
       '/budget/month',
@@ -205,7 +241,16 @@ export function budgetInsights(
         'change',
         current ? 'Spending pace vs previous cycle' : 'Spending vs previous cycle',
         `${delta >= 0 ? '+' : '-'}${Math.round((Math.abs(delta) / priorExpense) * 100)}%`,
-        `${money(nowExpense)} versus ${money(priorExpense)}${current ? ' over the same number of cycle days where available' : ''}. ${money(Math.abs(delta))} ${delta >= 0 ? 'more' : 'less'} recorded; missing transactions can affect this comparison.`,
+        translate(
+          '{{p0}} versus {{p1}}{{p2}}. {{p3}} {{p4}} recorded; missing transactions can affect this comparison.',
+          {
+            p0: money(nowExpense),
+            p1: money(priorExpense),
+            p2: current ? ' over the same number of cycle days where available' : '',
+            p3: money(Math.abs(delta)),
+            p4: delta >= 0 ? 'more' : 'less',
+          },
+        ),
         delta > 0 ? 'attention' : 'good',
         'Review transactions',
         '/budget/month',
@@ -220,7 +265,10 @@ export function budgetInsights(
       'debt',
       'Debt after planned payments',
       money(projected),
-      `${money(remaining)} remaining at cycle end. All pending debt plans across all dates would reduce this by ${money(round(remaining - projected))}, before future interest and fees.`,
+      translate(
+        '{{p0}} remaining at cycle end. All pending debt plans across all dates would reduce this by {{p1}}, before future interest and fees.',
+        { p0: money(remaining), p1: money(round(remaining - projected)) },
+      ),
       'neutral',
       'Manage debt',
       '/budget/debts',
@@ -238,7 +286,10 @@ export function budgetInsights(
           'due',
           'Debt payments needing attention',
           money(round(due.reduce((sum, t) => sum + t.amount, 0))),
-          `${due.length} unpaid planned payment${due.length === 1 ? '' : 's'} overdue or due within the next 7 days. Mark payments already made as paid to keep your figures accurate.`,
+          translate(
+            '{{p0}} unpaid planned payment{{p1}} overdue or due within the next 7 days. Mark payments already made as paid to keep your figures accurate.',
+            { p0: due.length, p1: due.length === 1 ? '' : 's' },
+          ),
           'attention',
           'Review debt payments',
           '/budget/debts',
@@ -250,7 +301,10 @@ export function budgetInsights(
         'interest',
         'Largest estimated card interest',
         money(interest.interest),
-        `${interest.debt.name}: ${interest.debt.annualInterestRate}% annual rate applied to the cycle opening balance. This is a cycle estimate; prior interest and lender fees are excluded.`,
+        translate(
+          '{{p0}}: {{p1}}% annual rate applied to the cycle opening balance. This is a cycle estimate; prior interest and lender fees are excluded.',
+          { p0: interest.debt.name, p1: interest.debt.annualInterestRate },
+        ),
         'attention',
         'Review debt account',
         '/budget/debts',

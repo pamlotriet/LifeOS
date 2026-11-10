@@ -1,3 +1,4 @@
+import { withTranslations } from '../../../../test-providers';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Html5Qrcode } from 'html5-qrcode';
 import { IsbnFrameDecoder } from './isbn-frame-decoder';
@@ -26,7 +27,7 @@ describe('scanner recovery', () => {
     vi.stubGlobal('navigator', { mediaDevices: { getUserMedia: vi.fn() } });
     vi.spyOn(Html5Qrcode, 'getCameras').mockRejectedValue(new Error('Permission denied'));
     vi.spyOn(Html5Qrcode.prototype, 'clear').mockImplementation(() => {});
-    const scan = new BookBarcodeScannerService().scan();
+    const scan = withTranslations(() => new BookBarcodeScannerService()).scan();
     const cancelled = expect(scan).rejects.toThrow('Scan cancelled.');
     await vi.waitFor(() => {
       expect(document.querySelector<HTMLButtonElement>('[data-photo]')?.disabled).toBe(false);
@@ -46,7 +47,7 @@ describe('scanner recovery', () => {
       .mockResolvedValueOnce('6001234567892')
       .mockResolvedValueOnce('9780140328721');
     const oldDecoder = vi.spyOn(Html5Qrcode.prototype, 'scanFile');
-    const scan = new BookBarcodeScannerService().scan();
+    const scan = withTranslations(() => new BookBarcodeScannerService()).scan();
     await vi.waitFor(() =>
       expect(document.querySelector<HTMLButtonElement>('[data-photo]')?.disabled).toBe(false),
     );
@@ -88,7 +89,9 @@ describe('scanner recovery', () => {
       .mockResolvedValue('9780140328721');
     const stop = vi.spyOn(Html5Qrcode.prototype, 'stop').mockResolvedValue();
     vi.spyOn(Html5Qrcode.prototype, 'clear').mockImplementation(() => {});
-    await expect(new BookBarcodeScannerService().scan()).resolves.toBe('9780140328721');
+    await expect(withTranslations(() => new BookBarcodeScannerService()).scan()).resolves.toBe(
+      '9780140328721',
+    );
     expect(getImageData).toHaveBeenCalledWith(0, 0, 1920, 1080);
     expect(decode).toHaveBeenCalledWith(expect.any(Uint8ClampedArray), 1920, 1080);
     expect(stop).toHaveBeenCalled();
@@ -124,7 +127,7 @@ describe('scanner recovery', () => {
         .mockResolvedValue('9780571376476');
       const stop = vi.spyOn(Html5Qrcode.prototype, 'stop').mockResolvedValue();
       vi.spyOn(Html5Qrcode.prototype, 'clear').mockImplementation(() => {});
-      const scan = new BookBarcodeScannerService().scan();
+      const scan = withTranslations(() => new BookBarcodeScannerService()).scan();
       await vi.advanceTimersByTimeAsync(1000);
       expect(decode).not.toHaveBeenCalled();
       ready = true;
@@ -154,7 +157,7 @@ describe('scanner recovery', () => {
     });
     const stop = vi.spyOn(Html5Qrcode.prototype, 'stop').mockResolvedValue();
     vi.spyOn(Html5Qrcode.prototype, 'clear').mockImplementation(() => {});
-    const scan = new BookBarcodeScannerService().scan();
+    const scan = withTranslations(() => new BookBarcodeScannerService()).scan();
     const cancelled = expect(scan).rejects.toThrow('Scan cancelled.');
     await vi.waitFor(() => expect(start).toHaveBeenCalled());
     document.querySelector<HTMLButtonElement>('[data-cancel]')!.click();

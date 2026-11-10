@@ -1,7 +1,7 @@
 @if (!embedded) {
   <ion-header
     app-page-header
-    [title]="id ? (showEditor() ? 'Edit Book' : 'Books') : 'Add Book'"
+    [title]="(id ? (showEditor() ? 'Edit Book' : 'Books') : 'Add Book') | translate"
   ></ion-header>
 }
 <ion-content class="[--background:transparent] [--color:var(--foreground)]">
@@ -10,7 +10,7 @@
       slot="fixed"
       type="button"
       class="book-sheet-close"
-      aria-label="Close add book"
+      [attr.aria-label]="'Close add book' | translate"
       [disabled]="saving()"
       (click)="cancel()"
     >
@@ -20,8 +20,8 @@
   <main class="mx-auto max-w-xl px-4 pb-10 pt-4 text-white" [class.book-sheet]="embedded">
     @if (embedded) {
       <header class="book-sheet-header">
-        <h1>Add book</h1>
-        <p>Two quick steps &mdash; the basics, then where it lands on your shelf.</p>
+        <h1>{{ 'Add book' | translate }}</h1>
+        <p>{{ 'Two quick steps — the basics, then where it lands on your shelf.' | translate }}</p>
       </header>
     }
     @if (loading()) {
@@ -29,13 +29,17 @@
     } @else if (id && !showEditor()) {
       @if (book(); as current) {
         <div class="mb-4 flex items-center justify-between gap-3">
-          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Your library</p>
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
+            {{ 'Your library' | translate }}
+          </p>
           <div class="flex gap-2">
             <button
               type="button"
               (click)="toggleFlag('favourite')"
               [disabled]="saving()"
-              [attr.aria-label]="current.favourite ? 'Remove from favourites' : 'Add to favourites'"
+              [attr.aria-label]="
+                (current.favourite ? 'Remove from favourites' : 'Add to favourites') | translate
+              "
               class="grid h-10 w-10 place-items-center rounded-full border border-[var(--border)] bg-[var(--card)] text-xl text-pink-400"
             >
               {{ current.favourite ? '♥' : '♡' }}
@@ -45,7 +49,7 @@
               (click)="openEditor()"
               class="rounded-full border border-cyan-400/60 bg-[var(--card)] px-4 text-sm font-semibold text-cyan-200"
             >
-              Edit
+              {{ 'Edit' | translate }}
             </button>
           </div>
         </div>
@@ -56,7 +60,7 @@
           @if (current.coverUrl) {
             <img
               [src]="current.coverUrl"
-              [alt]="'Cover of ' + current.title"
+              [alt]="'Cover of ' + current.title | translate"
               class="h-40 w-28 shrink-0 rounded-xl border border-white/15 object-cover shadow-lg shadow-black/40"
             />
           } @else {
@@ -67,18 +71,21 @@
             </div>
           }
           <div class="min-w-0 flex-1 self-center">
-            <h1 class="text-xl font-bold leading-tight">{{ current.title }}</h1>
+            <h1 class="text-xl font-bold leading-tight">{{ current.title | translate }}</h1>
             <p class="mt-1 text-sm text-[var(--text-secondary)]">{{ current.author }}</p>
             <p class="mt-1 text-xs text-[var(--text-secondary)]">
-              {{ current.publicationDate.slice(0, 4) || 'Year unknown' }} · {{ current.category }}
+              {{ current.publicationDate.slice(0, 4) || 'Year unknown' | translate }} ·
+              {{ current.category }}
             </p>
             <span
               class="mt-3 inline-flex rounded-full border border-emerald-400/50 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-200"
-              >{{ current.status }}</span
+              >{{ current.status | translate }}</span
             >
             <p
               class="mt-2 text-lg tracking-widest text-amber-300"
-              [attr.aria-label]="current.rating ? current.rating + ' out of 5 stars' : 'Not rated'"
+              [attr.aria-label]="
+                (current.rating ? current.rating + ' out of 5 stars' : 'Not rated') | translate
+              "
             >
               {{
                 current.rating
@@ -89,7 +96,7 @@
             @if (current.spiceRating) {
               <p
                 class="mt-1 text-sm text-orange-300"
-                [attr.aria-label]="current.spiceRating + ' out of 5 spice rating'"
+                [attr.aria-label]="current.spiceRating + ' out of 5 spice rating' | translate"
               >
                 {{ '🌶️'.repeat(current.spiceRating) }}
               </p>
@@ -99,26 +106,41 @@
 
         @if (current.progressMode === 'locations') {
           <section
-            aria-label="Kindle reading progress"
+            [attr.aria-label]="'Kindle reading progress' | translate"
             class="mt-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3 text-sm"
           >
             <p>{{ kindleSummary(current) }}</p>
-            <p class="mt-2">Estimated pages logged: {{ locationPagesRead(current) }}</p>
-            <h2 class="mt-3 font-semibold">Reading history</h2>
+            <p class="mt-2">
+              {{
+                'messages.estimated_pages_logged_count_f36723'
+                  | translate: { p0: locationPagesRead(current) }
+              }}
+            </p>
+            <h2 class="mt-3 font-semibold">{{ 'Reading history' | translate }}</h2>
             @for (entry of current.locationEntries ?? []; track entry.id) {
               <p class="mt-2 text-xs">
-                {{ formatDate(entry.date.slice(0, 10)) }} &middot; Location
-                {{ entry.fromLocation }} to {{ entry.toLocation }} &middot; &asymp;
-                {{ sessionPages(current, entry) }} estimated pages read
+                {{
+                  'messages.count_location_count_to_count_count_estimated_aa84bc'
+                    | translate
+                      : {
+                          p0: formatDate(entry.date.slice(0, 10)),
+                          p1: entry.fromLocation,
+                          p2: entry.toLocation,
+                          p3: sessionPages(current, entry),
+                        }
+                }}
               </p>
             } @empty {
               <p class="text-xs">
-                No reading entries yet. Log your location using Update progress in your library.
+                {{
+                  'No reading entries yet. Log your location using Update progress in your library.'
+                    | translate
+                }}
               </p>
             }
           </section>
         }
-        <section aria-label="Book tags" class="mt-3 flex flex-wrap gap-1.5">
+        <section [attr.aria-label]="'Book tags' | translate" class="mt-3 flex flex-wrap gap-1.5">
           <span
             class="rounded-full border border-cyan-400/50 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-100"
             >{{ current.category }}</span
@@ -156,9 +178,9 @@
           <p
             class="mt-3 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm text-[var(--text-secondary)]"
           >
-            Part of <strong class="text-white">{{ current.seriesName }}</strong>
+            {{ 'Part of' | translate }} <strong class="text-white">{{ current.seriesName }}</strong>
             @if (current.seriesNumber) {
-              · Book {{ current.seriesNumber }}
+              {{ 'messages.book_count_97450e' | translate: { p0: current.seriesNumber } }}
             }
           </p>
         }
@@ -168,13 +190,15 @@
           class="mt-4 rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--card)] p-3"
         >
           <div class="mb-2 flex items-center justify-between">
-            <h2 id="copies-title" class="text-base font-bold">My Copies &amp; Formats</h2>
+            <h2 id="copies-title" class="text-base font-bold">
+              {{ 'My Copies & Formats' | translate }}
+            </h2>
             <button
               type="button"
               (click)="addCopyFromDetails()"
               class="rounded-full border border-cyan-400/60 px-3 py-1.5 text-xs font-semibold text-cyan-200"
             >
-              + Add Copy
+              {{ '+ Add Copy' | translate }}
             </button>
           </div>
           @for (copy of current.copies; track copy.id) {
@@ -184,25 +208,31 @@
               <span
                 class="grid h-8 w-8 place-items-center rounded-lg bg-violet-500/20 text-violet-300"
                 ><ion-icon name="book" aria-hidden="true"></ion-icon></span
-              ><span class="flex-1 text-sm font-semibold">{{ copy.format }}</span
+              ><span class="flex-1 text-sm font-semibold">{{ copy.format | translate }}</span
               ><span class="max-w-28 truncate text-xs text-[var(--text-secondary)]">{{
-                copy.label || '—'
+                copy.label || '—' | translate
               }}</span>
             </div>
           }
         </section>
 
-        <section aria-label="Reading dates" class="mt-3 grid grid-cols-2 gap-2">
+        <section
+          [attr.aria-label]="'Reading dates' | translate"
+          class="mt-3 grid grid-cols-2 gap-2"
+        >
           <div class="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
-            <p class="text-xs text-[var(--text-secondary)]">Started</p>
+            <p class="text-xs text-[var(--text-secondary)]">{{ 'Started' | translate }}</p>
             <p class="mt-1 text-sm font-semibold">{{ formatDate(current.startDate) }}</p>
           </div>
           <div class="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
-            <p class="text-xs text-[var(--text-secondary)]">Finished</p>
+            <p class="text-xs text-[var(--text-secondary)]">{{ 'Finished' | translate }}</p>
             <p class="mt-1 text-sm font-semibold">{{ formatDate(current.finishDate) }}</p>
           </div>
         </section>
-        <section aria-label="Book preferences" class="mt-3 grid grid-cols-3 gap-2">
+        <section
+          [attr.aria-label]="'Book preferences' | translate"
+          class="mt-3 grid grid-cols-3 gap-2"
+        >
           <button
             type="button"
             (click)="toggleFlag('favourite')"
@@ -210,7 +240,7 @@
             class="flex min-h-16 flex-col items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] text-xs"
           >
             <span class="text-xl text-pink-400">{{ current.favourite ? '♥' : '♡' }}</span
-            >Favourite
+            >{{ 'Favourite' | translate }}
           </button>
           <button
             type="button"
@@ -219,7 +249,7 @@
             class="flex min-h-16 flex-col items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] text-xs"
           >
             <span class="text-xl text-cyan-300">{{ current.wouldRecommend ? '👍' : '♧' }}</span
-            >Recommend
+            >{{ 'Recommend' | translate }}
           </button>
           <button
             type="button"
@@ -228,7 +258,7 @@
             class="flex min-h-16 flex-col items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] text-xs"
           >
             <span class="text-xl text-sky-300">{{ current.reread ? '↻' : '⟳' }}</span
-            >Reread
+            >{{ 'Reread' | translate }}
           </button>
         </section>
         @if (error()) {
@@ -236,7 +266,7 @@
             role="alert"
             class="mt-3 rounded-xl border border-rose-400/50 bg-[var(--card)] p-3 text-sm text-rose-200"
           >
-            {{ error() }}
+            {{ error() | translate }}
           </p>
         }
         <div class="mt-5 grid grid-cols-2 gap-2">
@@ -245,18 +275,18 @@
             (click)="openEditor()"
             class="min-h-11 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 font-bold text-[var(--card)]"
           >
-            Edit Details</button
+            {{ 'Edit Details' | translate }}</button
           ><button
             type="button"
             (click)="showDelete.set(true)"
             class="min-h-11 rounded-xl border border-rose-400/60 text-rose-200"
           >
-            Delete Book
+            {{ 'Delete Book' | translate }}
           </button>
         </div>
       } @else {
         <p role="alert" class="rounded-xl border border-rose-400/50 bg-[var(--card)] p-4 text-sm">
-          {{ error() || 'Book not found.' }}
+          {{ error() || 'Book not found.' | translate }}
         </p>
       }
     } @else {
@@ -268,7 +298,10 @@
       >
         <div class="book-step text-center">
           <p class="text-xs text-[var(--text-secondary)]">
-            {{ step() }} of 2 · {{ step() === 1 ? 'Basics' : 'Details' }}
+            {{
+              'messages.count_of_2_count_ee29e5'
+                | translate: { p0: step(), p1: step() === 1 ? 'Basics' : 'Details' }
+            }}
           </p>
           <div class="book-step-bars mx-auto mt-2 flex max-w-44 gap-1.5">
             <span class="h-1.5 flex-1 rounded-full bg-cyan-400"></span
@@ -288,87 +321,92 @@
               class="book-scan flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-cyan-300/60 bg-gradient-to-r from-cyan-400/20 to-blue-500/20 px-4 font-semibold text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.12)] disabled:opacity-60"
             >
               <ion-icon name="scan-outline" class="text-xl" aria-hidden="true"></ion-icon
-              >{{ scanning() ? 'Scanning or looking up book...' : 'Scan ISBN barcode' }}
+              >{{
+                (scanning() ? 'Scanning or looking up book...' : 'Scan ISBN barcode') | translate
+              }}
             </button>
             @if (scanMessage()) {
               <p role="status" class="-mt-1 text-center text-xs text-emerald-200">
-                {{ scanMessage() }}
+                {{ scanMessage() | translate }}
               </p>
             }
             <div
               class="book-manual-divider flex items-center gap-3 text-[11px] uppercase tracking-widest text-[var(--text-secondary)]"
             >
-              <span class="h-px flex-1 bg-[var(--border)]"></span>or enter manually<span
-                class="h-px flex-1 bg-[var(--border)]"
-              ></span>
+              <span class="h-px flex-1 bg-[var(--border)]"></span
+              >{{ 'or enter manually' | translate
+              }}<span class="h-px flex-1 bg-[var(--border)]"></span>
             </div>
           }
           <section class="book-basics">
             <div class="book-cover-preview">
               @if (form.value.coverUrl) {
-                <img [src]="form.value.coverUrl" alt="Book cover" />
+                <img [src]="form.value.coverUrl" [attr.alt]="'Book cover' | translate" />
               } @else {
                 <span
                   ><ion-icon name="book" aria-hidden="true"></ion-icon
-                  ><strong>Your cover will appear here</strong
-                  ><small>An ISBN gives the best match.</small></span
+                  ><strong>{{ 'Your cover will appear here' | translate }}</strong
+                  ><small>{{ 'An ISBN gives the best match.' | translate }}</small></span
                 >
               }
             </div>
             <div class="book-basic-fields">
               <label
-                >Title <em>*</em
+                >{{ 'Title' | translate }} <em>*</em
                 ><input
                   appInput="field"
                   formControlName="title"
-                  placeholder="Enter book title"
+                  [placeholder]="'Enter book title' | translate"
                   (blur)="lookupCover()" /></label
               ><label
-                >Author <em>*</em
+                >{{ 'Author' | translate }} <em>*</em
                 ><input
                   appInput="field"
                   formControlName="author"
-                  placeholder="Enter author name"
+                  [placeholder]="'Enter author name' | translate"
                   (blur)="lookupCover()" /></label
               ><label
-                >ISBN
+                >{{ 'ISBN' | translate }}
                 <input
                   appInput="field"
                   formControlName="isbn"
                   inputmode="numeric"
-                  placeholder="Scan or enter ISBN"
+                  [placeholder]="'Scan or enter ISBN' | translate"
                   (blur)="lookupCover()"
               /></label>
             </div>
           </section>
           <div class="flex items-center justify-between gap-2 text-xs text-[var(--text-secondary)]">
             <span>{{
-              lookingUpCover()
+              (lookingUpCover()
                 ? 'Finding cover...'
                 : coverMessage() || 'Cover matched by title and author.'
+              ) | translate
             }}</span
             ><button
               type="button"
               (click)="lookupCover()"
               class="shrink-0 font-semibold text-cyan-300"
             >
-              Find cover
+              {{ 'Find cover' | translate }}
             </button>
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div class="min-w-0 text-xs">
-              Main category *<app-select
+              {{ 'Main category *' | translate
+              }}<app-select
                 class="mt-1 block"
-                ariaLabel="Main category"
-                placeholder="Select category"
+                [ariaLabel]="'Main category' | translate"
+                [placeholder]="'Select category' | translate"
                 [options]="categoryOptions"
                 formControlName="category"
               />
             </div>
             <div class="min-w-0 text-xs">
-              Publication date<app-date-picker
+              {{ 'Publication date' | translate
+              }}<app-date-picker
                 class="mt-1 block"
-                ariaLabel="Publication date"
+                [ariaLabel]="'Publication date' | translate"
                 [align]="'right'"
                 formControlName="publicationDate"
               />
@@ -378,17 +416,17 @@
             class="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--card)] p-3"
           >
             <div class="mb-1 flex items-center justify-between">
-              <h2 class="text-sm font-bold">Copies &amp; Formats</h2>
+              <h2 class="text-sm font-bold">{{ 'Copies & Formats' | translate }}</h2>
               <button
                 type="button"
                 (click)="addCopy()"
                 class="rounded-full border border-cyan-400/70 px-3 py-1 text-xs font-semibold text-cyan-200"
               >
-                + Add copy
+                {{ '+ Add copy' | translate }}
               </button>
             </div>
             <p class="mb-2 text-[11px] text-[var(--text-secondary)]">
-              Add each format you own. You can add multiple copies.
+              {{ 'Add each format you own. You can add multiple copies.' | translate }}
             </p>
             @for (copy of copies(); track copy.id; let index = $index) {
               <div class="mb-2 flex gap-2 last:mb-0">
@@ -400,15 +438,15 @@
                   (valueChange)="updateCopy(copy.id, 'format', $event)"
                 /><input
                   appInput="field"
-                  [attr.aria-label]="'Label for copy ' + (index + 1)"
+                  [attr.aria-label]="'Label for copy ' + (index + 1) | translate"
                   [value]="copy.label"
                   (input)="updateCopy(copy.id, 'label', $any($event.target).value)"
-                  placeholder="Edition / label"
+                  [placeholder]="'Edition / label' | translate"
                   class="min-w-0 flex-1"
                 /><button
                   type="button"
                   (click)="removeCopy(copy.id)"
-                  [attr.aria-label]="'Remove copy ' + (index + 1)"
+                  [attr.aria-label]="'Remove copy ' + (index + 1) | translate"
                   class="px-2 text-rose-300"
                 >
                   ×
@@ -417,12 +455,14 @@
             }
           </section>
           <section class="tracking-choice">
-            <h2>Track reading by</h2>
+            <h2>{{ 'Track reading by' | translate }}</h2>
             <p>
-              Use one progress value across your copies. Choose pages, Kindle locations, or
-              percentage.
+              {{
+                'Use one progress value across your copies. Choose pages, Kindle locations, or percentage.'
+                  | translate
+              }}
             </p>
-            <div role="group" aria-label="Reading progress tracking">
+            <div role="group" [attr.aria-label]="'Reading progress tracking' | translate">
               <button
                 type="button"
                 [disabled]="!hasPageFormat()"
@@ -430,21 +470,21 @@
                 [attr.aria-pressed]="trackingByPages()"
                 (click)="trackingMode.set('pages')"
               >
-                Pages</button
+                {{ 'Pages' | translate }}</button
               ><button
                 type="button"
                 [class.active]="trackingMode() === 'locations'"
                 [attr.aria-pressed]="trackingMode() === 'locations'"
                 (click)="trackingMode.set('locations')"
               >
-                Kindle locations</button
+                {{ 'Kindle locations' | translate }}</button
               ><button
                 type="button"
                 [class.active]="trackingMode() === 'percent'"
                 [attr.aria-pressed]="trackingMode() === 'percent'"
                 (click)="trackingMode.set('percent')"
               >
-                Percentage
+                {{ 'Percentage' | translate }}
               </button>
             </div>
           </section>
@@ -453,7 +493,8 @@
               class="book-basic-fields rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3"
             >
               <label
-                >Total locations<input
+                >{{ 'Total locations' | translate
+                }}<input
                   appInput="field"
                   type="number"
                   min="1"
@@ -461,7 +502,8 @@
                   formControlName="totalLocations"
               /></label>
               <label
-                >Current location<input
+                >{{ 'Current location' | translate
+                }}<input
                   appInput="field"
                   type="number"
                   min="0"
@@ -470,7 +512,8 @@
                   formControlName="currentLocation"
               /></label>
               <label
-                >Locations per estimated page<input
+                >{{ 'Locations per estimated page' | translate
+                }}<input
                   appInput="field"
                   type="number"
                   min="0.01"
@@ -478,22 +521,26 @@
                   formControlName="locationsPerPage"
               /></label>
               <p class="text-xs text-[var(--text-secondary)]">
-                Default: 15. A rough conversion assumption, not an official Kindle standard.
-                Converted pages are always estimates, including when using a print edition page
-                count.
+                {{
+                  'Default: 15. A rough conversion assumption, not an official Kindle standard. Converted pages are always estimates, including when using a print edition page count.'
+                    | translate
+                }}
               </p>
             </section>
           }
           @if (hasPageFormat() || trackingMode() === 'locations') {
             <label class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3 text-xs"
-              ><span class="font-semibold"
-                >Number of pages {{ trackingByPages() ? '' : '(optional)' }}</span
+              ><span class="font-semibold">{{
+                'messages.number_of_pages_count_e9b6f7'
+                  | translate: { p0: trackingByPages() ? '' : '(optional)' }
+              }}</span
               ><span class="mt-1 block text-[11px] text-[var(--text-secondary)]">{{
-                trackingByPages()
+                (trackingByPages()
                   ? 'Required for page tracking.'
                   : trackingMode() === 'locations'
                     ? 'Use the edition page count for estimated page conversion, or leave empty to estimate from total locations.'
                     : 'Add a page count if you also want to switch to pages later.'
+                ) | translate
               }}</span
               ><input
                 appInput="field"
@@ -501,47 +548,52 @@
                 [attr.min]="trackingByPages() ? 1 : 0"
                 inputmode="numeric"
                 formControlName="pageCount"
-                placeholder="e.g. 890"
+                [placeholder]="'e.g. 890' | translate"
                 class="mt-2 block w-full"
             /></label>
           }
         } @else {
           <div class="grid grid-cols-2 gap-2">
             <div class="min-w-0 text-xs">
-              Status<app-select
+              {{ 'Status' | translate
+              }}<app-select
                 class="mt-1 block"
-                ariaLabel="Reading status"
+                [ariaLabel]="'Reading status' | translate"
                 [options]="statusOptions"
                 formControlName="status"
               />
             </div>
             <div class="min-w-0 text-xs">
-              Rating<app-select
+              {{ 'Rating' | translate
+              }}<app-select
                 class="mt-1 block"
-                ariaLabel="Rating"
+                [ariaLabel]="'Rating' | translate"
                 [options]="ratingOptions"
                 formControlName="rating"
               />
             </div>
           </div>
           <label class="text-xs"
-            >Review<textarea
+            >{{ 'Review' | translate
+            }}<textarea
               appInput="field"
               formControlName="review"
               rows="3"
-              placeholder="Write your review..."
+              [placeholder]="'Write your review...' | translate"
               class="mt-1 block w-full"
             ></textarea>
           </label>
           <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
             <div class="mb-2 flex items-center justify-between">
               <div>
-                <h2 class="text-sm font-bold">Genre Tags</h2>
+                <h2 class="text-sm font-bold">{{ 'Genre Tags' | translate }}</h2>
                 <p class="text-[11px] text-[var(--text-secondary)]">
-                  Choose up to five genre tags.
+                  {{ 'Choose up to five genre tags.' | translate }}
                 </p>
               </div>
-              <a routerLink="/books/tags" class="text-xs text-cyan-300 no-underline">Manage</a>
+              <a routerLink="/books/tags" class="text-xs text-cyan-300 no-underline">{{
+                'Manage' | translate
+              }}</a>
             </div>
             <div class="flex flex-wrap gap-1.5">
               @for (tag of store.tags(); track tag.id) {
@@ -564,9 +616,9 @@
             </div>
           </section>
           <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
-            <h2 class="text-sm font-bold">Mood Tags</h2>
+            <h2 class="text-sm font-bold">{{ 'Mood Tags' | translate }}</h2>
             <p class="mb-2 text-[11px] text-[var(--text-secondary)]">
-              How did this book make you feel?
+              {{ 'How did this book make you feel?' | translate }}
             </p>
             <div class="flex flex-wrap gap-1.5">
               @for (tag of store.tags(); track tag.id) {
@@ -589,14 +641,18 @@
             </div>
           </section>
           <fieldset class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
-            <legend class="px-1 text-sm font-semibold">Spice rating</legend>
-            <p class="mb-2 text-xs text-[var(--text-secondary)]">How spicy is this book?</p>
+            <legend class="px-1 text-sm font-semibold">{{ 'Spice rating' | translate }}</legend>
+            <p class="mb-2 text-xs text-[var(--text-secondary)]">
+              {{ 'How spicy is this book?' | translate }}
+            </p>
             <div class="grid grid-cols-6 gap-1.5">
               @for (level of [0, 1, 2, 3, 4, 5]; track level) {
                 <button
                   type="button"
                   (click)="setSpiceRating(level)"
-                  [attr.aria-label]="level === 0 ? 'No spice' : level + ' out of 5 spice'"
+                  [attr.aria-label]="
+                    (level === 0 ? 'No spice' : level + ' out of 5 spice') | translate
+                  "
                   [attr.aria-pressed]="form.controls.spiceRating.value === level"
                   class="grid min-h-11 place-items-center rounded-xl border text-sm transition-colors"
                   [class]="
@@ -605,7 +661,7 @@
                       : 'border-[var(--border)] bg-[var(--card)] text-[var(--text-secondary)]'
                   "
                 >
-                  {{ level === 0 ? 'None' : level + ' 🌶' }}
+                  {{ (level === 0 ? 'None' : level + ' 🌶') | translate }}
                 </button>
               }
             </div>
@@ -623,7 +679,7 @@
               "
             >
               <span class="text-xl">{{ form.controls.favourite.value ? '♥' : '♡' }}</span
-              >Favourite</button
+              >{{ 'Favourite' | translate }}</button
             ><button
               type="button"
               (click)="toggleFormFlag('wouldRecommend')"
@@ -636,7 +692,7 @@
               "
             >
               <span class="text-xl">{{ form.controls.wouldRecommend.value ? '👍' : '♡' }}</span
-              >Recommend</button
+              >{{ 'Recommend' | translate }}</button
             ><button
               type="button"
               (click)="toggleFormFlag('reread')"
@@ -648,7 +704,7 @@
                   : 'border-[var(--border)] bg-[var(--card)] text-[var(--text-secondary)]'
               "
             >
-              <span class="text-xl">↻</span>Reread
+              <span class="text-xl">↻</span>{{ 'Reread' | translate }}
             </button>
           </div>
           <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
@@ -659,7 +715,7 @@
               [attr.aria-pressed]="isSeries()"
               class="flex w-full items-center justify-between gap-3 text-left text-sm font-semibold"
             >
-              <span>Part of a series</span
+              <span>{{ 'Part of a series' | translate }}</span
               ><span
                 class="relative h-7 w-12 shrink-0 rounded-full border transition-colors"
                 [class]="
@@ -676,13 +732,15 @@
             @if (isSeries()) {
               <div class="mt-3 grid grid-cols-[1fr_76px] gap-2">
                 <label class="min-w-0 text-xs"
-                  >Series Name<input
+                  >{{ 'Series Name' | translate
+                  }}<input
                     appInput="field"
                     formControlName="seriesName"
-                    placeholder="Series name"
+                    [placeholder]="'Series name' | translate"
                     class="mt-1 block w-full" /></label
                 ><label class="text-xs"
-                  >Book #<input
+                  >{{ 'Book #' | translate
+                  }}<input
                     appInput="field"
                     type="number"
                     min="1"
@@ -694,17 +752,19 @@
           </section>
           <div class="grid grid-cols-2 gap-2">
             <div class="min-w-0 text-xs">
-              Start Date<app-date-picker
+              {{ 'Start Date' | translate
+              }}<app-date-picker
                 class="mt-1 block"
-                ariaLabel="Start date"
+                [ariaLabel]="'Start date' | translate"
                 [clearable]="true"
                 formControlName="startDate"
               />
             </div>
             <div class="min-w-0 text-xs">
-              Finish Date<app-date-picker
+              {{ 'Finish Date' | translate
+              }}<app-date-picker
                 class="mt-1 block"
-                ariaLabel="Finish date"
+                [ariaLabel]="'Finish date' | translate"
                 [align]="'right'"
                 [clearable]="true"
                 formControlName="finishDate"
@@ -717,7 +777,7 @@
             role="alert"
             class="rounded-xl border border-rose-400/50 bg-[var(--card)] p-3 text-sm text-rose-200"
           >
-            {{ error() }}
+            {{ error() | translate }}
           </p>
         }
         @if (!embedded) {
@@ -727,10 +787,11 @@
               (click)="step() === 2 ? step.set(1) : cancel()"
               class="min-h-11 rounded-xl border border-[var(--border)] text-sm font-semibold text-[var(--text-secondary)]"
             >
-              {{ step() === 2 ? 'Back' : 'Cancel' }}</button
+              {{ (step() === 2 ? 'Back' : 'Cancel') | translate }}</button
             ><button appButton="primary" type="submit" [disabled]="saving()" class="font-bold">
               {{
-                step() === 1 ? 'Next' : saving() ? 'Saving...' : id ? 'Save Changes' : 'Save Book'
+                (step() === 1 ? 'Next' : saving() ? 'Saving...' : id ? 'Save Changes' : 'Save Book')
+                  | translate
               }}
             </button>
           </div>
@@ -742,12 +803,12 @@
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Delete book"
+          [attr.aria-label]="'Delete book' | translate"
           class="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 text-center"
         >
-          <h2 class="text-lg font-bold">Delete this book?</h2>
+          <h2 class="text-lg font-bold">{{ 'Delete this book?' | translate }}</h2>
           <p class="mt-2 text-sm text-[var(--text-secondary)]">
-            All copies and reading details for this book will be removed.
+            {{ 'All copies and reading details for this book will be removed.' | translate }}
           </p>
           <div class="mt-5 grid grid-cols-2 gap-2">
             <button
@@ -755,14 +816,14 @@
               (click)="showDelete.set(false)"
               class="rounded-xl border border-[var(--border)] py-3"
             >
-              Cancel</button
+              {{ 'Cancel' | translate }}</button
             ><button
               type="button"
               (click)="delete()"
               [disabled]="deleting()"
               class="rounded-xl bg-rose-500 py-3 font-semibold"
             >
-              {{ deleting() ? 'Deleting...' : 'Delete' }}
+              {{ (deleting() ? 'Deleting...' : 'Delete') | translate }}
             </button>
           </div>
         </div>
@@ -780,7 +841,7 @@
         (click)="step() === 2 ? step.set(1) : cancel()"
         class="min-h-11 rounded-xl border border-[var(--border)] text-sm font-semibold text-[var(--text-secondary)]"
       >
-        {{ step() === 2 ? 'Back' : 'Cancel' }}</button
+        {{ (step() === 2 ? 'Back' : 'Cancel') | translate }}</button
       ><button
         appButton="primary"
         type="submit"
@@ -788,7 +849,10 @@
         [disabled]="saving()"
         class="font-bold"
       >
-        {{ step() === 1 ? 'Next' : saving() ? 'Saving...' : id ? 'Save Changes' : 'Save Book' }}
+        {{
+          (step() === 1 ? 'Next' : saving() ? 'Saving...' : id ? 'Save Changes' : 'Save Book')
+            | translate
+        }}
       </button>
     </div>
   </footer>

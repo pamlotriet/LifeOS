@@ -1,29 +1,34 @@
 <ion-content class="shelf-content">
   <main class="books-shelf-page" [attr.aria-busy]="store.loading()">
-    <nav class="shelf-topbar" aria-label="Books navigation">
-      <a routerLink="/books"><ion-icon name="arrow-back-outline" aria-hidden="true" /> Books</a>
-      <span
-        >{{ store.books().length }} {{ store.books().length === 1 ? 'book' : 'books' }} in your
-        collection</span
+    <nav class="shelf-topbar" [attr.aria-label]="'Books navigation' | translate">
+      <a routerLink="/books"
+        ><ion-icon name="arrow-back-outline" aria-hidden="true" /> {{ 'Books' | translate }}</a
       >
+      <span>{{
+        'messages.count_count_in_your_collection_2e077e'
+          | translate
+            : { p0: store.books().length, p1: store.books().length === 1 ? 'book' : 'books' }
+      }}</span>
     </nav>
 
     <header class="shelf-header">
       <div>
-        <p class="shelf-eyebrow">The whole collection</p>
-        <h1>On your shelf</h1>
-        <p class="shelf-description">Every book you own, in one row of spines.</p>
+        <p class="shelf-eyebrow">{{ 'The whole collection' | translate }}</p>
+        <h1>{{ 'On your shelf' | translate }}</h1>
+        <p class="shelf-description">
+          {{ 'Every book you own, in one row of spines.' | translate }}
+        </p>
       </div>
       <div class="shelf-actions">
         <a routerLink="/books/tags" class="shelf-button"
-          ><ion-icon name="bookmark-outline" aria-hidden="true" />Tags</a
+          ><ion-icon name="bookmark-outline" aria-hidden="true" />{{ 'Tags' | translate }}</a
         >
         <button
           type="button"
           (click)="addBookSheet.open()"
           class="shelf-button shelf-button-primary"
         >
-          <ion-icon name="add-outline" aria-hidden="true" />Add book
+          <ion-icon name="add-outline" aria-hidden="true" />{{ 'Add book' | translate }}
         </button>
       </div>
     </header>
@@ -31,21 +36,25 @@
     <section class="shelf-browse" aria-labelledby="browse-title">
       <div class="shelf-browse-heading">
         <h2 id="browse-title">
-          Browse <span>{{ filtered().length }}</span>
+          {{ 'Browse' | translate }} <span>{{ filtered().length }}</span>
         </h2>
         <label class="shelf-search">
           <ion-icon name="search-outline" aria-hidden="true" />
           <input
             appInput="field"
             type="search"
-            aria-label="Search books"
-            placeholder="Search title or author..."
+            [attr.aria-label]="'Search books' | translate"
+            [placeholder]="'Search title or author...' | translate"
             [value]="search()"
             (input)="search.set($any($event.target).value)"
           />
         </label>
       </div>
-      <div class="shelf-filters" role="group" aria-label="Filter books by status">
+      <div
+        class="shelf-filters"
+        role="group"
+        [attr.aria-label]="'Filter books by status' | translate"
+      >
         @for (filter of filters; track filter) {
           <button
             type="button"
@@ -53,14 +62,14 @@
             [attr.aria-pressed]="status() === filter"
             (click)="status.set(filter)"
           >
-            {{ filter }}
+            {{ filter | translate }}
           </button>
         }
       </div>
 
       @if (store.loading()) {
-        <div role="status" aria-label="Loading your bookshelf">
-          <span class="sr-only">Loading your bookshelf...</span>
+        <div role="status" [attr.aria-label]="'Loading your bookshelf' | translate">
+          <span class="sr-only">{{ 'Loading your bookshelf...' | translate }}</span>
           <div class="shelf-grid" aria-hidden="true">
             @for (item of [1, 2, 3, 4, 5, 6]; track item) {
               <div class="books-loading-book">
@@ -73,19 +82,23 @@
         </div>
       } @else if (store.error()) {
         <div role="alert" class="shelf-message">
-          {{ store.error() }} <button type="button" (click)="store.reload()">Retry</button>
+          {{ store.error() | translate }}
+          <button type="button" (click)="store.reload()">{{ 'Retry' | translate }}</button>
         </div>
       } @else if (!filtered().length) {
         <div class="shelf-message">
           <p>
             {{
-              store.books().length
+              (store.books().length
                 ? 'No books match these filters.'
                 : 'Your shelf is ready for its first book.'
+              ) | translate
             }}
           </p>
           @if (!store.books().length) {
-            <button type="button" (click)="addBookSheet.open()">Add your first book</button>
+            <button type="button" (click)="addBookSheet.open()">
+              {{ 'Add your first book' | translate }}
+            </button>
           }
         </div>
       } @else {
@@ -94,26 +107,30 @@
             <a [routerLink]="['/books', book.id, 'edit']" class="shelf-book">
               <span class="shelf-cover">
                 @if (book.coverUrl) {
-                  <img [src]="book.coverUrl" [alt]="'Cover of ' + book.title" loading="lazy" />
+                  <img
+                    [src]="book.coverUrl"
+                    [alt]="'Cover of ' + book.title | translate"
+                    loading="lazy"
+                  />
                 } @else {
                   <span class="shelf-cover-placeholder"
                     ><ion-icon name="book-outline" aria-hidden="true" /><strong>{{
-                      book.title
+                      book.title | translate
                     }}</strong
                     ><span>{{ book.author }}</span></span
                   >
                 }
               </span>
-              <strong class="shelf-book-title">{{ book.title }}</strong>
+              <strong class="shelf-book-title">{{ book.title | translate }}</strong>
               <span class="shelf-book-author">{{ book.author }}</span>
               <span class="shelf-book-status" [class.is-reading]="book.status === 'Reading'">
                 <ion-icon
                   [name]="book.status === 'Finished' ? 'checkmark-outline' : 'bookmark-outline'"
                   aria-hidden="true"
                 />
-                {{ book.status === 'Not Started' ? 'Want to read' : book.status }}
+                {{ (book.status === 'Not Started' ? 'Want to read' : book.status) | translate }}
                 @if (book.favourite) {
-                  <ion-icon name="heart-outline" aria-label="Favourite" />
+                  <ion-icon name="heart-outline" [attr.aria-label]="'Favourite' | translate" />
                 }
               </span>
               @if (book.progressMode === 'locations') {

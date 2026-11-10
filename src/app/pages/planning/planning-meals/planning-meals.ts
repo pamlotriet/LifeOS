@@ -1,3 +1,5 @@
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import {
@@ -30,11 +32,22 @@ import { PlanningStore } from '../state/planning-store';
 
 @Component({
   selector: 'app-planning-meals',
-  imports: [AppInput, AppButton, RouterLink, IonContent, IonIcon, FormsModule, PlanningHeader],
+  imports: [
+    TranslatePipe,
+    AppInput,
+    AppButton,
+    RouterLink,
+    IonContent,
+    IonIcon,
+    FormsModule,
+    PlanningHeader,
+  ],
   templateUrl: './planning-meals.html',
   styleUrl: '../planning.css',
 })
 export class PlanningMeals {
+  private readonly i18n = inject(TranslateService);
+
   readonly recipes = inject(RecipeStore);
   readonly nutrition = inject(NutritionService);
   recipeId = '';
@@ -103,7 +116,7 @@ export class PlanningMeals {
     }
     const total = sumNutrition(values);
     const goal = this.nutrition.profile().targets.calories;
-    return `${nutritionLabel(total)}${incomplete ? ' | Incomplete' : ''}${goal > 0 ? ` | ${(goal - total.calories).toFixed(0)} kcal remaining to current goal` : ''}`;
+    return `${nutritionLabel(total)}${incomplete ? ' | Incomplete' : ''}${goal > 0 ? this.i18n.instant(' | {{p0}} kcal remaining to current goal', { p0: (goal - total.calories).toFixed(0) }) : ''}`;
   }
   logged(item: MealPlanItem) {
     return this.nutrition.logs().some((l) => l.plannedMealId === item.id);
@@ -268,7 +281,7 @@ export class PlanningMeals {
     try {
       const { id, ...input } = item;
       await this.store.saveMeal({ ...input, date: this.copyDate });
-      this.nutritionError.set(`Meal copied to ${this.copyDate}.`);
+      this.nutritionError.set(this.i18n.instant('Meal copied to {{p0}}.', { p0: this.copyDate }));
     } catch (e) {
       this.nutritionError.set((e as Error).message);
     } finally {

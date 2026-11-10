@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '../../../shared/components/app-button/app-button';
 import { AppInput } from '../../../shared/components/app-input/app-input';
 import { Component, inject, signal } from '@angular/core';
@@ -12,7 +13,7 @@ import { PasswordStore } from '../state/password-store';
 
 @Component({
   selector: 'app-password-form',
-  imports: [AppInput, AppButton, IonContent, FormsModule, AppSelect, PageHeader],
+  imports: [TranslatePipe, AppInput, AppButton, IonContent, FormsModule, AppSelect, PageHeader],
   templateUrl: './password-form.html',
 })
 export class PasswordForm {

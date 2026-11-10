@@ -1,3 +1,4 @@
+import { TranslateService } from '@ngx-translate/core';
 import { buildBookStats, BookStatsDetail } from './book-stats';
 import { cycleBounds } from '../../budget/state/budget-cycle';
 import { NutritionService } from '../../nutrition/state/nutrition.service';
@@ -125,6 +126,8 @@ const categoryChart = (
 
 @Injectable({ providedIn: 'root' })
 export class StatsService {
+  private readonly i18n = inject(TranslateService);
+
   private readonly injector = inject(Injector);
   private readonly fuelEntries = signal<RefuelEntry[]>([]);
   private readonly fuelLoading = signal(false);
@@ -247,12 +250,18 @@ export class StatsService {
       emptyMessage: 'Log food eaten to see nutrition trends. Planned meals are excluded.',
       action: '/nutrition',
       kpis: [
-        kpi('Total consumed', `${Math.round(stats.total.calories)} kcal`),
-        kpi('Average calories / logged day', `${Math.round(stats.average.calories)} kcal`),
+        kpi(
+          'Total consumed',
+          this.i18n.instant('{{p0}} kcal', { p0: Math.round(stats.total.calories) }),
+        ),
+        kpi(
+          'Average calories / logged day',
+          this.i18n.instant('{{p0}} kcal', { p0: Math.round(stats.average.calories) }),
+        ),
         ...(['protein', 'carbs', 'fat'] as const).map((key) =>
           kpi(
-            `Average ${key}`,
-            `${stats.average[key].toFixed(1)} g${target[key] > 0 ? ` | ${((stats.average[key] / target[key]) * 100).toFixed(0)}% current goal` : ''}`,
+            this.i18n.instant('Average {{p0}}', { p0: key }),
+            `${stats.average[key].toFixed(1)} g${target[key] > 0 ? this.i18n.instant(' | {{p0}}% current goal', { p0: ((stats.average[key] / target[key]) * 100).toFixed(0) }) : ''}`,
           ),
         ),
         kpi('Days within recorded calorie goal', String(stats.daysMeetingGoal)),
@@ -292,7 +301,10 @@ export class StatsService {
         },
         options: chartOptions(),
       },
-      insight: `${stats.daily.length} logged days. Averages exclude days without logs. Days within goal means consumed calories at or below that day's recorded goal; older entries without goal snapshots are excluded from goal comparisons. Charts show the latest 31 logged days and 16 weeks in the selected range.`,
+      insight: this.i18n.instant(
+        "{{p0}} logged days. Averages exclude days without logs. Days within goal means consumed calories at or below that day's recorded goal; older entries without goal snapshots are excluded from goal comparisons. Charts show the latest 31 logged days and 16 weeks in the selected range.",
+        { p0: stats.daily.length },
+      ),
     };
   }
   private fuel(range: StatsRange, selectedMonth?: string): StatsDashboard {
@@ -323,20 +335,30 @@ export class StatsService {
         this.kpi('Fuel spend', money(averages.totalSpent), 'cash', '#9e7eb5'),
         this.kpi(
           'Distance tracked',
-          `${Math.round(averages.totalRangeKm).toLocaleString('en-ZA')} km`,
+          this.i18n.instant('{{p0}} km', {
+            p0: Math.round(averages.totalRangeKm).toLocaleString('en-ZA'),
+          }),
           'speedometer-outline',
           '#20b875',
         ),
         this.kpi(
           'Average consumption',
-          averages.litersPer100Km ? `${averages.litersPer100Km.toFixed(1)} L/100 km` : 'N/A',
+          averages.litersPer100Km
+            ? this.i18n.instant('{{p0}} L/100 km', { p0: averages.litersPer100Km.toFixed(1) })
+            : 'N/A',
           'water-outline',
           '#9e7eb5',
         ),
         this.kpi(
           'Fuel cost / km',
           averages.totalRangeKm > 0
-            ? `${money(entries.filter((x) => x.rangeKm !== null).reduce((sum, x) => sum + x.amountPaid, 0) / averages.totalRangeKm)} / km`
+            ? this.i18n.instant('{{p0}} / km', {
+                p0: money(
+                  entries
+                    .filter((x) => x.rangeKm !== null)
+                    .reduce((sum, x) => sum + x.amountPaid, 0) / averages.totalRangeKm,
+                ),
+              })
             : 'N/A',
           'cash',
           '#9e7eb5',
@@ -399,11 +421,23 @@ export class StatsService {
         },
         options: chartOptions(true),
       },
-      insight: `All figures follow the selected vehicle and period. Consumption and fuel cost/km use only refuels with a known distance (${economy.length} of ${entries.length}). Distances are calculated separately for each car before filtering by refuel date; intervals may start before the period. Economy uses total distance and litres, based on recorded refills, and assumes consistent filling. ${range === 'All' ? 'Spending chart shows the latest 24 months; totals include all records.' : ''}`,
+      insight: this.i18n.instant(
+        'All figures follow the selected vehicle and period. Consumption and fuel cost/km use only refuels with a known distance ({{p0}} of {{p1}}). Distances are calculated separately for each car before filtering by refuel date; intervals may start before the period. Economy uses total distance and litres, based on recorded refills, and assumes consistent filling. {{p2}}',
+        {
+          p0: economy.length,
+          p1: entries.length,
+          p2:
+            range === 'All'
+              ? 'Spending chart shows the latest 24 months; totals include all records.'
+              : '',
+        },
+      ),
     };
   }
   private bookStats(range: StatsRange, selectedMonth?: string): StatsDashboard {
-    return buildBookStats(this.books.books(), range, selectedMonth);
+    return buildBookStats(this.books.books(), range, selectedMonth, new Date(), (key, params) =>
+      this.i18n.instant(key, params),
+    );
   }
 
   budgetReportCycle(range?: StatsRange, selectedMonth?: string): string {

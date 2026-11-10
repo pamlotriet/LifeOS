@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
@@ -39,6 +40,7 @@ describe('Gym persistence and validation', () => {
     const service = runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           {
             provide: AuthService,
             useValue: { getSession: async () => ({ uid: 'me', token: 'token' }) },
@@ -81,6 +83,7 @@ describe('Gym persistence and validation', () => {
     const service = runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           {
             provide: AuthService,
             useValue: { getSession: async () => ({ uid: 'me', token: 'token' }) },
@@ -192,6 +195,7 @@ describe('Gym persistence and validation', () => {
     const service = runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           {
             provide: AuthService,
             useValue: { getSession: async () => ({ uid: 'me', token: 'token' }) },

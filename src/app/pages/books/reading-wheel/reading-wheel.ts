@@ -1,3 +1,5 @@
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import { AddBookSheet } from '../book-form/add-book-sheet.service';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -19,11 +21,13 @@ const COLORS = [
 
 @Component({
   selector: 'app-reading-wheel',
-  imports: [IonContent, IonIcon, RouterLink, AppSkeleton],
+  imports: [TranslatePipe, IonContent, IonIcon, RouterLink, AppSkeleton],
   templateUrl: './reading-wheel.html',
   styleUrl: './reading-wheel.css',
 })
 export class ReadingWheel {
+  private readonly i18n = inject(TranslateService);
+
   readonly addBookSheet = inject(AddBookSheet);
   readonly store = inject(BookStore);
   readonly mode = signal<'wheel' | 'manage' | 'result'>('wheel');
@@ -90,7 +94,11 @@ export class ReadingWheel {
     this.busy.set(true);
     this.error.set('');
     this.savingMessage.set(
-      `${selected ? 'Adding' : 'Removing'} ${book.title} ${selected ? 'to' : 'from'} the wheel...`,
+      this.i18n.instant('{{p0}} {{p1}} {{p2}} the wheel...', {
+        p0: selected ? 'Adding' : 'Removing',
+        p1: book.title,
+        p2: selected ? 'to' : 'from',
+      }),
     );
     try {
       await this.store.setWheelSelected(book.id, selected);
@@ -120,7 +128,12 @@ export class ReadingWheel {
     try {
       for (const [index, book] of books.entries()) {
         this.savingMessage.set(
-          `${selected ? 'Adding' : 'Removing'} books ${selected ? 'to' : 'from'} the wheel: ${index + 1} of ${books.length}...`,
+          this.i18n.instant('{{p0}} books {{p1}} the wheel: {{p2}} of {{p3}}...', {
+            p0: selected ? 'Adding' : 'Removing',
+            p1: selected ? 'to' : 'from',
+            p2: index + 1,
+            p3: books.length,
+          }),
         );
         await this.store.setWheelSelected(book.id, selected);
       }

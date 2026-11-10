@@ -5,6 +5,27 @@ and the shared input, button, chart, select and date controls.
 
 LifeOS is an Angular and Ionic personal organiser, hosted as an installable web app on Firebase Hosting.
 
+## UI translations
+
+User-facing text is managed with ngx-translate. Edit the values in
+`public/i18n/en.json` to change English wording. English phrases serve as message
+keys; keep keys stable when editing their displayed values. Parameterized template
+messages use stable `messages.*` keys and named parameters such as `{{p0}}` so
+formatting cannot alter lookup keys.
+
+Templates import `TranslatePipe` and use `| translate`; TypeScript presentation
+code uses `TranslateService.instant(key, params)`. Pure calculations that generate
+messages accept a translation callback. Keep persisted statuses, identifiers,
+routes and user-entered content unchanged; translate labels when rendering them.
+
+The loader and default language live in `src/app/core/i18n/translation.providers.ts`.
+English loads before the first render, and the service worker caches translation
+files for offline launches. Add another language as `public/i18n/<language>.json`
+with matching keys before selecting it through `TranslateService.use(language)`.
+
+Run `npm.cmd run i18n:check` to verify literal translation keys against the English
+catalog, then run the build and tests after changing templates or providers.
+
 ## Installable web app (PWA)
 
 LifeOS can be distributed through a website without publishing to app stores.

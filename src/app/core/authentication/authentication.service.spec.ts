@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -33,6 +34,7 @@ import { AuthService } from './authentication.service';
 function createService(): AuthService {
   const injector = Injector.create({
     providers: [
+      ...translationTestProviders,
       {
         provide: FirestoreService,
         useValue: { createUserIfMissing: authMocks.createUserIfMissing },

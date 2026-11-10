@@ -3,40 +3,45 @@
     <app-planning-header section="ingredients" />
     <header class="section-heading">
       <div>
-        <h2>Ingredient library</h2>
-        <p>Label values you can reuse in recipes and your diary.</p>
+        <h2>{{ 'Ingredient library' | translate }}</h2>
+        <p>{{ 'Label values you can reuse in recipes and your diary.' | translate }}</p>
       </div>
-      <button class="action" (click)="create()" [disabled]="busy()">+ Add ingredient</button>
+      <button class="action" (click)="create()" [disabled]="busy()">
+        {{ '+ Add ingredient' | translate }}
+      </button>
     </header>
     @if (store.loading()) {
-      <p role="status">Loading ingredients...</p>
+      <p role="status">{{ 'Loading ingredients...' | translate }}</p>
     }
     @if (store.error()) {
-      <p role="alert">{{ store.error() }} <button (click)="store.reload()">Retry</button></p>
+      <p role="alert">
+        {{ store.error() | translate }}
+        <button (click)="store.reload()">{{ 'Retry' | translate }}</button>
+      </p>
     }
     @if (error()) {
-      <p role="alert" class="notice">{{ error() }}</p>
+      <p role="alert" class="notice">{{ error() | translate }}</p>
     }
     @if (message()) {
-      <p role="status" class="notice">{{ message() }}</p>
+      <p role="status" class="notice">{{ message() | translate }}</p>
     }
     <ion-modal
       class="food-editor-modal"
       [isOpen]="editorOpen()"
       [canDismiss]="!busy()"
       (didDismiss)="editorOpen.set(false)"
-      aria-label="Ingredient editor"
+      [attr.aria-label]="'Ingredient editor' | translate"
     >
       <ng-template
         ><ion-content
           ><div class="ingredient-modal-content">
             <section id="ingredient-editor" class="surface editor">
               <div class="section-heading">
-                <h2>{{ food.id ? 'Edit ingredient' : 'New ingredient' }}</h2>
+                <h2>{{ (food.id ? 'Edit ingredient' : 'New ingredient') | translate }}</h2>
                 <button
                   type="button"
                   class="ingredient-editor-close"
-                  aria-label="Close ingredient editor"
+                  [attr.aria-label]="'Close ingredient editor' | translate"
                   (click)="editorOpen.set(false)"
                   [disabled]="busy()"
                 >
@@ -44,15 +49,18 @@
                 </button>
               </div>
               <p>
-                Enter your label values. Keep raw and cooked foods separate. Sodium uses mg; other
-                nutrients use g.
+                {{
+                  'Enter your label values. Keep raw and cooked foods separate. Sodium uses mg; other nutrients use g.'
+                    | translate
+                }}
               </p>
               @if (error()) {
-                <p role="alert" class="notice">{{ error() }}</p>
+                <p role="alert" class="notice">{{ error() | translate }}</p>
               }
               <form (ngSubmit)="saveFood()" class="space-y-3">
                 <label
-                  >Name<input
+                  >{{ 'Name' | translate
+                  }}<input
                     appInput="field"
                     class="lifeos-select"
                     name="name"
@@ -61,25 +69,29 @@
                 /></label>
                 <div class="grid grid-cols-2 gap-2">
                   <label
-                    >Category<input
+                    >{{ 'Category' | translate
+                    }}<input
                       appInput="field"
                       name="category"
                       class="lifeos-select"
                       [(ngModel)]="food.category" /></label
                   ><label
-                    >Brand<input
+                    >{{ 'Brand' | translate
+                    }}<input
                       appInput="field"
                       name="brand"
                       class="lifeos-select"
                       [(ngModel)]="food.brand" /></label
                   ><label
-                    >Preparation state<input
+                    >{{ 'Preparation state' | translate
+                    }}<input
                       appInput="field"
                       name="preparation"
                       class="lifeos-select"
                       [(ngModel)]="food.preparation" /></label
                   ><label
-                    >Barcode<input
+                    >{{ 'Barcode' | translate
+                    }}<input
                       appInput="field"
                       name="barcode"
                       class="lifeos-select"
@@ -87,7 +99,8 @@
                   /></label>
                 </div>
                 <label
-                  >Description<textarea
+                  >{{ 'Description' | translate
+                  }}<textarea
                     appInput="field"
                     name="description"
                     class="lifeos-select"
@@ -96,7 +109,8 @@
                 </label>
                 <div class="grid grid-cols-2 gap-2">
                   <label
-                    >Label / serving amount<input
+                    >{{ 'Label / serving amount' | translate
+                    }}<input
                       appInput="field"
                       name="labelAmount"
                       class="lifeos-select"
@@ -105,24 +119,25 @@
                       step="any"
                       [(ngModel)]="labelAmount" /></label
                   ><label
-                    >Label unit<select
-                      name="labelUnit"
-                      class="lifeos-select"
-                      [(ngModel)]="labelUnit"
-                    >
-                      <option>g</option>
-                      <option>ml</option>
+                    >{{ 'Label unit' | translate
+                    }}<select name="labelUnit" class="lifeos-select" [(ngModel)]="labelUnit">
+                      <option>{{ 'g' | translate }}</option>
+                      <option>{{ 'ml' | translate }}</option>
                     </select></label
                   >
                 </div>
                 <p>
-                  Enter 1 or 100 for per-unit or per-100 values. For a serving, enter its defined
-                  weight or volume here.
+                  {{
+                    'Enter 1 or 100 for per-unit or per-100 values. For a serving, enter its defined weight or volume here.'
+                      | translate
+                  }}
                 </p>
                 <div class="grid grid-cols-2 gap-2">
                   @for (key of keys; track key) {
                     <label class="capitalize"
-                      >{{ key }} per {{ labelAmount }} {{ labelUnit
+                      >{{
+                        'messages.count_per_count_count_15c4bc'
+                          | translate: { p0: key, p1: labelAmount, p2: labelUnit }
                       }}<input
                         appInput="field"
                         type="number"
@@ -136,7 +151,8 @@
                   }
                   @for (key of optionalKeys; track key) {
                     <label
-                      >{{ key }} (optional)<input
+                      >{{ 'messages.count_optional_3c0bb4' | translate: { p0: key }
+                      }}<input
                         appInput="field"
                         type="number"
                         min="0"
@@ -149,7 +165,8 @@
                   }
                 </div>
                 <label
-                  >Density: grams per ml (optional)<input
+                  >{{ 'Density: grams per ml (optional)' | translate
+                  }}<input
                     appInput="field"
                     name="density"
                     class="lifeos-select"
@@ -160,15 +177,17 @@
                     (ngModelChange)="food.density = $event === null ? undefined : $event"
                 /></label>
                 <details>
-                  <summary>Household portions</summary>
+                  <summary>{{ 'Household portions' | translate }}</summary>
                   <label
-                    >Portion name (egg, slice, cup)<input
+                    >{{ 'Portion name (egg, slice, cup)' | translate
+                    }}<input
                       appInput="field"
                       name="portionName"
                       class="lifeos-select"
                       [(ngModel)]="portionName" /></label
                   ><label
-                    >Weight or volume of one portion<input
+                    >{{ 'Weight or volume of one portion' | translate
+                    }}<input
                       appInput="field"
                       name="portionAmount"
                       type="number"
@@ -177,23 +196,31 @@
                       class="lifeos-select"
                       [(ngModel)]="portionAmount" /></label
                   ><label
-                    >Unit<select name="portionBase" class="lifeos-select" [(ngModel)]="portionBase">
-                      <option>g</option>
-                      <option>ml</option>
+                    >{{ 'Unit' | translate
+                    }}<select name="portionBase" class="lifeos-select" [(ngModel)]="portionBase">
+                      <option>{{ 'g' | translate }}</option>
+                      <option>{{ 'ml' | translate }}</option>
                     </select></label
-                  ><button type="button" (click)="addPortion()">Add portion</button>
+                  ><button type="button" (click)="addPortion()">
+                    {{ 'Add portion' | translate }}
+                  </button>
                   @for (p of food.portions; track $index) {
                     <p>
-                      1 {{ p.unit }} = {{ p.amount }} {{ p.baseUnit }}
+                      1 {{ p.unit | translate }} = {{ p.amount }} {{ p.baseUnit }}
                       <button type="button" (click)="food.portions?.splice($index, 1)">
-                        Remove
+                        {{ 'Remove' | translate }}
                       </button>
                     </p>
                   }
                 </details>
-                <p>Label preview: {{ label(food) }} per {{ labelAmount }} {{ labelUnit }}</p>
+                <p>
+                  {{
+                    'messages.label_preview_count_per_count_count_b98757'
+                      | translate: { p0: label(food), p1: labelAmount, p2: labelUnit }
+                  }}
+                </p>
                 <button [disabled]="busy() || store.loading()">
-                  {{ food.id ? 'Update ingredient' : 'Create ingredient' }}
+                  {{ (food.id ? 'Update ingredient' : 'Create ingredient') | translate }}
                 </button>
               </form>
             </section>
@@ -202,20 +229,22 @@
       >
     </ion-modal>
 
-    <section class="surface ingredient-list" aria-label="Ingredient library">
+    <section class="surface ingredient-list" [attr.aria-label]="'Ingredient library' | translate">
       <label
-        >Search ingredients<input
+        >{{ 'Search ingredients' | translate
+        }}<input
           appInput="field"
           class="lifeos-select"
           [ngModel]="query()"
           (ngModelChange)="query.set($event)" /></label
       ><label
-        >Category<select
+        >{{ 'Category' | translate
+        }}<select
           class="lifeos-select"
           [ngModel]="category()"
           (ngModelChange)="category.set($event)"
         >
-          <option value="">All categories</option>
+          <option value="">{{ 'All categories' | translate }}</option>
           @for (c of foodCategories(); track c) {
             <option>{{ c }}</option>
           }
@@ -226,17 +255,22 @@
           <strong>{{ item.name }}</strong> / {{ item.brand }} / {{ item.preparation }} /
           {{ item.category }}
           @if (item.archived) {
-            <span>Archived</span>
+            <span>{{ 'Archived' | translate }}</span>
           }
-          <p>{{ label(item) }} per 100 {{ item.baseUnit || 'g' }}</p>
-          <p>{{ item.description }}</p>
-          <button (click)="editFood(item)">Edit ingredient</button
+          <p>
+            {{
+              'messages.count_per_100_count_45fa82'
+                | translate: { p0: label(item), p1: item.baseUnit || 'g' }
+            }}
+          </p>
+          <p>{{ item.description | translate }}</p>
+          <button (click)="editFood(item)">{{ 'Edit ingredient' | translate }}</button
           ><button class="ml-4" [disabled]="busy()" (click)="archiveFood(item)">
-            {{ item.archived ? 'Restore' : 'Archive' }}
+            {{ (item.archived ? 'Restore' : 'Archive') | translate }}
           </button>
         </article>
       } @empty {
-        <p>No ingredients found. Use Add ingredient to create one.</p>
+        <p>{{ 'No ingredients found. Use Add ingredient to create one.' | translate }}</p>
       }
     </section>
   </main></ion-content

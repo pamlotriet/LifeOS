@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { computed, Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
@@ -44,7 +45,9 @@ function fixture() {
     monthly: computed(() => payments.filter((t) => t.date.startsWith(month()))),
   };
   const page = runInInjectionContext(
-    Injector.create({ providers: [{ provide: BudgetStore, useValue: store }] }),
+    Injector.create({
+      providers: [...translationTestProviders, { provide: BudgetStore, useValue: store }],
+    }),
     () => new BudgetComparison(),
   );
   return { page, store };

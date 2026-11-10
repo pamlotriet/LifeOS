@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
@@ -6,17 +7,20 @@ import { NutritionSettings } from '../nutrition-settings/nutrition-settings';
 
 @Component({
   selector: 'app-nutrition-profile',
-  imports: [IonContent, RouterLink, BackButton, NutritionSettings],
+  imports: [TranslatePipe, IonContent, RouterLink, BackButton, NutritionSettings],
   template: `<ion-content
     ><main>
       <div class="topbar"><app-back-button fallback="/more" /></div>
       <header>
-        <span class="eyebrow">Personal wellbeing</span>
-        <h1>Your <span>nutrition</span></h1>
-        <p>Manage your profile and daily targets in one place.</p>
+        <span class="eyebrow">{{ 'Personal wellbeing' | translate }}</span>
+        <h1>
+          {{ 'Your' | translate }} <span>{{ 'nutrition' | translate }}</span>
+        </h1>
+        <p>{{ 'Manage your profile and daily targets in one place.' | translate }}</p>
       </header>
-      <nav aria-label="Nutrition pages">
-        <a routerLink="/nutrition">Open calorie diary</a><a routerLink="/planning">Plan meals</a>
+      <nav [attr.aria-label]="'Nutrition pages' | translate">
+        <a routerLink="/nutrition">{{ 'Open calorie diary' | translate }}</a
+        ><a routerLink="/planning">{{ 'Plan meals' | translate }}</a>
       </nav>
       <app-nutrition-settings /></main
   ></ion-content>`,

@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { DestroyRef, Injector, runInInjectionContext, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -14,6 +15,7 @@ const setup = () => {
   const page = runInInjectionContext(
     Injector.create({
       providers: [
+        ...translationTestProviders,
         { provide: PlanningStore, useValue: store },
         { provide: RecipeStore, useValue: {} },
         { provide: NutritionService, useValue: {} },
@@ -66,7 +68,9 @@ describe('Meal planning updates', () => {
   });
   it('rejects invalid household portions before adding them', () => {
     const page = runInInjectionContext(
-      Injector.create({ providers: [{ provide: NutritionService, useValue: {} }] }),
+      Injector.create({
+        providers: [...translationTestProviders, { provide: NutritionService, useValue: {} }],
+      }),
       () => new Ingredients(),
     );
     page.portionName = 'cup';

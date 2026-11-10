@@ -1,3 +1,5 @@
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -9,7 +11,7 @@ import { BookBackup, booksCsv, parseBookBackup, planBookImport } from '../state/
 import { localDate } from '../../nutrition/state/nutrition.model';
 @Component({
   selector: 'app-book-transfer',
-  imports: [FormsModule, RouterLink, IonContent, PageHeader],
+  imports: [TranslatePipe, FormsModule, RouterLink, IonContent, PageHeader],
   templateUrl: './book-transfer.html',
   styles: `
     .transfer-page {
@@ -101,6 +103,8 @@ import { localDate } from '../../nutrition/state/nutrition.model';
   `,
 })
 export class BookTransfer {
+  private readonly i18n = inject(TranslateService);
+
   private readonly service = inject(BookService);
   readonly store = inject(BookStore);
   readonly backup = signal<BookBackup | null>(null);
@@ -137,7 +141,12 @@ export class BookTransfer {
         `lifeos-books-${localDate()}.${csv ? 'csv' : 'json'}`,
       );
       this.notice.set(
-        `Exported all ${backup.books.length} books${csv ? ' as a spreadsheet summary' : ` and ${backup.tags.length} tags as a full backup`}.`,
+        this.i18n.instant(
+          csv
+            ? 'Exported all {{p0}} books as a spreadsheet summary.'
+            : 'Exported all {{p0}} books and {{p1}} tags as a full backup.',
+          { p0: backup.books.length, p1: backup.tags.length },
+        ),
       );
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not export books.');
@@ -176,7 +185,11 @@ export class BookTransfer {
       });
       this.backup.set(null);
       this.notice.set(
-        `Import complete: ${result.added} added, ${result.updated} updated, ${result.skipped} skipped.`,
+        this.i18n.instant('Import complete: {{p0}} added, {{p1}} updated, {{p2}} skipped.', {
+          p0: result.added,
+          p1: result.updated,
+          p2: result.skipped,
+        }),
       );
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not import books.');

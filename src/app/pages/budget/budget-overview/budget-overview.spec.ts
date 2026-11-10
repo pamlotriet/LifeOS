@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -11,6 +12,7 @@ describe('Budget cycle navigation', () => {
     const page = runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           { provide: BudgetStore, useValue: store },
           { provide: ActivatedRoute, useValue: { snapshot: { data: {} } } },
         ],

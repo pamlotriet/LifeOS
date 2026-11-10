@@ -1,30 +1,40 @@
 <ion-content class="books-content">
   <main class="books-overview" [attr.aria-busy]="loading()">
-    <nav class="books-topbar" aria-label="Library navigation">
-      <a routerLink="/home"><ion-icon name="arrow-back-outline" aria-hidden="true" /> LifeOS</a>
-      <span><ion-icon name="book-outline" aria-hidden="true" /> Reading space</span>
+    <nav class="books-topbar" [attr.aria-label]="'Library navigation' | translate">
+      <a routerLink="/home"
+        ><ion-icon name="arrow-back-outline" aria-hidden="true" /> {{ 'LifeOS' | translate }}</a
+      >
+      <span
+        ><ion-icon name="book-outline" aria-hidden="true" /> {{ 'Reading space' | translate }}</span
+      >
     </nav>
     <header class="books-header">
       <div>
-        <p class="books-eyebrow">Your personal library</p>
-        <h1>Books <span>&amp; chapters</span></h1>
-        <p>A little less scrolling. A few more pages.</p>
+        <p class="books-eyebrow">{{ 'Your personal library' | translate }}</p>
+        <h1>
+          {{ 'Books' | translate }} <span>{{ '& chapters' | translate }}</span>
+        </h1>
+        <p>{{ 'A little less scrolling. A few more pages.' | translate }}</p>
       </div>
       <div class="books-header-actions">
         <a routerLink="/books/tags" class="books-secondary"
-          ><ion-icon name="pricetags-outline" aria-hidden="true" /> Tags</a
+          ><ion-icon name="pricetags-outline" aria-hidden="true" /> {{ 'Tags' | translate }}</a
         >
         <a routerLink="/books/shelf" class="books-secondary"
-          ><ion-icon name="library-outline" aria-hidden="true" /> Bookshelf</a
+          ><ion-icon name="library-outline" aria-hidden="true" /> {{ 'Bookshelf' | translate }}</a
         >
         <button type="button" (click)="addBookSheet.open()" class="books-primary">
-          <ion-icon name="add" aria-hidden="true" /> Add book
+          <ion-icon name="add" aria-hidden="true" /> {{ 'Add book' | translate }}
         </button>
       </div>
     </header>
     @if (loading()) {
-      <div class="books-loading" role="status" aria-label="Loading your library and reading goal">
-        <span class="sr-only">Loading your library and reading goal...</span>
+      <div
+        class="books-loading"
+        role="status"
+        [attr.aria-label]="'Loading your library and reading goal' | translate"
+      >
+        <span class="sr-only">{{ 'Loading your library and reading goal...' | translate }}</span>
         <div class="books-skeleton-totals" aria-hidden="true">
           @for (item of [1, 2, 3, 4]; track item) {
             <div>
@@ -48,42 +58,47 @@
         </div>
       </div>
     } @else {
-      <section class="books-totals" aria-label="Library totals" data-section="library-totals">
+      <section
+        class="books-totals"
+        [attr.aria-label]="'Library totals' | translate"
+        data-section="library-totals"
+      >
         <a routerLink="/books/shelf"
           ><ion-icon name="library-outline" aria-hidden="true" /><span
             ><strong>{{ store.books().length }}</strong
-            ><small>On your shelf</small></span
+            ><small>{{ 'On your shelf' | translate }}</small></span
           ></a
         >
         <a routerLink="/books/shelf"
           ><ion-icon name="book-outline" aria-hidden="true" /><span
             ><strong>{{ reading() }}</strong
-            ><small>Currently reading</small></span
+            ><small>{{ 'Currently reading' | translate }}</small></span
           ></a
         >
         <a routerLink="/books/finished"
           ><ion-icon name="checkmark-done-outline" aria-hidden="true" /><span
             ><strong>{{ finished() }}</strong
-            ><small>Finished</small></span
+            ><small>{{ 'Finished' | translate }}</small></span
           ></a
         >
         <a routerLink="/books/shelf"
           ><ion-icon name="bookmark-outline" aria-hidden="true" /><span
             ><strong>{{ favourites() }}</strong
-            ><small>Favourites</small></span
+            ><small>{{ 'Favourites' | translate }}</small></span
           ></a
         >
       </section>
       <section aria-labelledby="reading-now-title" class="reading-section">
         <div class="reading-heading">
-          <h2 id="reading-now-title">Currently reading</h2>
+          <h2 id="reading-now-title">{{ 'Currently reading' | translate }}</h2>
           <a routerLink="/books/shelf"
-            >All reading <ion-icon name="arrow-up-outline" aria-hidden="true"
+            >{{ 'All reading' | translate }} <ion-icon name="arrow-up-outline" aria-hidden="true"
           /></a>
         </div>
         @if (store.error()) {
           <p role="alert" class="reading-feedback">
-            {{ store.error() }} <button type="button" (click)="store.reload()">Retry</button>
+            {{ store.error() | translate }}
+            <button type="button" (click)="store.reload()">{{ 'Retry' | translate }}</button>
           </p>
         } @else {
           <div class="reading-list">
@@ -92,18 +107,22 @@
                 <a
                   [routerLink]="['/books', book.id, 'edit']"
                   class="reading-cover"
-                  [attr.aria-label]="'View ' + book.title"
+                  [attr.aria-label]="'View ' + book.title | translate"
                 >
                   @if (book.coverUrl) {
-                    <img [src]="book.coverUrl" [alt]="book.title + ' cover'" loading="lazy" />
+                    <img
+                      [src]="book.coverUrl"
+                      [alt]="book.title + ' cover' | translate"
+                      loading="lazy"
+                    />
                   } @else {
                     <ion-icon name="book-outline" aria-hidden="true" />
                   }
                 </a>
                 <div class="reading-details">
-                  <p class="reading-eyebrow">In progress</p>
+                  <p class="reading-eyebrow">{{ 'In progress' | translate }}</p>
                   <a [routerLink]="['/books', book.id, 'edit']" class="reading-book-title">{{
-                    book.title
+                    book.title | translate
                   }}</a>
                   <p class="reading-author">{{ book.author }}</p>
                   @if (book.progressMode === 'locations') {
@@ -111,16 +130,17 @@
                   }
                   <div class="reading-progress-copy">
                     <span>{{
-                      trackingMode(book) === 'pages' && book.pageCount > 0
+                      (trackingMode(book) === 'pages' && book.pageCount > 0
                         ? 'Page ' + book.pageProgress + ' of ' + book.pageCount
                         : 'Reading progress'
+                      ) | translate
                     }}</span
                     ><strong>{{ pagePercent(book) }}%</strong>
                   </div>
                   <div
                     class="reading-track"
                     role="progressbar"
-                    [attr.aria-label]="'Progress for ' + book.title"
+                    [attr.aria-label]="'Progress for ' + book.title | translate"
                     [attr.aria-valuenow]="pagePercent(book)"
                     aria-valuemin="0"
                     aria-valuemax="100"
@@ -130,18 +150,19 @@
                   <div class="reading-footer">
                     <p class="reading-remaining">
                       {{
-                        trackingMode(book) === 'pages' && book.pageCount > 0
+                        (trackingMode(book) === 'pages' && book.pageCount > 0
                           ? book.pageCount - book.pageProgress + ' pages to go'
                           : 100 - pagePercent(book) + '% to go'
+                        ) | translate
                       }}
                     </p>
                     <button
                       type="button"
                       class="reading-update"
                       (click)="openProgress(book)"
-                      [attr.aria-label]="'Update progress for ' + book.title"
+                      [attr.aria-label]="'Update progress for ' + book.title | translate"
                     >
-                      Update progress
+                      {{ 'Update progress' | translate }}
                     </button>
                   </div>
                 </div>
@@ -149,47 +170,53 @@
             } @empty {
               <div class="reading-empty">
                 <ion-icon name="book-outline" aria-hidden="true" />
-                <p>Your next chapter starts here.</p>
-                <a routerLink="/books/shelf">Choose a book from your shelf</a>
+                <p>{{ 'Your next chapter starts here.' | translate }}</p>
+                <a routerLink="/books/shelf">{{ 'Choose a book from your shelf' | translate }}</a>
               </div>
             }
           </div>
         }
         @if (estimatedPagesLogged() > 0) {
           <p class="reading-feedback">
-            &asymp; {{ estimatedPagesLogged() }} estimated pages logged from Kindle locations
+            {{
+              'messages.count_estimated_pages_logged_from_kindle_locations_244a48'
+                | translate: { p0: estimatedPagesLogged() }
+            }}
           </p>
         }
         @if (progressNotice()) {
-          <p role="status" class="reading-feedback">{{ progressNotice() }}</p>
+          <p role="status" class="reading-feedback">{{ progressNotice() | translate }}</p>
         }
       </section>
       <aside class="books-sidebar">
         <section class="books-goal" aria-labelledby="reading-goal-title">
           <div class="books-goal-heading">
             <p class="books-eyebrow">
-              <ion-icon name="radio-button-on-outline" aria-hidden="true" /> Reading goal
+              <ion-icon name="radio-button-on-outline" aria-hidden="true" />
+              {{ 'Reading goal' | translate }}
             </p>
             <button
               type="button"
               class="books-text-button"
               (click)="editGoal()"
-              [attr.aria-label]="goal() ? 'Edit reading goal' : 'Set reading goal'"
+              [attr.aria-label]="(goal() ? 'Edit reading goal' : 'Set reading goal') | translate"
             >
               <ion-icon name="pencil-outline" aria-hidden="true" />
             </button>
           </div>
-          <h2 id="reading-goal-title">Make time for a good book.</h2>
+          <h2 id="reading-goal-title">{{ 'Make time for a good book.' | translate }}</h2>
           @if (goal(); as target) {
             <div class="books-goal-number">
               <strong>{{ readThisYear() }}</strong
               ><span>/ {{ target }}</span>
             </div>
-            <p class="books-goal-caption">books finished in {{ year }}</p>
+            <p class="books-goal-caption">
+              {{ 'messages.books_finished_in_count_2e6342' | translate: { p0: year } }}
+            </p>
             <div
               class="books-goal-track"
               role="progressbar"
-              aria-label="Yearly reading goal"
+              [attr.aria-label]="'Yearly reading goal' | translate"
               [attr.aria-valuenow]="goalPercent()"
               aria-valuemin="0"
               aria-valuemax="100"
@@ -198,32 +225,33 @@
             </div>
             <div class="books-goal-status">
               <span>{{
-                goalRemaining()
+                (goalRemaining()
                   ? goalRemaining() + ' more stories to go'
                   : 'Goal reached. Keep reading!'
+                ) | translate
               }}</span
               ><span>{{ goalPercent() }}%</span>
             </div>
           } @else {
             <p class="books-goal-empty">
-              Choose how many books you&rsquo;d like to finish this year.
+              {{ 'Choose how many books you’d like to finish this year.' | translate }}
             </p>
             <button type="button" class="books-secondary" (click)="editGoal()">
-              Set reading goal
+              {{ 'Set reading goal' | translate }}
             </button>
           }
           @if (goalError() && !goalEditing()) {
-            <p role="alert" class="reading-feedback">{{ goalError() }}</p>
+            <p role="alert" class="reading-feedback">{{ goalError() | translate }}</p>
           }
           <a routerLink="/books/finished" class="books-secondary books-finished"
-            ><ion-icon name="checkmark-done-outline" aria-hidden="true" /> Finished books
-            <ion-icon name="arrow-up-outline" aria-hidden="true"
+            ><ion-icon name="checkmark-done-outline" aria-hidden="true" />
+            {{ 'Finished books' | translate }} <ion-icon name="arrow-up-outline" aria-hidden="true"
           /></a>
         </section>
         <section class="books-note">
           <ion-icon name="bookmark-outline" aria-hidden="true" />
-          <h2>One chapter at a time.</h2>
-          <p>There&rsquo;s no rush to the last page.</p>
+          <h2>{{ 'One chapter at a time.' | translate }}</h2>
+          <p>{{ 'There’s no rush to the last page.' | translate }}</p>
         </section>
       </aside>
     }
@@ -238,14 +266,17 @@
         class="w-full max-w-sm rounded-3xl border border-[var(--border)] bg-[var(--card)] p-5 text-white shadow-2xl"
       >
         <p class="text-xs font-semibold uppercase tracking-widest text-cyan-300">
-          {{ year }} reading challenge
+          {{ 'messages.count_reading_challenge_73f388' | translate: { p0: year } }}
         </p>
-        <h2 id="goal-dialog-title" class="mt-1 text-xl font-bold">Set your yearly goal</h2>
+        <h2 id="goal-dialog-title" class="mt-1 text-xl font-bold">
+          {{ 'Set your yearly goal' | translate }}
+        </h2>
         <p class="mt-2 text-sm text-[var(--text-secondary)]">
-          How many books would you like to finish this year?
+          {{ 'How many books would you like to finish this year?' | translate }}
         </p>
         <label class="mt-4 block text-sm"
-          >Number of books<input
+          >{{ 'Number of books' | translate
+          }}<input
             appInput="field"
             type="number"
             min="1"
@@ -256,7 +287,7 @@
             class="mt-1 block w-full"
         /></label>
         @if (goalError()) {
-          <p role="alert" class="mt-2 text-sm text-rose-200">{{ goalError() }}</p>
+          <p role="alert" class="mt-2 text-sm text-rose-200">{{ goalError() | translate }}</p>
         }
         <div class="mt-5 grid grid-cols-2 gap-2">
           <button
@@ -264,14 +295,14 @@
             (click)="goalEditing.set(false)"
             class="min-h-11 rounded-xl border border-[var(--border)]"
           >
-            Cancel</button
+            {{ 'Cancel' | translate }}</button
           ><button
             type="button"
             (click)="saveGoal()"
             [disabled]="goalSaving()"
             class="min-h-11 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 font-bold text-[var(--card)] disabled:opacity-60"
           >
-            {{ goalSaving() ? 'Saving...' : 'Save goal' }}
+            {{ (goalSaving() ? 'Saving...' : 'Save goal') | translate }}
           </button>
         </div>
       </div>
@@ -289,23 +320,27 @@
         <form class="progress-editor" (submit)="$event.preventDefault(); saveProgress()">
           <div class="progress-dialog-heading">
             <div>
-              <p class="reading-eyebrow">One chapter at a time</p>
-              <h2 id="progress-dialog-title">Update progress</h2>
+              <p class="reading-eyebrow">{{ 'One chapter at a time' | translate }}</p>
+              <h2 id="progress-dialog-title">{{ 'Update progress' | translate }}</h2>
             </div>
             <button
               class="progress-close"
               type="button"
-              aria-label="Close progress editor"
+              [attr.aria-label]="'Close progress editor' | translate"
               (click)="closeProgress()"
               [disabled]="progressSaving()"
             >
               ×
             </button>
           </div>
-          <p class="progress-book-name">{{ book.title }}</p>
+          <p class="progress-book-name">{{ book.title | translate }}</p>
           <fieldset [disabled]="progressSaving()">
             @if (book.progressMode !== 'locations') {
-              <div class="progress-modes" role="group" aria-label="Progress unit">
+              <div
+                class="progress-modes"
+                role="group"
+                [attr.aria-label]="'Progress unit' | translate"
+              >
                 @if (book.pageCount > 0) {
                   <button
                     type="button"
@@ -313,7 +348,7 @@
                     [attr.aria-pressed]="progressMode() === 'pages'"
                     (click)="changeProgressMode('pages')"
                   >
-                    Pages
+                    {{ 'Pages' | translate }}
                   </button>
                 }
                 <button
@@ -322,16 +357,17 @@
                   [attr.aria-pressed]="progressMode() === 'percent'"
                   (click)="changeProgressMode('percent')"
                 >
-                  Percentage
+                  {{ 'Percentage' | translate }}
                 </button>
               </div>
             }
             <label class="progress-label" for="reading-position">{{
-              progressMode() === 'locations'
+              (progressMode() === 'locations'
                 ? 'What Kindle location are you on?'
                 : progressMode() === 'pages'
                   ? 'What page are you on?'
                   : 'How far have you read?'
+              ) | translate
             }}</label>
             <div class="progress-number">
               <input
@@ -352,37 +388,44 @@
                 (input)="progressInput.set($any($event.target).value)"
                 aria-describedby="progress-unit"
               /><span id="progress-unit">{{
-                progressMode() === 'locations'
+                (progressMode() === 'locations'
                   ? 'of ' + book.totalLocations + ' locations'
                   : progressMode() === 'pages'
                     ? 'of ' + book.pageCount + ' pages'
                     : 'percent'
+                ) | translate
               }}</span>
             </div>
             <p class="reading-remaining">
-              Previously
               {{
-                trackingMode(book) === 'locations'
-                  ? 'location ' + book.currentLocation
-                  : trackingMode(book) === 'pages' && book.pageCount > 0
-                    ? 'page ' + book.pageProgress
-                    : book.progress + '%'
-              }}. You can also correct an earlier entry.
+                'messages.previously_count_you_can_also_correct_an_725fa7'
+                  | translate
+                    : {
+                        p0:
+                          trackingMode(book) === 'locations'
+                            ? 'location ' + book.currentLocation
+                            : trackingMode(book) === 'pages' && book.pageCount > 0
+                              ? 'page ' + book.pageProgress
+                              : book.progress + '%',
+                      }
+              }}
             </p>
             @if (book.progressMode === 'locations') {
               <p class="progress-label" role="status">{{ locationSessionPreview(book) }}</p>
             }
             @if (progressError()) {
-              <p role="alert" class="progress-error">{{ progressError() }}</p>
+              <p role="alert" class="progress-error">{{ progressError() | translate }}</p>
             }
             <button appButton="primary" class="reading-update progress-save" type="submit">
-              {{ progressSaving() ? 'Saving...' : 'Save progress' }}
+              {{ (progressSaving() ? 'Saving...' : 'Save progress') | translate }}
             </button>
             <button type="button" class="progress-finish" (click)="saveProgress(true)">
               <ion-icon name="checkmark-done-outline" aria-hidden="true" />
               <span
-                ><strong>Finish now</strong
-                ><small>Mark as finished today, then rate and review</small></span
+                ><strong>{{ 'Finish now' | translate }}</strong
+                ><small>{{
+                  'Mark as finished today, then rate and review' | translate
+                }}</small></span
               >
             </button>
           </fieldset>

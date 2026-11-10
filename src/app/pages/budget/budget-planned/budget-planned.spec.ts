@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { computed, Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
@@ -57,7 +58,9 @@ describe('Planning balance forecast', () => {
       ),
     };
     const page = runInInjectionContext(
-      Injector.create({ providers: [{ provide: BudgetStore, useValue: store }] }),
+      Injector.create({
+        providers: [...translationTestProviders, { provide: BudgetStore, useValue: store }],
+      }),
       () => new BudgetPlanned(),
     );
     expect(page.predictedBalance()).toBe(500.1);

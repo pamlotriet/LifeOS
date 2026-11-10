@@ -1,59 +1,72 @@
-<ion-header app-page-header title="Calorie diary"></ion-header>
+<ion-header app-page-header [title]="'Calorie diary' | translate"></ion-header>
 <ion-content class="[--background:transparent]"
   ><main class="nutrition-page">
     <nav class="page-links">
-      <a routerLink="/planning">Planning</a><a routerLink="/planning">Meal plan</a
-      ><a routerLink="/stats">Stats</a><a routerLink="/nutrition/profile">Goals</a>
+      <a routerLink="/planning">{{ 'Planning' | translate }}</a
+      ><a routerLink="/planning">{{ 'Meal plan' | translate }}</a
+      ><a routerLink="/stats">{{ 'Stats' | translate }}</a
+      ><a routerLink="/nutrition/profile">{{ 'Goals' | translate }}</a>
     </nav>
     <header class="diary-heading">
       <div>
-        <span class="eyebrow">Daily nutrition</span>
-        <h1>{{ date() === today ? 'Today' : 'Your diary' }}</h1>
+        <span class="eyebrow">{{ 'Daily nutrition' | translate }}</span>
+        <h1>{{ (date() === today ? 'Today' : 'Your diary') | translate }}</h1>
       </div>
-      <button class="action" (click)="openLogger()" [disabled]="store.loading()">+ Log food</button>
+      <button class="action" (click)="openLogger()" [disabled]="store.loading()">
+        {{ '+ Log food' | translate }}
+      </button>
     </header>
     <div class="date-nav">
-      <button aria-label="Previous day" (click)="changeDate(-1)">&larr;</button
+      <button [attr.aria-label]="'Previous day' | translate" (click)="changeDate(-1)">&larr;</button
       ><label
-        ><span class="sr-only">Diary date</span
+        ><span class="sr-only">{{ 'Diary date' | translate }}</span
         ><input
           appInput="field"
           type="date"
           [ngModel]="date()"
           (ngModelChange)="date.set($event); editingId = ''; loggerOpen.set(false)" /></label
-      ><button aria-label="Next day" (click)="changeDate(1)">&rarr;</button>
+      ><button [attr.aria-label]="'Next day' | translate" (click)="changeDate(1)">&rarr;</button>
       @if (date() !== today) {
-        <button (click)="date.set(today); editingId = ''; loggerOpen.set(false)">Today</button>
+        <button (click)="date.set(today); editingId = ''; loggerOpen.set(false)">
+          {{ 'Today' | translate }}
+        </button>
       }
     </div>
     @if (store.loading()) {
-      <p role="status">Loading your diary...</p>
+      <p role="status">{{ 'Loading your diary...' | translate }}</p>
     }
     @if (store.error()) {
       <p role="alert" class="notice">
-        {{ store.error() }} <button (click)="store.reload()">Retry</button>
+        {{ store.error() | translate }}
+        <button (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </p>
     }
     @if (error()) {
-      <p role="alert" class="notice">{{ error() }}</p>
+      <p role="alert" class="notice">{{ error() | translate }}</p>
     }
     @if (date() > today) {
-      <p class="notice">Future date. Planned meals stay separate from food you explicitly log.</p>
+      <p class="notice">
+        {{ 'Future date. Planned meals stay separate from food you explicitly log.' | translate }}
+      </p>
     }
-    <section class="surface daily-overview" aria-label="Daily calorie progress">
+    <section
+      class="surface daily-overview"
+      [attr.aria-label]="'Daily calorie progress' | translate"
+    >
       <div class="calorie-ring" [style.--progress]="progress() + '%'">
         <div>
           <strong>{{ total().calories.toFixed(0) }}</strong
-          ><span>kcal eaten</span>
+          ><span>{{ 'kcal eaten' | translate }}</span>
         </div>
       </div>
       <div class="calorie-context">
         <span class="eyebrow">{{
-          store.profile().targets.calories > 0
+          (store.profile().targets.calories > 0
             ? remaining() < 0
               ? 'Above goal'
               : 'Remaining today'
             : 'Your daily intake'
+          ) | translate
         }}</span>
         <h2>
           {{
@@ -63,33 +76,44 @@
                 : remaining().toFixed(0)
               : total().calories.toFixed(0)
           }}
-          <small>kcal</small>
+          <small>{{ 'kcal' | translate }}</small>
         </h2>
         @if (store.profile().targets.calories > 0) {
-          <p>of {{ store.profile().targets.calories }} kcal daily goal</p>
+          <p>
+            {{
+              'messages.of_count_kcal_daily_goal_1220d3'
+                | translate: { p0: store.profile().targets.calories }
+            }}
+          </p>
         } @else {
-          <a routerLink="/nutrition/profile">Set your calorie and macro goals</a>
+          <a routerLink="/nutrition/profile">{{
+            'Set your calorie and macro goals' | translate
+          }}</a>
         }
-        <a class="planned-note" routerLink="/planning"
-          >{{ planned().calories.toFixed(0) }} kcal planned separately &rarr;</a
-        >
+        <a class="planned-note" routerLink="/planning">{{
+          'messages.count_kcal_planned_separately_13dfb3'
+            | translate: { p0: planned().calories.toFixed(0) }
+        }}</a>
       </div>
       <div class="macro-grid">
         @for (key of macros; track key) {
           <div class="macro" [attr.data-macro]="key">
             <div>
-              <span class="capitalize">{{ key === 'carbs' ? 'Carbs' : key }}</span
-              ><strong>{{ total()[key].toFixed(1) }}<small> g</small></strong>
+              <span class="capitalize">{{ (key === 'carbs' ? 'Carbs' : key) | translate }}</span
+              ><strong
+                >{{ total()[key].toFixed(1) }}<small> {{ 'g' | translate }}</small></strong
+              >
             </div>
             <progress
-              [attr.aria-label]="key + ' goal progress'"
+              [attr.aria-label]="key + ' goal progress' | translate"
               [value]="total()[key]"
               [max]="store.profile().targets[key] || 1"
             ></progress
             ><small>{{
-              store.profile().targets[key] > 0
+              (store.profile().targets[key] > 0
                 ? 'of ' + store.profile().targets[key] + ' g'
                 : 'No goal set'
+              ) | translate
             }}</small>
           </div>
         }
@@ -99,26 +123,32 @@
       <section id="food-composer" class="surface composer" aria-labelledby="log-food-heading">
         <div class="section-heading">
           <div>
-            <span class="eyebrow">Record what you ate</span>
-            <h2 id="log-food-heading">Log food</h2>
+            <span class="eyebrow">{{ 'Record what you ate' | translate }}</span>
+            <h2 id="log-food-heading">{{ 'Log food' | translate }}</h2>
           </div>
-          <button (click)="loggerOpen.set(false)" [disabled]="busy()">Cancel</button>
+          <button (click)="loggerOpen.set(false)" [disabled]="busy()">
+            {{ 'Cancel' | translate }}
+          </button>
         </div>
         <label
-          >Meal<select class="lifeos-select" [(ngModel)]="meal">
+          >{{ 'Meal' | translate
+          }}<select class="lifeos-select" [(ngModel)]="meal">
             @for (m of categories; track m) {
               <option>{{ m }}</option>
             }
           </select></label
         >
-        <div class="mode-switch" role="group" aria-label="Food source">
+        <div class="mode-switch" role="group" [attr.aria-label]="'Food source' | translate">
           @for (mode of ['ingredient', 'recipe', 'manual']; track mode) {
             <button
               [class.active]="logMode() === mode"
               [attr.aria-pressed]="logMode() === mode"
               (click)="logMode.set($any(mode))"
             >
-              {{ mode === 'manual' ? 'Quick entry' : mode === 'recipe' ? 'Recipe' : 'Ingredient' }}
+              {{
+                (mode === 'manual' ? 'Quick entry' : mode === 'recipe' ? 'Recipe' : 'Ingredient')
+                  | translate
+              }}
             </button>
           }
         </div>
@@ -219,10 +249,12 @@
     }
     <div class="section-heading meals-heading">
       <div>
-        <h2>Your meals</h2>
-        <p>Only logged food counts toward your intake.</p>
+        <h2>{{ 'Your meals' | translate }}</h2>
+        <p>{{ 'Only logged food counts toward your intake.' | translate }}</p>
       </div>
-      <span class="entry-count">{{ entries().length }} entries</span>
+      <span class="entry-count">{{
+        'messages.count_entries_8b6d08' | translate: { p0: entries().length }
+      }}</span>
     </div>
     <div class="meal-grid">
       @for (m of categories; track m) {
@@ -230,9 +262,15 @@
           <header>
             <div>
               <h3>{{ m }}</h3>
-              <span>{{ mealCalories(m).toFixed(0) }} kcal</span>
+              <span>{{
+                'messages.count_kcal_46a76a' | translate: { p0: mealCalories(m).toFixed(0) }
+              }}</span>
             </div>
-            <button class="add-meal" [attr.aria-label]="'Add food to ' + m" (click)="openLogger(m)">
+            <button
+              class="add-meal"
+              [attr.aria-label]="'Add food to ' + m | translate"
+              (click)="openLogger(m)"
+            >
               +
             </button>
           </header>
@@ -243,33 +281,44 @@
                   <strong>{{ entry.name }}</strong
                   ><small>{{ entry.amount }}</small>
                 </div>
-                <strong>{{ entry.nutrition.calories.toFixed(0) }} <small>kcal</small></strong>
+                <strong
+                  >{{ entry.nutrition.calories.toFixed(0) }}
+                  <small>{{ 'kcal' | translate }}</small></strong
+                >
               </div>
               <p class="food-macros">
-                P {{ entry.nutrition.protein.toFixed(1) }}g / C
-                {{ entry.nutrition.carbs.toFixed(1) }}g / F {{ entry.nutrition.fat.toFixed(1) }}g
+                {{
+                  'messages.p_count_g_c_count_g_f_630337'
+                    | translate
+                      : {
+                          p0: entry.nutrition.protein.toFixed(1),
+                          p1: entry.nutrition.carbs.toFixed(1),
+                          p2: entry.nutrition.fat.toFixed(1),
+                        }
+                }}
               </p>
               @if (editingId === entry.id) {
                 <label
-                  >Recorded date<input
+                  >{{ 'Recorded date' | translate
+                  }}<input
                     appInput="field"
                     type="date"
                     [(ngModel)]="editDate"
                     class="lifeos-select" /></label
                 ><label
-                  >Recorded meal<select [(ngModel)]="editMeal" class="lifeos-select">
+                  >{{ 'Recorded meal' | translate
+                  }}<select [(ngModel)]="editMeal" class="lifeos-select">
                     @for (m of categories; track m) {
                       <option>{{ m }}</option>
                     }
                   </select></label
                 >
                 <label
-                  >Name<input
-                    appInput="field"
-                    class="lifeos-select"
-                    [(ngModel)]="manualName" /></label
+                  >{{ 'Name' | translate
+                  }}<input appInput="field" class="lifeos-select" [(ngModel)]="manualName" /></label
                 ><label
-                  >Actual amount<input
+                  >{{ 'Actual amount' | translate
+                  }}<input
                     appInput="field"
                     type="number"
                     min="0.01"
@@ -278,7 +327,10 @@
                     [(ngModel)]="editQuantity"
                 /></label>
                 <p>
-                  Adjust the recorded nutrition below; quantity changes scale it proportionally.
+                  {{
+                    'Adjust the recorded nutrition below; quantity changes scale it proportionally.'
+                      | translate
+                  }}
                 </p>
                 <div class="grid grid-cols-2 gap-2">
                   @for (key of keys; track key) {
@@ -294,36 +346,43 @@
                     /></label>
                   }
                 </div>
-                <button (click)="saveEdit(entry)" [disabled]="busy()">Save changes</button
-                ><button (click)="editingId = ''">Cancel</button>
+                <button (click)="saveEdit(entry)" [disabled]="busy()">
+                  {{ 'Save changes' | translate }}</button
+                ><button (click)="editingId = ''">{{ 'Cancel' | translate }}</button>
               }
 
               <div class="entry-actions">
-                <button (click)="startEdit(entry)">Edit</button
-                ><button (click)="copy(entry)" [disabled]="busy()">Log again</button
-                ><button (click)="removeLog(entry.id)" [disabled]="busy()">Remove</button>
+                <button (click)="startEdit(entry)">{{ 'Edit' | translate }}</button
+                ><button (click)="copy(entry)" [disabled]="busy()">
+                  {{ 'Log again' | translate }}</button
+                ><button (click)="removeLog(entry.id)" [disabled]="busy()">
+                  {{ 'Remove' | translate }}
+                </button>
               </div>
             </article>
           } @empty {
             <button class="empty-meal" (click)="openLogger(m)">
-              Nothing logged yet. <span>Add {{ m.toLowerCase() }} &rarr;</span>
+              {{ 'Nothing logged yet.' | translate }}
+              <span>{{ 'messages.add_count_044e7c' | translate: { p0: m.toLowerCase() } }}</span>
             </button>
           }
         </section>
       }
     </div>
     <details class="surface recent-history">
-      <summary>Recent foods <span>Copy to this day</span></summary>
+      <summary>
+        {{ 'Recent foods' | translate }} <span>{{ 'Copy to this day' | translate }}</span>
+      </summary>
       @for (entry of history(); track entry.id) {
         <div class="history-row">
           <div>
             <strong>{{ entry.name }}</strong
             ><small>{{ entry.date }} / {{ entry.amount }}</small>
           </div>
-          <button (click)="copy(entry)" [disabled]="busy()">+ Add</button>
+          <button (click)="copy(entry)" [disabled]="busy()">{{ '+ Add' | translate }}</button>
         </div>
       } @empty {
-        <p>Your recently logged foods will appear here.</p>
+        <p>{{ 'Your recently logged foods will appear here.' | translate }}</p>
       }
     </details>
   </main></ion-content

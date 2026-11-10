@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../test-providers';
 import '@angular/compiler';
 import { Location } from '@angular/common';
 import { DestroyRef, Injector, runInInjectionContext } from '@angular/core';
@@ -19,6 +20,7 @@ describe('In-app back navigation', () => {
     const service = runInInjectionContext(
       Injector.create({
         providers: [
+          ...translationTestProviders,
           { provide: Router, useValue: router },
           { provide: Location, useValue: { back } },
           { provide: DestroyRef, useValue: { onDestroy: vi.fn() } },

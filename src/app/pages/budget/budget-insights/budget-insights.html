@@ -1,21 +1,23 @@
 <ion-content
   ><main class="budget-page">
-    <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
+    <p class="muted text-sm" [attr.aria-label]="'Budget cycle dates' | translate">
+      {{ 'messages.cycle_count_1e4cb8' | translate: { p0: store.cycleLabel() } }}
+    </p>
     <header class="page-header">
       <app-back-button fallback="/budget" />
-      <h1 class="compact-title">Insights</h1>
+      <h1 class="compact-title">{{ 'Insights' | translate }}</h1>
       <span style="width: 42px"></span>
     </header>
     <app-budget-nav />
     <div class="month-nav">
-      <span class="muted">Report month</span
+      <span class="muted">{{ 'Report month' | translate }}</span
       ><app-month-picker
-        ariaLabel="Report month"
+        [ariaLabel]="'Report month' | translate"
         [ngModel]="store.month()"
         (ngModelChange)="setMonth($event)"
       />
     </div>
-    <nav class="segments" aria-label="Report type">
+    <nav class="segments" [attr.aria-label]="'Report type' | translate">
       @for (item of ['highlights', 'spending', 'income', 'trends']; track item) {
         <button
           [class.active]="tab() === item"
@@ -23,35 +25,39 @@
           (click)="tab.set(item)"
         >
           {{
-            item === 'highlights'
+            (item === 'highlights'
               ? 'For you'
               : item === 'spending'
                 ? 'Spending'
                 : item === 'income'
                   ? 'Income'
                   : 'Trends'
+            ) | translate
           }}
         </button>
       }
     </nav>
     @if (store.loading()) {
-      <p class="status" role="status">Loading insights...</p>
+      <p class="status" role="status">{{ 'Loading insights...' | translate }}</p>
     }
     @if (store.error()) {
       <div class="status error" role="alert">
-        {{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button>
+        {{ store.error() | translate }}
+        <button class="text-link" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </div>
     }
     @if (!store.loading() && !store.error()) {
       @if (tab() === 'highlights') {
         <div class="insights-intro">
-          <h2>Your budget, explained</h2>
+          <h2>{{ 'Your budget, explained' | translate }}</h2>
           <p class="muted">
-            Practical insights calculated from your recorded figures and plans. Update transactions
-            to keep these accurate.
+            {{
+              'Practical insights calculated from your recorded figures and plans. Update transactions to keep these accurate.'
+                | translate
+            }}
           </p>
         </div>
-        <section class="insight-grid" aria-label="Personal budget insights">
+        <section class="insight-grid" [attr.aria-label]="'Personal budget insights' | translate">
           @for (item of highlights(); track item.id) {
             <article
               class="panel insight-card"
@@ -59,20 +65,21 @@
               [class.insight-good]="item.tone === 'good'"
             >
               <span class="insight-status">{{
-                item.tone === 'attention'
+                (item.tone === 'attention'
                   ? 'Worth reviewing'
                   : item.tone === 'good'
                     ? 'Looking ahead'
                     : 'Your figures'
+                ) | translate
               }}</span>
-              <h3>{{ item.title }}</h3>
+              <h3>{{ item.title | translate }}</h3>
               <strong class="insight-value">{{ item.value }}</strong>
-              <p>{{ item.detail }}</p>
+              <p>{{ item.detail | translate }}</p>
               <a
                 class="secondary-button"
                 [routerLink]="item.route"
                 [queryParams]="item.id === 'income' ? { type: 'income' } : {}"
-                >{{ item.action }} <ion-icon name="chevron-forward" aria-hidden="true"
+                >{{ item.action | translate }} <ion-icon name="chevron-forward" aria-hidden="true"
               /></a>
             </article>
           }
@@ -80,17 +87,17 @@
       } @else {
         @if (tab() !== 'trends') {
           <section class="panel chart-panel">
-            <h2>{{ tab() === 'income' ? 'Monthly Income' : 'Monthly Spending' }}</h2>
+            <h2>{{ (tab() === 'income' ? 'Monthly Income' : 'Monthly Spending') | translate }}</h2>
             @if (breakdown().length) {
               <app-chart
                 [config]="horizontal()"
-                label="Monthly category amounts; full values in the table below"
+                [label]="'Monthly category amounts; full values in the table below' | translate"
               />
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th scope="col">Category</th>
-                    <th scope="col">Amount</th>
+                    <th scope="col">{{ 'Category' | translate }}</th>
+                    <th scope="col">{{ 'Amount' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -111,32 +118,45 @@
               </table>
             } @else {
               <div class="empty-state">
-                <p>No {{ tab() === 'income' ? 'income' : 'expenses' }} recorded for this month.</p>
-                <a class="text-link" routerLink="/budget/transactions/add">Add a transaction</a>
+                <p>
+                  {{
+                    'messages.no_count_recorded_for_this_month_32380e'
+                      | translate: { p0: tab() === 'income' ? 'income' : 'expenses' }
+                  }}
+                </p>
+                <a class="text-link" routerLink="/budget/transactions/add">{{
+                  'Add a transaction' | translate
+                }}</a>
               </div>
             }
           </section>
         }
         <section class="panel chart-panel">
-          <h2>Income vs Expenses</h2>
+          <h2>{{ 'Income vs Expenses' | translate }}</h2>
           @if (hasHistory()) {
             <app-chart
               [config]="comparison()"
-              label="Income and expenses for the four months ending in the selected month; exact amounts available below"
+              [label]="
+                'Income and expenses for the four months ending in the selected month; exact amounts available below'
+                  | translate
+              "
             />
           } @else {
             <p class="empty-state">
-              Your monthly comparison will appear when you record income or expenses.
+              {{
+                'Your monthly comparison will appear when you record income or expenses.'
+                  | translate
+              }}
             </p>
           }
           <details>
-            <summary>View monthly amounts</summary>
+            <summary>{{ 'View monthly amounts' | translate }}</summary>
             <table class="data-table">
               <thead>
                 <tr>
-                  <th scope="col">Month</th>
-                  <th scope="col">Income</th>
-                  <th scope="col">Expenses</th>
+                  <th scope="col">{{ 'Month' | translate }}</th>
+                  <th scope="col">{{ 'Income' | translate }}</th>
+                  <th scope="col">{{ 'Expenses' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -156,7 +176,8 @@
             ><ion-icon name="wallet"
           /></span>
           <div class="row-copy">
-            <small>Average Monthly Spending</small><strong>{{ money(average()) }}</strong>
+            <small>{{ 'Average Monthly Spending' | translate }}</small
+            ><strong>{{ money(average()) }}</strong>
           </div>
           @if (change() !== null) {
             <span [class.negative]="change()! > 0" [class.positive]="change()! <= 0"
@@ -166,9 +187,10 @@
           }
         </section>
         <p class="muted" style="font-size: 12px; margin-top: 12px">
-          Average across the four months shown, including months with no recorded spending.
-          Percentage compares the selected month's spending with the previous month. Bills are
-          included in expenses; savings transfers are excluded.
+          {{
+            "Average across the four months shown, including months with no recorded spending. Percentage compares the selected month's spending with the previous month. Bills are included in expenses; savings transfers are excluded."
+              | translate
+          }}
         </p>
       }
     }

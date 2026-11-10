@@ -1,12 +1,14 @@
 <ion-content
   ><main class="budget-page">
-    <p class="muted text-sm" aria-label="Budget cycle dates">Cycle: {{ store.cycleLabel() }}</p>
+    <p class="muted text-sm" [attr.aria-label]="'Budget cycle dates' | translate">
+      {{ 'messages.cycle_count_1e4cb8' | translate: { p0: store.cycleLabel() } }}
+    </p>
     <header class="page-header">
       <app-back-button fallback="/budget" />
-      <h1 class="compact-title">Categories</h1>
+      <h1 class="compact-title">{{ 'Categories' | translate }}</h1>
       <button
         class="primary-button"
-        aria-label="Add category"
+        [attr.aria-label]="'Add category' | translate"
         [disabled]="busy() || store.loading() || !!store.error()"
         (click)="open()"
       >
@@ -15,38 +17,41 @@
     </header>
     <app-budget-nav />
     <div class="month-nav">
-      <span class="muted">Totals for</span
+      <span class="muted">{{ 'Totals for' | translate }}</span
       ><app-month-picker
-        ariaLabel="Category totals month"
+        [ariaLabel]="'Category totals month' | translate"
         [ngModel]="store.month()"
         (ngModelChange)="setMonth($event)"
       />
     </div>
-    <nav class="segments" aria-label="Category types">
+    <nav class="segments" [attr.aria-label]="'Category types' | translate">
       @for (type of types; track type) {
         <button
           [class.active]="tab() === type"
           [attr.aria-pressed]="tab() === type"
           (click)="tab.set(type)"
         >
-          {{ label(type) }}
+          {{ label(type) | translate }}
         </button>
       }
     </nav>
     @if (store.loading()) {
-      <p class="status" role="status">Loading categories...</p>
+      <p class="status" role="status">{{ 'Loading categories...' | translate }}</p>
     }
     @if (store.error()) {
       <div class="status error" role="alert">
-        {{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button>
+        {{ store.error() | translate }}
+        <button class="text-link" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </div>
     }
     @if (!store.loading() && !store.error()) {
       @if (editor(); as model) {
         <section class="panel editor" aria-labelledby="category-editor-title">
-          <h2 id="category-editor-title">{{ isNew() ? 'Add' : 'Edit' }} category</h2>
+          <h2 id="category-editor-title">
+            {{ 'messages.count_category_374b0d' | translate: { p0: isNew() ? 'Add' : 'Edit' } }}
+          </h2>
           @if (error()) {
-            <p class="status error" role="alert">{{ error() }}</p>
+            <p class="status error" role="alert">{{ error() | translate }}</p>
           }
           <form (ngSubmit)="save()">
             <fieldset
@@ -54,25 +59,25 @@
               style="border: 0; padding: 0; margin: 16px 0 0; min-width: 0"
             >
               <label class="field"
-                ><span>Name</span
+                ><span>{{ 'Name' | translate }}</span
                 ><input
                   appInput="field"
                   name="name"
                   required
                   maxlength="40"
                   [(ngModel)]="model.name"
-                  placeholder="Category name"
+                  [placeholder]="'Category name' | translate"
               /></label>
               <label class="field"
-                ><span>Type</span
+                ><span>{{ 'Type' | translate }}</span
                 ><select class="lifeos-select" name="type" [(ngModel)]="model.type">
                   @for (type of types; track type) {
-                    <option [value]="type">{{ label(type) }}</option>
+                    <option [value]="type">{{ label(type) | translate }}</option>
                   }
                 </select></label
               >
               <label class="field"
-                ><span>Display order</span
+                ><span>{{ 'Display order' | translate }}</span
                 ><input
                   appInput="field"
                   name="order"
@@ -82,13 +87,13 @@
                   required
                   [(ngModel)]="model.order"
               /></label>
-              <span class="muted">Icon</span>
-              <div class="icon-options" aria-label="Choose icon">
+              <span class="muted">{{ 'Icon' | translate }}</span>
+              <div class="icon-options" [attr.aria-label]="'Choose icon' | translate">
                 @for (icon of icons; track icon) {
                   <button
                     type="button"
                     [class.selected]="model.icon === icon"
-                    [attr.aria-label]="icon"
+                    [attr.aria-label]="icon | translate"
                     [attr.aria-pressed]="model.icon === icon"
                     (click)="model.icon = icon"
                   >
@@ -96,21 +101,21 @@
                   </button>
                 }
               </div>
-              <span class="muted">Colour</span>
-              <div class="colour-options" aria-label="Choose colour">
+              <span class="muted">{{ 'Colour' | translate }}</span>
+              <div class="colour-options" [attr.aria-label]="'Choose colour' | translate">
                 @for (colour of colours; track colour) {
                   <button
                     type="button"
                     [style.background]="colour"
                     [class.selected]="model.colour === colour"
-                    [attr.aria-label]="'Colour ' + colour"
+                    [attr.aria-label]="'Colour ' + colour | translate"
                     [attr.aria-pressed]="model.colour === colour"
                     (click)="model.colour = colour"
                   ></button>
                 }
               </div>
               <label class="field"
-                ><span>Custom colour</span
+                ><span>{{ 'Custom colour' | translate }}</span
                 ><input type="color" name="colour" [(ngModel)]="model.colour"
               /></label>
               <div class="form-actions">
@@ -120,21 +125,23 @@
                   class="secondary-button"
                   (click)="editor.set(null)"
                 >
-                  Cancel</button
+                  {{ 'Cancel' | translate }}</button
                 ><button appButton="primary" class="primary-button" type="submit">
-                  {{ busy() ? 'Saving...' : 'Save category' }}
+                  {{ (busy() ? 'Saving...' : 'Save category') | translate }}
                 </button>
               </div>
               @if (!isNew()) {
                 <button type="button" class="text-link negative" (click)="confirming.set(true)">
-                  Delete category
+                  {{ 'Delete category' | translate }}
                 </button>
               }
               @if (confirming()) {
                 <div class="status error">
                   <p>
-                    Delete {{ model.name }}? It will be hidden from category lists and new
-                    transactions. Existing transactions and planned items are preserved.
+                    {{
+                      'messages.delete_count_it_will_be_hidden_from_2f6293'
+                        | translate: { p0: model.name }
+                    }}
                   </p>
                   <div class="form-actions">
                     <button
@@ -143,14 +150,14 @@
                       class="secondary-button"
                       (click)="confirming.set(false)"
                     >
-                      Keep it</button
+                      {{ 'Keep it' | translate }}</button
                     ><button
                       appButton="danger"
                       type="button"
                       class="secondary-button danger-button"
                       (click)="remove()"
                     >
-                      Delete
+                      {{ 'Delete' | translate }}
                     </button>
                   </div>
                 </div>
@@ -169,10 +176,16 @@
                 ><small>
                   @if (isSpending(category)) {
                     {{
-                      leftOver().confirmed ? 'Spending account balance' : 'Estimated spending left'
+                      'messages.count_count_planned_spending_money_count_d5babd'
+                        | translate
+                          : {
+                              p0: leftOver().confirmed
+                                ? 'Spending account balance'
+                                : 'Estimated spending left',
+                              p1: money(leftOver().actual),
+                              p2: money(leftOver().planned),
+                            }
                     }}
-                    {{ money(leftOver().actual) }} &middot; Planned spending money
-                    {{ money(leftOver().planned) }}
                   } @else {
                     {{ money(category.amount) }} · {{ category.percent }}%
                   }
@@ -181,14 +194,19 @@
             </button>
           } @empty {
             <div class="empty-state">
-              <h3>No categories here yet</h3>
-              <p>Add one to organise your {{ label(tab()).toLowerCase() }}.</p>
-              <button class="text-link" (click)="open()">Add category</button>
+              <h3>{{ 'No categories here yet' | translate }}</h3>
+              <p>
+                {{
+                  'messages.add_one_to_organise_your_count_d9b12c'
+                    | translate: { p0: label(tab()).toLowerCase() }
+                }}
+              </p>
+              <button class="text-link" (click)="open()">{{ 'Add category' | translate }}</button>
             </div>
           }
         </div>
         <p class="muted" style="font-size: 12px; margin-top: 16px">
-          Percentages show each category's share of this tab's monthly total.
+          {{ "Percentages show each category's share of this tab's monthly total." | translate }}
         </p>
       }
     }

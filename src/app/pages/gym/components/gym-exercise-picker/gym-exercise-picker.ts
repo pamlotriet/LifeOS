@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '../../../../shared/components/app-input/app-input';
 import {
   Component,
@@ -12,7 +13,7 @@ import {
 import { GymExercise } from '../../state/gym.model';
 
 @Component({
-  imports: [AppInput],
+  imports: [TranslatePipe, AppInput],
   selector: 'app-gym-exercise-picker',
   template: `
     <button
@@ -24,7 +25,7 @@ import { GymExercise } from '../../state/gym.model';
       (click)="toggle()"
     >
       <span
-        >{{ chosen()?.name || 'Choose an exercise'
+        >{{ chosen()?.name || 'Choose an exercise' | translate
         }}<small
           >{{ chosen()?.muscle }}{{ chosen()?.equipment ? ' · ' + chosen()?.equipment : '' }}</small
         ></span
@@ -36,8 +37,8 @@ import { GymExercise } from '../../state/gym.model';
           appInput="field"
           #searchField
           type="search"
-          aria-label="Search exercise library"
-          placeholder="Search name, muscle or equipment"
+          [attr.aria-label]="'Search exercise library' | translate"
+          [placeholder]="'Search name, muscle or equipment' | translate"
           [value]="query()"
           (input)="query.set($any($event.target).value); active.set(0)"
           (keydown)="navigate($event)"
@@ -47,7 +48,12 @@ import { GymExercise } from '../../state/gym.model';
           [attr.aria-controls]="listId"
           [attr.aria-activedescendant]="matches().length ? listId + '-' + active() : null"
         />
-        <div class="picker-results" role="listbox" [id]="listId" aria-label="Exercise library">
+        <div
+          class="picker-results"
+          role="listbox"
+          [id]="listId"
+          [attr.aria-label]="'Exercise library' | translate"
+        >
           @for (item of matches(); track item.id; let i = $index) {
             <button
               type="button"
@@ -61,7 +67,9 @@ import { GymExercise } from '../../state/gym.model';
               ><small>{{ item.muscle }}{{ item.equipment ? ' · ' + item.equipment : '' }}</small>
             </button>
           } @empty {
-            <p role="status">No matching exercises. Try another name, muscle or equipment.</p>
+            <p role="status">
+              {{ 'No matching exercises. Try another name, muscle or equipment.' | translate }}
+            </p>
           }
         </div>
       </div>

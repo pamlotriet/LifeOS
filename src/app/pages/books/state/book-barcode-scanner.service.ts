@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { inject, Injectable } from '@angular/core';
 import { IsbnFrameDecoder } from './isbn-frame-decoder';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 
@@ -14,6 +15,8 @@ export function cleanScannedIsbn(value: string): string | null {
 
 @Injectable({ providedIn: 'root' })
 export class BookBarcodeScannerService {
+  private readonly i18n = inject(TranslateService);
+
   scan(): Promise<string> {
     return this.scanWithWebCamera();
   }
@@ -27,6 +30,11 @@ export class BookBarcodeScannerService {
     overlay.style.cssText =
       'position:fixed;inset:0;z-index:9999;background:#0c0918;display:flex;flex-direction:column;padding:max(env(safe-area-inset-top),16px) 16px max(env(safe-area-inset-bottom),16px);color:#f5f1ff;';
     overlay.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div><strong style="font-size:20px">Scan ISBN barcode</strong><p style="margin:4px 0 0;color:#b9b4d8;font-size:13px">Place the barcode beginning with 978 or 979 in view, including the blank space at both ends.</p></div><button type="button" data-cancel style="min-width:72px;min-height:44px;border:1px solid #393047;border-radius:999px;background:#171225;color:#f5f1ff">Cancel</button></div><div id="${id}" style="overflow:hidden;border:1px solid #a18aff;border-radius:20px;background:#000"></div><p data-status style="text-align:center;color:#b9b4d8;font-size:13px;margin:16px 0 10px">Requesting camera access...</p><button type="button" data-photo disabled style="min-height:46px;border:1px solid #a18aff;border-radius:14px;background:#a18aff;color:#100a25;font-weight:600">Scan from a photo</button><input data-file type="file" accept="image/*" hidden>`;
+    // Translate through textContent so translations are never interpreted as HTML.
+    overlay.querySelectorAll('strong, p, button').forEach((element) => {
+      const key = element.textContent?.trim();
+      if (key) element.textContent = this.i18n.instant(key);
+    });
     document.body.appendChild(overlay);
     const scanner = new Html5Qrcode(id, {
       formatsToSupport: [
@@ -101,7 +109,7 @@ export class BookBarcodeScannerService {
             const photoButton = overlay.querySelector<HTMLButtonElement>('[data-photo]');
             if (photoButton) photoButton.disabled = true;
             const status = overlay.querySelector<HTMLElement>('[data-status]');
-            if (status) status.textContent = 'Reading barcode from photo...';
+            if (status) status.textContent = this.i18n.instant('Reading barcode from photo...');
             try {
               if (scanner.isScanning) {
                 await scanner.stop();
@@ -118,15 +126,21 @@ export class BookBarcodeScannerService {
               if (settled) return;
               if (value && (await accept(value))) return;
               if (status)
-                status.textContent = value
-                  ? `Barcode ${value} detected. This is not a valid book ISBN beginning with 978 or 979.`
-                  : 'No barcode detected in this photo. Crop around the barcode, keeping white space at both ends, and try again.';
+                status.textContent = this.i18n.instant(
+                  value
+                    ? this.i18n.instant(
+                        'Barcode {{p0}} detected. This is not a valid book ISBN beginning with 978 or 979.',
+                        { p0: value },
+                      )
+                    : 'No barcode detected in this photo. Crop around the barcode, keeping white space at both ends, and try again.',
+                );
             } catch (error) {
               if (!settled && status)
-                status.textContent =
+                status.textContent = this.i18n.instant(
                   error instanceof Error
                     ? error.message
-                    : 'Photo scanning failed. Try a JPEG or PNG image.';
+                    : 'Photo scanning failed. Try a JPEG or PNG image.',
+                );
             } finally {
               readingPhoto = false;
               if (photoButton) photoButton.disabled = false;
@@ -146,8 +160,9 @@ export class BookBarcodeScannerService {
           cameras.at(-1)!;
         const status = overlay.querySelector<HTMLElement>('[data-status]');
         if (status)
-          status.textContent =
-            'Hold the barcode steady with the entire barcode visible. Move farther away if it looks blurry.';
+          status.textContent = this.i18n.instant(
+            'Hold the barcode steady with the entire barcode visible. Move farther away if it looks blurry.',
+          );
         started = true;
         await scanner.start(
           rearCamera.id,
@@ -197,15 +212,18 @@ export class BookBarcodeScannerService {
                   return;
                 }
                 if (value && status)
-                  status.textContent =
-                    'Barcode detected. Scan the book ISBN beginning with 978 or 979.';
+                  status.textContent = this.i18n.instant(
+                    'Barcode detected. Scan the book ISBN beginning with 978 or 979.',
+                  );
                 else if (status)
-                  status.textContent =
-                    'Scanning for ISBN... Keep the entire barcode visible and hold steady.';
+                  status.textContent = this.i18n.instant(
+                    'Scanning for ISBN... Keep the entire barcode visible and hold steady.',
+                  );
               } catch {
                 if (!settled && !readingPhoto && status)
-                  status.textContent =
-                    'Barcode reader could not load or read the camera image. Check your connection and retry, or scan from a photo.';
+                  status.textContent = this.i18n.instant(
+                    'Barcode reader could not load or read the camera image. Check your connection and retry, or scan from a photo.',
+                  );
               }
             }
             if (!settled && !readingPhoto) frameTimer = setTimeout(() => void readFrame(), 500);
@@ -216,9 +234,11 @@ export class BookBarcodeScannerService {
         const message = error instanceof Error ? error.message : String(error);
         const status = overlay.querySelector<HTMLElement>('[data-status]');
         if (!settled && status)
-          status.textContent = /permission|notallowed|denied/i.test(message)
-            ? 'Camera access was denied. Allow camera access in your browser settings, or scan from a photo.'
-            : 'Camera could not start. Try scanning from a photo.';
+          status.textContent = this.i18n.instant(
+            /permission|notallowed|denied/i.test(message)
+              ? 'Camera access was denied. Allow camera access in your browser settings, or scan from a photo.'
+              : 'Camera could not start. Try scanning from a photo.',
+          );
       } finally {
         starting = false;
         const photoButton = overlay.querySelector<HTMLButtonElement>('[data-photo]');

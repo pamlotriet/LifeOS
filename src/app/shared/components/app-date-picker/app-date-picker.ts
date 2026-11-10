@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   Component,
   computed,
@@ -15,7 +16,7 @@ const localIso = (date: Date) =>
 
 @Component({
   selector: 'app-date-picker',
-  imports: [IonIcon, IonModal],
+  imports: [TranslatePipe, IonIcon, IonModal],
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => AppDatePicker), multi: true },
   ],
@@ -34,7 +35,7 @@ const localIso = (date: Date) =>
     <div class="relative" [class.z-50]="open()">
       <button
         type="button"
-        [attr.aria-label]="ariaLabel()"
+        [attr.aria-label]="ariaLabel() | translate"
         [attr.aria-expanded]="open()"
         aria-haspopup="dialog"
         [disabled]="disabled()"
@@ -47,7 +48,7 @@ const localIso = (date: Date) =>
           aria-hidden="true"
         ></ion-icon
         ><span class="min-w-0 flex-1 truncate" [class.text-[#91aecd]]="!currentValue()">{{
-          formatted() || placeholder()
+          formatted() || placeholder() | translate
         }}</span
         ><ion-icon
           name="chevron-down-outline"
@@ -59,19 +60,19 @@ const localIso = (date: Date) =>
         class="lifeos-date-modal"
         [isOpen]="open()"
         [backdropDismiss]="true"
-        [attr.aria-label]="ariaLabel()"
+        [attr.aria-label]="ariaLabel() | translate"
         (didDismiss)="open.set(false)"
       >
         <ng-template>
           <div
             role="dialog"
-            [attr.aria-label]="ariaLabel()"
+            [attr.aria-label]="ariaLabel() | translate"
             class="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 text-[var(--foreground)]"
           >
             <div class="mb-3 flex items-center justify-between">
               <button
                 type="button"
-                aria-label="Previous month"
+                [attr.aria-label]="'Previous month' | translate"
                 (click)="shiftMonth(-1)"
                 [disabled]="mode() !== 'days'"
                 class="grid h-9 w-9 place-items-center rounded-lg hover:bg-[var(--muted)] disabled:opacity-30"
@@ -82,10 +83,10 @@ const localIso = (date: Date) =>
                 (click)="mode.set('years')"
                 class="rounded-lg px-2 py-1 text-sm font-semibold hover:bg-[var(--muted)]"
               >
-                {{ monthLabel() }} ▾</button
+                {{ monthLabel() | translate }} ▾</button
               ><button
                 type="button"
-                aria-label="Next month"
+                [attr.aria-label]="'Next month' | translate"
                 (click)="shiftMonth(1)"
                 [disabled]="mode() !== 'days'"
                 class="grid h-9 w-9 place-items-center rounded-lg hover:bg-[var(--muted)] disabled:opacity-30"
@@ -114,14 +115,14 @@ const localIso = (date: Date) =>
                     (click)="selectMonth($index)"
                     class="rounded-lg py-3 text-sm hover:bg-[var(--muted)]"
                   >
-                    {{ month }}
+                    {{ '' + month | translate }}
                   </button>
                 }
               </div>
             } @else {
               <div class="grid grid-cols-7 text-center text-[11px] text-[var(--text-secondary)]">
                 @for (day of weekdays; track day) {
-                  <span class="py-1">{{ day }}</span>
+                  <span class="py-1">{{ '' + day | translate }}</span>
                 }
               </div>
               <div class="grid grid-cols-7 gap-0.5 text-center text-sm">
@@ -129,7 +130,7 @@ const localIso = (date: Date) =>
                   @if (day) {
                     <button
                       type="button"
-                      [attr.aria-label]="dateLabel(day)"
+                      [attr.aria-label]="dateLabel(day) | translate"
                       [attr.aria-pressed]="isSelected(day)"
                       (click)="choose(day)"
                       class="grid h-9 place-items-center rounded-lg hover:bg-[var(--muted)]"
@@ -139,7 +140,7 @@ const localIso = (date: Date) =>
                           : 'text-[var(--foreground)]'
                       "
                     >
-                      {{ day }}
+                      {{ '' + day | translate }}
                     </button>
                   } @else {
                     <span></span>
@@ -149,11 +150,11 @@ const localIso = (date: Date) =>
             }
             <div class="mt-2 flex justify-between border-t border-[var(--border)] pt-2">
               <button type="button" (click)="chooseToday()" class="text-xs text-cyan-300">
-                Today
+                {{ 'Today' | translate }}
               </button>
               @if (clearable()) {
                 <button type="button" (click)="chooseEmpty()" class="text-xs text-[#9e7eb5]">
-                  Clear date
+                  {{ 'Clear date' | translate }}
                 </button>
               }
             </div>

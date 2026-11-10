@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '../../shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -23,7 +24,7 @@ import { RecipeStore } from '../recipes/state/recipe-store';
 import { PlanningStore } from '../planning/state/planning-store';
 @Component({
   selector: 'app-nutrition',
-  imports: [AppInput, FormsModule, RouterLink, IonContent, PageHeader],
+  imports: [TranslatePipe, AppInput, FormsModule, RouterLink, IonContent, PageHeader],
   templateUrl: './nutrition.html',
   styleUrl: './nutrition.css',
 })

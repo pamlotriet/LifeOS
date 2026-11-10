@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
 import { BookService } from './book.service';
@@ -40,6 +41,7 @@ function fixture() {
   const service = runInInjectionContext(
     Injector.create({
       providers: [
+        ...translationTestProviders,
         {
           provide: AuthService,
           useValue: { userId: () => 'me', getSession: async () => ({ uid: 'me', token: 'token' }) },

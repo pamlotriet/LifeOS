@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -15,7 +16,12 @@ describe('Transaction deletion', () => {
   } as BudgetTransaction;
   const create = () =>
     runInInjectionContext(
-      Injector.create({ providers: [{ provide: BudgetStore, useValue: { deleteTransaction } }] }),
+      Injector.create({
+        providers: [
+          ...translationTestProviders,
+          { provide: BudgetStore, useValue: { deleteTransaction } },
+        ],
+      }),
       () => new BudgetTransactions(),
     );
   beforeEach(() => vi.resetAllMocks());

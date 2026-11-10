@@ -1,3 +1,4 @@
+import translationTestProviders from '../../../../test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
@@ -18,7 +19,9 @@ describe('Book tag browsing', () => {
       ]),
     };
     const page = runInInjectionContext(
-      Injector.create({ providers: [{ provide: BookStore, useValue: store }] }),
+      Injector.create({
+        providers: [...translationTestProviders, { provide: BookStore, useValue: store }],
+      }),
       () => new BookTags(),
     );
     return { page, store };

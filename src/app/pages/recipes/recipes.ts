@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '../../shared/components/app-input/app-input';
 import { RecipeForm } from './recipe-form/recipe-form';
 import { BackButton } from '../../shared/components/back-button/back-button';
@@ -10,7 +11,16 @@ import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
 @Component({
   selector: 'app-recipes',
-  imports: [AppInput, BackButton, IonContent, IonIcon, RouterLink, AppSkeleton, RecipeForm],
+  imports: [
+    TranslatePipe,
+    AppInput,
+    BackButton,
+    IonContent,
+    IonIcon,
+    RouterLink,
+    AppSkeleton,
+    RecipeForm,
+  ],
   templateUrl: './recipes.html',
   styleUrl: './recipes.css',
 })
