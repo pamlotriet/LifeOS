@@ -1,4 +1,4 @@
-import { MealCategory } from '../../nutrition/state/nutrition.model';
+import { MealCategory } from '@pages/nutrition/state/nutrition.model';
 export interface MealPlanItem {
   id: string;
   date: string;

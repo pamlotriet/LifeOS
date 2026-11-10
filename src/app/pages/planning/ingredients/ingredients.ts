@@ -1,12 +1,12 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppInput } from '../../../shared/components/app-input/app-input';
+import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonModal } from '@ionic/angular';
-import { PlanningHeader } from '../components/planning-header/planning-header';
-import { NutritionService } from '../../nutrition/state/nutrition.service';
-import { Food, nutritionLabel, zeroMacros } from '../../nutrition/state/nutrition.model';
-import { normalizeNutrition, scaleNutrition } from '../../nutrition/state/nutrition.calculations';
+import { PlanningHeader } from '@pages/planning/components/planning-header/planning-header';
+import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import { Food, nutritionLabel, zeroMacros } from '@pages/nutrition/state/nutrition.model';
+import { normalizeNutrition, scaleNutrition } from '@pages/nutrition/state/nutrition.calculations';
 @Component({
   selector: 'app-ingredients',
   imports: [TranslatePipe, AppInput, FormsModule, IonContent, IonModal, PlanningHeader],

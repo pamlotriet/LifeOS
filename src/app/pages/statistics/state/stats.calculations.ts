@@ -1,4 +1,4 @@
-import { StatsRange } from './stats.service';
+import { StatsRange } from '@pages/statistics/state/stats.service';
 
 /** Returns ISO year-month keys ending at the supplied date for predictable charts. */
 export function statsMonths(range: StatsRange, now = new Date()): string[] {

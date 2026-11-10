@@ -1,15 +1,15 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { VehicleStore } from '../vehicles/state/vehicle-store';
+import { AuthService } from '@core/authentication/authentication.service';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
 import {
   calculateRefuels,
   RefuelEntry,
   RefuelInput,
   RefuelRecord,
   refuelAverages,
-} from './refuel.model';
-import { RefuelService } from './refuel.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
+} from '@pages/fuel/state/refuel.model';
+import { RefuelService } from '@pages/fuel/state/refuel.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 
 @Injectable({ providedIn: 'root' })
 export class RefuelStore {

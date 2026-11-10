@@ -1,21 +1,21 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { AppMonthPicker } from '../../../shared/components/app-month-picker/app-month-picker';
-import { budgetSnapshot } from '../budget-snapshot';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
+import { budgetSnapshot } from '@pages/budget/budget-snapshot';
+import { BackButton } from '@shared/components/back-button/back-button';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
-import { BudgetStore } from '../state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget.store';
 import {
   categoryPlanItems,
   compatibleCategory,
   isSpendingCategory,
   money,
-} from '../state/budget.model';
-import { BudgetNav } from '../components/budget-nav/budget-nav';
-import { compareBudgetCategories } from './budget-comparison.model';
+} from '@pages/budget/state/budget.model';
+import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
+import { compareBudgetCategories } from '@pages/budget/budget-comparison/budget-comparison.model';
 
 @Component({
   selector: 'app-budget-comparison',

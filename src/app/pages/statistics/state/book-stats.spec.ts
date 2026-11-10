@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildBookStats } from './book-stats';
-import { BookRecord } from '../../books/state/book.model';
+import { buildBookStats } from '@pages/statistics/state/book-stats';
+import { BookRecord } from '@pages/books/state/book.model';
 
 const book = (overrides: Partial<BookRecord>): BookRecord =>
   ({

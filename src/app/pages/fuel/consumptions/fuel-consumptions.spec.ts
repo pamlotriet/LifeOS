@@ -1,11 +1,11 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
-import { FuelDashboard } from '../fuel-dashboard/fuel-dashboard';
-import { RefuelStore } from '../state/refuel-store';
-import { VehicleStore } from '../vehicles/state/vehicle-store';
-import { calculateRefuels, RefuelRecord } from '../state/refuel.model';
+import { FuelDashboard } from '@pages/fuel/fuel-dashboard/fuel-dashboard';
+import { RefuelStore } from '@pages/fuel/state/refuel-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { calculateRefuels, RefuelRecord } from '@pages/fuel/state/refuel.model';
 const record = (id: string, odometer: number): RefuelRecord => ({
   id,
   vehicleId: 'car',

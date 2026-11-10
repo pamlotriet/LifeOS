@@ -9,7 +9,7 @@ import {
   total,
   TransactionInput,
   validateTransaction,
-} from './budget.model';
+} from '@pages/budget/state/budget.model';
 
 const transaction = (
   amount: number,

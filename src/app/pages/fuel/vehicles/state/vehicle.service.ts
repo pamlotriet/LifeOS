@@ -3,10 +3,10 @@ import {
   FirestoreDocument,
   FirestoreService,
   FirestoreValue,
-} from '../../../../core/firebase/firestore.service';
-import { StoragePhotoService } from '../../../../core/firebase/storage-photo.service';
-import { AuthService } from '../../../../core/authentication/authentication.service';
-import type { VehicleRecord } from './vehicle-store';
+} from '@core/firebase/firestore.service';
+import { StoragePhotoService } from '@core/firebase/storage-photo.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import type { VehicleRecord } from '@pages/fuel/vehicles/state/vehicle-store';
 
 @Injectable({ providedIn: 'root' })
 export class VehicleService {

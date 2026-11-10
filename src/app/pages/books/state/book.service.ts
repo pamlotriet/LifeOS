@@ -1,14 +1,19 @@
 import { TranslateService } from '@ngx-translate/core';
-import { BookBackup, createBookBackup, parseBookBackup, planBookImport } from './book-transfer';
-import { FirestoreWrite } from '../../../core/firebase/firestore.service';
+import {
+  BookBackup,
+  createBookBackup,
+  parseBookBackup,
+  planBookImport,
+} from '@pages/books/state/book-transfer';
+import { FirestoreWrite } from '@core/firebase/firestore.service';
 import { inject, Injectable } from '@angular/core';
 import {
   FirestoreDocument,
   FirestoreService,
   FirestoreValue,
-} from '../../../core/firebase/firestore.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { OpenLibraryCoverService } from './open-library-cover.service';
+} from '@core/firebase/firestore.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { OpenLibraryCoverService } from '@pages/books/state/open-library-cover.service';
 import {
   BookInput,
   BookRecord,
@@ -17,8 +22,8 @@ import {
   validateLocationTracking,
   locationProgress,
   effectiveTotalPages,
-} from './book.model';
-import { DEFAULT_GENRE_TAGS, GENRE_SEED_ID } from './default-genre-tags';
+} from '@pages/books/state/book.model';
+import { DEFAULT_GENRE_TAGS, GENRE_SEED_ID } from '@pages/books/state/default-genre-tags';
 
 const text = (value: string): FirestoreValue => ({ stringValue: value });
 const strings = (values: string[]): FirestoreValue => ({

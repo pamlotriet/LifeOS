@@ -1,13 +1,13 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { OpenLibraryCoverService } from './open-library-cover.service';
-import { BookService } from './book.service';
-import { BookInput, BookRecord, BookTag } from './book.model';
-import { DEFAULT_GENRE_TAGS, GENRE_SEED_ID } from './default-genre-tags';
+import { AuthService } from '@core/authentication/authentication.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { OpenLibraryCoverService } from '@pages/books/state/open-library-cover.service';
+import { BookService } from '@pages/books/state/book.service';
+import { BookInput, BookRecord, BookTag } from '@pages/books/state/book.model';
+import { DEFAULT_GENRE_TAGS, GENRE_SEED_ID } from '@pages/books/state/default-genre-tags';
 
 describe('BookService', () => {
   const getSession = vi.fn();

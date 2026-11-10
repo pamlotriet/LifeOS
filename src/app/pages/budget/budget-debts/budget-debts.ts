@@ -1,14 +1,14 @@
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { BackButton } from '../../../shared/components/back-button/back-button';
-import { BudgetNav } from '../components/budget-nav/budget-nav';
-import { BudgetNumber } from '../../../shared/directives/budget-number';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { BackButton } from '@shared/components/back-button/back-button';
+import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
+import { BudgetNumber } from '@shared/directives/budget-number';
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { AppDatePicker } from '../../../shared/components/app-date-picker/app-date-picker';
-import { BudgetStore } from '../state/budget.store';
+import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
+import { BudgetStore } from '@pages/budget/state/budget.store';
 import {
   BudgetDebtInput,
   BudgetTransaction,
@@ -16,7 +16,7 @@ import {
   localDate,
   money,
   TransactionInput,
-} from '../state/budget.model';
+} from '@pages/budget/state/budget.model';
 
 @Component({
   selector: 'app-budget-debts',
@@ -58,7 +58,7 @@ export class BudgetDebts {
     const startDay = this.store.cycleStartDay();
     this.busy.set(true);
     try {
-      const { createDebtPdf } = await import('../debt-pdf');
+      const { createDebtPdf } = await import('@pages/budget/debt-pdf');
       createDebtPdf(debts, transactions, month, startDay, (key, params) =>
         this.i18n.instant(key, params),
       ).save(`LifeOS-Debt-Report-${month}.pdf`);

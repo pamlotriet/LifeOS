@@ -1,12 +1,12 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it } from 'vitest';
-import { StatsService } from './stats.service';
-import { NutritionService } from '../../nutrition/state/nutrition.service';
-import { BudgetStore } from '../../budget/state/budget.store';
-import { BookStore } from '../../books/state/book-store';
-import { VehicleStore } from '../../fuel/vehicles/state/vehicle-store';
-import { cycleMonth, inCycle } from '../../budget/state/budget-cycle';
+import { StatsService } from '@pages/statistics/state/stats.service';
+import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BookStore } from '@pages/books/state/book-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { cycleMonth, inCycle } from '@pages/budget/state/budget-cycle';
 describe('Selected month reports', () => {
   const year = new Date().getFullYear();
   const service = () =>

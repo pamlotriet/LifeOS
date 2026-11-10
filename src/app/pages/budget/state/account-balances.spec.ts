@@ -5,7 +5,7 @@ import {
   debtSummary,
   savingsNet,
   validateTransaction,
-} from './budget.model';
+} from '@pages/budget/state/budget.model';
 const tx = (amount: number, extra: Partial<BudgetTransaction> = {}): BudgetTransaction => ({
   id: 't',
   amount,

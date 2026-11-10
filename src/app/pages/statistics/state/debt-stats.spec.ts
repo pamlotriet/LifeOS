@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { BudgetDebt, BudgetTransaction } from '../../budget/state/budget.model';
-import { debtStats } from './debt-stats';
+import { BudgetDebt, BudgetTransaction } from '@pages/budget/state/budget.model';
+import { debtStats } from '@pages/statistics/state/debt-stats';
 
 describe('Debt statistics', () => {
   it('shows the 64944 credit opening separately and restores deleted repayments', () => {

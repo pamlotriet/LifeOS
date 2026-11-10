@@ -1,8 +1,8 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
-import { BudgetService } from './budget.service';
-import { cycleBounds, cycleMonth, cycleStart, inCycle } from './budget-cycle';
+import { AuthService } from '@core/authentication/authentication.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
+import { BudgetService } from '@pages/budget/state/budget.service';
+import { cycleBounds, cycleMonth, cycleStart, inCycle } from '@pages/budget/state/budget-cycle';
 import {
   SavingsBalance,
   savingsNet,
@@ -20,7 +20,7 @@ import {
   localDate,
   supportsPlan,
   TransactionInput,
-} from './budget.model';
+} from '@pages/budget/state/budget.model';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetStore {

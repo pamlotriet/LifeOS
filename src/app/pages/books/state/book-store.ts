@@ -1,8 +1,8 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { BookInput, BookRecord, BookTag } from './book.model';
-import { BookService } from './book.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { BookInput, BookRecord, BookTag } from '@pages/books/state/book.model';
+import { BookService } from '@pages/books/state/book.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 
 @Injectable({ providedIn: 'root' })
 export class BookStore {

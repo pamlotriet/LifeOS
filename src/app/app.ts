@@ -1,14 +1,14 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { WriteFeedback } from './core/firebase/write-feedback.service';
+import { WriteFeedback } from '@core/firebase/write-feedback.service';
 import { DOCUMENT } from '@angular/common';
-import { AppNavigation } from './core/navigation/app-navigation.service';
-import { AppUpdates } from './core/updates/app-updates.service';
+import { AppNavigation } from '@core/navigation/app-navigation.service';
+import { AppUpdates } from '@core/updates/app-updates.service';
 import { Component, inject, signal } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular';
-import { AuthService } from './core/authentication/authentication.service';
-import { RefreshCoordinator } from './core/refresh/refresh-coordinator.service';
-import { ThemeService } from './core/theme/theme.service';
-import { ClearZeroOnFocus } from './shared/directives/clear-zero-on-focus';
+import { AuthService } from '@core/authentication/authentication.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
+import { ThemeService } from '@core/theme/theme.service';
+import { ClearZeroOnFocus } from '@shared/directives/clear-zero-on-focus';
 
 @Component({
   imports: [TranslatePipe, IonApp, IonRouterOutlet, ClearZeroOnFocus],

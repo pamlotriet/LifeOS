@@ -1,12 +1,12 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { BookService } from './book.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { OpenLibraryCoverService } from './open-library-cover.service';
-import { createBookBackup } from './book-transfer';
-import { BookRecord } from './book.model';
+import { BookService } from '@pages/books/state/book.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { OpenLibraryCoverService } from '@pages/books/state/open-library-cover.service';
+import { createBookBackup } from '@pages/books/state/book-transfer';
+import { BookRecord } from '@pages/books/state/book.model';
 const base: BookRecord = {
   id: 'a',
   title: 'Title',

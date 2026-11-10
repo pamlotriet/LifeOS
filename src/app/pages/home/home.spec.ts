@@ -1,13 +1,13 @@
 import { signal } from '@angular/core';
-import { NutritionService } from '../nutrition/state/nutrition.service';
-import { GymStore } from '../gym/state/gym.store';
-import { BudgetStore } from '../budget/state/budget.store';
-import { BookStore } from '../books/state/book-store';
-import { PlanningStore } from '../planning/state/planning-store';
-import { VehicleStore } from '../fuel/vehicles/state/vehicle-store';
+import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import { GymStore } from '@pages/gym/state/gym.store';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BookStore } from '@pages/books/state/book-store';
+import { PlanningStore } from '@pages/planning/state/planning-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
 import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Home } from './home';
+import { Home } from '@pages/home/home';
 
 describe('Home', () => {
   let component: Home;

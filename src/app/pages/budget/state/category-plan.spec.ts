@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { categoryPlanItems, compatibleCategory, supportsPlan } from './budget.model';
+import {
+  categoryPlanItems,
+  compatibleCategory,
+  supportsPlan,
+} from '@pages/budget/state/budget.model';
 
 describe('Category planned items', () => {
   it('includes monthly savings plans and counts savings as transfers', () => {

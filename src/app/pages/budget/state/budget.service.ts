@@ -3,9 +3,9 @@ import {
   FirestoreDocument,
   FirestoreService,
   FirestoreValue,
-} from '../../../core/firebase/firestore.service';
-import { StoragePhotoService } from '../../../core/firebase/storage-photo.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
+} from '@core/firebase/firestore.service';
+import { StoragePhotoService } from '@core/firebase/storage-photo.service';
+import { AuthService } from '@core/authentication/authentication.service';
 import {
   SavingsBalance,
   SpendingBalanceCheckpoint,
@@ -18,7 +18,7 @@ import {
   CATEGORY_TYPES,
   TransactionInput,
   validateTransaction,
-} from './budget.model';
+} from '@pages/budget/state/budget.model';
 
 function fields(record: object): Record<string, FirestoreValue> {
   return Object.fromEntries(

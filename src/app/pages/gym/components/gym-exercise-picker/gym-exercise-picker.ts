@@ -1,5 +1,5 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppInput } from '../../../../shared/components/app-input/app-input';
+import { AppInput } from '@shared/components/app-input/app-input';
 import {
   Component,
   computed,
@@ -10,7 +10,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { GymExercise } from '../../state/gym.model';
+import { GymExercise } from '@pages/gym/state/gym.model';
 
 @Component({
   imports: [TranslatePipe, AppInput],

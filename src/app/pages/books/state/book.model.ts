@@ -1,4 +1,4 @@
-import { englishText, TranslateText } from '../../../core/i18n/translation-text';
+import { englishText, TranslateText } from '@core/i18n/translation-text';
 export const BOOK_CATEGORIES = [
   'Fantasy',
   'Romantasy',

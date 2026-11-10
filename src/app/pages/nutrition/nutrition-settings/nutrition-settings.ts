@@ -1,11 +1,11 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, effect, inject, signal } from '@angular/core';
-import { AuthService } from '../../../core/authentication/authentication.service';
+import { AuthService } from '@core/authentication/authentication.service';
 import { FormsModule } from '@angular/forms';
-import { NutritionService, defaultProfile } from '../state/nutrition.service';
-import { calculateTargets, normalizeProfile } from '../state/nutrition.model';
+import { NutritionService, defaultProfile } from '@pages/nutrition/state/nutrition.service';
+import { calculateTargets, normalizeProfile } from '@pages/nutrition/state/nutrition.model';
 @Component({
   selector: 'app-nutrition-settings',
   imports: [TranslatePipe, AppInput, AppButton, FormsModule],

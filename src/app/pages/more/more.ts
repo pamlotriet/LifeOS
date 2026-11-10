@@ -3,8 +3,8 @@ import { nutritionOutline } from 'ionicons/icons';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { AuthService } from '../../core/authentication/authentication.service';
-import { AppUpdates } from '../../core/updates/app-updates.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { AppUpdates } from '@core/updates/app-updates.service';
 
 @Component({
   imports: [TranslatePipe, IonContent, IonIcon, RouterLink],

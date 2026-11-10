@@ -1,6 +1,6 @@
 import '@angular/compiler';
 import { describe, expect, it } from 'vitest';
-import { parseBudgetNumber } from './budget-number';
+import { parseBudgetNumber } from '@shared/directives/budget-number';
 
 describe('Budget number parsing', () => {
   it('accepts decimal commas and grouped amounts', () => {

@@ -1,15 +1,18 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { calculateRecipe, ingredientNutrition } from '../../nutrition/state/nutrition.calculations';
-import { NutritionSummary } from '../../../shared/components/nutrition-summary/nutrition-summary';
-import { NutritionService } from '../../nutrition/state/nutrition.service';
-import { NutritionIngredient } from '../../nutrition/state/nutrition.model';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import {
+  calculateRecipe,
+  ingredientNutrition,
+} from '@pages/nutrition/state/nutrition.calculations';
+import { NutritionSummary } from '@shared/components/nutrition-summary/nutrition-summary';
+import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import { NutritionIngredient } from '@pages/nutrition/state/nutrition.model';
 import { Component, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonIcon, IonModal } from '@ionic/angular';
-import { AppSelect, SelectOption } from '../../../shared/components/app-select/app-select';
+import { AppSelect, SelectOption } from '@shared/components/app-select/app-select';
 import { addIcons } from 'ionicons';
 import {
   heart,
@@ -26,9 +29,9 @@ import {
   RECIPE_DIFFICULTIES,
   RecipeInput,
   RecipeStep,
-} from '../state/recipe.model';
-import { RecipeStore } from '../state/recipe-store';
-import { pickImage } from '../../../shared/utils/pick-image';
+} from '@pages/recipes/state/recipe.model';
+import { RecipeStore } from '@pages/recipes/state/recipe-store';
+import { pickImage } from '@shared/utils/pick-image';
 
 @Component({
   selector: 'app-recipe-form',

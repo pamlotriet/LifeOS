@@ -4,15 +4,15 @@ import {
   FirestoreService,
   FirestoreValue,
   FirestoreWrite,
-} from '../../../core/firebase/firestore.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
+} from '@core/firebase/firestore.service';
+import { AuthService } from '@core/authentication/authentication.service';
 import {
   calculateRefuels,
   RefuelEntry,
   RefuelInput,
   RefuelRecord,
   refuelLifetimeSummary,
-} from './refuel.model';
+} from '@pages/fuel/state/refuel.model';
 
 const calculatedFields = ['rangeKm', 'randPerLiter', 'kmPerLiter', 'litersPer100Km'];
 

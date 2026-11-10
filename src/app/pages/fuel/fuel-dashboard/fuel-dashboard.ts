@@ -2,11 +2,11 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, inject, Input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { RefuelStore } from '../state/refuel-store';
-import { VehicleStore } from '../vehicles/state/vehicle-store';
-import { FuelChart } from '../components/fuel-chart/fuel-chart';
-import { fuelAnalytics } from '../fuel-analytics';
-import { FuelLoading } from '../components/fuel-loading/fuel-loading';
+import { RefuelStore } from '@pages/fuel/state/refuel-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { FuelChart } from '@pages/fuel/components/fuel-chart/fuel-chart';
+import { fuelAnalytics } from '@pages/fuel/fuel-analytics';
+import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 @Component({
   selector: 'app-fuel-dashboard',
   imports: [TranslatePipe, FormsModule, RouterLink, FuelChart, FuelLoading],

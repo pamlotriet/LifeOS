@@ -1,10 +1,10 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it } from 'vitest';
-import { StatsService } from './stats.service';
-import { VehicleStore } from '../../fuel/vehicles/state/vehicle-store';
-import { RefuelService } from '../../fuel/state/refuel.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
+import { StatsService } from '@pages/statistics/state/stats.service';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { RefuelService } from '@pages/fuel/state/refuel.service';
+import { AuthService } from '@core/authentication/authentication.service';
 
 describe('Vehicle statistics', () => {
   it('calculates distances per car, preserves the prior reading, and filters totals and charts', async () => {

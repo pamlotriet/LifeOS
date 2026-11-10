@@ -4,11 +4,16 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
-import { PageHeader } from '../../../shared/components/page-header/page-header';
-import { BookService } from '../state/book.service';
-import { BookStore } from '../state/book-store';
-import { BookBackup, booksCsv, parseBookBackup, planBookImport } from '../state/book-transfer';
-import { localDate } from '../../nutrition/state/nutrition.model';
+import { PageHeader } from '@shared/components/page-header/page-header';
+import { BookService } from '@pages/books/state/book.service';
+import { BookStore } from '@pages/books/state/book-store';
+import {
+  BookBackup,
+  booksCsv,
+  parseBookBackup,
+  planBookImport,
+} from '@pages/books/state/book-transfer';
+import { localDate } from '@pages/nutrition/state/nutrition.model';
 @Component({
   selector: 'app-book-transfer',
   imports: [TranslatePipe, FormsModule, RouterLink, IonContent, PageHeader],

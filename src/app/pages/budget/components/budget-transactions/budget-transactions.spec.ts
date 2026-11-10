@@ -1,10 +1,10 @@
-import translationTestProviders from '../../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { BudgetTransactions } from './budget-transactions';
-import { BudgetStore } from '../../state/budget.store';
-import { BudgetTransaction } from '../../state/budget.model';
+import { BudgetTransactions } from '@pages/budget/components/budget-transactions/budget-transactions';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetTransaction } from '@pages/budget/state/budget.model';
 
 describe('Transaction deletion', () => {
   const deleteTransaction = vi.fn();

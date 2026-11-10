@@ -10,7 +10,7 @@ export class AddBookSheet {
     if (this.opening) return;
     this.opening = true;
     try {
-      const { BookForm } = await import('./book-form');
+      const { BookForm } = await import('@pages/books/book-form/book-form');
       const modal = await this.modals.create({
         component: BookForm,
         componentProps: { embedded: true },

@@ -1,11 +1,11 @@
-import translationTestProviders from '../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Location } from '@angular/common';
 import { DestroyRef, Injector, runInInjectionContext } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
-import { AppNavigation, parentPage } from './app-navigation.service';
+import { AppNavigation, parentPage } from '@core/navigation/app-navigation.service';
 
 describe('In-app back navigation', () => {
   function fixture() {

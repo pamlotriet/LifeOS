@@ -1,13 +1,13 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { BookStore } from './book-store';
-import { BookRecord } from './book.model';
-import { BookService } from './book.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { OpenLibraryCoverService } from './open-library-cover.service';
+import { BookStore } from '@pages/books/state/book-store';
+import { BookRecord } from '@pages/books/state/book.model';
+import { BookService } from '@pages/books/state/book.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { OpenLibraryCoverService } from '@pages/books/state/open-library-cover.service';
 
 describe('Progress tracking persistence', () => {
   it('saves the selected unit alongside synchronized pages and percentage', async () => {

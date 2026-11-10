@@ -10,8 +10,12 @@ import {
   scaleNutrition,
   snapshotLog,
   sumNutrition,
-} from './nutrition.calculations';
-import { Food, IngredientNutrition, NutritionIngredient } from './nutrition.model';
+} from '@pages/nutrition/state/nutrition.calculations';
+import {
+  Food,
+  IngredientNutrition,
+  NutritionIngredient,
+} from '@pages/nutrition/state/nutrition.model';
 const steak: Food = {
   id: 'steak',
   name: 'Lean steak raw',

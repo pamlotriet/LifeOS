@@ -1,8 +1,12 @@
-import { assertNotLogged, snapshotLog, normalizeNutrition } from './nutrition.calculations';
+import {
+  assertNotLogged,
+  snapshotLog,
+  normalizeNutrition,
+} from '@pages/nutrition/state/nutrition.calculations';
 import { effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 import {
   calculateTargets,
   normalizeProfile,
@@ -12,7 +16,7 @@ import {
   NutritionProfile,
   validMacros,
   zeroMacros,
-} from './nutrition.model';
+} from '@pages/nutrition/state/nutrition.model';
 export const defaultProfile = (): NutritionProfile => ({
   name: '',
   age: 0,

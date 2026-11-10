@@ -1,13 +1,13 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { DestroyRef, Injector, runInInjectionContext, signal } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AddBookSheet } from '../book-form/add-book-sheet.service';
-import { BooksLibrary } from './books-library';
-import { BookStore } from '../state/book-store';
-import { BookRecord } from '../state/book.model';
-import { ReadingGoalService } from '../state/reading-goal.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
+import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
+import { BooksLibrary } from '@pages/books/books-library/books-library';
+import { BookStore } from '@pages/books/state/book-store';
+import { BookRecord } from '@pages/books/state/book.model';
+import { ReadingGoalService } from '@pages/books/state/reading-goal.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 import { Router } from '@angular/router';
 
 describe('Reading progress editor', () => {

@@ -2,9 +2,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject, signal, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
-import { BudgetStore } from '../../state/budget.store';
-import { BudgetCategory, BudgetTransaction, money } from '../../state/budget.model';
-import { AppButton } from '../../../../shared/components/app-button/app-button';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetCategory, BudgetTransaction, money } from '@pages/budget/state/budget.model';
+import { AppButton } from '@shared/components/app-button/app-button';
 @Component({
   selector: 'app-budget-transactions',
   imports: [TranslatePipe, AppButton, RouterLink, IonIcon],

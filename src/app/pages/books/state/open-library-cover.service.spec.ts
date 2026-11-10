@@ -1,7 +1,7 @@
-import { withTranslations } from '../../../../test-providers';
+import { withTranslations } from '@src/test-providers';
 import '@angular/compiler';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { OpenLibraryCoverService } from './open-library-cover.service';
+import { OpenLibraryCoverService } from '@pages/books/state/open-library-cover.service';
 
 describe('OpenLibraryCoverService', () => {
   afterEach(() => vi.unstubAllGlobals());

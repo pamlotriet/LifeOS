@@ -8,7 +8,7 @@ import {
   scaleMacros,
   validMacros,
   zeroMacros,
-} from './nutrition.model';
+} from '@pages/nutrition/state/nutrition.model';
 const nutrients = [
   'calories',
   'protein',

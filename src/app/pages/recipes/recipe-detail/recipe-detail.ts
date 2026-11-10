@@ -1,18 +1,18 @@
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
-import { AppInput } from '../../../shared/components/app-input/app-input';
+import { AppInput } from '@shared/components/app-input/app-input';
 import { FormsModule } from '@angular/forms';
-import { NutritionService } from '../../nutrition/state/nutrition.service';
-import { calculateRecipe, scaleNutrition } from '../../nutrition/state/nutrition.calculations';
-import { NutritionSummary } from '../../../shared/components/nutrition-summary/nutrition-summary';
-import { PlanningStore } from '../../planning/state/planning-store';
-import { localDate, MEAL_CATEGORIES, MealCategory } from '../../nutrition/state/nutrition.model';
+import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import { calculateRecipe, scaleNutrition } from '@pages/nutrition/state/nutrition.calculations';
+import { NutritionSummary } from '@shared/components/nutrition-summary/nutrition-summary';
+import { PlanningStore } from '@pages/planning/state/planning-store';
+import { localDate, MEAL_CATEGORIES, MealCategory } from '@pages/nutrition/state/nutrition.model';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { PageHeader } from '../../../shared/components/page-header/page-header';
-import { RecipeRecord, recipeCategories } from '../state/recipe.model';
-import { RecipeStore } from '../state/recipe-store';
+import { PageHeader } from '@shared/components/page-header/page-header';
+import { RecipeRecord, recipeCategories } from '@pages/recipes/state/recipe.model';
+import { RecipeStore } from '@pages/recipes/state/recipe-store';
 
 @Component({
   selector: 'app-recipe-detail',

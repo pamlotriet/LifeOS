@@ -1,13 +1,13 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppInput } from '../../shared/components/app-input/app-input';
-import { RecipeForm } from './recipe-form/recipe-form';
-import { BackButton } from '../../shared/components/back-button/back-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { RecipeForm } from '@pages/recipes/recipe-form/recipe-form';
+import { BackButton } from '@shared/components/back-button/back-button';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { RECIPE_CATEGORIES, recipeCategories } from './state/recipe.model';
-import { RecipeStore } from './state/recipe-store';
-import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
+import { RECIPE_CATEGORIES, recipeCategories } from '@pages/recipes/state/recipe.model';
+import { RecipeStore } from '@pages/recipes/state/recipe-store';
+import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 
 @Component({
   selector: 'app-recipes',

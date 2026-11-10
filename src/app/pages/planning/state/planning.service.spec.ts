@@ -1,10 +1,10 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { PlanningService } from './planning.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { PlanningService } from '@pages/planning/state/planning.service';
 
 describe('PlanningService', () => {
   const getSession = vi.fn();

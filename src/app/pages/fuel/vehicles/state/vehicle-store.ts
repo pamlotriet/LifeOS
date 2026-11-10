@@ -1,7 +1,7 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { AuthService } from '../../../../core/authentication/authentication.service';
-import { VehicleService } from './vehicle.service';
-import { RefreshCoordinator } from '../../../../core/refresh/refresh-coordinator.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { VehicleService } from '@pages/fuel/vehicles/state/vehicle.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 
 export interface VehicleRecord {
   id: string;

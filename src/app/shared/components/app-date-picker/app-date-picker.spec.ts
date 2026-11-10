@@ -1,8 +1,8 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { AppDatePicker } from './app-date-picker';
+import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
 
 describe('AppDatePicker', () => {
   it('uses local calendar dates without changing the selected day for time zones', () => {

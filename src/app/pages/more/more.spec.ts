@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { More } from './more';
+import { More } from '@pages/more/more';
 
 describe('More', () => {
   let component: More;

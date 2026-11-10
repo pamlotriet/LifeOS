@@ -1,10 +1,10 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { computed, Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
-import { BudgetComparison } from './budget-comparison';
-import { BudgetStore } from '../state/budget.store';
-import { BudgetTransaction, DEFAULT_CATEGORIES } from '../state/budget.model';
+import { BudgetComparison } from '@pages/budget/budget-comparison/budget-comparison';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetTransaction, DEFAULT_CATEGORIES } from '@pages/budget/state/budget.model';
 
 function fixture() {
   const month = signal('2026-10');

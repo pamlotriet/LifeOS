@@ -1,4 +1,4 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -6,9 +6,9 @@ import {
   FirestoreDocument,
   FirestoreService,
   FirestoreWrite,
-} from '../../../core/firebase/firestore.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { RefuelService } from './refuel.service';
+} from '@core/firebase/firestore.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { RefuelService } from '@pages/fuel/state/refuel.service';
 
 describe('RefuelService', () => {
   const getSession = vi.fn();

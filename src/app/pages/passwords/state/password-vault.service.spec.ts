@@ -1,11 +1,11 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { PasswordVaultService } from './password-vault.service';
-import { VaultCryptoService } from './vault-crypto.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { PasswordVaultService } from '@pages/passwords/state/password-vault.service';
+import { VaultCryptoService } from '@pages/passwords/state/vault-crypto.service';
 
 describe('PasswordVaultService', () => {
   it('writes only encrypted password content to Firestore', async () => {

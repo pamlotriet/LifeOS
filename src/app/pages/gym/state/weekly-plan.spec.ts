@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildWeeklyPlan, WEEKLY_PLAN_ID } from './weekly-plan';
-import { validateExercise, validateGymEntry, GymEntry } from './gym.model';
+import { buildWeeklyPlan, WEEKLY_PLAN_ID } from '@pages/gym/state/weekly-plan';
+import { validateExercise, validateGymEntry, GymEntry } from '@pages/gym/state/gym.model';
 describe('Attached five-day gym plan', () => {
   it('creates the complete ordered Monday-Friday plan including daily stretching', () => {
     const plan = buildWeeklyPlan([], []);

@@ -62,8 +62,8 @@ import {
   phonePortrait,
   shieldCheckmark,
 } from 'ionicons/icons';
-import { routes } from './app.routes';
-import { provideAppTranslations } from './core/i18n/translation.providers';
+import { routes } from '@app/app.routes';
+import { provideAppTranslations } from '@core/i18n/translation.providers';
 
 addIcons({
   barbell,

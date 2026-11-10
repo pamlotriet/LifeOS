@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { createDebtPdf } from './debt-pdf';
-import { BudgetDebt, BudgetTransaction } from './state/budget.model';
+import { createDebtPdf } from '@pages/budget/debt-pdf';
+import { BudgetDebt, BudgetTransaction } from '@pages/budget/state/budget.model';
 
 const debt: BudgetDebt = {
   id: 'loan',

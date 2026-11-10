@@ -1,8 +1,8 @@
-import { englishText, TranslateText } from '../../../core/i18n/translation-text';
+import { englishText, TranslateText } from '@core/i18n/translation-text';
 import { ChartConfiguration } from 'chart.js';
-import { BookRecord, effectiveTotalPages } from '../../books/state/book.model';
-import type { StatsDashboard, StatsRange } from './stats.service';
-import { statsAnchor, statsMonths } from './stats.calculations';
+import { BookRecord, effectiveTotalPages } from '@pages/books/state/book.model';
+import type { StatsDashboard, StatsRange } from '@pages/statistics/state/stats.service';
+import { statsAnchor, statsMonths } from '@pages/statistics/state/stats.calculations';
 
 interface Row {
   label: string;

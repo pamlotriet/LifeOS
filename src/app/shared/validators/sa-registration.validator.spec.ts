@@ -1,7 +1,7 @@
 import '@angular/compiler';
 import { FormControl, Validators } from '@angular/forms';
 import { describe, expect, it } from 'vitest';
-import { saRegistrationValidator } from './sa-registration.validator';
+import { saRegistrationValidator } from '@shared/validators/sa-registration.validator';
 
 describe('saRegistrationValidator', () => {
   const registration = new FormControl('', {

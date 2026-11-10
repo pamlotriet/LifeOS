@@ -1,10 +1,10 @@
-import translationTestProviders from '../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { Gym } from './gym';
-import { GymStore } from './state/gym.store';
-import { GymExercise, GymEntry } from './state/gym.model';
+import { Gym } from '@pages/gym/gym';
+import { GymStore } from '@pages/gym/state/gym.store';
+import { GymExercise, GymEntry } from '@pages/gym/state/gym.model';
 
 describe('Weekly gym planner', () => {
   const exercise: GymExercise = {

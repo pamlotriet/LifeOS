@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics, isSupported as isAnalyticsSupported } from 'firebase/analytics';
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 import { getAuth } from 'firebase/auth';
 
 export const firebaseApp = initializeApp(environment.firebaseConfig);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { cycleBounds, cycleMonth, inCycle } from './budget-cycle';
-import { debtSummary } from './budget.model';
+import { cycleBounds, cycleMonth, inCycle } from '@pages/budget/state/budget-cycle';
+import { debtSummary } from '@pages/budget/state/budget.model';
 
 describe('Budget cycles', () => {
   it('assigns payday transactions to the next named budget month', () => {

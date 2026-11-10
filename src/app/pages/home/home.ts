@@ -1,15 +1,15 @@
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
-import { AppInput } from '../../shared/components/app-input/app-input';
+import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
-import { NutritionService } from '../nutrition/state/nutrition.service';
-import { GymStore } from '../gym/state/gym.store';
-import { BudgetStore } from '../budget/state/budget.store';
-import { BookStore } from '../books/state/book-store';
-import { PlanningStore } from '../planning/state/planning-store';
-import { VehicleStore } from '../fuel/vehicles/state/vehicle-store';
-import { money, summary } from '../budget/state/budget.model';
-import { localDate } from '../nutrition/state/nutrition.model';
+import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import { GymStore } from '@pages/gym/state/gym.store';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BookStore } from '@pages/books/state/book-store';
+import { PlanningStore } from '@pages/planning/state/planning-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { money, summary } from '@pages/budget/state/budget.model';
+import { localDate } from '@pages/nutrition/state/nutrition.model';
 import { addIcons } from 'ionicons';
 import {
   restaurantOutline,

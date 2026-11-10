@@ -1,10 +1,10 @@
-import { cycleMonth, inCycle } from '../../budget/state/budget-cycle';
+import { cycleMonth, inCycle } from '@pages/budget/state/budget-cycle';
 import {
   BudgetDebt,
   BudgetTransaction,
   debtSummary,
   localDate,
-} from '../../budget/state/budget.model';
+} from '@pages/budget/state/budget.model';
 
 export function debtStats(
   debts: BudgetDebt[],

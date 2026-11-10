@@ -4,7 +4,7 @@ import {
   refuelAverages,
   refuelLifetimeSummary,
   RefuelRecord,
-} from './refuel.model';
+} from '@pages/fuel/state/refuel.model';
 
 const entry = (
   id: string,

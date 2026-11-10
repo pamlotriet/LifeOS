@@ -1,7 +1,7 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { PasswordInput, PasswordRecord } from './password.model';
-import { PasswordVaultService } from './password-vault.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { PasswordInput, PasswordRecord } from '@pages/passwords/state/password.model';
+import { PasswordVaultService } from '@pages/passwords/state/password-vault.service';
 
 @Injectable({ providedIn: 'root' })
 export class PasswordStore {

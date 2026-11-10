@@ -1,6 +1,6 @@
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, input } from '@angular/core';
-import { AppSkeleton } from '../../../../shared/components/app-skeleton/app-skeleton';
+import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 export type FuelLoadingKind =
   'dashboard' | 'insights' | 'vehicles' | 'history' | 'vehicle-form' | 'refuel-form';
 @Component({

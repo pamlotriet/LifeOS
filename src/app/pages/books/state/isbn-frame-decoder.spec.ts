@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { prepareZXingModule } from 'zxing-wasm/reader';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { IsbnFrameDecoder } from './isbn-frame-decoder';
+import { IsbnFrameDecoder } from '@pages/books/state/isbn-frame-decoder';
 
 // EAN-13 fixture for 9780140328721, with quiet zones at both ends.
 const bars =

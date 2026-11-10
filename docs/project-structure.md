@@ -99,11 +99,25 @@ preserved.
 Import the standalone component into the consuming component's `imports` array:
 
 ```ts
-import { AppInput } from '../../shared/components/app-input/app-input';
-import { AppButton } from '../../shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { AppButton } from '@shared/components/app-button/app-button';
 ```
 
-Paths vary with the consuming screen's depth. Prefer explicit component imports.
+Use the aliases in the root `tsconfig.json` for imports between folders:
+
+| Alias             | Directory            |
+| ----------------- | -------------------- |
+| `@core/*`         | `src/app/core/*`     |
+| `@shared/*`       | `src/app/shared/*`   |
+| `@pages/*`        | `src/app/pages/*`    |
+| `@environments/*` | `src/environments/*` |
+| `@app/*`          | `src/app/*`          |
+| `@src/*`          | `src/*`              |
+| `@public/*`       | `public/*`           |
+
+Use aliases for all application module imports, including same-folder, static,
+type-only and lazy imports and test mocks. Template and stylesheet URLs remain
+relative to their component. Prefer explicit component imports.
 
 ```html
 <label for="title">Title</label>

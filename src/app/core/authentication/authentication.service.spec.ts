@@ -1,8 +1,8 @@
-import translationTestProviders from '../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { FirestoreService } from '../firebase/firestore.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
 
 const authMocks = vi.hoisted(() => ({
   webCurrentUser: null as unknown,
@@ -27,9 +27,9 @@ vi.mock('firebase/auth', () => ({
   signOut: authMocks.webSignOut,
 }));
 
-vi.mock('../firebase/firebase.config', () => ({ firebaseApp: {} }));
+vi.mock('@core/firebase/firebase.config', () => ({ firebaseApp: {} }));
 
-import { AuthService } from './authentication.service';
+import { AuthService } from '@core/authentication/authentication.service';
 
 function createService(): AuthService {
   const injector = Injector.create({

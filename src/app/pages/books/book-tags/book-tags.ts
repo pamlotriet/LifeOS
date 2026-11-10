@@ -1,11 +1,11 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
-import { BookTag, BookTagType } from '../state/book.model';
-import { BookStore } from '../state/book-store';
+import { BookTag, BookTagType } from '@pages/books/state/book.model';
+import { BookStore } from '@pages/books/state/book-store';
 
 @Component({
   selector: 'app-book-tags',

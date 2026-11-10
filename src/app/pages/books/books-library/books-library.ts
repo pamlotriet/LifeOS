@@ -1,8 +1,8 @@
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { AddBookSheet } from '../book-form/add-book-sheet.service';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
 import { addIcons } from 'ionicons';
 import {
   add,
@@ -27,10 +27,10 @@ import {
   BookRecord,
   BOOK_CATEGORIES,
   BOOK_FORMATS,
-} from '../state/book.model';
-import { BookStore } from '../state/book-store';
-import { ReadingGoalService } from '../state/reading-goal.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
+} from '@pages/books/state/book.model';
+import { BookStore } from '@pages/books/state/book-store';
+import { ReadingGoalService } from '@pages/books/state/reading-goal.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 
 @Component({
   selector: 'app-books-library',

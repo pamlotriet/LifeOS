@@ -1,11 +1,11 @@
 import { IonModal } from '@ionic/angular';
-import { FuelModalStub } from '../fuel-modal.testing';
+import { FuelModalStub } from '@pages/fuel/fuel-modal.testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
-import { RefuelStore } from '../state/refuel-store';
-import { VehicleStore } from '../vehicles/state/vehicle-store';
-import { RefuelForm } from './refuel-form';
+import { RefuelStore } from '@pages/fuel/state/refuel-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { RefuelForm } from '@pages/fuel/refuel-form/refuel-form';
 
 describe('RefuelForm', () => {
   let fixture: ComponentFixture<RefuelForm>;

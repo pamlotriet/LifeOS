@@ -7,7 +7,7 @@ import {
   locationPagesRead,
   kindleSummary,
   validateLocationTracking,
-} from './book.model';
+} from '@pages/books/state/book.model';
 
 const book = (values: Partial<BookRecord> = {}): BookRecord =>
   ({

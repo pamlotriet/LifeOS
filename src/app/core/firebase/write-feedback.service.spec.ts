@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { WriteFeedback } from './write-feedback.service';
+import { WriteFeedback } from '@core/firebase/write-feedback.service';
 describe('Write feedback', () => {
   afterEach(() => vi.useRealTimers());
   it('coalesces batch saves and dismisses the toast automatically', () => {

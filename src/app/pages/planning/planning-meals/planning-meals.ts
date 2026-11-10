@@ -1,34 +1,34 @@
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
 import {
   aggregateGroceries,
   calculateRecipe,
   ingredientNutrition,
   scaleNutrition,
   sumNutrition,
-} from '../../nutrition/state/nutrition.calculations';
+} from '@pages/nutrition/state/nutrition.calculations';
 import {
   MEAL_CATEGORIES,
   MealCategory,
   localDate,
   zeroMacros,
-} from '../../nutrition/state/nutrition.model';
+} from '@pages/nutrition/state/nutrition.model';
 import { RouterLink } from '@angular/router';
-import { RecipeStore } from '../../recipes/state/recipe-store';
-import { NutritionService } from '../../nutrition/state/nutrition.service';
-import { nutritionLabel } from '../../nutrition/state/nutrition.model';
-import { MealPlanItem } from '../state/planning.model';
-import { PLANNING_ICONS } from '../planning-icons';
+import { RecipeStore } from '@pages/recipes/state/recipe-store';
+import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import { nutritionLabel } from '@pages/nutrition/state/nutrition.model';
+import { MealPlanItem } from '@pages/planning/state/planning.model';
+import { PLANNING_ICONS } from '@pages/planning/planning-icons';
 import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { PlanningHeader } from '../components/planning-header/planning-header';
-import { GroceryItem } from '../state/planning.model';
-import { PlanningStore } from '../state/planning-store';
+import { PlanningHeader } from '@pages/planning/components/planning-header/planning-header';
+import { GroceryItem } from '@pages/planning/state/planning.model';
+import { PlanningStore } from '@pages/planning/state/planning-store';
 
 @Component({
   selector: 'app-planning-meals',

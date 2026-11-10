@@ -1,7 +1,7 @@
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { BackButton } from '../../../../shared/components/back-button/back-button';
+import { BackButton } from '@shared/components/back-button/back-button';
 @Component({
   selector: 'app-planning-header',
   imports: [TranslatePipe, RouterLink, BackButton],

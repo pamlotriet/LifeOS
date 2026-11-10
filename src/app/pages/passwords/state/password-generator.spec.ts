@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { generatePassword } from './password-generator';
+import { generatePassword } from '@pages/passwords/state/password-generator';
 
 describe('generatePassword', () => {
   it('uses every selected character group and requested length', () => {

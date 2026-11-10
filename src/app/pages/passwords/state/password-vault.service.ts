@@ -3,10 +3,14 @@ import {
   FirestoreDocument,
   FirestoreService,
   FirestoreValue,
-} from '../../../core/firebase/firestore.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { EncryptedPayload, PasswordInput, PasswordRecord } from './password.model';
-import { VaultCryptoService } from './vault-crypto.service';
+} from '@core/firebase/firestore.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import {
+  EncryptedPayload,
+  PasswordInput,
+  PasswordRecord,
+} from '@pages/passwords/state/password.model';
+import { VaultCryptoService } from '@pages/passwords/state/vault-crypto.service';
 const text = (value: string): FirestoreValue => ({ stringValue: value });
 
 @Injectable({ providedIn: 'root' })

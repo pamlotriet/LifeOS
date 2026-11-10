@@ -1,14 +1,14 @@
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
-import { AppButton } from '../../shared/components/app-button/app-button';
-import { AppInput } from '../../shared/components/app-input/app-input';
-import { GymExercisePicker } from './components/gym-exercise-picker/gym-exercise-picker';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { GymExercisePicker } from '@pages/gym/components/gym-exercise-picker/gym-exercise-picker';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonModal } from '@ionic/angular';
-import { GYM_DAYS, GymEntry, GymExercise, MUSCLE_GROUPS } from './state/gym.model';
-import { GymStore } from './state/gym.store';
+import { GYM_DAYS, GymEntry, GymExercise, MUSCLE_GROUPS } from '@pages/gym/state/gym.model';
+import { GymStore } from '@pages/gym/state/gym.store';
 type WorkoutDraft = Omit<GymEntry, 'id' | 'sets' | 'rest'> & {
   sets: number | null;
   rest: number | null;

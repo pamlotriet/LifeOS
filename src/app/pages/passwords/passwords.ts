@@ -1,13 +1,13 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppButton } from '../../shared/components/app-button/app-button';
-import { AppInput } from '../../shared/components/app-input/app-input';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { PageHeader } from '../../shared/components/page-header/page-header';
-import { PASSWORD_CATEGORIES } from './state/password.model';
-import { PasswordStore } from './state/password-store';
+import { PageHeader } from '@shared/components/page-header/page-header';
+import { PASSWORD_CATEGORIES } from '@pages/passwords/state/password.model';
+import { PasswordStore } from '@pages/passwords/state/password-store';
 
 @Component({
   selector: 'app-passwords',

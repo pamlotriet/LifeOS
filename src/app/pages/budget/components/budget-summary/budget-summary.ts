@@ -1,7 +1,12 @@
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { inject, Component, Input } from '@angular/core';
-import { BudgetCategory, BudgetTransaction, money, summary } from '../../state/budget.model';
+import {
+  BudgetCategory,
+  BudgetTransaction,
+  money,
+  summary,
+} from '@pages/budget/state/budget.model';
 @Component({
   imports: [TranslatePipe],
   selector: 'app-budget-summary',

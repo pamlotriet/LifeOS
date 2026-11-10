@@ -3,9 +3,14 @@ import {
   FirestoreDocument,
   FirestoreService,
   FirestoreValue,
-} from '../../../core/firebase/firestore.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { GymEntry, GymExercise, validateExercise, validateGymEntry } from './gym.model';
+} from '@core/firebase/firestore.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import {
+  GymEntry,
+  GymExercise,
+  validateExercise,
+  validateGymEntry,
+} from '@pages/gym/state/gym.model';
 
 const fields = (input: object): Record<string, FirestoreValue> =>
   Object.fromEntries(

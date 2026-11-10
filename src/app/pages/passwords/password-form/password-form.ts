@@ -1,15 +1,19 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
-import { AppSelect, SelectOption } from '../../../shared/components/app-select/app-select';
-import { PageHeader } from '../../../shared/components/page-header/page-header';
-import { generatePassword } from '../state/password-generator';
-import { PASSWORD_CATEGORIES, PasswordInput, PasswordRecord } from '../state/password.model';
-import { PasswordStore } from '../state/password-store';
+import { AppSelect, SelectOption } from '@shared/components/app-select/app-select';
+import { PageHeader } from '@shared/components/page-header/page-header';
+import { generatePassword } from '@pages/passwords/state/password-generator';
+import {
+  PASSWORD_CATEGORIES,
+  PasswordInput,
+  PasswordRecord,
+} from '@pages/passwords/state/password.model';
+import { PasswordStore } from '@pages/passwords/state/password-store';
 
 @Component({
   selector: 'app-password-form',

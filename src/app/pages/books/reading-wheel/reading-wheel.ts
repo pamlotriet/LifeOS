@@ -1,12 +1,12 @@
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
-import { AddBookSheet } from '../book-form/add-book-sheet.service';
+import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { BookRecord } from '../state/book.model';
-import { BookStore } from '../state/book-store';
-import { AppSkeleton } from '../../../shared/components/app-skeleton/app-skeleton';
+import { BookRecord } from '@pages/books/state/book.model';
+import { BookStore } from '@pages/books/state/book-store';
+import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 
 const COLORS = [
   '#2477c6',

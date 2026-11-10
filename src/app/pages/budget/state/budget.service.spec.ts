@@ -1,12 +1,12 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { StoragePhotoService } from '../../../core/firebase/storage-photo.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { BudgetService } from './budget.service';
-import { DEFAULT_CATEGORIES, TransactionInput } from './budget.model';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { StoragePhotoService } from '@core/firebase/storage-photo.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { BudgetService } from '@pages/budget/state/budget.service';
+import { DEFAULT_CATEGORIES, TransactionInput } from '@pages/budget/state/budget.model';
 
 describe('BudgetService', () => {
   const getSession = vi.fn();

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AppInput } from './app-input';
-import { AppButton } from '../app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { AppButton } from '@shared/components/app-button/app-button';
 
 @Component({
   imports: [ReactiveFormsModule, AppInput, AppButton],

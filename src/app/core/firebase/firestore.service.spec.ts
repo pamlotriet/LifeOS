@@ -1,8 +1,8 @@
-import { withTranslations } from '../../../test-providers';
+import { withTranslations } from '@src/test-providers';
 import '@angular/compiler';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { WriteFeedback } from './write-feedback.service';
-import { FirestoreService } from './firestore.service';
+import { WriteFeedback } from '@core/firebase/write-feedback.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
 
 describe('FirestoreService', () => {
   afterEach(() => vi.unstubAllGlobals());

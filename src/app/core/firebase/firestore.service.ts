@@ -1,7 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
-import { WriteFeedback } from './write-feedback.service';
+import { WriteFeedback } from '@core/firebase/write-feedback.service';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 
 export interface FirestoreValue {
   stringValue?: string;

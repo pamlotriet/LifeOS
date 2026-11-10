@@ -1,6 +1,6 @@
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { AddBookSheet } from '../book-form/add-book-sheet.service';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -14,8 +14,8 @@ import {
   heartOutline,
   searchOutline,
 } from 'ionicons/icons';
-import { kindleSummary } from '../state/book.model';
-import { BookStore } from '../state/book-store';
+import { kindleSummary } from '@pages/books/state/book.model';
+import { BookStore } from '@pages/books/state/book-store';
 
 @Component({
   selector: 'app-books-shelf',

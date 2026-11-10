@@ -3,9 +3,9 @@ import {
   FirestoreDocument,
   FirestoreService,
   FirestoreValue,
-} from '../../../core/firebase/firestore.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { GroceryItem, MealPlanItem } from './planning.model';
+} from '@core/firebase/firestore.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { GroceryItem, MealPlanItem } from '@pages/planning/state/planning.model';
 
 const text = (value: string): FirestoreValue => ({ stringValue: value });
 const bool = (value: boolean): FirestoreValue => ({ booleanValue: value });

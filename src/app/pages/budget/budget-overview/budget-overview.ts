@@ -1,24 +1,24 @@
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { AppMonthPicker } from '../../../shared/components/app-month-picker/app-month-picker';
-import { BudgetNumber } from '../../../shared/directives/budget-number';
-import { BackButton } from '../../../shared/components/back-button/back-button';
-import { budgetSnapshot, budgetSpending } from '../budget-snapshot';
-import { cycleMonth } from '../state/budget-cycle';
-import { BudgetNav } from '../components/budget-nav/budget-nav';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
+import { BudgetNumber } from '@shared/directives/budget-number';
+import { BackButton } from '@shared/components/back-button/back-button';
+import { budgetSnapshot, budgetSpending } from '@pages/budget/budget-snapshot';
+import { cycleMonth } from '@pages/budget/state/budget-cycle';
+import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { ChartConfiguration } from 'chart.js';
-import { BudgetStore } from '../state/budget.store';
-import { localDate, money, summary } from '../state/budget.model';
-import { AppChart } from '../../../shared/components/app-chart/app-chart';
-import { BudgetSummary } from '../components/budget-summary/budget-summary';
-import { BudgetTransactions } from '../components/budget-transactions/budget-transactions';
-import { AppSkeleton } from '../../../shared/components/app-skeleton/app-skeleton';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { localDate, money, summary } from '@pages/budget/state/budget.model';
+import { AppChart } from '@shared/components/app-chart/app-chart';
+import { BudgetSummary } from '@pages/budget/components/budget-summary/budget-summary';
+import { BudgetTransactions } from '@pages/budget/components/budget-transactions/budget-transactions';
+import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 
 @Component({
   selector: 'app-budget-overview',

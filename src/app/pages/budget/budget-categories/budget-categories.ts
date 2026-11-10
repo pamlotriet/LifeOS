@@ -1,14 +1,14 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { AppMonthPicker } from '../../../shared/components/app-month-picker/app-month-picker';
-import { budgetSnapshot } from '../budget-snapshot';
-import { BackButton } from '../../../shared/components/back-button/back-button';
-import { BudgetNav } from '../components/budget-nav/budget-nav';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
+import { budgetSnapshot } from '@pages/budget/budget-snapshot';
+import { BackButton } from '@shared/components/back-button/back-button';
+import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { BudgetStore } from '../state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget.store';
 import {
   BudgetCategory,
   CATEGORY_COLOURS,
@@ -18,7 +18,7 @@ import {
   isSpendingCategory,
   money,
   total,
-} from '../state/budget.model';
+} from '@pages/budget/state/budget.model';
 
 @Component({
   selector: 'app-budget-categories',

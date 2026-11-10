@@ -7,8 +7,8 @@ import {
   signInWithPopup,
   signOut as webSignOut,
 } from 'firebase/auth';
-import { firebaseApp } from '../firebase/firebase.config';
-import { FirestoreService } from '../firebase/firestore.service';
+import { firebaseApp } from '@core/firebase/firebase.config';
+import { FirestoreService } from '@core/firebase/firestore.service';
 
 @Injectable({
   providedIn: 'root',

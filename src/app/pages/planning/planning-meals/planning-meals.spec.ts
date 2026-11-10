@@ -1,14 +1,14 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { DestroyRef, Injector, runInInjectionContext, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
-import { PlanningMeals } from './planning-meals';
-import { PlanningStore } from '../state/planning-store';
-import { RecipeStore } from '../../recipes/state/recipe-store';
-import { NutritionService } from '../../nutrition/state/nutrition.service';
-import { Ingredients } from '../ingredients/ingredients';
+import { PlanningMeals } from '@pages/planning/planning-meals/planning-meals';
+import { PlanningStore } from '@pages/planning/state/planning-store';
+import { RecipeStore } from '@pages/recipes/state/recipe-store';
+import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import { Ingredients } from '@pages/planning/ingredients/ingredients';
 
 const setup = () => {
   const store = { saveGrocery: vi.fn(), loading: signal(false), error: signal('') };

@@ -1,5 +1,5 @@
-import { englishText, TranslateText } from '../../../core/i18n/translation-text';
-import { cycleBounds, inCycle } from '../state/budget-cycle';
+import { englishText, TranslateText } from '@core/i18n/translation-text';
+import { cycleBounds, inCycle } from '@pages/budget/state/budget-cycle';
 import {
   BudgetCategory,
   BudgetDebt,
@@ -12,7 +12,7 @@ import {
   summary,
   supportsPlan,
   total,
-} from '../state/budget.model';
+} from '@pages/budget/state/budget.model';
 
 export interface BudgetInsight {
   id: string;

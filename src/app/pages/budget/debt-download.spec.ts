@@ -1,15 +1,15 @@
-import translationTestProviders from '../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { BudgetDebts } from './budget-debts/budget-debts';
-import { BudgetStore } from './state/budget.store';
+import { BudgetDebts } from '@pages/budget/budget-debts/budget-debts';
+import { BudgetStore } from '@pages/budget/state/budget.store';
 
 const { save, createDebtPdf } = vi.hoisted(() => {
   const save = vi.fn();
   return { save, createDebtPdf: vi.fn(() => ({ save })) };
 });
-vi.mock('./debt-pdf', () => ({ createDebtPdf }));
+vi.mock('@pages/budget/debt-pdf', () => ({ createDebtPdf }));
 afterEach(() => {
   vi.clearAllMocks();
 });

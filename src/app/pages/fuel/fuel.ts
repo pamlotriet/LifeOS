@@ -1,7 +1,7 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { FuelDashboard } from './fuel-dashboard/fuel-dashboard';
-import { Vehicles } from './vehicles/vehicles';
-import { BackButton } from '../../shared/components/back-button/back-button';
+import { FuelDashboard } from '@pages/fuel/fuel-dashboard/fuel-dashboard';
+import { Vehicles } from '@pages/fuel/vehicles/vehicles';
+import { BackButton } from '@shared/components/back-button/back-button';
 import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';

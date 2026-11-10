@@ -1,8 +1,8 @@
 import '@angular/compiler';
 import { signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { BudgetStore } from './budget.store';
-import { BudgetCategory, BudgetPlan, BudgetTransaction } from './budget.model';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetCategory, BudgetPlan, BudgetTransaction } from '@pages/budget/state/budget.model';
 
 function setup() {
   const category: BudgetCategory = {

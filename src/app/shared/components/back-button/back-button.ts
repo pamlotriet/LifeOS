@@ -3,7 +3,7 @@ import { addIcons } from 'ionicons';
 import { arrowBackOutline } from 'ionicons/icons';
 import { Component, computed, inject, input } from '@angular/core';
 import { IonIcon } from '@ionic/angular';
-import { AppNavigation, pageName } from '../../../core/navigation/app-navigation.service';
+import { AppNavigation, pageName } from '@core/navigation/app-navigation.service';
 
 @Component({
   selector: 'app-back-button',

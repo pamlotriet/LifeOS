@@ -1,9 +1,9 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
-import { BookTags } from './book-tags';
-import { BookStore } from '../state/book-store';
+import { BookTags } from '@pages/books/book-tags/book-tags';
+import { BookStore } from '@pages/books/state/book-store';
 
 describe('Book tag browsing', () => {
   function fixture() {

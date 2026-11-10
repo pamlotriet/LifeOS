@@ -1,13 +1,18 @@
-import { validMacros } from '../../nutrition/state/nutrition.model';
+import { validMacros } from '@pages/nutrition/state/nutrition.model';
 import { inject, Injectable } from '@angular/core';
 import {
   FirestoreDocument,
   FirestoreService,
   FirestoreValue,
-} from '../../../core/firebase/firestore.service';
-import { StoragePhotoService } from '../../../core/firebase/storage-photo.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { RecipeInput, RecipeRecord, RecipeStep, recipeCategories } from './recipe.model';
+} from '@core/firebase/firestore.service';
+import { StoragePhotoService } from '@core/firebase/storage-photo.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import {
+  RecipeInput,
+  RecipeRecord,
+  RecipeStep,
+  recipeCategories,
+} from '@pages/recipes/state/recipe.model';
 
 const text = (value: string): FirestoreValue => ({ stringValue: value });
 const strings = (values: string[]): FirestoreValue => ({

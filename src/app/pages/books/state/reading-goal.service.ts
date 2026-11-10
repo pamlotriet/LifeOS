@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { AuthService } from '@core/authentication/authentication.service';
 
 @Injectable({ providedIn: 'root' })
 export class ReadingGoalService {

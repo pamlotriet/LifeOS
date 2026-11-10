@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { EncryptedPayload } from './password.model';
+import { EncryptedPayload } from '@pages/passwords/state/password.model';
 
 const ITERATIONS = 600_000;
 const encoder = new TextEncoder();

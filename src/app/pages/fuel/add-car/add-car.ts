@@ -1,17 +1,17 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { fuelEditorSheet } from '../fuel-editor-sheet';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { fuelEditorSheet } from '@pages/fuel/fuel-editor-sheet';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonIcon, IonModal } from '@ionic/angular';
-import { VehicleStore } from '../vehicles/state/vehicle-store';
-import { saRegistrationValidator } from '../../../shared/validators/sa-registration.validator';
-import { AppSelect } from '../../../shared/components/app-select/app-select';
-import { pickImage } from '../../../shared/utils/pick-image';
-import { FuelLoading } from '../components/fuel-loading/fuel-loading';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { saRegistrationValidator } from '@shared/validators/sa-registration.validator';
+import { AppSelect } from '@shared/components/app-select/app-select';
+import { pickImage } from '@shared/utils/pick-image';
+import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 @Component({
   imports: [
     TranslatePipe,

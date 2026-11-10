@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { BookRecord, BookTag } from './book.model';
+import { BookRecord, BookTag } from '@pages/books/state/book.model';
 import {
   booksCsv,
   createBookBackup,
   parseBookBackup,
   planBookImport,
   mergeBookInformation,
-} from './book-transfer';
+} from '@pages/books/state/book-transfer';
 const tags: BookTag[] = [
   { id: 'genre', name: 'Fantasy', type: 'genre', color: '#abcdef' },
   { id: 'mood', name: 'Cosy', type: 'mood', color: '#123456' },

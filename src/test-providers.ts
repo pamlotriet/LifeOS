@@ -1,7 +1,7 @@
 import '@angular/compiler';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import english from '../public/i18n/en.json';
+import english from '@public/i18n/en.json';
 import { Injector, runInInjectionContext } from '@angular/core';
 
 const translationTestProviders = [

@@ -1,4 +1,4 @@
-import { NutritionIngredient } from '../../nutrition/state/nutrition.model';
+import { NutritionIngredient } from '@pages/nutrition/state/nutrition.model';
 export const RECIPE_CATEGORIES = [
   'Breakfast',
   'Lunch',

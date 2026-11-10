@@ -1,6 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
 import { inject, Injectable } from '@angular/core';
-import { IsbnFrameDecoder } from './isbn-frame-decoder';
+import { IsbnFrameDecoder } from '@pages/books/state/isbn-frame-decoder';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 
 export function cleanScannedIsbn(value: string): string | null {

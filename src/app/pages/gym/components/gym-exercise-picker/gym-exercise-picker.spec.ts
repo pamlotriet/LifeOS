@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it } from 'vitest';
-import { GymExercisePicker } from './gym-exercise-picker';
+import { GymExercisePicker } from '@pages/gym/components/gym-exercise-picker/gym-exercise-picker';
 
 describe('Gym exercise picker', () => {
   async function fixture() {

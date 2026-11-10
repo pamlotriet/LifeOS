@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { statsAnchor, statsMonthOptions, statsMonths, sumByMonth } from './stats.calculations';
+import {
+  statsAnchor,
+  statsMonthOptions,
+  statsMonths,
+  sumByMonth,
+} from '@pages/statistics/state/stats.calculations';
 
 describe('Stats calculations', () => {
   it('creates chronological month windows across year boundaries', () => {

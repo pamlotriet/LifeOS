@@ -1,6 +1,6 @@
 import '@angular/compiler';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { StoragePhotoService } from './storage-photo.service';
+import { StoragePhotoService } from '@core/firebase/storage-photo.service';
 
 describe('StoragePhotoService', () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -34,12 +34,10 @@ describe('StoragePhotoService', () => {
   });
 
   it('rejects unsupported images before upload', async () => {
-    const request = vi
-      .fn()
-      .mockResolvedValue({
-        ok: true,
-        blob: async () => new Blob(['x'], { type: 'image/svg+xml' }),
-      });
+    const request = vi.fn().mockResolvedValue({
+      ok: true,
+      blob: async () => new Blob(['x'], { type: 'image/svg+xml' }),
+    });
     vi.stubGlobal('fetch', request);
     await expect(
       new StoragePhotoService().uploadVehiclePhoto('user-1', 'car-1', 'blob:photo', 'id-token'),

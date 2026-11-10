@@ -2,11 +2,11 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { AppSelect, SelectOption } from '../../../shared/components/app-select/app-select';
-import { PageHeader } from '../../../shared/components/page-header/page-header';
-import { AppSkeleton } from '../../../shared/components/app-skeleton/app-skeleton';
-import { BookStore } from '../state/book-store';
-import { finishDateParts } from '../finished-books-filter';
+import { AppSelect, SelectOption } from '@shared/components/app-select/app-select';
+import { PageHeader } from '@shared/components/page-header/page-header';
+import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
+import { BookStore } from '@pages/books/state/book-store';
+import { finishDateParts } from '@pages/books/finished-books-filter';
 
 const MONTHS = [
   'January',

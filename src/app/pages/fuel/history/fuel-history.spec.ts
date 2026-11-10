@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { RefuelStore } from '../state/refuel-store';
-import { FuelHistory } from './fuel-history';
+import { RefuelStore } from '@pages/fuel/state/refuel-store';
+import { FuelHistory } from '@pages/fuel/history/fuel-history';
 
 describe('FuelHistory', () => {
   let component: FuelHistory;

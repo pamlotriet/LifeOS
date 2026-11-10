@@ -1,12 +1,12 @@
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, inject, signal, Input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon, ModalController } from '@ionic/angular';
-import { PageHeader } from '../../../shared/components/page-header/page-header';
+import { PageHeader } from '@shared/components/page-header/page-header';
 import {
   BookCopy,
   BookFormat,
@@ -20,13 +20,13 @@ import {
   kindleSummary,
   locationSessionPages,
   locationPagesRead,
-} from '../state/book.model';
-import { BookStore } from '../state/book-store';
-import { OpenLibraryCoverService } from '../state/open-library-cover.service';
-import { AppSelect } from '../../../shared/components/app-select/app-select';
-import { AppDatePicker } from '../../../shared/components/app-date-picker/app-date-picker';
-import { BookBarcodeScannerService } from '../state/book-barcode-scanner.service';
-import { AppSkeleton } from '../../../shared/components/app-skeleton/app-skeleton';
+} from '@pages/books/state/book.model';
+import { BookStore } from '@pages/books/state/book-store';
+import { OpenLibraryCoverService } from '@pages/books/state/open-library-cover.service';
+import { AppSelect } from '@shared/components/app-select/app-select';
+import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
+import { BookBarcodeScannerService } from '@pages/books/state/book-barcode-scanner.service';
+import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 
 @Component({
   selector: 'app-book-form',

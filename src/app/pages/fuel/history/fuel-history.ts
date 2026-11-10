@@ -2,11 +2,11 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
-import { RefuelStore } from '../state/refuel-store';
-import { VehicleStore } from '../vehicles/state/vehicle-store';
-import { FuelLoading } from '../components/fuel-loading/fuel-loading';
-import { AppSelect } from '../../../shared/components/app-select/app-select';
-import { AppDatePicker } from '../../../shared/components/app-date-picker/app-date-picker';
+import { RefuelStore } from '@pages/fuel/state/refuel-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
+import { AppSelect } from '@shared/components/app-select/app-select';
+import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
 
 @Component({
   imports: [TranslatePipe, IonIcon, RouterLink, AppSelect, AppDatePicker, FuelLoading],

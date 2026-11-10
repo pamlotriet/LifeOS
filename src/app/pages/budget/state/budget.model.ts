@@ -1,4 +1,4 @@
-import { cycleStart, inCycle } from './budget-cycle';
+import { cycleStart, inCycle } from '@pages/budget/state/budget-cycle';
 export type TransactionType = 'expense' | 'income' | 'transfer' | 'spending-transfer';
 export type CategoryType = 'expense' | 'income' | 'bills' | 'savings';
 export function supportsPlan(type: CategoryType): boolean {

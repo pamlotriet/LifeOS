@@ -1,8 +1,8 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
-import { RecipeInput, RecipeRecord } from './recipe.model';
-import { RecipeService } from './recipe.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
+import { RecipeInput, RecipeRecord } from '@pages/recipes/state/recipe.model';
+import { RecipeService } from '@pages/recipes/state/recipe.service';
 
 @Injectable({ providedIn: 'root' })
 export class RecipeStore {

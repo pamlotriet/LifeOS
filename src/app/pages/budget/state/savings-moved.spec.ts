@@ -1,9 +1,13 @@
 import '@angular/compiler';
 import { signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { BudgetStore } from './budget.store';
-import { BudgetTransaction, DEFAULT_CATEGORIES, TransactionInput } from './budget.model';
-import { budgetSnapshot } from '../budget-snapshot';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import {
+  BudgetTransaction,
+  DEFAULT_CATEGORIES,
+  TransactionInput,
+} from '@pages/budget/state/budget.model';
+import { budgetSnapshot } from '@pages/budget/budget-snapshot';
 
 function fixture() {
   const store = Object.create(BudgetStore.prototype) as BudgetStore;

@@ -1,5 +1,5 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppInput } from '../../shared/components/app-input/app-input';
+import { AppInput } from '@shared/components/app-input/app-input';
 import { addIcons } from 'ionicons';
 import {
   arrowBackOutline,
@@ -13,16 +13,21 @@ import {
   flameOutline,
   starOutline,
   trendingUpOutline,
-} from './statistics-icons';
-import { statsMonthOptions } from './state/stats.calculations';
+} from '@pages/statistics/statistics-icons';
+import { statsMonthOptions } from '@pages/statistics/state/stats.calculations';
 import { FormsModule } from '@angular/forms';
-import { BudgetStatistics } from './components/budget-statistics/budget-statistics';
+import { BudgetStatistics } from '@pages/statistics/components/budget-statistics/budget-statistics';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
-import { AppChart } from '../../shared/components/app-chart/app-chart';
-import { StatisticsSkeleton } from './components/statistics-skeleton/statistics-skeleton';
-import { StatsModule, StatsRange, StatsService, STATS_MODULES } from './state/stats.service';
+import { AppChart } from '@shared/components/app-chart/app-chart';
+import { StatisticsSkeleton } from '@pages/statistics/components/statistics-skeleton/statistics-skeleton';
+import {
+  StatsModule,
+  StatsRange,
+  StatsService,
+  STATS_MODULES,
+} from '@pages/statistics/state/stats.service';
 
 @Component({
   selector: 'app-statistics',

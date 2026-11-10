@@ -1,16 +1,16 @@
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AppMonthPicker } from '../../../shared/components/app-month-picker/app-month-picker';
-import { BackButton } from '../../../shared/components/back-button/back-button';
-import { budgetInsights } from './budget-insights.model';
-import { BudgetNav } from '../components/budget-nav/budget-nav';
+import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
+import { BackButton } from '@shared/components/back-button/back-button';
+import { budgetInsights } from '@pages/budget/budget-insights/budget-insights.model';
+import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
-import { BudgetStore } from '../state/budget.store';
-import { localDate, money, summary, total } from '../state/budget.model';
-import { AppChart } from '../../../shared/components/app-chart/app-chart';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { localDate, money, summary, total } from '@pages/budget/state/budget.model';
+import { AppChart } from '@shared/components/app-chart/app-chart';
 
 @Component({
   selector: 'app-budget-insights',

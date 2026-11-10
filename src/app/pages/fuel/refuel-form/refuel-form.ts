@@ -1,7 +1,7 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { fuelEditorSheet } from '../fuel-editor-sheet';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { fuelEditorSheet } from '@pages/fuel/fuel-editor-sheet';
 import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import {
   AbstractControl,
@@ -13,12 +13,12 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonIcon, IonModal } from '@ionic/angular';
-import { RefuelStore } from '../state/refuel-store';
-import { RefuelInput } from '../state/refuel.model';
-import { AppSelect } from '../../../shared/components/app-select/app-select';
-import { AppDatePicker } from '../../../shared/components/app-date-picker/app-date-picker';
-import { VehicleStore } from '../vehicles/state/vehicle-store';
-import { FuelLoading } from '../components/fuel-loading/fuel-loading';
+import { RefuelStore } from '@pages/fuel/state/refuel-store';
+import { RefuelInput } from '@pages/fuel/state/refuel.model';
+import { AppSelect } from '@shared/components/app-select/app-select';
+import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 
 type DecimalInput = number | string | null;
 

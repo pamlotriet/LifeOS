@@ -1,4 +1,4 @@
-import { BookTag } from './book.model';
+import { BookTag } from '@pages/books/state/book.model';
 
 const genres = [
   'Fantasy',

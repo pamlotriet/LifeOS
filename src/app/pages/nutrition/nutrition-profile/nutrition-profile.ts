@@ -2,8 +2,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
-import { BackButton } from '../../../shared/components/back-button/back-button';
-import { NutritionSettings } from '../nutrition-settings/nutrition-settings';
+import { BackButton } from '@shared/components/back-button/back-button';
+import { NutritionSettings } from '@pages/nutrition/nutrition-settings/nutrition-settings';
 
 @Component({
   selector: 'app-nutrition-profile',

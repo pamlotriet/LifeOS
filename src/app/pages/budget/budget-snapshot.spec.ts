@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { BudgetPlan, BudgetTransaction, DEFAULT_CATEGORIES } from './state/budget.model';
-import { budgetSnapshot, budgetSpending } from './budget-snapshot';
+import {
+  BudgetPlan,
+  BudgetTransaction,
+  DEFAULT_CATEGORIES,
+} from '@pages/budget/state/budget.model';
+import { budgetSnapshot, budgetSpending } from '@pages/budget/budget-snapshot';
 const tx = (
   amount: number,
   type: BudgetTransaction['type'],

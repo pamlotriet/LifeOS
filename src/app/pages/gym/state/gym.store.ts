@@ -1,9 +1,9 @@
-import { buildWeeklyPlan } from './weekly-plan';
+import { buildWeeklyPlan } from '@pages/gym/state/weekly-plan';
 import { effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
-import { GymEntry, GymExercise } from './gym.model';
-import { GymService } from './gym.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
+import { GymEntry, GymExercise } from '@pages/gym/state/gym.model';
+import { GymService } from '@pages/gym/state/gym.service';
 
 @Injectable({ providedIn: 'root' })
 export class GymStore {

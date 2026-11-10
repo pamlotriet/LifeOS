@@ -1,13 +1,18 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { GymExercise, GymEntry, validateExercise, validateGymEntry } from './gym.model';
-import { GymService } from './gym.service';
-import { GymStore } from './gym.store';
-import { buildWeeklyPlan } from './weekly-plan';
+import { AuthService } from '@core/authentication/authentication.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import {
+  GymExercise,
+  GymEntry,
+  validateExercise,
+  validateGymEntry,
+} from '@pages/gym/state/gym.model';
+import { GymService } from '@pages/gym/state/gym.service';
+import { GymStore } from '@pages/gym/state/gym.store';
+import { buildWeeklyPlan } from '@pages/gym/state/weekly-plan';
 
 const exercise: GymExercise = {
   id: 'bench',

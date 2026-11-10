@@ -1,4 +1,4 @@
-import { RefuelEntry, refuelAverages } from './state/refuel.model';
+import { RefuelEntry, refuelAverages } from '@pages/fuel/state/refuel.model';
 export interface FuelPoint {
   label: string;
   value: number | null;

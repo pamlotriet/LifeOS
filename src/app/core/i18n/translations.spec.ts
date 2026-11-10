@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import english from '../../../../public/i18n/en.json';
+import english from '@public/i18n/en.json';
 
 @Component({
   imports: [TranslatePipe],

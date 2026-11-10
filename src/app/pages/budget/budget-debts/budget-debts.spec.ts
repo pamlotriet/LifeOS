@@ -1,10 +1,10 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { BudgetDebts } from './budget-debts';
-import { BudgetStore } from '../state/budget.store';
-import { BudgetTransaction, DEFAULT_CATEGORIES, localDate } from '../state/budget.model';
+import { BudgetDebts } from '@pages/budget/budget-debts/budget-debts';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetTransaction, DEFAULT_CATEGORIES, localDate } from '@pages/budget/state/budget.model';
 
 describe('Debt payment workflow', () => {
   const saveTransaction = vi.fn();

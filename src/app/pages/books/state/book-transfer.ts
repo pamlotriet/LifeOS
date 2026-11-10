@@ -4,7 +4,7 @@ import {
   BookRecord,
   BookTag,
   validateLocationTracking,
-} from './book.model';
+} from '@pages/books/state/book.model';
 export interface BookBackup {
   format: 'lifeos-books';
   version: 1;

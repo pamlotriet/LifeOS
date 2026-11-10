@@ -1,8 +1,8 @@
-import { englishText, TranslateText } from '../../core/i18n/translation-text';
+import { englishText, TranslateText } from '@core/i18n/translation-text';
 import { jsPDF } from 'jspdf';
 import { autoTable } from 'jspdf-autotable';
-import { BudgetDebt, BudgetTransaction, money } from './state/budget.model';
-import { debtReportData } from './debt-report';
+import { BudgetDebt, BudgetTransaction, money } from '@pages/budget/state/budget.model';
+import { debtReportData } from '@pages/budget/debt-report';
 
 export function createDebtPdf(
   debts: BudgetDebt[],

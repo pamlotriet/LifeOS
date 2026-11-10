@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { budgetInsights } from './budget-insights.model';
+import { budgetInsights } from '@pages/budget/budget-insights/budget-insights.model';
 import {
   BudgetDebt,
   BudgetTransaction,
   DEFAULT_CATEGORIES,
   debtPlanId,
   money,
-} from '../state/budget.model';
+} from '@pages/budget/state/budget.model';
 
 const transaction = (
   id: string,

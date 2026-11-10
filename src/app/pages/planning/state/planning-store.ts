@@ -1,8 +1,8 @@
 import { effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
-import { GroceryItem, MealPlanItem } from './planning.model';
-import { PlanningService } from './planning.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
+import { GroceryItem, MealPlanItem } from '@pages/planning/state/planning.model';
+import { PlanningService } from '@pages/planning/state/planning.service';
 
 @Injectable({ providedIn: 'root' })
 export class PlanningStore {

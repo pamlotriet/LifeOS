@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { VaultCryptoService } from './vault-crypto.service';
+import { VaultCryptoService } from '@pages/passwords/state/vault-crypto.service';
 
 describe('VaultCryptoService', () => {
   it('encrypts and decrypts vault data with its context bound by AES-GCM', async () => {

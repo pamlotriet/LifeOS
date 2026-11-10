@@ -1,16 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { StoragePhotoService } from '../../../core/firebase/storage-photo.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
-import { RecipeService } from '../../recipes/state/recipe.service';
-import { PlanningService } from '../../planning/state/planning.service';
-import { StatsService } from '../../statistics/state/stats.service';
-import { NutritionService } from './nutrition.service';
-import { calculateRecipe, scaleNutrition, sumNutrition } from './nutrition.calculations';
-import { RecipeInput } from '../../recipes/state/recipe.model';
+import { AuthService } from '@core/authentication/authentication.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { StoragePhotoService } from '@core/firebase/storage-photo.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
+import { RecipeService } from '@pages/recipes/state/recipe.service';
+import { PlanningService } from '@pages/planning/state/planning.service';
+import { StatsService } from '@pages/statistics/state/stats.service';
+import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import {
+  calculateRecipe,
+  scaleNutrition,
+  sumNutrition,
+} from '@pages/nutrition/state/nutrition.calculations';
+import { RecipeInput } from '@pages/recipes/state/recipe.model';
 describe('Nutrition service workflow', () => {
   it('persists an ingredient, recipe, plan and personal snapshot consumed by Stats', async () => {
     const updateDocument = vi.fn().mockResolvedValue(undefined);

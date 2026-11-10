@@ -1,8 +1,11 @@
-import { withTranslations } from '../../../../test-providers';
+import { withTranslations } from '@src/test-providers';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Html5Qrcode } from 'html5-qrcode';
-import { IsbnFrameDecoder } from './isbn-frame-decoder';
-import { BookBarcodeScannerService, cleanScannedIsbn } from './book-barcode-scanner.service';
+import { IsbnFrameDecoder } from '@pages/books/state/isbn-frame-decoder';
+import {
+  BookBarcodeScannerService,
+  cleanScannedIsbn,
+} from '@pages/books/state/book-barcode-scanner.service';
 
 describe('cleanScannedIsbn', () => {
   it('accepts a valid ISBN-13 and removes separators', () => {

@@ -3,10 +3,10 @@ import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { BookForm } from './book-form';
-import { BookStore } from '../state/book-store';
-import { OpenLibraryCoverService } from '../state/open-library-cover.service';
-import { BookBarcodeScannerService } from '../state/book-barcode-scanner.service';
+import { BookForm } from '@pages/books/book-form/book-form';
+import { BookStore } from '@pages/books/state/book-store';
+import { OpenLibraryCoverService } from '@pages/books/state/open-library-cover.service';
+import { BookBarcodeScannerService } from '@pages/books/state/book-barcode-scanner.service';
 import { addIcons } from 'ionicons';
 import {
   book,

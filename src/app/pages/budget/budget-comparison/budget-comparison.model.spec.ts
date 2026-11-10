@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { compareBudgetCategories } from './budget-comparison.model';
-import { BudgetTransaction, DEFAULT_CATEGORIES, debtPlanId } from '../state/budget.model';
+import { compareBudgetCategories } from '@pages/budget/budget-comparison/budget-comparison.model';
+import {
+  BudgetTransaction,
+  DEFAULT_CATEGORIES,
+  debtPlanId,
+} from '@pages/budget/state/budget.model';
 
 const payment = (id: string, amount: number, extra = {}): BudgetTransaction => ({
   id,

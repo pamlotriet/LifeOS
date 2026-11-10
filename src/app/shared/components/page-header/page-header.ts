@@ -1,6 +1,6 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { BackButton } from '../back-button/back-button';
-import { AppNavigation } from '../../../core/navigation/app-navigation.service';
+import { BackButton } from '@shared/components/back-button/back-button';
+import { AppNavigation } from '@core/navigation/app-navigation.service';
 import { Component, inject, input } from '@angular/core';
 
 @Component({

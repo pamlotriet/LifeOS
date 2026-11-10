@@ -1,19 +1,19 @@
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { AppDatePicker } from '../../../shared/components/app-date-picker/app-date-picker';
-import { AppMonthPicker } from '../../../shared/components/app-month-picker/app-month-picker';
-import { budgetSnapshot } from '../budget-snapshot';
-import { cycleMonth } from '../state/budget-cycle';
-import { BackButton } from '../../../shared/components/back-button/back-button';
-import { BudgetNav } from '../components/budget-nav/budget-nav';
-import { BudgetNumber, parseBudgetNumber } from '../../../shared/directives/budget-number';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
+import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
+import { budgetSnapshot } from '@pages/budget/budget-snapshot';
+import { cycleMonth } from '@pages/budget/state/budget-cycle';
+import { BackButton } from '@shared/components/back-button/back-button';
+import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
+import { BudgetNumber, parseBudgetNumber } from '@shared/directives/budget-number';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { BudgetStore } from '../state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget.store';
 import {
   BudgetPlan,
   categoryPlanItems,
@@ -24,8 +24,8 @@ import {
   isSpendingCategory,
   supportsPlan,
   total,
-} from '../state/budget.model';
-import { BudgetTransactions } from '../components/budget-transactions/budget-transactions';
+} from '@pages/budget/state/budget.model';
+import { BudgetTransactions } from '@pages/budget/components/budget-transactions/budget-transactions';
 
 @Component({
   selector: 'app-budget-planned',

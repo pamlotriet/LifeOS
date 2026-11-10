@@ -1,10 +1,10 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { RefreshCoordinator } from '../../../core/refresh/refresh-coordinator.service';
-import { defaultProfile, NutritionService } from './nutrition.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
+import { defaultProfile, NutritionService } from '@pages/nutrition/state/nutrition.service';
 describe('Personal nutrition persistence', () => {
   const userId = signal('member');
   const updateDocument = vi.fn();

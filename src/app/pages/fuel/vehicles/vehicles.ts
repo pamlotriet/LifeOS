@@ -2,8 +2,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
-import { VehicleStore } from './state/vehicle-store';
-import { FuelLoading } from '../components/fuel-loading/fuel-loading';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 
 @Component({
   imports: [TranslatePipe, IonIcon, RouterLink, FuelLoading],

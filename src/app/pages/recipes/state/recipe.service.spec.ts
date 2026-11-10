@@ -1,12 +1,12 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { FirestoreService } from '../../../core/firebase/firestore.service';
-import { StoragePhotoService } from '../../../core/firebase/storage-photo.service';
-import { AuthService } from '../../../core/authentication/authentication.service';
-import { RecipeInput } from './recipe.model';
-import { RecipeService } from './recipe.service';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { StoragePhotoService } from '@core/firebase/storage-photo.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { RecipeInput } from '@pages/recipes/state/recipe.model';
+import { RecipeService } from '@pages/recipes/state/recipe.service';
 
 describe('RecipeService', () => {
   const getSession = vi.fn();

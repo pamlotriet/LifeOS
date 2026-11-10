@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { RefreshCoordinator } from './refresh-coordinator.service';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 
 describe('RefreshCoordinator', () => {
   it('runs every registered refresh handler', async () => {

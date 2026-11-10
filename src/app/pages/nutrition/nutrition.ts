@@ -1,11 +1,11 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppInput } from '../../shared/components/app-input/app-input';
+import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
-import { PageHeader } from '../../shared/components/page-header/page-header';
-import { NutritionService } from './state/nutrition.service';
+import { PageHeader } from '@shared/components/page-header/page-header';
+import { NutritionService } from '@pages/nutrition/state/nutrition.service';
 import {
   FoodLog,
   localDate,
@@ -13,15 +13,15 @@ import {
   MealCategory,
   nutritionLabel,
   zeroMacros,
-} from './state/nutrition.model';
+} from '@pages/nutrition/state/nutrition.model';
 import {
   calculateRecipe,
   ingredientNutrition,
   scaleNutrition,
   sumNutrition,
-} from './state/nutrition.calculations';
-import { RecipeStore } from '../recipes/state/recipe-store';
-import { PlanningStore } from '../planning/state/planning-store';
+} from '@pages/nutrition/state/nutrition.calculations';
+import { RecipeStore } from '@pages/recipes/state/recipe-store';
+import { PlanningStore } from '@pages/planning/state/planning-store';
 @Component({
   selector: 'app-nutrition',
   imports: [TranslatePipe, AppInput, FormsModule, RouterLink, IonContent, PageHeader],

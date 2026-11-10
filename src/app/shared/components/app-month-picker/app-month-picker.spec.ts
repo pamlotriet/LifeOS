@@ -1,8 +1,8 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { AppMonthPicker } from './app-month-picker';
+import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
 
 describe('Budget month picker', () => {
   it('preserves the selected year when switching months and emits ISO month values', () => {

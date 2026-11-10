@@ -1,9 +1,9 @@
-import { AuthService } from '../../../core/authentication/authentication.service';
+import { AuthService } from '@core/authentication/authentication.service';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { NutritionService, defaultProfile } from '../state/nutrition.service';
-import { NutritionSettings } from './nutrition-settings';
+import { NutritionService, defaultProfile } from '@pages/nutrition/state/nutrition.service';
+import { NutritionSettings } from '@pages/nutrition/nutrition-settings/nutrition-settings';
 describe('Automatic targets in settings', () => {
   const profile = signal(defaultProfile());
   const saveProfile = vi.fn();

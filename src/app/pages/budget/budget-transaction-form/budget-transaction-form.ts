@@ -1,21 +1,21 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppButton } from '../../../shared/components/app-button/app-button';
-import { AppInput } from '../../../shared/components/app-input/app-input';
-import { AppDatePicker } from '../../../shared/components/app-date-picker/app-date-picker';
-import { BackButton } from '../../../shared/components/back-button/back-button';
-import { BudgetNumber } from '../../../shared/directives/budget-number';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
+import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
+import { BackButton } from '@shared/components/back-button/back-button';
+import { BudgetNumber } from '@shared/directives/budget-number';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { BudgetStore } from '../state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget.store';
 import {
   compatibleCategory,
   isSpendingCategory,
   localDate,
   TransactionInput,
   TransactionType,
-} from '../state/budget.model';
+} from '@pages/budget/state/budget.model';
 
 @Component({
   selector: 'app-budget-transaction-form',

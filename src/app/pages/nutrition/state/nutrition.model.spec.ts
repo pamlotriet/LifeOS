@@ -5,7 +5,7 @@ import {
   recipeNutrition,
   scaleMacros,
   validMacros,
-} from './nutrition.model';
+} from '@pages/nutrition/state/nutrition.model';
 describe('Nutrition calculations', () => {
   const per100 = { calories: 200, protein: 20, carbs: 3, fat: 9 };
   it('scales food values for fractional gram quantities', () => {

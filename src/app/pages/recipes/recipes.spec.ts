@@ -1,10 +1,10 @@
-import translationTestProviders from '../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
-import { RecipeStore } from './state/recipe-store';
-import { RecipeRecord } from './state/recipe.model';
-import { Recipes } from './recipes';
+import { RecipeStore } from '@pages/recipes/state/recipe-store';
+import { RecipeRecord } from '@pages/recipes/state/recipe.model';
+import { Recipes } from '@pages/recipes/recipes';
 
 describe('Recipe category filters', () => {
   it('finds a recipe under each selected category and searches secondary categories', () => {

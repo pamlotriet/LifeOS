@@ -1,4 +1,4 @@
-import { GymEntry, GymExercise } from './gym.model';
+import { GymEntry, GymExercise } from '@pages/gym/state/gym.model';
 export const WEEKLY_PLAN_ID = 'variety-five-day-v1';
 export const WEEKLY_PLAN_FOCUS = [
   'Full-body strength + short WOD',

@@ -1,15 +1,15 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { computed, Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
-import { BudgetPlanned } from './budget-planned';
-import { BudgetStore } from '../state/budget.store';
+import { BudgetPlanned } from '@pages/budget/budget-planned/budget-planned';
+import { BudgetStore } from '@pages/budget/state/budget.store';
 import {
   BudgetPlan,
   BudgetTransaction,
   DEFAULT_CATEGORIES,
   debtPlanId,
-} from '../state/budget.model';
+} from '@pages/budget/state/budget.model';
 
 describe('Planning balance forecast', () => {
   it('subtracts category plans and debt payments once, preserves cents, and follows the selected month', () => {

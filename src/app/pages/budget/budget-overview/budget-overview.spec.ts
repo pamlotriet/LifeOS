@@ -1,10 +1,10 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { describe, expect, it, vi } from 'vitest';
-import { BudgetStore } from '../state/budget.store';
-import { BudgetOverview } from './budget-overview';
+import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetOverview } from '@pages/budget/budget-overview/budget-overview';
 
 describe('Budget cycle navigation', () => {
   const create = () => {

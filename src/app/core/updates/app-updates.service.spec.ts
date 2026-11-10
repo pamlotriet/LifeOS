@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { SwUpdate } from '@angular/service-worker';
 import { of, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { AppUpdates } from './app-updates.service';
+import { AppUpdates } from '@core/updates/app-updates.service';
 
 describe('App updates', () => {
   afterEach(() => TestBed.resetTestingModule());

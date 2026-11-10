@@ -1,6 +1,7 @@
 # LifeOS application conventions
 
 - Follow `docs/project-structure.md` for directory ownership.
+- Use the TypeScript aliases `@core/`, `@shared/`, `@pages/`, `@environments/`, `@app/`, `@src/` and `@public/` for all application module imports, including same-folder imports, lazy imports and tests. Keep Angular template and stylesheet URLs relative.
 - Put page screens in `pages/<feature>/<screen>/` with their template, styles and tests.
 - Keep feature stores, models, calculations and persistence services in that feature's `state/` folder. Do not recreate `shared/state`.
 - Put app-wide authentication, navigation, theme, refresh, updates and infrastructure in the relevant `core/` folder.

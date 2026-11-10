@@ -1,8 +1,8 @@
-import translationTestProviders from '../../../../test-providers';
+import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { ElementRef, Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
-import { AppSelect } from './app-select';
+import { AppSelect } from '@shared/components/app-select/app-select';
 
 describe('AppSelect', () => {
   it('passes the selected option to a reactive form', () => {
