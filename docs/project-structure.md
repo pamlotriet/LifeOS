@@ -20,7 +20,6 @@ src/app/
   core/
     authentication/            App-wide authentication and guards
     firebase/                  Firebase configuration and persistence infrastructure
-    images/                    Authenticated image caching
     layout/                    App navigation shell
     navigation/
     refresh/

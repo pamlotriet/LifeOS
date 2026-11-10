@@ -3,6 +3,7 @@
 # Compiled output
 /dist
 /tmp
+/local-backups/
 /out-tsc
 /bazel-out
 
