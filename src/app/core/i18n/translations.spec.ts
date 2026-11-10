@@ -27,9 +27,9 @@ describe('Application translations', () => {
     const translate = TestBed.inject(TranslateService);
     fixture.detectChanges();
     const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
-    expect(button.textContent).toBe('Loading Gym');
+    expect(button.textContent?.trim()).toBe('Loading Gym');
     expect(button.getAttribute('aria-label')).toBe('Search spaces');
-    expect(fixture.nativeElement.querySelector('p').textContent).toBe(
+    expect(fixture.nativeElement.querySelector('p').textContent.trim()).toBe(
       '2 books and 3 tags in this backup.',
     );
     translate.setTranslation('test', {
@@ -39,7 +39,7 @@ describe('Application translations', () => {
     });
     translate.use('test');
     fixture.detectChanges();
-    expect(button.textContent).toBe('Chargement : Sport');
+    expect(button.textContent?.trim()).toBe('Chargement : Sport');
     expect(button.getAttribute('aria-label')).toBe('Chercher');
   });
 });
