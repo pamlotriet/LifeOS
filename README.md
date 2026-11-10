@@ -1,5 +1,8 @@
 # LifeOS
 
+See [Application structure](docs/project-structure.md) for feature folders, state ownership,
+and the shared input, button, chart, select and date controls.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.8.
 
 ## Installable web app (PWA)

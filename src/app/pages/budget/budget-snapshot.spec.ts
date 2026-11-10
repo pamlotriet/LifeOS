@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BudgetPlan, BudgetTransaction, DEFAULT_CATEGORIES } from '../../shared/state/budget/budget.model';
+import { BudgetPlan, BudgetTransaction, DEFAULT_CATEGORIES } from './state/budget.model';
 import { budgetSnapshot, budgetSpending } from './budget-snapshot';
 const tx=(amount:number,type:BudgetTransaction['type'],categoryId:string,extra:Partial<BudgetTransaction>={}):BudgetTransaction=>({id:'t',title:'Test',date:'2026-10-10',paymentMethod:'Card',notes:'',receiptUrl:'',receiptPath:'',amount,type,categoryId,...extra});
 const plan:BudgetPlan={id:'p',month:'2026-10',categoryId:'food',amount:1000};

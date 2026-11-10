@@ -1,8 +1,8 @@
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
-import { RecipeStore } from '../../shared/state/recipes/recipe-store';
-import { RecipeRecord } from '../../shared/state/recipes/recipe.model';
+import { RecipeStore } from './state/recipe-store';
+import { RecipeRecord } from './state/recipe.model';
 import { Recipes } from './recipes';
 
 describe('Recipe category filters', () => {

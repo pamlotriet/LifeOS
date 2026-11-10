@@ -16,7 +16,7 @@
       <button aria-label="Previous day" (click)="changeDate(-1)">&larr;</button
       ><label
         ><span class="sr-only">Diary date</span
-        ><input
+        ><input appInput="field"
           type="date"
           [ngModel]="date()"
           (ngModelChange)="date.set($event); editingId = ''; loggerOpen.set(false)" /></label
@@ -138,7 +138,7 @@
             >
             <div class="field-grid">
               <label
-                >Amount<input
+                >Amount<input appInput="field"
                   type="number"
                   min="0.01"
                   step="any"
@@ -168,7 +168,7 @@
                 }
               </select></label
             ><label
-              >Servings eaten<input
+              >Servings eaten<input appInput="field"
                 type="number"
                 min="0.01"
                 step="any"
@@ -188,7 +188,7 @@
           }
           @case ('manual') {
             <label
-              >Food name<input
+              >Food name<input appInput="field"
                 class="lifeos-select"
                 [(ngModel)]="manualName"
                 placeholder="What did you eat?"
@@ -196,7 +196,7 @@
             <div class="field-grid">
               @for (key of keys; track key) {
                 <label class="capitalize"
-                  >{{ key }} ({{ key === 'calories' ? 'kcal' : 'g' }})<input
+                  >{{ key }} ({{ key === 'calories' ? 'kcal' : 'g' }})<input appInput="field"
                     type="number"
                     min="0"
                     step="any"
@@ -246,7 +246,7 @@
               </p>
               @if (editingId === entry.id) {
                 <label
-                  >Recorded date<input
+                  >Recorded date<input appInput="field"
                     type="date"
                     [(ngModel)]="editDate"
                     class="lifeos-select" /></label
@@ -257,9 +257,9 @@
                     }
                   </select></label
                 >
-                <label>Name<input class="lifeos-select" [(ngModel)]="manualName" /></label
+                <label>Name<input appInput="field" class="lifeos-select" [(ngModel)]="manualName" /></label
                 ><label
-                  >Actual amount<input
+                  >Actual amount<input appInput="field"
                     type="number"
                     min="0.01"
                     step="any"
@@ -273,7 +273,7 @@
                   @for (key of keys; track key) {
                     <label
                       >{{ key
-                      }}<input
+                      }}<input appInput="field"
                         type="number"
                         min="0"
                         step="any"

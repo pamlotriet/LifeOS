@@ -1,5 +1,5 @@
-import { FuelDashboard } from './fuel-dashboard';
-import { Vehicles } from '../vehicles/vehicles';
+import { FuelDashboard } from './fuel-dashboard/fuel-dashboard';
+import { Vehicles } from './vehicles/vehicles';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';

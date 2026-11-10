@@ -2,8 +2,8 @@ import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
 import { Gym } from './gym';
-import { GymStore } from '../../shared/state/gym/gym.store';
-import { GymExercise, GymEntry } from '../../shared/state/gym/gym.model';
+import { GymStore } from './state/gym.store';
+import { GymExercise, GymEntry } from './state/gym.model';
 
 describe('Weekly gym planner',()=>{
   const exercise:GymExercise={id:'squat',name:'Squat',muscle:'Legs',equipment:'Barbell',notes:''};

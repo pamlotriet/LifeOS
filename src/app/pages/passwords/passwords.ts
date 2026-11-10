@@ -1,12 +1,14 @@
+import { AppButton } from '../../shared/components/app-button/app-button';
+import { AppInput } from '../../shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
-import { PASSWORD_CATEGORIES } from '../../shared/state/passwords/password.model';
-import { PasswordStore } from '../../shared/state/passwords/password-store';
+import { PASSWORD_CATEGORIES } from './state/password.model';
+import { PasswordStore } from './state/password-store';
 
-@Component({ selector: 'app-passwords', imports: [IonContent, IonIcon, RouterLink, FormsModule, PageHeader], templateUrl: './passwords.html' })
+@Component({ selector: 'app-passwords', imports: [AppInput, AppButton, IonContent, IonIcon, RouterLink, FormsModule, PageHeader], templateUrl: './passwords.html' })
 export class Passwords {
   readonly store = inject(PasswordStore); readonly categories = PASSWORD_CATEGORIES; readonly search = signal(''); readonly category = signal('All');
   readonly masterPassword = signal(''); readonly confirmation = signal(''); readonly busy = signal(false); readonly message = signal('');

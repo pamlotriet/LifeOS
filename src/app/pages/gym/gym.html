@@ -224,7 +224,7 @@
                 (click)="copySource.set(null)"
               >
                 Cancel</button
-              ><button type="submit" class="button primary" [disabled]="store.saving()">
+              ><button appButton="primary" type="submit" class="button primary" [disabled]="store.saving()">
                 {{ store.saving() ? 'Copying...' : 'Copy workout' }}
               </button>
             </div>
@@ -405,7 +405,7 @@
         </div>
         <div class="library-tools">
           <label
-            >Find an exercise<input
+            >Find an exercise<input appInput="field"
               type="search"
               placeholder="Search name, equipment or muscle..."
               [ngModel]="search()"
@@ -546,7 +546,7 @@
             <fieldset [disabled]="store.saving()">
               <div class="field-grid">
                 <label
-                  >Exercise name<input
+                  >Exercise name<input appInput="field"
                     name="name"
                     required
                     maxlength="100"
@@ -561,14 +561,14 @@
                 >
               </div>
               <label
-                >Equipment (optional)<input
+                >Equipment (optional)<input appInput="field"
                   name="equipment"
                   maxlength="100"
                   placeholder="e.g. Dumbbells and bench"
                   [(ngModel)]="exercise.equipment"
               /></label>
               <label
-                >Instructions / notes (optional)<textarea
+                >Instructions / notes (optional)<textarea appInput="field"
                   name="notes"
                   maxlength="2000"
                   rows="3"
@@ -577,7 +577,7 @@
               </label>
               <div class="form-actions">
                 <button type="button" class="button" (click)="cancelExercise()">Cancel</button
-                ><button class="button primary" type="submit">
+                ><button appButton="primary" class="button primary" type="submit">
                   {{
                     store.saving()
                       ? 'Saving...'
@@ -634,7 +634,7 @@
               </div>
               <div class="field-grid three">
                 <label
-                  >Sets<input
+                  >Sets<input appInput="field"
                     name="sets"
                     type="number"
                     required
@@ -644,14 +644,14 @@
                     placeholder="e.g. 3"
                     [(ngModel)]="entry.sets" /></label
                 ><label
-                  >Reps / duration<input
+                  >Reps / duration<input appInput="field"
                     name="reps"
                     required
                     maxlength="80"
                     placeholder="e.g. 8-12 reps or 30 seconds"
                     [(ngModel)]="entry.reps" /></label
                 ><label
-                  >Rest (seconds)<input
+                  >Rest (seconds)<input appInput="field"
                     name="rest"
                     type="number"
                     required
@@ -663,13 +663,13 @@
                 /></label>
               </div>
               <label
-                >Weight / resistance (optional)<input
+                >Weight / resistance (optional)<input appInput="field"
                   name="weight"
                   maxlength="80"
                   placeholder="e.g. 20 kg, bodyweight or medium band"
                   [(ngModel)]="entry.weight" /></label
               ><label
-                >Workout notes (optional)<textarea
+                >Workout notes (optional)<textarea appInput="field"
                   name="notes"
                   maxlength="2000"
                   rows="2"
@@ -678,7 +678,7 @@
               </label>
               <div class="form-actions">
                 <button type="button" class="button" (click)="closeEditors()">Cancel</button
-                ><button type="submit" class="button primary">
+                ><button appButton="primary" type="submit" class="button primary">
                   {{
                     store.saving()
                       ? 'Saving...'

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BudgetDebt, BudgetTransaction, money } from '../../shared/state/budget/budget.model';
+import { BudgetDebt, BudgetTransaction, money } from './state/budget.model';
 import { debtReportHtml } from './debt-report';
 
 const debt: BudgetDebt = { id: 'loan', name: 'Home loan', type: 'loan', openingBalance: 10000, openingOverride: null, annualInterestRate: 0 };

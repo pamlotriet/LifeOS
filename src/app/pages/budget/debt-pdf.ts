@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { autoTable } from 'jspdf-autotable';
-import { BudgetDebt, BudgetTransaction, money } from '../../shared/state/budget/budget.model';
+import { BudgetDebt, BudgetTransaction, money } from './state/budget.model';
 import { debtReportData } from './debt-report';
 
 export function createDebtPdf(debts: BudgetDebt[], transactions: BudgetTransaction[], month: string, startDay: number): jsPDF {

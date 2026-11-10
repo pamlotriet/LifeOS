@@ -1,12 +1,12 @@
 import { WriteFeedback } from './core/firebase/write-feedback.service';
 import { DOCUMENT } from '@angular/common';
-import { AppNavigation } from './shared/state/app-navigation.service';
-import { AppUpdates } from './shared/state/app-updates.service';
+import { AppNavigation } from './core/navigation/app-navigation.service';
+import { AppUpdates } from './core/updates/app-updates.service';
 import { Component, inject, signal } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular';
-import { AuthService } from './shared/state/authentication/authentication.service';
-import { RefreshCoordinator } from './shared/state/refresh/refresh-coordinator.service';
-import { ThemeService } from './shared/state/theme/theme.service';
+import { AuthService } from './core/authentication/authentication.service';
+import { RefreshCoordinator } from './core/refresh/refresh-coordinator.service';
+import { ThemeService } from './core/theme/theme.service';
 import { ClearZeroOnFocus } from './shared/directives/clear-zero-on-focus';
 
 @Component({

@@ -1,8 +1,8 @@
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { BudgetDebts } from './budget-debts';
-import { BudgetStore } from '../../shared/state/budget/budget.store';
+import { BudgetDebts } from './budget-debts/budget-debts';
+import { BudgetStore } from './state/budget.store';
 
 const { save, createDebtPdf } = vi.hoisted(() => {
   const save = vi.fn();

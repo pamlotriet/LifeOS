@@ -1,0 +1,24 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px !important;
+  padding: 10px 16px !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--app-button-radius, 12px) !important;
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+:host(.secondary-action) { border-color: var(--border) !important; background: var(--card) !important; color: var(--foreground) !important; }
+:host(.danger-action) { background: var(--destructive) !important; color: white !important; }
+:host:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+:host:disabled { opacity: .55; cursor: not-allowed; }
+@media(hover:hover) { :host:hover:not(:disabled) { filter: brightness(.95); } }

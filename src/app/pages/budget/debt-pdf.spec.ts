@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createDebtPdf } from './debt-pdf';
-import { BudgetDebt, BudgetTransaction } from '../../shared/state/budget/budget.model';
+import { BudgetDebt, BudgetTransaction } from './state/budget.model';
 
 const debt: BudgetDebt = { id: 'loan', name: 'Home loan', type: 'loan', openingBalance: 10000, openingOverride: null, annualInterestRate: 0 };
 describe('Downloadable debt PDF', () => {

@@ -1,9 +1,10 @@
+import { AppInput } from '../../shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { PageHeader } from '../../shared/components/page-header/page-header';
-import { NutritionService } from '../../shared/state/nutrition/nutrition.service';
+import { NutritionService } from './state/nutrition.service';
 import {
   FoodLog,
   localDate,
@@ -11,18 +12,18 @@ import {
   MealCategory,
   nutritionLabel,
   zeroMacros,
-} from '../../shared/state/nutrition/nutrition.model';
+} from './state/nutrition.model';
 import {
   calculateRecipe,
   ingredientNutrition,
   scaleNutrition,
   sumNutrition,
-} from '../../shared/state/nutrition/nutrition.calculations';
-import { RecipeStore } from '../../shared/state/recipes/recipe-store';
-import { PlanningStore } from '../../shared/state/planning/planning-store';
+} from './state/nutrition.calculations';
+import { RecipeStore } from '../recipes/state/recipe-store';
+import { PlanningStore } from '../planning/state/planning-store';
 @Component({
   selector: 'app-nutrition',
-  imports: [FormsModule, RouterLink, IonContent, PageHeader],
+  imports: [AppInput, FormsModule, RouterLink, IonContent, PageHeader],
   templateUrl: './nutrition.html',
   styleUrl: './nutrition.css',
 })

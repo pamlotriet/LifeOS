@@ -1,0 +1,70 @@
+<ion-content>
+  <main class="budget-page budget-overview-page">
+    <div class="budget-topbar">
+      @if (monthlyView) { <app-back-button fallback="/budget" /> } @else { <app-back-button fallback="/home" /> }
+    </div>
+    <header class="page-header budget-overview-header">
+      <div class="budget-title"><span class="budget-eyebrow">Personal finance</span><h1>@if (monthlyView) { Your <span>transactions</span> } @else { Your <span>budget</span> }</h1><p class="muted">{{ monthlyView ? "Your records, one cycle at a time" : "Plan your money. Track your progress." }}</p></div>
+      <a class="icon-button" [routerLink]="monthlyView ? '/budget/transactions/add' : '/budget/month'" [attr.aria-label]="monthlyView ? 'Add transaction' : 'View transactions'"><ion-icon [name]="monthlyView ? 'add' : 'calendar-outline'" /></a>
+    </header>
+    <section class="cycle-selector" aria-label="Budget cycle">
+      <div class="cycle-navigation">
+        <button type="button" class="icon-button" aria-label="Previous budget cycle" (click)="shiftMonth(-1)"><ion-icon name="chevron-back" aria-hidden="true" /></button>
+        <label class="cycle-picker"><span>Budget cycle</span><app-month-picker ariaLabel="Budget cycle month" [ngModel]="store.month()" (ngModelChange)="setMonth($event)" /></label>
+        <button type="button" class="icon-button" aria-label="Next budget cycle" (click)="shiftMonth(1)"><ion-icon name="chevron-forward" aria-hidden="true" /></button>
+      </div>
+      <div class="cycle-details"><p aria-label="Budget cycle dates" aria-live="polite">{{ cycleDates() }}</p><button type="button" class="text-link" (click)="goToCurrentCycle()">Current cycle</button></div>
+    </section>
+    <app-budget-nav />
+    @if (store.loading()) { <section class="budget-loading" aria-label="Loading your budget"><app-skeleton variant="cards" [count]="4" /><div class="panel mt-4 p-4"><app-skeleton variant="chart" /></div><div class="panel mt-4 p-4"><app-skeleton variant="list" [count]="4" /></div></section> }
+    @if (store.error()) { <div class="status error" role="alert">{{ store.error() }} <button class="text-link" (click)="store.reload()">Retry</button></div> }
+    @if (store.notice()) { <p class="status" role="status">{{ store.notice() }}</p> }
+    @if (!store.loading() && !store.error()) {
+      <div class="form-actions mb-4 budget-entry-actions" aria-label="Add budget transactions">
+        <a class="primary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'income' }"><ion-icon name="cash" /> Add income</a>
+        <a class="secondary-button" routerLink="/budget/transactions/add" [queryParams]="{ type: 'expense' }">Add expense</a>
+      </div>
+      @if (!monthlyView) {
+        <section aria-label="Budget statistics"><app-budget-summary [transactions]="store.monthly()" [categories]="store.categories()" /></section>
+      }
+      @if (!monthlyView) {
+        <section class="left-over-cards" aria-label="Cycle left over">
+          <article class="panel"><h2>Planned spending money</h2><strong [class.negative]="snapshot().leftOver.planned < 0">{{ money(snapshot().leftOver.planned) }}</strong><p>Recorded income minus your full cycle plan.</p></article>
+          <article class="panel"><h2>{{ snapshot().leftOver.confirmed ? "Spending account balance" : "Estimated spending left" }}</h2><strong [class.negative]="snapshot().leftOver.actual < 0" aria-live="polite">{{ money(snapshot().leftOver.actual) }}</strong><p>{{ snapshot().leftOver.confirmed ? "Carries forward your balance, adds recorded transfers to Spending and deducts Spending purchases." : 'Estimate from your budget. Set your real Spending account balance below.' }}</p>
+            <a class="text-link spending-transfer-link" routerLink="/budget/transactions/add" [queryParams]="{ type: 'spending-transfer' }">Record transfer to Spending &rarr;</a>
+            <details class="spending-balance-editor"><summary>Set current Spending balance</summary>
+              <p>Enter what is in your Spending account now, after transfers and purchases already recorded here. Existing purchases will not be deducted again. Main-account bills, savings and other accounts stay separate.</p>
+              <form (ngSubmit)="saveSpendingBalance()"><label>Current balance (R)<input appInput="field" type="text" appBudgetNumber inputmode="decimal" name="spendingBalance" [ngModel]="balanceInput()" (ngModelChange)="balanceInput.set($event); balanceSaved.set(false)" [disabled]="savingBalance()" required /></label><button appButton="secondary" type="submit" class="secondary-button" [disabled]="savingBalance()">{{ savingBalance() ? 'Saving...' : 'Confirm current balance' }}</button></form>
+              @if (balanceSaved()) { <p class="positive" role="status">Spending balance saved.</p> }
+              @if (balanceError()) { <p class="negative" role="alert">{{ balanceError() }}</p> }
+              <p>Set this once to get started. Your balance carries forward across cycles. Record each actual transfer into Spending and each Spending purchase; no monthly balance adjustment is needed.</p>
+            </details></article>
+        </section>
+        <section class="panel budget-content-card" aria-label="Savings account"><h2>Total savings</h2><strong aria-live="polite">{{ money(store.savingsTotal()) }}</strong><p>Across all budget cycles. Transfers to savings increase this balance; expenses paid from Savings reduce it.</p><div class="form-actions"><a class="text-link" routerLink="/budget/transactions/add" [queryParams]="{ type: 'transfer' }">Add to savings</a><a class="text-link" routerLink="/budget/transactions/add">Record a purchase</a></div><details class="spending-balance-editor"><summary>Set current total savings</summary><p>Enter your savings balance after all transactions already recorded here. Future transactions update it automatically.</p><form (ngSubmit)="saveSavingsBalance()"><label>Total savings (R)<input appInput="field" type="text" appBudgetNumber inputmode="decimal" name="savingsBalance" [ngModel]="savingsInput()" (ngModelChange)="savingsInput.set($event)" required [disabled]="savingsBusy()" /></label><button appButton="secondary" type="submit" class="secondary-button" [disabled]="savingsBusy()">{{ savingsBusy() ? 'Saving...' : 'Save savings balance' }}</button></form><p role="status">{{ savingsMessage() }}</p></details></section>
+        <section class="panel balance-panel" aria-label="Balance after remaining plans">
+          <div class="section-heading"><h2>Your cycle outlook</h2><a class="text-link" routerLink="/budget/planned">Edit plans</a></div>
+          <span class="outlook-label">After remaining plans</span>
+          <strong class="outlook-total" [class.deficit]="snapshot().afterPlans < 0">{{ money(snapshot().afterPlans) }}</strong>
+          <p class="outlook-note">{{ snapshot().hasPlans ? 'Based on recorded income and the plans still to be covered.' : 'No plans added yet. Add your expected costs for a fuller picture.' }}</p>
+          <dl class="outlook-breakdown"><div><dt>Balance from records</dt><dd>{{ money(snapshot().remaining) }}</dd></div><div><dt>Unspent category plans</dt><dd>− {{ money(snapshot().categoryCommitments) }}</dd></div><div><dt>Unpaid debt plans</dt><dd>− {{ money(snapshot().debtCommitments) }}</dd></div></dl>
+          <div class="allocation-bar" aria-hidden="true">@for (part of snapshot().allocation; track part.label) { <span [style.width.%]="part.percent" [style.background]="part.color"></span> }</div>
+          <p class="outlook-note">@if (snapshot().outflowPercent !== null) { {{ snapshot().outflowPercent }}% of recorded income spent or moved to savings. } @else { No income recorded for this cycle. } Figures reflect your entries, not your bank balance.</p>
+          <a class="text-link" routerLink="/budget/comparison">Compare plans with actual spending →</a>
+        </section>
+      }
+        @if (!monthlyView) { <section class="panel budget-content-card">
+          <div class="section-heading"><h2>Spending by Category</h2><a class="text-link" routerLink="/budget/insights">See all</a></div>
+          @if (spending().length) {
+            <div class="donut-layout"><div class="donut-wrap"><app-chart [config]="donut()" [height]="180" label="Spending by category; amounts and percentages listed alongside" /><div class="donut-centre">{{ money(totals().expenses) }}<small>spent</small></div></div><div class="chart-legend">@for (item of spending(); track item.id) { <div class="legend-row"><span class="swatch" [style.background]="item.colour"></span><span>{{ item.name }}</span><strong>{{ money(item.amount) }}<small>{{ item.percent }}%</small></strong></div> }</div></div>
+          } @else { <div class="panel empty-state"><p>Your spending breakdown will appear here after your first expense.</p></div> }
+          <p class="spending-note">{{ snapshot().expenseCount }} recorded expenses · Includes bills and {{ money(snapshot().debtPaid) }} in debt payments. Savings and unpaid plans are excluded.</p>
+          <div class="toolbar"><a class="text-link" routerLink="/budget/categories">Manage categories</a><a class="text-link" routerLink="/budget/insights">View insights <ion-icon name="chevron-forward" /></a></div>
+        </section> }
+      <div class="section-heading transaction-heading"><div><h2>{{ monthlyView ? 'Transactions' : 'Recent transactions' }}</h2>@if (monthlyView) { <p class="transaction-count" aria-live="polite">{{ filtered().length }} {{ filtered().length === 1 ? 'transaction' : 'transactions' }} {{ selectedDate() ? 'on this date' : 'this cycle' }}</p> }</div>@if (!monthlyView) { <a class="text-link" routerLink="/budget/month">See all</a> } @else { <a class="text-link" routerLink="/budget/transactions/add">Add new</a> }</div>
+      @if (monthlyView) {
+        <div class="transaction-filters"><label for="transaction-date">Date<select id="transaction-date" [ngModel]="selectedDate()" (ngModelChange)="selectedDate.set($event)"><option value="">All dates in this cycle</option>@for (date of transactionDates(); track date.value) { <option [value]="date.value">{{ date.label }}</option> }</select></label>@if (selectedDate()) { <button type="button" class="text-link" (click)="selectedDate.set('')">Clear filter</button> }</div>
+      }
+      <app-budget-transactions [transactions]="monthlyView ? filtered() : store.monthly().slice(0, 5)" [categories]="store.categories()" />
+    }
+  </main>
+</ion-content>

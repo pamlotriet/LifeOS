@@ -1,4 +1,4 @@
-import { RefuelEntry, refuelAverages } from '../../shared/state/refuels/refuel.model';
+import { RefuelEntry, refuelAverages } from './state/refuel.model';
 export interface FuelPoint { label:string; value:number|null; }
 export function fuelAnalytics(entries:RefuelEntry[],limit=12) {
   const ordered=[...entries].sort((a,b)=>a.dop.localeCompare(b.dop)||a.odometer-b.odometer||a.id.localeCompare(b.id));

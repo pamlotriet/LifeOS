@@ -1,10 +1,12 @@
-import { GymExercisePicker } from './gym-exercise-picker';
+import { AppButton } from '../../shared/components/app-button/app-button';
+import { AppInput } from '../../shared/components/app-input/app-input';
+import { GymExercisePicker } from './components/gym-exercise-picker/gym-exercise-picker';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonModal } from '@ionic/angular';
-import { GYM_DAYS, GymEntry, GymExercise, MUSCLE_GROUPS } from '../../shared/state/gym/gym.model';
-import { GymStore } from '../../shared/state/gym/gym.store';
+import { GYM_DAYS, GymEntry, GymExercise, MUSCLE_GROUPS } from './state/gym.model';
+import { GymStore } from './state/gym.store';
 type WorkoutDraft = Omit<GymEntry, 'id' | 'sets' | 'rest'> & {
   sets: number | null;
   rest: number | null;
@@ -12,7 +14,7 @@ type WorkoutDraft = Omit<GymEntry, 'id' | 'sets' | 'rest'> & {
 
 @Component({
   selector: 'app-gym',
-  imports: [IonContent, IonModal, FormsModule, RouterLink, GymExercisePicker],
+  imports: [AppInput, AppButton, IonContent, IonModal, FormsModule, RouterLink, GymExercisePicker],
   templateUrl: './gym.html',
   styleUrls: ['./gym.css', './gym-workflow.css', './gym-popup.css'],
 })

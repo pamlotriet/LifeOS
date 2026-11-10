@@ -1,0 +1,14 @@
+import { Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { AppChart } from '../../../../shared/components/app-chart/app-chart';
+import { StatsDashboard } from '../../state/stats.service';
+
+@Component({
+  selector: 'app-budget-statistics',
+  imports: [RouterLink, AppChart],
+  templateUrl: './budget-statistics.html',
+  styleUrl: './budget-statistics.css',
+})
+export class BudgetStatistics {
+  readonly data = input.required<StatsDashboard>();
+}

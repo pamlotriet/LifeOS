@@ -1,15 +1,16 @@
-import { RecipeForm } from './recipe-form';
+import { AppInput } from '../../shared/components/app-input/app-input';
+import { RecipeForm } from './recipe-form/recipe-form';
 import { BackButton } from '../../shared/components/back-button/back-button';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { RECIPE_CATEGORIES, recipeCategories } from '../../shared/state/recipes/recipe.model';
-import { RecipeStore } from '../../shared/state/recipes/recipe-store';
+import { RECIPE_CATEGORIES, recipeCategories } from './state/recipe.model';
+import { RecipeStore } from './state/recipe-store';
 import { AppSkeleton } from '../../shared/components/app-skeleton/app-skeleton';
 
 @Component({
   selector: 'app-recipes',
-  imports: [BackButton, IonContent, IonIcon, RouterLink, AppSkeleton, RecipeForm],
+  imports: [AppInput, BackButton, IonContent, IonIcon, RouterLink, AppSkeleton, RecipeForm],
   templateUrl: './recipes.html',
   styleUrl: './recipes.css',
 })

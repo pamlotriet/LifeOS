@@ -1,0 +1,76 @@
+import { IonModal } from '@ionic/angular';
+import { FuelModalStub } from '../fuel-modal.testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
+import { AddCar } from './add-car';
+import { VehicleStore } from '../vehicles/state/vehicle-store';
+
+describe('AddCar', () => {
+  let component: AddCar;
+  let fixture: ComponentFixture<AddCar>;
+  let addVehicle: ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
+    addVehicle = vi.fn().mockResolvedValue(undefined);
+    await TestBed.configureTestingModule({
+      imports: [AddCar],
+      providers: [provideRouter([]), { provide: VehicleStore, useValue: { add: addVehicle } }],
+    }).overrideComponent(AddCar, { remove: { imports: [IonModal] }, add: { imports: [FuelModalStub] } }).compileComponents();
+
+    fixture = TestBed.createComponent(AddCar);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('closes on dismissal and ignores duplicate dismissal events', () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    fixture.componentInstance.dismiss();
+    fixture.componentInstance.dismiss();
+    expect(fixture.componentInstance.modalOpen()).toBe(false);
+    expect(navigate).toHaveBeenCalledTimes(1);
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('does not save an incomplete vehicle', () => {
+    component.submit();
+
+    expect(component.vehicleForm.invalid).toBe(true);
+    expect(addVehicle).not.toHaveBeenCalled();
+  });
+
+  it('saves a valid vehicle and returns to the list', async () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    component.vehicleForm.patchValue({
+      make: ' Toyota ',
+      model: ' Corolla ',
+      year: '2024',
+      registration: 'caa 123 456',
+      fuelType: 'Petrol',
+      odometer: 12500,
+    });
+
+    await component.submit();
+
+    expect(addVehicle).toHaveBeenCalledWith(
+      expect.objectContaining({ make: 'Toyota', model: 'Corolla', year: '2024', registration: 'CAA 123 456', odometer: 12500 }),
+    );
+    expect(navigate).toHaveBeenCalledWith('/fuel/vehicles', { replaceUrl:true });
+  });
+
+  it('stays on the form when Firebase cannot save the vehicle', async () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    addVehicle.mockRejectedValue(new Error('Could not save vehicle (403).'));
+    component.vehicleForm.patchValue({
+      make: 'Toyota', model: 'Corolla', year: '2024', registration: 'CAA 123 456',
+      fuelType: 'Petrol', odometer: 12500,
+    });
+
+    await component.submit();
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(component.saveError()).toContain('Could not save vehicle');
+  });
+});

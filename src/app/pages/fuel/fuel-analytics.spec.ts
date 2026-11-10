@@ -1,5 +1,5 @@
 import { describe,expect,it } from 'vitest';
-import { calculateRefuels,RefuelRecord } from '../../shared/state/refuels/refuel.model';
+import { calculateRefuels,RefuelRecord } from './state/refuel.model';
 import { fuelAnalytics } from './fuel-analytics';
 const record=(id:string,date:string,odometer:number,amountPaid=800):RefuelRecord=>({id,vehicleId:'car',dop:date,odometer,amountPaid,qtyLiters:40,pop:'Station',areaTown:'Town',fuelType:'95',initialRangeKm:null});
 describe('Fuel chart data',()=>{

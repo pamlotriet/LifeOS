@@ -1,5 +1,5 @@
 import { BackButton } from '../back-button/back-button';
-import { AppNavigation } from '../../state/app-navigation.service';
+import { AppNavigation } from '../../../core/navigation/app-navigation.service';
 import { Component, inject, input } from '@angular/core';
 
 @Component({

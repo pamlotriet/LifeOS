@@ -1,5 +1,5 @@
-import { cycleBounds } from '../../shared/state/budget/budget-cycle';
-import { BudgetDebt, BudgetTransaction, debtSummary, money, total } from '../../shared/state/budget/budget.model';
+import { cycleBounds } from './state/budget-cycle';
+import { BudgetDebt, BudgetTransaction, debtSummary, money, total } from './state/budget.model';
 
 const escape = (value: string): string => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
 const date = (value: string): string => new Date(`${value}T12:00:00`).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' });

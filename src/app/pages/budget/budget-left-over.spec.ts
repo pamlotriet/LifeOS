@@ -1,7 +1,7 @@
 import { computed, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
 import { budgetSnapshot } from './budget-snapshot';
-import { BudgetTransaction, DEFAULT_CATEGORIES } from '../../shared/state/budget/budget.model';
+import { BudgetTransaction, DEFAULT_CATEGORIES } from './state/budget.model';
 
 describe('Left over category', () => {
   it('keeps planned left over stable while actual follows additions, edits and deletions', () => {
