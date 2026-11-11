@@ -1,0 +1,83 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.carousel-nav[hidden] {
+  display: none;
+}
+
+.carousel {
+  position: relative;
+  min-width: 0;
+}
+
+.carousel-nav {
+  display: none;
+  position: absolute;
+  top: calc(50% - 9px);
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  transform: translateY(-50%);
+  --app-button-radius: 50%;
+  box-shadow: 0 3px 12px color-mix(in srgb, var(--foreground) 8%, transparent) !important;
+}
+
+.carousel-nav:first-child {
+  left: -22px;
+}
+
+.carousel-nav:last-child {
+  right: -22px;
+}
+
+.carousel-nav svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--primary);
+}
+
+@media (min-width: 768px) {
+  .carousel-nav {
+    display: inline-flex;
+  }
+}
+
+.carousel-track {
+  --scrollbar-thumb: color-mix(in srgb, var(--primary) 28%, var(--secondary));
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--secondary);
+}
+
+.carousel-track:hover,
+.carousel-track:focus-within {
+  --scrollbar-thumb: color-mix(in srgb, var(--primary) 60%, var(--secondary));
+}
+
+/* Keep the rounded treatment in browsers using WebKit scrollbar styling. */
+@supports selector(::-webkit-scrollbar) {
+  .carousel-track {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+
+  .carousel-track::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .carousel-track::-webkit-scrollbar-track {
+    background: var(--secondary);
+    border-radius: 999px;
+  }
+
+  .carousel-track::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 999px;
+  }
+
+  .carousel-track::-webkit-scrollbar-thumb:active {
+    background: var(--primary);
+  }
+}

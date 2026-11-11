@@ -2470,5 +2470,21 @@
   "home.no_spaces_match_count": "No spaces match “{{p0}}”.",
   "home.clear_search": "Clear search",
   "home.balance": "balance",
-  "search.clear": "Clear search"
+  "search.clear": "Clear search",
+  "home.spent_this_month": "spent this month",
+  "home.fuel_selected_vehicle": "Selected vehicle: {{p0}}",
+  "home.planned_meals": "planned meals",
+  "home.today_and_upcoming": "Today and upcoming",
+  "home.saved_recipes": "saved recipes",
+  "home.saved_passwords": "saved passwords",
+  "home.vault_locked": "Locked",
+  "home.unlock_to_view_total": "Unlock your vault to view the total",
+  "home.saved_vehicles": "saved vehicles",
+  "home.previous_metrics": "Previous metrics",
+  "home.next_metrics": "Next metrics",
+  "home.pause_metrics": "Pause",
+  "home.play_metrics": "Play",
+  "home.count_fuel_spent": "{{p0}} this month ({{p1}})",
+  "home.count_saved_recipes": "{{p0}} saved recipes",
+  "home.count_saved_passwords": "{{p0}} saved passwords"
 }

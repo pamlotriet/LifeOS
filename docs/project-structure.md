@@ -6,6 +6,7 @@ src/app/
     components/
       app-input/               Native text, number and multiline fields
       app-button/              Primary, secondary and destructive actions
+      app-carousel/            Projected slides, autoplay, desktop arrows and themed scrolling
       app-search/              Ionic search bar with shared styling and signal binding
       app-select/
       app-date-picker/
@@ -182,3 +183,16 @@ than shared controls.
 Run `npm.cmd run build` and `npm.cmd test -- --watch=false` after moving files.
 Update static and lazy imports, template/style references and test fixture paths
 together. A structural refactor must not rename routes or change persisted records.
+
+## Skeleton placeholders
+
+Import `AppSkeleton` from `@shared/components/app-skeleton/app-skeleton`.
+Use Tailwind dimensions for individual placeholders; rectangles and circles are
+decorative, so keep an accessible loading message on the surrounding region.
+
+```html
+<app-skeleton variant="rectangle" class="h-8 w-30" />
+<app-skeleton variant="circle" class="size-12" />
+```
+
+Existing `list`, `cards`, `grid`, `form` and `chart` variants remain available.

@@ -1,3 +1,6 @@
+import { PasswordStore } from '@pages/passwords/state/vault/password-store';
+import { RefuelStore } from '@pages/fuel/state/refuel/refuel-store';
+import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
 import { signal } from '@angular/core';
 import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
 import { GymStore } from '@pages/gym/state/gym/gym.store';
@@ -7,7 +10,6 @@ import { PlanningStore } from '@pages/planning/state/plan/planning-store';
 import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { vi } from 'vitest';
 import { Home } from '@pages/home/home';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -22,6 +24,28 @@ describe('Home', () => {
       imports: [Home],
       providers: [
         provideRouter([]),
+        {
+          provide: PasswordStore,
+          useValue: {
+            records: signal([]),
+            vault: { crypto: { unlocked: signal(false) } },
+            loading: signal(false),
+            error: signal(''),
+          },
+        },
+        {
+          provide: RefuelStore,
+          useValue: {
+            entries: signal([]),
+            selectedVehicle: signal(null),
+            loading: signal(false),
+            error: signal(''),
+          },
+        },
+        {
+          provide: RecipeStore,
+          useValue: { recipes: signal([]), loading: signal(false), error: signal('') },
+        },
         {
           provide: NutritionService,
           useValue: {
@@ -66,35 +90,12 @@ describe('Home', () => {
 
   it('opens the nutrition tracker directly from Home', () => {
     const link = fixture.nativeElement.querySelector(
-      '.featured-space[href="/nutrition"]',
+      '.metric-card[href="/nutrition"]',
     ) as HTMLAnchorElement;
     expect(link).toBeTruthy();
-    expect(link.textContent).toContain('Calories & macros');
-  });
-
-  it('filters spaces by their name', () => {
-    component.searchQuery.set('books');
-    expect(component.dashboardState.filteredSpaces().map((space) => space.route)).toEqual([
-      '/books',
-    ]);
-    expect(component.dashboardState.featuredSpaces()).toEqual([]);
-  });
-
-  it('filters and restores spaces through the reusable search bar', async () => {
-    const searchbar = fixture.nativeElement.querySelector('app-search ion-searchbar');
-    searchbar.dispatchEvent(new CustomEvent('ionInput', { detail: { value: 'books' } }));
-    await fixture.whenStable();
-    expect(component.searchQuery()).toBe('books');
-    expect(component.dashboardState.filteredSpaces().map((space) => space.route)).toEqual([
-      '/books',
-    ]);
-    expect(component.dashboardState.featuredSpaces()).toEqual([]);
-
-    searchbar.dispatchEvent(new CustomEvent('ionClear'));
-    await fixture.whenStable();
-    expect(component.searchQuery()).toBe('');
-    expect(component.dashboardState.filteredSpaces()).toHaveLength(7);
-    expect(component.dashboardState.featuredSpaces()).toHaveLength(2);
+    expect(link.textContent).toContain('Calories');
+    expect(link.querySelector('progress')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.featured-spaces')).toBeNull();
   });
 
   it('shows empty recorded data without sample totals', () => {
@@ -104,36 +105,59 @@ describe('Home', () => {
     expect(component.dashboardState.overviewMetrics()[0].hint).toBe('home.no_food_logged_today');
   });
 
-  it('updates labels, interpolated totals, search and accessible text from the catalog', async () => {
+  it('shows reusable placeholders while metrics load and replaces them with data', async () => {
+    const nutrition = TestBed.inject(NutritionService);
+    (nutrition.loading as ReturnType<typeof signal<boolean>>).set(true);
+    await fixture.whenStable();
+    const calorieCard = fixture.nativeElement.querySelector('.metric-card');
+    expect(calorieCard.getAttribute('aria-busy')).toBe('true');
+    expect(calorieCard.querySelectorAll('app-skeleton[aria-hidden="true"]')).toHaveLength(2);
+    expect(calorieCard.querySelector('.sr-only').textContent).toContain('Loading Calories');
+    expect(calorieCard.querySelector('.metric-value')).toBeNull();
+
+    (nutrition.loading as ReturnType<typeof signal<boolean>>).set(false);
+    await fixture.whenStable();
+    expect(calorieCard.querySelector('app-skeleton')).toBeNull();
+    expect(calorieCard.querySelector('.metric-value')).toBeTruthy();
+  });
+
+  it('updates labels and interpolated totals from the catalog', async () => {
     const translate = TestBed.inject(TranslateService);
     translate.setTranslation('fr', {
-      'home.search_spaces': 'Chercher un espace',
       'home.no_food_logged_today': 'Aucun repas enregistré',
       'home.count_finished_this_month': '{{p0}} livres terminés ce mois',
       'home.books': 'Livres',
       'home.read_more': 'Lire davantage',
-      'home.clear_search': 'Effacer la recherche',
     });
     translate.use('fr');
     await fixture.whenStable();
 
     expect(fixture.nativeElement.textContent).toContain('Aucun repas enregistré');
     expect(fixture.nativeElement.textContent).toContain('0 livres terminés ce mois');
-    const input = fixture.nativeElement.querySelector('input');
-    await vi.waitFor(() => {
-      expect(input.placeholder).toBe('Chercher un espace');
-      expect(input.getAttribute('aria-label')).toBe('Chercher un espace');
-    });
-    component.searchQuery.set('livres');
-    await fixture.whenStable();
-    expect(component.dashboardState.filteredSpaces().map((space) => space.route)).toEqual([
-      '/books',
-    ]);
-    component.searchQuery.set('no matching space');
-    await fixture.whenStable();
-    expect(fixture.nativeElement.querySelector('.home-empty button').textContent).toContain(
-      'Effacer la recherche',
-    );
+    expect(fixture.nativeElement.querySelector('app-search')).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('.space-row')).toHaveLength(7);
+  });
+
+  it('provides metrics for all spaces except passwords', () => {
+    const metrics = component.dashboardState.overviewMetrics();
+    for (const space of component.homeStateService.spaceLinks.filter(
+      (space) => space.route !== '/passwords',
+    )) {
+      expect(metrics.some((metric) => metric.route === space.route)).toBe(true);
+    }
+    expect(metrics.some((metric) => metric.route === '/passwords')).toBe(false);
+    expect(fixture.nativeElement.querySelectorAll('.metric-card')).toHaveLength(8);
+    expect(fixture.nativeElement.querySelector('.space-row[href="/passwords"]')).toBeTruthy();
+  });
+
+  it('shows a summary for every space, including a locked vault', () => {
+    for (const space of component.dashboardState.spaces) {
+      const summary = fixture.nativeElement.querySelector(
+        `.space-row[href="${space.route}"] small`,
+      );
+      expect(summary.textContent.trim()).not.toBe('');
+    }
+    expect(component.getSpaceSummary('/passwords').key).toBe('home.vault_locked');
   });
 
   it('should create', () => {

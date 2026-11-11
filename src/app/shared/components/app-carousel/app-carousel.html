@@ -1,0 +1,62 @@
+<div
+  class="carousel"
+  (mouseenter)="setHover(true)"
+  (mouseleave)="setHover(false)"
+  (focusin)="setFocus(true)"
+  (focusout)="setFocus(false, $event)"
+>
+  <button
+    appButton="secondary"
+    type="button"
+    class="carousel-nav"
+    [hidden]="!showArrows()"
+    (click)="scroll(-1, true)"
+    [attr.aria-controls]="trackId"
+    [attr.aria-label]="previousLabel()"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+  </button>
+  <section
+    [id]="trackId"
+    #track
+    class="carousel-track relative flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-0.5 pt-0.5 pb-3"
+    (pointerdown)="noteInteraction()"
+    (wheel)="noteInteraction()"
+    (keydown.arrowright)="scroll(1, true); $event.preventDefault()"
+    (keydown.arrowleft)="scroll(-1, true); $event.preventDefault()"
+    [attr.aria-label]="label()"
+  >
+    <ng-content />
+  </section>
+  <button
+    appButton="secondary"
+    type="button"
+    class="carousel-nav"
+    [hidden]="!showArrows()"
+    (click)="scroll(1, true)"
+    [attr.aria-controls]="trackId"
+    [attr.aria-label]="nextLabel()"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  </button>
+</div>

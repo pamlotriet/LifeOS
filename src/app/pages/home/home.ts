@@ -1,3 +1,6 @@
+import { AppCarousel } from '@shared/components/app-carousel/app-carousel';
+import { PasswordStore } from '@pages/passwords/state/vault/password-store';
+import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 import { LanguageService } from '@core/i18n/language.service';
 import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
 import { GymStore } from '@pages/gym/state/gym/gym.store';
@@ -7,9 +10,8 @@ import { PlanningStore } from '@pages/planning/state/plan/planning-store';
 import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { money } from '@pages/budget/state/budget/budget.model';
 import { localDate } from '@pages/nutrition/state/nutrition/nutrition.model';
-import { Component, computed, inject, signal } from '@angular/core';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AppSearch } from '@shared/components/app-search/app-search';
+import { Component, computed, inject } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { HomeStateService } from '@pages/home/state/dashboard/home-state.service';
 import { addIcons } from 'ionicons';
 import {
@@ -20,22 +22,19 @@ import {
   calendar,
   book,
   lockClosed,
-  scanOutline,
-  cash,
   checkmark,
 } from 'ionicons/icons';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 
 @Component({
-  imports: [TranslatePipe, AppSearch, IonContent, IonIcon, RouterLink],
+  imports: [AppCarousel, TranslatePipe, AppSkeleton, IonContent, IonIcon, RouterLink],
   providers: [HomeStateService],
   selector: 'app-home',
   templateUrl: './home.html',
   host: { class: 'block' },
 })
 export class Home {
-  private readonly translations = inject(TranslateService);
   private readonly currentLanguage = inject(LanguageService).currentLanguage;
 
   readonly nutrition = inject(NutritionService);
@@ -44,14 +43,13 @@ export class Home {
   readonly books = inject(BookStore);
   readonly planning = inject(PlanningStore);
   readonly vehicles = inject(VehicleStore);
+  readonly passwords = inject(PasswordStore);
 
-  readonly searchQuery = signal('');
   readonly todayDate = localDate();
   readonly homeStateService = inject(HomeStateService);
 
   readonly dashboardState = this.homeStateService.create({
     todayDate: this.todayDate,
-    matchesSearchQuery: (space) => this.matchesSearchQuery(space),
   });
 
   constructor() {
@@ -63,17 +61,8 @@ export class Home {
       calendar,
       book,
       lockClosed,
-      scanOutline,
-      cash,
       checkmark,
     });
-  }
-
-  matchesSearchQuery(space: { title: string; description: string }): boolean {
-    this.currentLanguage();
-    return `${this.translations.instant(space.title)} ${this.translations.instant(space.description)}`
-      .toLowerCase()
-      .includes(this.searchQuery().trim().toLowerCase());
   }
 
   calculateProgressPercentage(value: number, goal: number): number {
@@ -81,6 +70,11 @@ export class Home {
   }
 
   isSpaceLoading(route: string): boolean {
+    if (route === '/passwords') return this.passwords.loading();
+    if (route === '/fuel' || route === '/recipes') {
+      return !!this.dashboardState.overviewMetrics().find((metric) => metric.route === route)
+        ?.loading;
+    }
     if (route === '/budget') return this.budget.loading();
     if (route === '/books') return this.books.loading();
     if (route === '/planning') return this.planning.loading();
@@ -90,6 +84,24 @@ export class Home {
 
   getSpaceSummary(route: string): { key: string; params?: Record<string, unknown> } {
     switch (route) {
+      case '/fuel':
+      case '/recipes': {
+        const metric = this.dashboardState.overviewMetrics().find((item) => item.route === route)!;
+        return metric.error
+          ? { key: 'home.open_this_space_to_retry' }
+          : route === '/fuel'
+            ? {
+                key: 'home.count_fuel_spent',
+                params: { p0: metric.value, p1: metric.hintParams?.p0 },
+              }
+            : { key: 'home.count_saved_recipes', params: { p0: metric.value } };
+      }
+      case '/passwords':
+        return this.passwords.error()
+          ? { key: 'home.open_this_space_to_retry' }
+          : this.passwords.vault.crypto.unlocked()
+            ? { key: 'home.count_saved_passwords', params: { p0: this.passwords.records().length } }
+            : { key: 'home.vault_locked' };
       case '/budget':
         return this.budget.loading()
           ? { key: 'home.loading_balance' }

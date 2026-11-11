@@ -1,3 +1,7 @@
+import { RefuelStore } from '@pages/fuel/state/refuel/refuel-store';
+import { PlanningStore } from '@pages/planning/state/plan/planning-store';
+import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { Injectable, computed, inject } from '@angular/core';
 import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
 import { GymStore } from '@pages/gym/state/gym/gym.store';
@@ -12,10 +16,12 @@ export class HomeStateService {
   private readonly budget = inject(BudgetStore);
   private readonly books = inject(BookStore);
 
-  create(context: {
-    todayDate: string;
-    matchesSearchQuery: (space: { title: string; description: string }) => boolean;
-  }) {
+  private readonly fuel = inject(RefuelStore);
+  private readonly planning = inject(PlanningStore);
+  private readonly recipes = inject(RecipeStore);
+  private readonly vehicles = inject(VehicleStore);
+
+  create(context: { todayDate: string }) {
     const calories = computed(() =>
       this.nutrition
         .logs()
@@ -30,16 +36,15 @@ export class HomeStateService {
     const balance = computed(
       () => summary(this.budget.monthly(), this.budget.categories()).remaining,
     );
-    const filteredSpaces = computed(() =>
-      ['/budget', '/fuel', '/planning', '/books', '/recipes', '/passwords', '/fuel/vehicles']
-        .map((route) => this.spaceLinks.find((space) => space.route === route)!)
-        .filter((space) => context.matchesSearchQuery(space)),
-    );
-    const featuredSpaces = computed(() =>
-      this.spaceLinks.filter(
-        (space) => [7, 8].includes(space.id) && context.matchesSearchQuery(space),
-      ),
-    );
+    const spaces = [
+      '/budget',
+      '/fuel',
+      '/planning',
+      '/books',
+      '/recipes',
+      '/passwords',
+      '/fuel/vehicles',
+    ].map((route) => this.spaceLinks.find((space) => space.route === route)!);
     const overviewMetrics = computed(() => {
       const goal = calorieGoal(),
         caloriesRemaining = goal - calories();
@@ -101,6 +106,50 @@ export class HomeStateService {
           loading: this.books.loading(),
           error: this.books.error(),
         },
+        {
+          title: 'home.fuel',
+          value: money(
+            this.fuel
+              .entries()
+              .filter((entry) => entry.dop.startsWith(context.todayDate.slice(0, 7)))
+              .reduce((total, entry) => total + entry.amountPaid, 0),
+          ),
+          unit: 'home.spent_this_month',
+          hint: 'home.fuel_selected_vehicle',
+          hintParams: { p0: this.fuel.selectedVehicle()?.name ?? '?' },
+          route: '/fuel',
+          loading: this.fuel.loading() || this.vehicles.loading(),
+          error: this.fuel.error() || this.vehicles.error(),
+        },
+        {
+          title: 'home.planning',
+          value: String(
+            this.planning.meals().filter((meal) => meal.date >= context.todayDate).length,
+          ),
+          unit: 'home.planned_meals',
+          hint: 'home.today_and_upcoming',
+          route: '/planning',
+          loading: this.planning.loading(),
+          error: this.planning.error(),
+        },
+        {
+          title: 'home.recipes',
+          value: String(this.recipes.recipes().length),
+          unit: 'home.saved_recipes',
+          hint: 'home.cook_your_favourites',
+          route: '/recipes',
+          loading: this.recipes.loading(),
+          error: this.recipes.error(),
+        },
+        {
+          title: 'home.vehicles',
+          value: String(this.vehicles.vehicles().length),
+          unit: 'home.saved_vehicles',
+          hint: 'home.manage_your_cars',
+          route: '/fuel/vehicles',
+          loading: this.vehicles.loading(),
+          error: this.vehicles.error(),
+        },
       ];
     });
 
@@ -110,8 +159,7 @@ export class HomeStateService {
       trainingDays,
       reading,
       balance,
-      filteredSpaces,
-      featuredSpaces,
+      spaces,
       overviewMetrics,
     };
   }
@@ -207,16 +255,5 @@ export class HomeStateService {
       id: 6,
       route: '/fuel/vehicles',
     },
-  ];
-
-  readonly quickActions = [
-    {
-      label: 'home.add_expense',
-      icon: 'cash',
-      accent: 'emerald',
-      route: '/budget/transactions/add',
-    },
-    { label: 'home.log_refuel', icon: 'car', accent: 'amber', route: '/fuel' },
-    { label: 'home.scan_book', icon: 'scan-outline', accent: 'violet', route: '/books/scan' },
   ];
 }
