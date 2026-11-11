@@ -4,8 +4,8 @@ import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
-import { BookTag, BookTagType } from '@pages/books/state/book.model';
-import { BookStore } from '@pages/books/state/book-store';
+import { BookTag, BookTagType } from '@pages/books/state/book/book.model';
+import { BookStore } from '@pages/books/state/book/book-store';
 
 @Component({
   selector: 'app-book-tags',

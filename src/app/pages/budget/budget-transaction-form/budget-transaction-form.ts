@@ -8,14 +8,14 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   compatibleCategory,
   isSpendingCategory,
   localDate,
   TransactionInput,
   TransactionType,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 
 @Component({
   selector: 'app-budget-transaction-form',

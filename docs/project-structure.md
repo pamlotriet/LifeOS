@@ -34,7 +34,13 @@ src/app/
       book-tags/
       book-transfer/
       reading-wheel/
-      state/                   Book models, stores, services and calculation tests
+      state/                   Book state grouped by responsibility
+        book/                  Records, store, persistence and tracking tests
+        barcode-scanner/       Camera/photo scanning, decoder and fixtures
+        transfer/              Backup import/export and tests
+        genres/                Default genre tags
+        covers/                Cover and ISBN lookup service
+        reading-goal/          Annual goal persistence and tests
     budget/
       budget-overview/
       budget-transaction-form/
@@ -45,47 +51,65 @@ src/app/
       budget-insights/
       components/              Budget navigation, summary and transactions
       state/
+        budget/
+        cycle/
     fuel/
       add-car/                 Add/edit vehicle screen and tests
       vehicles/
-        state/                 Vehicle state used by all vehicle screens
+        state/
+          vehicle/             Vehicle state used by all vehicle screens
       refuel-form/
       history/
       consumptions/
       insights/
       fuel-dashboard/
       components/
-      state/                   Refuel models, store and service
+      state/
+        refuel/                Refuel models, store, service and tests
     gym/
       components/
       state/
+        gym/
+        weekly-plan/
     nutrition/
       nutrition-profile/
       nutrition-settings/
       state/
+        nutrition/
+        calculations/
     passwords/
       password-form/
       password-settings/
       state/
+        vault/
+        crypto/
+        generator/
     planning/
       ingredients/
       planning-meals/
       components/
       state/
+        plan/
     recipes/
       recipe-form/
       recipe-detail/
       state/
+        recipe/
     statistics/
       components/
       state/
+        overview/
+        books/
+        debts/
+        vehicles/
     home/
     more/
 ```
 
 Feature landing screens can live directly in their feature folder. Additional screens
 and reusable feature components each have a folder containing their TypeScript,
-template, stylesheet and tests. Feature state lives with its owning feature even
+template, stylesheet and tests. Group feature state into subfolders by responsibility, keeping tests beside the
+code they exercise. Feature state lives with its owning feature even
 when another feature consumes its data. Infrastructure and genuinely app-wide
 services belong in `core`; `shared/state` has been removed.
 

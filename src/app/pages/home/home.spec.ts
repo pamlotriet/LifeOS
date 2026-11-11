@@ -1,10 +1,10 @@
 import { signal } from '@angular/core';
-import { NutritionService } from '@pages/nutrition/state/nutrition.service';
-import { GymStore } from '@pages/gym/state/gym.store';
-import { BudgetStore } from '@pages/budget/state/budget.store';
-import { BookStore } from '@pages/books/state/book-store';
-import { PlanningStore } from '@pages/planning/state/planning-store';
-import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
+import { GymStore } from '@pages/gym/state/gym/gym.store';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
+import { BookStore } from '@pages/books/state/book/book-store';
+import { PlanningStore } from '@pages/planning/state/plan/planning-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Home } from '@pages/home/home';

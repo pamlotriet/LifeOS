@@ -1,6 +1,6 @@
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, input } from '@angular/core';
-import { RecipeNutritionSummary, nutritionLabel } from '@pages/nutrition/state/nutrition.model';
+import { RecipeNutritionSummary, nutritionLabel } from '@pages/nutrition/state/nutrition/nutrition.model';
 @Component({
   imports: [TranslatePipe],
   selector: 'app-nutrition-summary',

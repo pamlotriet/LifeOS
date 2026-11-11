@@ -1,4 +1,4 @@
-import { BookRecord } from '@pages/books/state/book.model';
+import { BookRecord } from '@pages/books/state/book/book.model';
 
 export function finishDateParts(book: BookRecord): { year: number; month: number } | null {
   if (book.status !== 'Finished') return null;

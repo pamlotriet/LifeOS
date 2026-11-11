@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BookRecord } from '@pages/books/state/book.model';
+import { BookRecord } from '@pages/books/state/book/book.model';
 import { finishDateParts } from '@pages/books/finished-books-filter';
 
 const book = (status: BookRecord['status'], finishDate: string) =>

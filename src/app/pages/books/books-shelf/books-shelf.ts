@@ -14,8 +14,8 @@ import {
   heartOutline,
   searchOutline,
 } from 'ionicons/icons';
-import { kindleSummary } from '@pages/books/state/book.model';
-import { BookStore } from '@pages/books/state/book-store';
+import { kindleSummary } from '@pages/books/state/book/book.model';
+import { BookStore } from '@pages/books/state/book/book-store';
 
 @Component({
   selector: 'app-books-shelf',

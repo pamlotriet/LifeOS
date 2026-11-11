@@ -3,8 +3,8 @@ import '@angular/compiler';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BudgetTransactions } from '@pages/budget/components/budget-transactions/budget-transactions';
-import { BudgetStore } from '@pages/budget/state/budget.store';
-import { BudgetTransaction } from '@pages/budget/state/budget.model';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
+import { BudgetTransaction } from '@pages/budget/state/budget/budget.model';
 
 describe('Transaction deletion', () => {
   const deleteTransaction = vi.fn();

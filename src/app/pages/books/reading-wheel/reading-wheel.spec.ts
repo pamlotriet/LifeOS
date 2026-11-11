@@ -2,8 +2,8 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { BookRecord } from '@pages/books/state/book.model';
-import { BookStore } from '@pages/books/state/book-store';
+import { BookRecord } from '@pages/books/state/book/book.model';
+import { BookStore } from '@pages/books/state/book/book-store';
 import { ReadingWheel } from '@pages/books/reading-wheel/reading-wheel';
 
 describe('Reading wheel selections', () => {

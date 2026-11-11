@@ -7,13 +7,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { AppSelect, SelectOption } from '@shared/components/app-select/app-select';
 import { PageHeader } from '@shared/components/page-header/page-header';
-import { generatePassword } from '@pages/passwords/state/password-generator';
+import { generatePassword } from '@pages/passwords/state/generator/password-generator';
 import {
   PASSWORD_CATEGORIES,
   PasswordInput,
   PasswordRecord,
-} from '@pages/passwords/state/password.model';
-import { PasswordStore } from '@pages/passwords/state/password-store';
+} from '@pages/passwords/state/vault/password.model';
+import { PasswordStore } from '@pages/passwords/state/vault/password-store';
 
 @Component({
   selector: 'app-password-form',

@@ -3,7 +3,7 @@ import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
 import { BookTags } from '@pages/books/book-tags/book-tags';
-import { BookStore } from '@pages/books/state/book-store';
+import { BookStore } from '@pages/books/state/book/book-store';
 
 describe('Book tag browsing', () => {
   function fixture() {

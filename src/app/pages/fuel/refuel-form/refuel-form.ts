@@ -13,11 +13,11 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonIcon, IonModal } from '@ionic/angular';
-import { RefuelStore } from '@pages/fuel/state/refuel-store';
-import { RefuelInput } from '@pages/fuel/state/refuel.model';
+import { RefuelStore } from '@pages/fuel/state/refuel/refuel-store';
+import { RefuelInput } from '@pages/fuel/state/refuel/refuel.model';
 import { AppSelect } from '@shared/components/app-select/app-select';
 import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
-import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 
 type DecimalInput = number | string | null;

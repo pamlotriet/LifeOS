@@ -1,0 +1,78 @@
+import translationTestProviders from '@src/test-providers';
+import '@angular/compiler';
+import { Injector, runInInjectionContext } from '@angular/core';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { FirestoreService } from '@core/firebase/firestore.service';
+import { AuthService } from '@core/authentication/authentication.service';
+import { PlanningService } from '@pages/planning/state/plan/planning.service';
+
+describe('PlanningService', () => {
+  const getSession = vi.fn();
+  const listDocuments = vi.fn();
+  const createDocument = vi.fn();
+  const updateDocument = vi.fn();
+  const deleteDocument = vi.fn();
+  const service = () =>
+    runInInjectionContext(
+      Injector.create({
+        providers: [
+          ...translationTestProviders,
+          { provide: AuthService, useValue: { getSession } },
+          {
+            provide: FirestoreService,
+            useValue: {
+              listDocuments,
+              createDocument,
+              updateDocument,
+              deleteDocument,
+              tryGetDocument: vi
+                .fn()
+                .mockResolvedValue({ fields: { familyOwnerId: { stringValue: 'former-owner' } } }),
+            },
+          },
+        ],
+      }),
+      () => new PlanningService(),
+    );
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    getSession.mockResolvedValue({ uid: 'user-1', token: 'token' });
+  });
+
+  it('stores meals in the signed-in user collection even with a legacy family link', async () => {
+    await service().saveMeal({ title: 'Dinner', date: '2026-10-20', detail: '' });
+    expect(createDocument).toHaveBeenCalledWith(
+      'users/user-1/mealPlan',
+      expect.any(String),
+      expect.objectContaining({ title: { stringValue: 'Dinner' } }),
+      'token',
+    );
+  });
+
+  it('updates grocery completion without creating a duplicate', async () => {
+    await service().saveGrocery({ name: 'Rice', section: 'Pantry', checked: true }, 'item-1');
+    expect(updateDocument).toHaveBeenCalledWith(
+      'users/user-1/groceryItems/item-1',
+      expect.objectContaining({ checked: { booleanValue: true } }),
+      'token',
+    );
+    expect(createDocument).not.toHaveBeenCalled();
+  });
+
+  it('loads grocery items and their checked state', async () => {
+    listDocuments.mockResolvedValue([
+      {
+        name: 'projects/p/databases/(default)/documents/users/user-1/groceryItems/item-1',
+        fields: {
+          name: { stringValue: 'Tomatoes' },
+          section: { stringValue: 'Produce' },
+          checked: { booleanValue: true },
+        },
+      },
+    ]);
+    await expect(service().listGroceries()).resolves.toEqual([
+      { id: 'item-1', name: 'Tomatoes', section: 'Produce', checked: true },
+    ]);
+  });
+});

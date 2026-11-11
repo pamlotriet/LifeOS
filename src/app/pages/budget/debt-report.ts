@@ -1,11 +1,11 @@
-import { cycleBounds } from '@pages/budget/state/budget-cycle';
+import { cycleBounds } from '@pages/budget/state/cycle/budget-cycle';
 import {
   BudgetDebt,
   BudgetTransaction,
   debtSummary,
   money,
   total,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 
 const escape = (value: string): string =>
   value.replace(

@@ -5,8 +5,8 @@ import { BackButton } from '@shared/components/back-button/back-button';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { RECIPE_CATEGORIES, recipeCategories } from '@pages/recipes/state/recipe.model';
-import { RecipeStore } from '@pages/recipes/state/recipe-store';
+import { RECIPE_CATEGORIES, recipeCategories } from '@pages/recipes/state/recipe/recipe.model';
+import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
 import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 
 @Component({

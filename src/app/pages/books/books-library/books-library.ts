@@ -27,9 +27,9 @@ import {
   BookRecord,
   BOOK_CATEGORIES,
   BOOK_FORMATS,
-} from '@pages/books/state/book.model';
-import { BookStore } from '@pages/books/state/book-store';
-import { ReadingGoalService } from '@pages/books/state/reading-goal.service';
+} from '@pages/books/state/book/book.model';
+import { BookStore } from '@pages/books/state/book/book-store';
+import { ReadingGoalService } from '@pages/books/state/reading-goal/reading-goal.service';
 import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 
 @Component({

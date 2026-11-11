@@ -3,8 +3,8 @@ import '@angular/compiler';
 import { computed, Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
 import { BudgetComparison } from '@pages/budget/budget-comparison/budget-comparison';
-import { BudgetStore } from '@pages/budget/state/budget.store';
-import { BudgetTransaction, DEFAULT_CATEGORIES } from '@pages/budget/state/budget.model';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
+import { BudgetTransaction, DEFAULT_CATEGORIES } from '@pages/budget/state/budget/budget.model';
 
 function fixture() {
   const month = signal('2026-10');

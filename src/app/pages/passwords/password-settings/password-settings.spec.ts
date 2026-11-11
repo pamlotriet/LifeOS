@@ -1,10 +1,13 @@
-import { NutritionService, defaultProfile } from '@pages/nutrition/state/nutrition.service';
+import {
+  NutritionService,
+  defaultProfile,
+} from '@pages/nutrition/state/nutrition/nutrition.service';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { BudgetStore } from '@pages/budget/state/budget.store';
-import { PasswordStore } from '@pages/passwords/state/password-store';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
+import { PasswordStore } from '@pages/passwords/state/vault/password-store';
 import { ThemeService } from '@core/theme/theme.service';
 import { PasswordSettings } from '@pages/passwords/password-settings/password-settings';
 

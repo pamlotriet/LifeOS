@@ -5,15 +5,15 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { PageHeader } from '@shared/components/page-header/page-header';
-import { BookService } from '@pages/books/state/book.service';
-import { BookStore } from '@pages/books/state/book-store';
+import { BookService } from '@pages/books/state/book/book.service';
+import { BookStore } from '@pages/books/state/book/book-store';
 import {
   BookBackup,
   booksCsv,
   parseBookBackup,
   planBookImport,
-} from '@pages/books/state/book-transfer';
-import { localDate } from '@pages/nutrition/state/nutrition.model';
+} from '@pages/books/state/transfer/book-transfer';
+import { localDate } from '@pages/nutrition/state/nutrition/nutrition.model';
 @Component({
   selector: 'app-book-transfer',
   imports: [TranslatePipe, FormsModule, RouterLink, IonContent, PageHeader],

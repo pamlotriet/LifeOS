@@ -10,7 +10,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { GymExercise } from '@pages/gym/state/gym.model';
+import { GymExercise } from '@pages/gym/state/gym/gym.model';
 
 @Component({
   imports: [TranslatePipe, AppInput],

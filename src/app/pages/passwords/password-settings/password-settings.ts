@@ -1,10 +1,10 @@
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '@shared/components/page-header/page-header';
-import { PasswordStore } from '@pages/passwords/state/password-store';
+import { PasswordStore } from '@pages/passwords/state/vault/password-store';
 import { ThemeService } from '@core/theme/theme.service';
 
 @Component({

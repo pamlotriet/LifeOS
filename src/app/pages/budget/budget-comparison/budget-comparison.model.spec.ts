@@ -4,7 +4,7 @@ import {
   BudgetTransaction,
   DEFAULT_CATEGORIES,
   debtPlanId,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 
 const payment = (id: string, amount: number, extra = {}): BudgetTransaction => ({
   id,

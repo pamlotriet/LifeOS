@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { PageHeader } from '@shared/components/page-header/page-header';
-import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
 import {
   FoodLog,
   localDate,
@@ -13,15 +13,15 @@ import {
   MealCategory,
   nutritionLabel,
   zeroMacros,
-} from '@pages/nutrition/state/nutrition.model';
+} from '@pages/nutrition/state/nutrition/nutrition.model';
 import {
   calculateRecipe,
   ingredientNutrition,
   scaleNutrition,
   sumNutrition,
-} from '@pages/nutrition/state/nutrition.calculations';
-import { RecipeStore } from '@pages/recipes/state/recipe-store';
-import { PlanningStore } from '@pages/planning/state/planning-store';
+} from '@pages/nutrition/state/calculations/nutrition.calculations';
+import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
+import { PlanningStore } from '@pages/planning/state/plan/planning-store';
 @Component({
   selector: 'app-nutrition',
   imports: [TranslatePipe, AppInput, FormsModule, RouterLink, IonContent, PageHeader],

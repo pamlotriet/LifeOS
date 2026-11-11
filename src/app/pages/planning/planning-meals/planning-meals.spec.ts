@@ -5,9 +5,9 @@ import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { PlanningMeals } from '@pages/planning/planning-meals/planning-meals';
-import { PlanningStore } from '@pages/planning/state/planning-store';
-import { RecipeStore } from '@pages/recipes/state/recipe-store';
-import { NutritionService } from '@pages/nutrition/state/nutrition.service';
+import { PlanningStore } from '@pages/planning/state/plan/planning-store';
+import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
+import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
 import { Ingredients } from '@pages/planning/ingredients/ingredients';
 
 const setup = () => {

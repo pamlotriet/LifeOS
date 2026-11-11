@@ -2,14 +2,14 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
-import { NutritionService } from '@pages/nutrition/state/nutrition.service';
-import { GymStore } from '@pages/gym/state/gym.store';
-import { BudgetStore } from '@pages/budget/state/budget.store';
-import { BookStore } from '@pages/books/state/book-store';
-import { PlanningStore } from '@pages/planning/state/planning-store';
-import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
-import { money, summary } from '@pages/budget/state/budget.model';
-import { localDate } from '@pages/nutrition/state/nutrition.model';
+import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
+import { GymStore } from '@pages/gym/state/gym/gym.store';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
+import { BookStore } from '@pages/books/state/book/book-store';
+import { PlanningStore } from '@pages/planning/state/plan/planning-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
+import { money, summary } from '@pages/budget/state/budget/budget.model';
+import { localDate } from '@pages/nutrition/state/nutrition/nutrition.model';
 import { addIcons } from 'ionicons';
 import {
   restaurantOutline,

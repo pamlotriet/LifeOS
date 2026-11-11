@@ -3,7 +3,7 @@ import {
   BudgetPlan,
   BudgetTransaction,
   DEFAULT_CATEGORIES,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 import { budgetSnapshot, budgetSpending } from '@pages/budget/budget-snapshot';
 const tx = (
   amount: number,

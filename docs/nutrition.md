@@ -25,14 +25,14 @@ LifeOS now extends its existing Recipes, Planning, Grocery List, Nutrition and S
 
 ## Significant files
 
-- `src/app/pages/nutrition/state/nutrition.model.ts`: compatible expanded domain types.
-- `src/app/pages/nutrition/state/nutrition.calculations.ts`: normalization, explicit conversions, recipe aggregation, scaling, snapshots, daily statistics, duplicate detection and grocery aggregation.
-- `src/app/pages/nutrition/state/nutrition.service.ts`: ingredient CRUD/archive, personal ingredient scope, private logging/edits/deletes, goals and persistence.
+- `src/app/pages/nutrition/state/nutrition/nutrition.model.ts`: compatible expanded domain types.
+- `src/app/pages/nutrition/state/calculations/nutrition.calculations.ts`: normalization, explicit conversions, recipe aggregation, scaling, snapshots, daily statistics, duplicate detection and grocery aggregation.
+- `src/app/pages/nutrition/state/nutrition/nutrition.service.ts`: ingredient CRUD/archive, personal ingredient scope, private logging/edits/deletes, goals and persistence.
 - `src/app/shared/components/nutrition-summary/nutrition-summary.ts`: reusable complete/incomplete recipe nutrition summary.
 - `src/app/pages/nutrition/nutrition.ts`, `nutrition.html`, `nutrition-settings.ts`: daily diary, library, logging/history/editing and target guidance.
-- `src/app/pages/recipes/recipe-form/recipe-form.*`, `recipe-detail.*`, `src/app/pages/recipes/state/recipe.model.ts`, `recipe.service.ts`: existing recipe integration and compatibility.
-- `src/app/pages/planning/planning-meals/planning-meals.*`, `src/app/pages/planning/state/planning.model.ts`, `planning.service.ts`: expanded existing planner and grocery persistence.
-- `src/app/pages/statistics/state/stats.service.ts`, `src/app/pages/statistics/statistics.*`: Nutrition module, existing Chart.js components, range filters and consumption-only reporting.
+- `src/app/pages/recipes/recipe-form/recipe-form.*`, `recipe-detail.*`, `src/app/pages/recipes/state/recipe/recipe.model.ts`, `recipe.service.ts`: existing recipe integration and compatibility.
+- `src/app/pages/planning/planning-meals/planning-meals.*`, `src/app/pages/planning/state/plan/planning.model.ts`, `planning.service.ts`: expanded existing planner and grocery persistence.
+- `src/app/pages/statistics/state/overview/stats.service.ts`, `src/app/pages/statistics/statistics.*`: Nutrition module, existing Chart.js components, range filters and consumption-only reporting.
 - `firestore.rules`: recipe-sharing-scoped ingredients collection; private nutrition permissions retained.
 - Nutrition calculation, persistence and workflow specs: conversion/business-rule coverage and a mocked service integration through ingredient ? recipe ? plan ? diary ? Stats.
 

@@ -8,18 +8,18 @@ import {
   ingredientNutrition,
   scaleNutrition,
   sumNutrition,
-} from '@pages/nutrition/state/nutrition.calculations';
+} from '@pages/nutrition/state/calculations/nutrition.calculations';
 import {
   MEAL_CATEGORIES,
   MealCategory,
   localDate,
   zeroMacros,
-} from '@pages/nutrition/state/nutrition.model';
+} from '@pages/nutrition/state/nutrition/nutrition.model';
 import { RouterLink } from '@angular/router';
-import { RecipeStore } from '@pages/recipes/state/recipe-store';
-import { NutritionService } from '@pages/nutrition/state/nutrition.service';
-import { nutritionLabel } from '@pages/nutrition/state/nutrition.model';
-import { MealPlanItem } from '@pages/planning/state/planning.model';
+import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
+import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
+import { nutritionLabel } from '@pages/nutrition/state/nutrition/nutrition.model';
+import { MealPlanItem } from '@pages/planning/state/plan/planning.model';
 import { PLANNING_ICONS } from '@pages/planning/planning-icons';
 import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -27,8 +27,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { PlanningHeader } from '@pages/planning/components/planning-header/planning-header';
-import { GroceryItem } from '@pages/planning/state/planning.model';
-import { PlanningStore } from '@pages/planning/state/planning-store';
+import { GroceryItem } from '@pages/planning/state/plan/planning.model';
+import { PlanningStore } from '@pages/planning/state/plan/planning-store';
 
 @Component({
   selector: 'app-planning-meals',

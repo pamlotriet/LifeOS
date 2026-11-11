@@ -3,9 +3,9 @@ import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
 import { FuelDashboard } from '@pages/fuel/fuel-dashboard/fuel-dashboard';
-import { RefuelStore } from '@pages/fuel/state/refuel-store';
-import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
-import { calculateRefuels, RefuelRecord } from '@pages/fuel/state/refuel.model';
+import { RefuelStore } from '@pages/fuel/state/refuel/refuel-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
+import { calculateRefuels, RefuelRecord } from '@pages/fuel/state/refuel/refuel.model';
 const record = (id: string, odometer: number): RefuelRecord => ({
   id,
   vehicleId: 'car',

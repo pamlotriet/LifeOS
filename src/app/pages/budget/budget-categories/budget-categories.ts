@@ -8,7 +8,7 @@ import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   BudgetCategory,
   CATEGORY_COLOURS,
@@ -18,7 +18,7 @@ import {
   isSpendingCategory,
   money,
   total,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 
 @Component({
   selector: 'app-budget-categories',

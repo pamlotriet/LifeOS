@@ -4,10 +4,10 @@ import { AppInput } from '@shared/components/app-input/app-input';
 import {
   calculateRecipe,
   ingredientNutrition,
-} from '@pages/nutrition/state/nutrition.calculations';
+} from '@pages/nutrition/state/calculations/nutrition.calculations';
 import { NutritionSummary } from '@shared/components/nutrition-summary/nutrition-summary';
-import { NutritionService } from '@pages/nutrition/state/nutrition.service';
-import { NutritionIngredient } from '@pages/nutrition/state/nutrition.model';
+import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
+import { NutritionIngredient } from '@pages/nutrition/state/nutrition/nutrition.model';
 import { Component, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -29,8 +29,8 @@ import {
   RECIPE_DIFFICULTIES,
   RecipeInput,
   RecipeStep,
-} from '@pages/recipes/state/recipe.model';
-import { RecipeStore } from '@pages/recipes/state/recipe-store';
+} from '@pages/recipes/state/recipe/recipe.model';
+import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
 import { pickImage } from '@shared/utils/pick-image';
 
 @Component({

@@ -4,9 +4,9 @@ import { DestroyRef, Injector, runInInjectionContext, signal } from '@angular/co
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
 import { BooksLibrary } from '@pages/books/books-library/books-library';
-import { BookStore } from '@pages/books/state/book-store';
-import { BookRecord } from '@pages/books/state/book.model';
-import { ReadingGoalService } from '@pages/books/state/reading-goal.service';
+import { BookStore } from '@pages/books/state/book/book-store';
+import { BookRecord } from '@pages/books/state/book/book.model';
+import { ReadingGoalService } from '@pages/books/state/reading-goal/reading-goal.service';
 import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 import { Router } from '@angular/router';
 

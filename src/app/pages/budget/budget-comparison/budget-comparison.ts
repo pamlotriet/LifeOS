@@ -7,13 +7,13 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
-import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   categoryPlanItems,
   compatibleCategory,
   isSpendingCategory,
   money,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { compareBudgetCategories } from '@pages/budget/budget-comparison/budget-comparison.model';
 

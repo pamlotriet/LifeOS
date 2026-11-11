@@ -4,9 +4,12 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonModal } from '@ionic/angular';
 import { PlanningHeader } from '@pages/planning/components/planning-header/planning-header';
-import { NutritionService } from '@pages/nutrition/state/nutrition.service';
-import { Food, nutritionLabel, zeroMacros } from '@pages/nutrition/state/nutrition.model';
-import { normalizeNutrition, scaleNutrition } from '@pages/nutrition/state/nutrition.calculations';
+import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
+import { Food, nutritionLabel, zeroMacros } from '@pages/nutrition/state/nutrition/nutrition.model';
+import {
+  normalizeNutrition,
+  scaleNutrition,
+} from '@pages/nutrition/state/calculations/nutrition.calculations';
 @Component({
   selector: 'app-ingredients',
   imports: [TranslatePipe, AppInput, FormsModule, IonContent, IonModal, PlanningHeader],

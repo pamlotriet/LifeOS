@@ -2,7 +2,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
-import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 
 @Component({

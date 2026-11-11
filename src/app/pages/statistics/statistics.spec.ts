@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { StatsService } from '@pages/statistics/state/stats.service';
+import { StatsService } from '@pages/statistics/state/overview/stats.service';
 import { Statistics } from '@pages/statistics/statistics';
 
 describe('Statistics', () => {

@@ -1,4 +1,4 @@
-import { cycleBounds, cycleStart, inCycle } from '@pages/budget/state/budget-cycle';
+import { cycleBounds, cycleStart, inCycle } from '@pages/budget/state/cycle/budget-cycle';
 import {
   SpendingBalanceCheckpoint,
   BudgetCategory,
@@ -9,7 +9,7 @@ import {
   summary,
   supportsPlan,
   total,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 const round = (value: number) => Math.round(value * 100) / 100;
 export function budgetSnapshot(
   transactions: BudgetTransaction[],

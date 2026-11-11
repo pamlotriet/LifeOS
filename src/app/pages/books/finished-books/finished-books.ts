@@ -5,7 +5,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { AppSelect, SelectOption } from '@shared/components/app-select/app-select';
 import { PageHeader } from '@shared/components/page-header/page-header';
 import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
-import { BookStore } from '@pages/books/state/book-store';
+import { BookStore } from '@pages/books/state/book/book-store';
 import { finishDateParts } from '@pages/books/finished-books-filter';
 
 const MONTHS = [

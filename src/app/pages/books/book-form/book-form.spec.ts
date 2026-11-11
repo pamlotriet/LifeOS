@@ -4,9 +4,9 @@ import { signal } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BookForm } from '@pages/books/book-form/book-form';
-import { BookStore } from '@pages/books/state/book-store';
-import { OpenLibraryCoverService } from '@pages/books/state/open-library-cover.service';
-import { BookBarcodeScannerService } from '@pages/books/state/book-barcode-scanner.service';
+import { BookStore } from '@pages/books/state/book/book-store';
+import { OpenLibraryCoverService } from '@pages/books/state/covers/open-library-cover.service';
+import { BookBarcodeScannerService } from '@pages/books/state/barcode-scanner/book-barcode-scanner.service';
 import { addIcons } from 'ionicons';
 import {
   book,

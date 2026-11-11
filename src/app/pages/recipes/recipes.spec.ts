@@ -2,8 +2,8 @@ import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it } from 'vitest';
-import { RecipeStore } from '@pages/recipes/state/recipe-store';
-import { RecipeRecord } from '@pages/recipes/state/recipe.model';
+import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
+import { RecipeRecord } from '@pages/recipes/state/recipe/recipe.model';
 import { Recipes } from '@pages/recipes/recipes';
 
 describe('Recipe category filters', () => {

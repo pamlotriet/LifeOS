@@ -14,7 +14,7 @@ import {
   starOutline,
   trendingUpOutline,
 } from '@pages/statistics/statistics-icons';
-import { statsMonthOptions } from '@pages/statistics/state/stats.calculations';
+import { statsMonthOptions } from '@pages/statistics/state/overview/stats.calculations';
 import { FormsModule } from '@angular/forms';
 import { BudgetStatistics } from '@pages/statistics/components/budget-statistics/budget-statistics';
 import { Component, computed, effect, inject, signal } from '@angular/core';
@@ -27,7 +27,7 @@ import {
   StatsRange,
   StatsService,
   STATS_MODULES,
-} from '@pages/statistics/state/stats.service';
+} from '@pages/statistics/state/overview/stats.service';
 
 @Component({
   selector: 'app-statistics',

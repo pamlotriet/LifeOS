@@ -8,7 +8,7 @@ import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
-import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   BudgetDebtInput,
   BudgetTransaction,
@@ -16,7 +16,7 @@ import {
   localDate,
   money,
   TransactionInput,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 
 @Component({
   selector: 'app-budget-debts',

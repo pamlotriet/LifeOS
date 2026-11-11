@@ -6,7 +6,7 @@ import {
   BudgetTransaction,
   money,
   summary,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 @Component({
   imports: [TranslatePipe],
   selector: 'app-budget-summary',

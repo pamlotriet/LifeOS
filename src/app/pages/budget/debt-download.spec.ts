@@ -3,7 +3,7 @@ import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BudgetDebts } from '@pages/budget/budget-debts/budget-debts';
-import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 
 const { save, createDebtPdf } = vi.hoisted(() => {
   const save = vi.fn();

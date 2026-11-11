@@ -3,7 +3,7 @@ import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { describe, expect, it, vi } from 'vitest';
-import { BudgetStore } from '@pages/budget/state/budget.store';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import { BudgetOverview } from '@pages/budget/budget-overview/budget-overview';
 
 describe('Budget cycle navigation', () => {

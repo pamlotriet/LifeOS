@@ -7,8 +7,8 @@ import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonModal } from '@ionic/angular';
-import { GYM_DAYS, GymEntry, GymExercise, MUSCLE_GROUPS } from '@pages/gym/state/gym.model';
-import { GymStore } from '@pages/gym/state/gym.store';
+import { GYM_DAYS, GymEntry, GymExercise, MUSCLE_GROUPS } from '@pages/gym/state/gym/gym.model';
+import { GymStore } from '@pages/gym/state/gym/gym.store';
 type WorkoutDraft = Omit<GymEntry, 'id' | 'sets' | 'rest'> & {
   sets: number | null;
   rest: number | null;

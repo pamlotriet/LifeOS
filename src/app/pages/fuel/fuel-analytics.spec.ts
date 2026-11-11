@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateRefuels, RefuelRecord } from '@pages/fuel/state/refuel.model';
+import { calculateRefuels, RefuelRecord } from '@pages/fuel/state/refuel/refuel.model';
 import { fuelAnalytics } from '@pages/fuel/fuel-analytics';
 const record = (id: string, date: string, odometer: number, amountPaid = 800): RefuelRecord => ({
   id,

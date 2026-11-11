@@ -7,7 +7,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonIcon, IonModal } from '@ionic/angular';
-import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle-store';
+import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { saRegistrationValidator } from '@shared/validators/sa-registration.validator';
 import { AppSelect } from '@shared/components/app-select/app-select';
 import { pickImage } from '@shared/utils/pick-image';

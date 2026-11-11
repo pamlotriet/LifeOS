@@ -3,8 +3,8 @@ import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
 import { Gym } from '@pages/gym/gym';
-import { GymStore } from '@pages/gym/state/gym.store';
-import { GymExercise, GymEntry } from '@pages/gym/state/gym.model';
+import { GymStore } from '@pages/gym/state/gym/gym.store';
+import { GymExercise, GymEntry } from '@pages/gym/state/gym/gym.model';
 
 describe('Weekly gym planner', () => {
   const exercise: GymExercise = {

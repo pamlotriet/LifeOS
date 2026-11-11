@@ -20,12 +20,12 @@ import {
   kindleSummary,
   locationSessionPages,
   locationPagesRead,
-} from '@pages/books/state/book.model';
-import { BookStore } from '@pages/books/state/book-store';
-import { OpenLibraryCoverService } from '@pages/books/state/open-library-cover.service';
+} from '@pages/books/state/book/book.model';
+import { BookStore } from '@pages/books/state/book/book-store';
+import { OpenLibraryCoverService } from '@pages/books/state/covers/open-library-cover.service';
 import { AppSelect } from '@shared/components/app-select/app-select';
 import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
-import { BookBarcodeScannerService } from '@pages/books/state/book-barcode-scanner.service';
+import { BookBarcodeScannerService } from '@pages/books/state/barcode-scanner/book-barcode-scanner.service';
 import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 
 @Component({

@@ -3,8 +3,12 @@ import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BudgetDebts } from '@pages/budget/budget-debts/budget-debts';
-import { BudgetStore } from '@pages/budget/state/budget.store';
-import { BudgetTransaction, DEFAULT_CATEGORIES, localDate } from '@pages/budget/state/budget.model';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
+import {
+  BudgetTransaction,
+  DEFAULT_CATEGORIES,
+  localDate,
+} from '@pages/budget/state/budget/budget.model';
 
 describe('Debt payment workflow', () => {
   const saveTransaction = vi.fn();

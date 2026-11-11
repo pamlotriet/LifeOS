@@ -8,8 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
-import { BudgetStore } from '@pages/budget/state/budget.store';
-import { localDate, money, summary, total } from '@pages/budget/state/budget.model';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
+import { localDate, money, summary, total } from '@pages/budget/state/budget/budget.model';
 import { AppChart } from '@shared/components/app-chart/app-chart';
 
 @Component({

@@ -1,4 +1,4 @@
-import { inCycle } from '@pages/budget/state/budget-cycle';
+import { inCycle } from '@pages/budget/state/cycle/budget-cycle';
 import {
   BudgetCategory,
   BudgetPlan,
@@ -7,7 +7,7 @@ import {
   debtPlanId,
   supportsPlan,
   total,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 
 export function compareBudgetCategories(
   categories: BudgetCategory[],

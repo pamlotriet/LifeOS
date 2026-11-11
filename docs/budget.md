@@ -31,7 +31,7 @@ REST service, and the current account's loaded history is filtered locally.
 
 ## Verification
 
-`npm exec -- vitest run src/app/pages/budget/state/budget.model.spec.ts src/app/pages/budget/state/budget.service.spec.ts`
+`npm exec -- vitest run src/app/pages/budget/state/budget/budget.model.spec.ts src/app/pages/budget/state/budget/budget.service.spec.ts`
 
 `npm run build`
 

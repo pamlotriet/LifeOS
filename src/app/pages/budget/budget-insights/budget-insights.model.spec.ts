@@ -6,7 +6,7 @@ import {
   DEFAULT_CATEGORIES,
   debtPlanId,
   money,
-} from '@pages/budget/state/budget.model';
+} from '@pages/budget/state/budget/budget.model';
 
 const transaction = (
   id: string,

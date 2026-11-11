@@ -6,8 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { PageHeader } from '@shared/components/page-header/page-header';
-import { PASSWORD_CATEGORIES } from '@pages/passwords/state/password.model';
-import { PasswordStore } from '@pages/passwords/state/password-store';
+import { PASSWORD_CATEGORIES } from '@pages/passwords/state/vault/password.model';
+import { PasswordStore } from '@pages/passwords/state/vault/password-store';
 
 @Component({
   selector: 'app-passwords',
