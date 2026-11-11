@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Home } from '@pages/home/home';
 import { More } from '@pages/more/more';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 import { TabsShell } from '@core/layout/tabs-shell/tabs-shell';
@@ -13,7 +12,7 @@ export const routes: Routes = [
     path: '',
     component: TabsShell,
     children: [
-      { path: 'home', component: Home },
+      { path: 'home', loadComponent: () => import('@pages/home/home').then((m) => m.Home) },
       {
         path: 'stats',
         loadComponent: () => import('@pages/statistics/statistics').then((m) => m.Statistics),

@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BookRecord } from '@pages/books/state/book/book.model';
 import { BookStore } from '@pages/books/state/book/book-store';
 import { ReadingWheel } from '@pages/books/reading-wheel/reading-wheel';
+import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
 
 describe('Reading wheel selections', () => {
   const books = signal<BookRecord[]>([]);
@@ -37,6 +38,7 @@ describe('Reading wheel selections', () => {
       imports: [ReadingWheel],
       providers: [
         provideRouter([]),
+        { provide: AddBookSheet, useValue: { open: vi.fn() } },
         {
           provide: BookStore,
           useValue: { books, sortedBooks: books, loading, error: signal(''), setWheelSelected },

@@ -6,6 +6,7 @@ src/app/
     components/
       app-input/               Native text, number and multiline fields
       app-button/              Primary, secondary and destructive actions
+      app-search/              Ionic search bar with shared styling and signal binding
       app-select/
       app-date-picker/
       app-month-picker/
@@ -103,6 +104,8 @@ src/app/
         debts/
         vehicles/
     home/
+      state/
+        dashboard/             Computed Home metrics and filtered space lists
     more/
 ```
 

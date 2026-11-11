@@ -1,23 +1,51 @@
 import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { Injector, runInInjectionContext, signal } from '@angular/core';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BudgetDebts } from '@pages/budget/budget-debts/budget-debts';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 
-const { save, createDebtPdf } = vi.hoisted(() => {
-  const save = vi.fn();
-  return { save, createDebtPdf: vi.fn(() => ({ save })) };
+const { save, pdfs } = vi.hoisted(() => ({
+  save: vi.fn(),
+  pdfs: [] as Array<{ output(): string }>,
+}));
+vi.mock('jspdf', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('jspdf')>();
+  return Object.assign({}, actual, {
+    jsPDF: class extends actual.jsPDF {
+      constructor(options: ConstructorParameters<typeof actual.jsPDF>[0]) {
+        super(options);
+        this.save = save;
+        pdfs.push(this);
+      }
+    },
+  });
 });
-vi.mock('@pages/budget/debt-pdf', () => ({ createDebtPdf }));
-afterEach(() => {
-  vi.clearAllMocks();
+
+beforeEach(() => {
+  save.mockReset();
+  pdfs.length = 0;
 });
+
 describe('Debt export download', () => {
   const store = {
     debts: signal([
-      { id: 'loan', name: 'Home loan' },
-      { id: 'card', name: 'Credit card' },
+      {
+        id: 'loan',
+        name: 'Home loan',
+        type: 'loan',
+        openingBalance: 10000,
+        openingOverride: null,
+        annualInterestRate: 0,
+      },
+      {
+        id: 'card',
+        name: 'Everyday Visa account',
+        type: 'credit-card',
+        openingBalance: 2000,
+        openingOverride: null,
+        annualInterestRate: 0,
+      },
     ]),
     transactions: signal([]),
     month: signal('2026-10'),
@@ -35,7 +63,9 @@ describe('Debt export download', () => {
   it('saves a named PDF directly for the selected account', async () => {
     const page = create();
     await page.exportPdf('loan');
-    expect(createDebtPdf).toHaveBeenCalledWith([store.debts()[0]], [], '2026-10', 1);
+    expect(pdfs).toHaveLength(1);
+    expect(pdfs[0].output()).toContain('Home loan');
+    expect(pdfs[0].output()).not.toContain('Everyday Visa account');
     expect(save).toHaveBeenCalledWith('LifeOS-Debt-Report-2026-10.pdf');
     expect(page.busy()).toBe(false);
     expect(page.error()).toBe('');
