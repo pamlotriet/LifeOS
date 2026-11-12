@@ -1,7 +1,6 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { WriteFeedback } from '@core/firebase/write-feedback.service';
-import { DOCUMENT } from '@angular/common';
-import { AppNavigation } from '@core/navigation/app-navigation.service';
+import { WriteToast } from '@shared/components/write-toast/write-toast';
+import { Login } from '@pages/login/login';
 import { AppUpdates } from '@core/updates/app-updates.service';
 import { Component, inject, signal } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular';
@@ -11,20 +10,15 @@ import { ThemeService } from '@core/theme/theme.service';
 import { ClearZeroOnFocus } from '@shared/directives/clear-zero-on-focus';
 
 @Component({
-  imports: [TranslatePipe, IonApp, IonRouterOutlet, ClearZeroOnFocus],
+  imports: [TranslatePipe, IonApp, IonRouterOutlet, ClearZeroOnFocus, WriteToast, Login],
   selector: 'app-root',
-  styleUrl: './app.css',
   templateUrl: './app.html',
 })
 export class App {
-  readonly writeFeedback = inject(WriteFeedback);
-  private readonly navigation = inject(AppNavigation);
   readonly updates = inject(AppUpdates);
   readonly refreshCoordinator = inject(RefreshCoordinator);
   readonly theme = inject(ThemeService);
   readonly paletteToggle = signal(false);
-  readonly signInError = signal('');
-  readonly signingIn = signal(false);
   readonly pullDistance = signal(0);
   private touchStart: number | null = null;
 
@@ -73,23 +67,5 @@ export class App {
 
   pullIndicatorOffset(): number {
     return this.refreshCoordinator.refreshing() ? 0 : Math.min(18, this.pullDistance() / 4);
-  }
-
-  async authenticate() {
-    if (this.signingIn()) return;
-    this.signInError.set('');
-    this.signingIn.set(true);
-    try {
-      await this.authService.loginWithGoogle();
-    } catch (error) {
-      console.error('Google sign-in failed', error);
-      this.signInError.set(
-        error instanceof Error && error.message.includes('Firebase user profile')
-          ? 'Could not set up your account. Please try again.'
-          : 'Could not sign in with Google. Please try again.',
-      );
-    } finally {
-      this.signingIn.set(false);
-    }
   }
 }

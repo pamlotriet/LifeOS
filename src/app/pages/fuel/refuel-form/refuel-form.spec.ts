@@ -1,5 +1,5 @@
 import { IonModal } from '@ionic/angular';
-import { FuelModalStub } from '@pages/fuel/fuel-modal.testing';
+import { FuelModalStub } from '@pages/fuel/testing/fuel-modal.testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';

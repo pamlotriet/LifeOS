@@ -1,35 +1,32 @@
-<div class="vehicles-page">
-  <div class="mb-1 flex items-center justify-between px-0.5">
+<div class="grid grid-cols-2 gap-4.5 text-foreground [@media(max-width:700px)]:grid-cols-1">
+  <div class="col-span-full mb-1 flex items-center justify-between px-0.5">
     <h1 class="text-xl font-bold tracking-tight">{{ 'My Vehicles' | translate }}</h1>
   </div>
 
   @if (loading()) {
     <app-fuel-loading kind="vehicles" [label]="'Loading vehicles' | translate" />
   } @else if (error()) {
-    <div
-      role="alert"
-      class="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 py-6 text-center"
-    >
-      <p class="text-sm text-[var(--text-secondary)]">{{ error() | translate }}</p>
+    <div role="alert" class="rounded-2xl border border-border bg-card px-4 py-6 text-center">
+      <p class="text-sm text-(--text-secondary)">{{ error() | translate }}</p>
       <button
         type="button"
         (click)="reload()"
-        class="mt-3 rounded-full border border-[#1ce0f2] px-5 py-2 text-sm font-semibold text-[#4be9f6]"
+        class="mt-3 rounded-full border border-primary px-5 py-2 text-sm font-semibold text-foreground"
       >
         {{ 'Try again' | translate }}
       </button>
     </div>
   } @else if (vehicles().length === 0) {
     <div
-      class="rounded-[22px] border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--card)] px-5 py-8 text-center"
+      class="rounded-[22px] border border-border bg-linear-to-br from-card to-card px-5 py-8 text-center"
     >
       <ion-icon
         name="car-sport-outline"
-        class="text-5xl text-[#70ddec]"
+        class="text-5xl text-primary"
         aria-hidden="true"
       ></ion-icon>
       <h2 class="mt-3 text-base font-semibold">{{ 'No vehicles yet' | translate }}</h2>
-      <p class="mt-1 text-sm text-[var(--text-secondary)]">
+      <p class="mt-1 text-sm text-(--text-secondary)">
         {{ 'Add your first vehicle to start tracking fuel consumption.' | translate }}
       </p>
     </div>
@@ -38,57 +35,60 @@
   @for (vehicle of vehicles(); track vehicle.id) {
     <a
       [routerLink]="['/fuel/edit-car', vehicle.id]"
-      class="flex min-h-24 items-center gap-3 overflow-hidden rounded-[22px] border border-[var(--border)] bg-gradient-to-br from-[var(--card)] via-[var(--card)] to-[var(--card)] p-2.5 text-white no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_8px_22px_rgba(0,0,0,0.15)] focus-visible:outline-2 focus-visible:outline-cyan-300"
+      class="group flex min-h-32 items-center gap-4 rounded-2xl border border-border bg-card! p-4 text-foreground! no-underline shadow-sm transition-colors hover:border-primary/40 hover:bg-secondary/30! focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ring sm:p-5"
     >
-      @if (vehicle.image) {
-        <img
-          [src]="vehicle.image"
-          [alt]="vehicle.name | translate"
-          class="h-[72px] w-24 shrink-0 rounded-2xl border border-white/10 object-cover object-center"
-        />
-      } @else {
-        <div
-          class="grid h-[72px] w-24 shrink-0 place-items-center rounded-2xl border border-white/10 bg-[var(--card)]"
-        >
+      <div
+        class="grid h-28 w-32 shrink-0 place-items-center overflow-hidden rounded-xl border border-border bg-muted sm:h-32 sm:w-40 max-[360px]:size-24"
+      >
+        @if (vehicle.image) {
+          <img
+            [src]="vehicle.image"
+            [alt]="vehicle.name | translate"
+            class="h-full w-full object-cover"
+          />
+        } @else {
           <ion-icon
-            name="car"
-            class="text-4xl text-[var(--text-secondary)]"
+            name="car-sport-outline"
+            class="text-3xl text-muted-foreground"
             aria-hidden="true"
           ></ion-icon>
-        </div>
-      }
-      <div class="min-w-0 flex-1 py-0.5">
-        <h2 class="truncate text-[15px] font-semibold leading-tight">{{ vehicle.name }}</h2>
-        <p class="mt-1 truncate text-xs text-[var(--text-secondary)]">
+        }
+      </div>
+      <div class="min-w-0 flex-1">
+        <h2 class="truncate text-base font-semibold tracking-tight text-foreground">
+          {{ vehicle.name }}
+        </h2>
+        <p class="mt-1 truncate text-sm text-muted-foreground">
           {{ vehicle.description | translate }}
         </p>
         <span
-          class="mt-1.5 inline-flex max-w-full truncate rounded-full border border-[var(--border)] bg-[var(--card)] px-2 py-0.5 text-[10px] leading-tight text-[var(--text-secondary)]"
+          class="mt-2 inline-flex max-w-full truncate rounded-md border border-border bg-muted px-2 py-1 text-[11px] font-medium tracking-wide text-muted-foreground"
           >{{ vehicle.registration }}</span
         >
-      </div>
-      <div class="flex shrink-0 items-center gap-2">
         @if (vehicle.consumption) {
-          <div class="text-right">
-            <p class="text-lg font-bold leading-none">{{ vehicle.consumption }}</p>
-            <p class="mt-1 text-[10px] text-[var(--text-secondary)]">{{ 'L/100km' | translate }}</p>
-          </div>
+          <p class="mt-2 text-xs text-muted-foreground">
+            <span class="font-semibold text-foreground">{{ vehicle.consumption }}</span>
+            {{ 'L/100km' | translate }}
+          </p>
         }
       </div>
+      <ion-icon
+        name="chevron-forward"
+        class="shrink-0 text-lg text-muted-foreground transition-colors group-hover:text-primary"
+        aria-hidden="true"
+      ></ion-icon>
     </a>
   }
 
   <a
     routerLink="/fuel/add-car"
-    class="mt-0.5 flex min-h-[72px] items-center justify-center gap-3 rounded-[22px] border border-dashed border-[#1ce0f2] bg-[var(--card)] px-3 text-left no-underline transition-colors hover:bg-[var(--card)]"
+    class="flex min-h-32 items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-transparent p-5 text-left text-foreground no-underline transition-colors hover:border-primary/40 hover:bg-card focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ring"
   >
-    <span
-      class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#1ce5ef] to-[#14bfe5] text-[var(--card)] shadow-[0_5px_16px_rgba(20,207,231,0.2)]"
-    >
+    <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-secondary text-primary">
       <ion-icon name="add" class="text-2xl" aria-hidden="true"></ion-icon>
     </span>
     <span class="flex flex-col">
-      <span class="text-sm font-semibold text-[#4be9f6]">{{ 'Add vehicle' | translate }}</span>
+      <span class="text-sm font-semibold text-foreground">{{ 'Add vehicle' | translate }}</span>
       <span class="mt-0.5 text-xs text-[var(--text-secondary)]">{{
         'Start tracking fuel consumption' | translate
       }}</span>

@@ -1,7 +1,7 @@
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
-import { fuelEditorSheet } from '@pages/fuel/fuel-editor-sheet';
+import { fuelEditorSheet } from '@pages/fuel/utils/fuel-editor-sheet';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';

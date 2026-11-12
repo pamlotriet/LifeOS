@@ -1,0 +1,32 @@
+<ion-tabs>
+  <ion-tab-bar
+    slot="bottom"
+    class="lifeos-tab-bar border-t border-border bg-(--nav-background) [--background:var(--nav-background)] [--border:none]"
+  >
+    <div class="desktop-nav-brand">
+      <img src="/icons/lifeos-plum-192.png" width="32" height="32" alt="" />
+      <span
+        >{{ 'LifeOS' | translate }}<small>{{ 'Everyday workspace' | translate }}</small></span
+      >
+    </div>
+    @for (tab of tabs; track tab.path) {
+      <ion-tab-button
+        [tab]="tab.path"
+        class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]"
+      >
+        <div class="flex h-fit w-fit flex-col items-center justify-center text-center">
+          @if (tab.highlighted) {
+            <div
+              class="mb-1 flex h-fit w-fit items-center justify-center rounded-full bg-secondary"
+            >
+              <ion-icon size="large" [name]="tab.icon" class="text-primary"></ion-icon>
+            </div>
+          } @else {
+            <ion-icon size="large" [name]="tab.icon" class="mb-1"></ion-icon>
+          }
+          <ion-label>{{ tab.label | translate }}</ion-label>
+        </div>
+      </ion-tab-button>
+    }
+  </ion-tab-bar>
+</ion-tabs>

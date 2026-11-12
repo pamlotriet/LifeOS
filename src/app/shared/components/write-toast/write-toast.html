@@ -1,0 +1,14 @@
+@if (writeFeedback.message()) {
+  <div class="write-toast" role="status" aria-live="polite" aria-atomic="true">
+    <span class="toast-check" aria-hidden="true"
+      ><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg></span
+    ><span>{{ writeFeedback.message() | translate }}</span>
+    <button
+      type="button"
+      [attr.aria-label]="'Dismiss notification' | translate"
+      (click)="writeFeedback.dismiss()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+    </button>
+  </div>
+}

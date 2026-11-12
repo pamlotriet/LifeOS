@@ -1,0 +1,106 @@
+<main class="login-page h-full overflow-y-auto bg-background font-sans text-foreground scheme-dark">
+  <div
+    class="mx-auto flex min-h-full w-[min(100%-56px,460px)] flex-col justify-center pt-[max(env(safe-area-inset-top),108px)] pb-[max(env(safe-area-inset-bottom),52px)] [@media(min-height:800px)]:pt-[max(env(safe-area-inset-top),120px)] [@media(min-height:800px)]:pb-[max(env(safe-area-inset-bottom),64px)] max-[360px]:w-[calc(100%-32px)] max-[360px]:pt-20!"
+  >
+    <header class="mb-5.5 text-center [@media(min-height:800px)]:mb-6.5">
+      <img
+        class="mx-auto mb-2.5 block w-24 rounded-[22%] [@media(min-height:800px)]:mb-3"
+        src="/icons/lifeos-plum-192.png"
+        alt=""
+      />
+      <h1 class="m-0 text-[42px] leading-[1.12] font-[750] tracking-[-1.5px]">
+        {{ 'Life' | translate
+        }}<span
+          class="bg-[linear-gradient(115deg,var(--primary),var(--lifeos-magenta))] bg-clip-text text-transparent"
+          >{{ 'OS' | translate }}</span
+        >
+      </h1>
+      <p class="mt-1.25 text-[clamp(16px,4.1vw,21px)] tracking-[-0.5px] text-(--text-secondary)">
+        {{ 'Organize your life beautifully.' | translate }}
+      </p>
+    </header>
+
+    <section
+      class="relative rounded-3xl border border-border border-t-4 border-t-primary bg-card px-5 py-6 text-center shadow-(--soft-shadow) [@media(min-height:800px)]:px-5.5 [@media(min-height:800px)]:py-6.75 max-[360px]:px-3.5! max-[360px]:py-5.5!"
+      aria-labelledby="login-title"
+      [attr.aria-busy]="signingIn()"
+    >
+      <h2
+        id="login-title"
+        class="m-0 text-[clamp(20px,4.6vw,24px)] font-semibold tracking-[-0.5px]"
+      >
+        {{ 'Sign in with Google' | translate }}
+      </h2>
+      <p class="mt-1 mb-4.5 text-[17px] text-(--text-secondary)">
+        {{ 'to continue to LifeOS' | translate }}
+      </p>
+      <button
+        class="login-button flex min-h-14.5 w-full cursor-pointer items-center justify-center gap-3.5 rounded-[17px] border border-border bg-card px-4 py-3 font-[650] text-[clamp(15px,3.9vw,20px)] text-foreground transition-[filter,transform] duration-200 enabled:hover:-translate-y-px enabled:hover:brightness-[1.08] focus-visible:outline-3 focus-visible:outline-offset-[5px] focus-visible:outline-(--text-secondary) disabled:cursor-wait disabled:opacity-65 [@media(min-height:800px)]:min-h-16 max-[360px]:gap-2 max-[360px]:px-3"
+        type="button"
+        [disabled]="signingIn()"
+        (click)="authenticate()"
+      >
+        <img
+          class="size-7.5 shrink-0"
+          src="/images/google.svg"
+          width="30"
+          height="30"
+          alt=""
+          aria-hidden="true"
+        />
+        <span class="flex-1">{{
+          (signingIn() ? 'Checking account...' : 'Continue with Google') | translate
+        }}</span>
+        <ion-icon
+          class="ml-auto size-4.5 shrink-0 text-(--text-secondary)"
+          [icon]="chevronIcon"
+          aria-hidden="true"
+        >
+        </ion-icon>
+      </button>
+
+      @if (signInError()) {
+        <p
+          class="mt-4 rounded-[10px] border border-[#e787a666] bg-[#671e4266] p-2.5 text-[13px] leading-normal text-[#ffe3e9]"
+          role="alert"
+        >
+          {{ signInError() | translate }}
+        </p>
+      }
+      <div
+        class="mt-5.5 flex text-left text-(--text-secondary) [&>div]:flex [&>div]:flex-1 [&>div]:items-center [&>div]:justify-center [&>div]:gap-2 [&>div]:text-[11px] [&>div]:leading-[1.4] [&>div+div]:border-l [&>div+div]:border-border max-[360px]:[&>div]:gap-1.25 max-[360px]:[&>div]:text-[10px]"
+        [attr.aria-label]="'Security features' | translate"
+      >
+        <div>
+          <ion-icon
+            class="size-5.75 shrink-0 text-primary"
+            [icon]="securityIcons.lockClosedOutline"
+            aria-hidden="true"
+          ></ion-icon
+          ><span>{{ 'Encrypted' | translate }}<br />{{ 'data' | translate }}</span>
+        </div>
+        <div>
+          <ion-icon
+            class="size-5.75 shrink-0 text-primary"
+            [icon]="securityIcons.shieldCheckmarkOutline"
+            aria-hidden="true"
+          ></ion-icon
+          ><span>{{ 'Secure' | translate }}<br />{{ 'access' | translate }}</span>
+        </div>
+        <div>
+          <ion-icon
+            class="size-5.75 shrink-0 text-primary"
+            [icon]="securityIcons.eyeOffOutline"
+            aria-hidden="true"
+          ></ion-icon
+          ><span>{{ 'Private' | translate }}<br />{{ 'by design' | translate }}</span>
+        </div>
+      </div>
+    </section>
+    <footer class="mt-3.75 text-center text-xs leading-[1.7] text-(--text-secondary)">
+      {{ 'No account creation required.' | translate }}<br />{{
+        'Sign in with Google only.' | translate
+      }}
+    </footer>
+  </div>
+</main>

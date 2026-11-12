@@ -22,7 +22,7 @@ import {
   Tooltip,
   Filler,
 } from 'chart.js';
-import { FuelPoint } from '@pages/fuel/fuel-analytics';
+import { FuelPoint } from '@pages/fuel/state/analytics/fuel-analytics';
 Chart.register(
   BarController,
   BarElement,

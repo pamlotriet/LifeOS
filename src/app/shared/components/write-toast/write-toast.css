@@ -1,0 +1,57 @@
+.write-toast {
+  position: fixed;
+  z-index: 200000;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+  padding: 10px 12px;
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px #0005;
+  font-size: 13px;
+}
+.toast-check {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: var(--success);
+}
+.write-toast svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.write-toast button {
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 23px;
+  min-width: 32px;
+  min-height: 32px;
+  cursor: pointer;
+}
+.write-toast button:focus-visible {
+  outline: 2px solid var(--ring);
+}
+@media (max-width: 767px) {
+  .write-toast {
+    bottom: calc(100px + env(safe-area-inset-bottom));
+  }
+}

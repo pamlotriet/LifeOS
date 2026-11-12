@@ -1,7 +1,7 @@
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
-import { fuelEditorSheet } from '@pages/fuel/fuel-editor-sheet';
+import { fuelEditorSheet } from '@pages/fuel/utils/fuel-editor-sheet';
 import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import {
   AbstractControl,

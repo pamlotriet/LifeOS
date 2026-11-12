@@ -1,40 +1,38 @@
 <ion-app
   appClearZeroOnFocus
-  class="lifeos-app bg-[var(--card)]"
+  class="lifeos-app bg-background text-foreground"
   (touchstart)="onTouchStart($event)"
   (touchmove)="onTouchMove($event)"
   (touchend)="onTouchEnd()"
   (touchcancel)="onTouchEnd()"
 >
-  @if (writeFeedback.message()) {
-    <div class="write-toast" role="status" aria-live="polite" aria-atomic="true">
-      <span class="toast-check" aria-hidden="true"
-        ><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg></span
-      ><span>{{ writeFeedback.message() | translate }}</span>
-      <button
-        type="button"
-        [attr.aria-label]="'Dismiss notification' | translate"
-        (click)="writeFeedback.dismiss()"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
-      </button>
-    </div>
-  }
+  <app-write-toast />
   @if (updates.available()) {
-    <aside class="app-update-banner" role="status">
-      <div>
-        <strong>{{ 'Update available' | translate }}</strong
-        ><span>{{ 'Save any changes, then refresh for the latest LifeOS.' | translate }}</span>
+    <aside
+      class="fixed top-[max(12px,env(safe-area-inset-top))] left-1/2 z-10000 box-border flex w-[calc(100%-24px)] max-w-140 -translate-x-1/2 items-center gap-4 rounded-xl border border-primary bg-card px-4 py-3.5 text-foreground shadow-[0_6px_24px_#0003]"
+      role="status"
+    >
+      <div class="min-w-0 flex-1">
+        <strong class="block text-[0.9rem]">{{ 'Update available' | translate }}</strong>
+        <span class="mt-1 block text-xs leading-normal text-(--text-secondary)">{{
+          'Save any changes, then refresh for the latest LifeOS.' | translate
+        }}</span>
       </div>
-      <button type="button" (click)="updates.refresh()">{{ 'Refresh' | translate }}</button>
+      <button
+        class="min-h-11 rounded-lg border-0 bg-primary px-4 py-2.5 font-semibold text-primary-foreground"
+        type="button"
+        (click)="updates.refresh()"
+      >
+        {{ 'Refresh' | translate }}
+      </button>
     </aside>
   }
   @if (authService.isAuthenticated() && (pullDistance() || refreshCoordinator.refreshing())) {
     <div
-      class="pointer-events-none fixed inset-x-0 top-[env(safe-area-inset-top)] z-[100] flex justify-center"
+      class="pointer-events-none fixed inset-x-0 top-[env(safe-area-inset-top)] z-100 flex justify-center"
     >
       <div
-        class="mt-2 flex min-h-9 items-center gap-2 rounded-full border border-cyan-300/50 bg-[var(--card)]/95 px-4 py-2 text-xs font-semibold text-cyan-100 shadow-[0_5px_20px_rgba(0,0,0,0.35)] backdrop-blur"
+        class="mt-2 flex min-h-9 items-center gap-2 rounded-full border border-cyan-300/50 bg-(--card)/95 px-4 py-2 text-xs font-semibold text-cyan-100 shadow-[0_5px_20px_rgba(0,0,0,0.35)] backdrop-blur"
         [style.transform]="'translateY(' + pullIndicatorOffset() + 'px)'"
       >
         <span
@@ -53,88 +51,13 @@
     </div>
   }
   <ion-router-outlet
-    class="app-route-outlet"
+    class="app-route-outlet bg-transparent"
+    [class]="authService.authReady() && !authService.isAuthenticated() ? 'hidden!' : ''"
     [class.auth-route-hidden]="authService.authReady() && !authService.isAuthenticated()"
     [animated]="false"
     [swipeGesture]="false"
   ></ion-router-outlet>
   @if (authService.authReady() && !authService.isAuthenticated()) {
-    <main class="login-page">
-      <div class="login-content">
-        <header class="login-brand">
-          <img class="login-logo" src="/icons/lifeos-plum-192.png" alt="" />
-          <h1>
-            {{ 'Life' | translate }}<span>{{ 'OS' | translate }}</span>
-          </h1>
-          <p>{{ 'Organize your life beautifully.' | translate }}</p>
-        </header>
-
-        <section class="login-card" aria-labelledby="login-title" [attr.aria-busy]="signingIn()">
-          <h2 id="login-title">{{ 'Sign in with Google' | translate }}</h2>
-          <p class="login-subtitle">{{ 'to continue to LifeOS' | translate }}</p>
-          <button
-            class="login-button google-button"
-            type="button"
-            [disabled]="signingIn()"
-            (click)="authenticate()"
-          >
-            <svg class="google-mark" viewBox="0 0 48 48" aria-hidden="true">
-              <path
-                fill="#4285F4"
-                d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.2h6.7c3.9-3.6 6-8.8 6-15.1Z"
-              />
-              <path
-                fill="#34A853"
-                d="M24 44c5.4 0 10-1.8 13.4-4.9l-6.7-5.2c-1.8 1.2-4.1 1.9-6.7 1.9-5.2 0-9.6-3.5-11.2-8.2H5.9v5.4A20.2 20.2 0 0 0 24 44Z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M12.8 27.6a12 12 0 0 1 0-7.2V15H5.9a20 20 0 0 0 0 18l6.9-5.4Z"
-              />
-              <path
-                fill="#EA4335"
-                d="M24 12.2c2.9 0 5.5 1 7.5 2.9l5.6-5.6A19.3 19.3 0 0 0 24 4 20.2 20.2 0 0 0 5.9 15l6.9 5.4c1.6-4.7 6-8.2 11.2-8.2Z"
-              />
-            </svg>
-            <span>{{
-              (signingIn() ? 'Checking account...' : 'Continue with Google') | translate
-            }}</span>
-            <svg class="button-chevron" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m9 5 7 7-7 7" />
-            </svg>
-          </button>
-
-          @if (signInError()) {
-            <p class="login-error" role="alert">{{ signInError() | translate }}</p>
-          }
-          <div class="login-security" [attr.aria-label]="'Security features' | translate">
-            <div>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="4" y="10" width="16" height="12" rx="3" />
-                <path d="M7 10V7a5 5 0 0 1 10 0v3m-5 5v3" /></svg
-              ><span>{{ 'Encrypted' | translate }}<br />{{ 'data' | translate }}</span>
-            </div>
-            <div>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 2c3 3 6 3 9 4 0 8-3 12-9 16C6 18 3 14 3 6c3-1 6-1 9-4Z" />
-                <path d="m8 12 3 3 5-6" /></svg
-              ><span>{{ 'Secure' | translate }}<br />{{ 'access' | translate }}</span>
-            </div>
-            <div>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="m3 3 18 18M10 5c5-1 9 3 12 7a22 22 0 0 1-4 4M6 6a22 22 0 0 0-4 6c5 7 10 9 16 6M9 9a4 4 0 0 0 6 6"
-                /></svg
-              ><span>{{ 'Private' | translate }}<br />{{ 'by design' | translate }}</span>
-            </div>
-          </div>
-        </section>
-        <footer class="login-footer">
-          {{ 'No account creation required.' | translate }}<br />{{
-            'Sign in with Google only.' | translate
-          }}
-        </footer>
-      </div>
-    </main>
+    <app-login />
   }
 </ion-app>

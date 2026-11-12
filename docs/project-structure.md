@@ -67,7 +67,10 @@ src/app/
       fuel-dashboard/
       components/
       state/
+        analytics/             Fuel chart calculations and tests
         refuel/                Refuel models, store, service and tests
+      utils/                   Responsive fuel editor presentation
+      testing/                 Shared fuel modal test fixtures
     gym/
       components/
       state/
@@ -116,6 +119,12 @@ template, stylesheet and tests. Group feature state into subfolders by responsib
 code they exercise. Feature state lives with its owning feature even
 when another feature consumes its data. Infrastructure and genuinely app-wide
 services belong in `core`; `shared/state` has been removed.
+
+`app.routes.ts` contains top-level feature entry points and legacy redirects. It
+loads feature route arrays from `pages/<feature>/<feature>.routes.ts` using
+`loadChildren`. Tab navigation routes live in `core/layout/tabs-shell/tabs.routes.ts`.
+Each route file keeps page components lazy with `loadComponent`; feature paths are
+relative to their top-level entry point.
 
 Vehicle state belongs to `fuel/vehicles/state`, rather than `add-car/state`, because
 listing, adding, editing, refuelling and statistics use the same vehicle records.

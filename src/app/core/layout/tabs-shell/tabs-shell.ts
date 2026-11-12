@@ -13,76 +13,17 @@ import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angu
 @Component({
   selector: 'app-tabs-shell',
   imports: [TranslatePipe, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs],
-  template: `
-    <ion-tabs>
-      <ion-tab-bar
-        slot="bottom"
-        class="lifeos-tab-bar border-t border-[var(--border)] bg-[var(--nav-background)] [--background:var(--nav-background)] [--border:none]"
-      >
-        <div class="desktop-nav-brand">
-          <img src="/icons/lifeos-plum-192.png" width="32" height="32" alt="" />
-          <span
-            >{{ 'LifeOS' | translate }}<small>{{ 'Everyday workspace' | translate }}</small></span
-          >
-        </div>
-        <ion-tab-button
-          tab="home"
-          class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]"
-        >
-          <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <ion-icon size="large" name="home-outline" class="mb-1"></ion-icon>
-            <ion-label>{{ 'Home' | translate }}</ion-label>
-          </div>
-        </ion-tab-button>
-        <ion-tab-button
-          tab="stats"
-          class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]"
-        >
-          <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <ion-icon size="large" name="stats-chart-outline" class="mb-1"></ion-icon>
-            <ion-label>{{ 'Stats' | translate }}</ion-label>
-          </div>
-        </ion-tab-button>
-        <ion-tab-button
-          tab="planning"
-          class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]"
-        >
-          <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <div
-              class="mb-1 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--secondary)]"
-            >
-              <ion-icon
-                size="large"
-                name="calendar-outline"
-                class="text-[var(--primary)]"
-              ></ion-icon>
-            </div>
-            <ion-label>{{ 'Planning' | translate }}</ion-label>
-          </div>
-        </ion-tab-button>
-        <ion-tab-button
-          tab="wheel"
-          class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]"
-        >
-          <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <ion-icon size="large" name="disc-outline" class="mb-1"></ion-icon>
-            <ion-label>{{ 'Wheel' | translate }}</ion-label>
-          </div>
-        </ion-tab-button>
-        <ion-tab-button
-          tab="more"
-          class="lifeos-tab-button [--background:var(--nav-background)] [--color:var(--nav-inactive)] [--color-selected:var(--nav-active)]"
-        >
-          <div class="flex h-full w-full flex-col items-center justify-center text-center">
-            <ion-icon size="large" name="ellipsis-horizontal" class="mb-1"></ion-icon>
-            <ion-label>{{ 'More' | translate }}</ion-label>
-          </div>
-        </ion-tab-button>
-      </ion-tab-bar>
-    </ion-tabs>
-  `,
+  templateUrl: './tabs-shell.html',
 })
 export class TabsShell {
+  readonly tabs = [
+    { path: 'home', label: 'Home', icon: 'home-outline', highlighted: false },
+    { path: 'stats', label: 'Stats', icon: 'stats-chart-outline', highlighted: false },
+    { path: 'planning', label: 'Planning', icon: 'calendar-outline', highlighted: true },
+    { path: 'wheel', label: 'Wheel', icon: 'disc-outline', highlighted: false },
+    { path: 'more', label: 'More', icon: 'ellipsis-horizontal', highlighted: false },
+  ] as const;
+
   constructor() {
     addIcons({ homeOutline, statsChartOutline, calendarOutline, discOutline, ellipsisHorizontal });
   }

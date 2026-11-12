@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { RefuelStore } from '@pages/fuel/state/refuel/refuel-store';
 import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { FuelChart } from '@pages/fuel/components/fuel-chart/fuel-chart';
-import { fuelAnalytics } from '@pages/fuel/fuel-analytics';
+import { fuelAnalytics } from '@pages/fuel/state/analytics/fuel-analytics';
 import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 @Component({
   selector: 'app-fuel-dashboard',

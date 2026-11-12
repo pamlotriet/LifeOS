@@ -8,7 +8,7 @@ import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 @Component({
   imports: [TranslatePipe, IonIcon, RouterLink, FuelLoading],
   selector: 'app-vehicles',
-  styleUrl: './vehicles.css',
+  host: { class: 'block min-w-0' },
   templateUrl: './vehicles.html',
 })
 export class Vehicles {
