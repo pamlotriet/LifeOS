@@ -24,11 +24,11 @@ import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
     FuelLoading,
   ],
   selector: 'app-add-car',
-  styleUrl: './add-car.css',
   templateUrl: './add-car.html',
 })
 export class AddCar {
   readonly mobileSheet = fuelEditorSheet();
+
   readonly modalOpen = signal(true);
   dismiss(): void {
     if (!this.modalOpen()) return;
@@ -40,6 +40,7 @@ export class AddCar {
   private readonly route = inject(ActivatedRoute);
   private readonly formBuilder = inject(FormBuilder);
   private readonly vehicleStore = inject(VehicleStore);
+
   readonly editId = this.route.snapshot.paramMap.get('id');
   readonly loadingVehicle = signal(!!this.editId);
   readonly deleting = signal(false);
@@ -63,19 +64,24 @@ export class AddCar {
     ]),
     photoUrl: this.formBuilder.control<string | null>(null),
   });
+
   readonly photoUrl = toSignal(this.vehicleForm.controls.photoUrl.valueChanges, {
     initialValue: this.vehicleForm.controls.photoUrl.value,
   });
+
   readonly formStatus = toSignal(this.vehicleForm.statusChanges, {
     initialValue: this.vehicleForm.status,
   });
+
   readonly submitAttempted = signal(false);
   readonly saving = signal(false);
   readonly saveError = signal('');
   private readonly latestModelYear = new Date().getFullYear() + 1;
+
   readonly yearOptions = Array.from({ length: this.latestModelYear - 1899 }, (_, index) =>
     String(this.latestModelYear - index),
   );
+
   readonly fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric'];
   readonly yearSelectOptions = this.yearOptions.map((year) => ({ value: year, label: year }));
   readonly fuelSelectOptions = this.fuelTypes.map((fuel) => ({ value: fuel, label: fuel }));
@@ -127,9 +133,12 @@ export class AddCar {
         odometer: value.odometer,
         photoUrl: value.photoUrl,
       };
+
       if (this.editId) await this.vehicleStore.update(this.editId, changes);
       else await this.vehicleStore.add(changes);
+
       this.modalOpen.set(false);
+
       await this.router.navigateByUrl('/fuel/vehicles', { replaceUrl: true });
     } catch (error) {
       console.error('Could not save vehicle', error);
@@ -148,9 +157,12 @@ export class AddCar {
 
   async deleteVehicle(): Promise<void> {
     if (!this.editId || this.saving() || this.deleting()) return;
+
     if (!window.confirm('Delete this vehicle? This cannot be undone.')) return;
+
     this.deleting.set(true);
     this.saveError.set('');
+
     try {
       await this.vehicleStore.delete(this.editId);
       this.modalOpen.set(false);
@@ -161,6 +173,7 @@ export class AddCar {
       this.deleting.set(false);
     }
   }
+
   async pickMedia(): Promise<void> {
     try {
       const photo = await pickImage();

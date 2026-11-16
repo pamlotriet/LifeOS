@@ -3,6 +3,6 @@ import { FuelDashboard } from '@pages/fuel/fuel-dashboard/fuel-dashboard';
 @Component({
   selector: 'app-insights',
   imports: [FuelDashboard],
-  template: '<app-fuel-dashboard [insights]="true" />',
+  template: '<app-fuel-dashboard />',
 })
 export class Insights {}

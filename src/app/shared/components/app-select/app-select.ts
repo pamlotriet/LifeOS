@@ -31,6 +31,11 @@ export interface SelectOption {
         type="button"
         [attr.aria-label]="ariaLabel() | translate"
         aria-haspopup="listbox"
+        [attr.style]="
+          appearance() === 'neutral'
+            ? 'background: var(--card) !important; color: var(--foreground) !important; border-color: var(--border) !important; box-shadow: none !important;'
+            : null
+        "
         [attr.aria-expanded]="open()"
         [disabled]="disabled()"
         (click)="open.set(!open()); onTouched()"
@@ -70,6 +75,11 @@ export interface SelectOption {
       @if (open()) {
         <div
           role="listbox"
+          [attr.style]="
+            appearance() === 'neutral'
+              ? 'background: var(--card) !important; border-color: var(--border) !important;'
+              : null
+          "
           [attr.aria-label]="ariaLabel() | translate"
           class="absolute top-full left-0 z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-xl border border-[#7f5d99] bg-[#123451] p-1 shadow-[0_14px_32px_rgba(0,0,0,0.35)]"
         >
@@ -116,6 +126,7 @@ export interface SelectOption {
   `,
 })
 export class AppSelect implements ControlValueAccessor {
+  readonly appearance = input<'default' | 'neutral'>('default');
   readonly options = input.required<SelectOption[]>();
   readonly placeholder = input('Select an option');
   readonly ariaLabel = input('Select an option');

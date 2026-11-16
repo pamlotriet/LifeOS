@@ -56,8 +56,8 @@ src/app/
         budget/
         cycle/
     fuel/
-      add-car/                 Add/edit vehicle screen and tests
       vehicles/
+        add-car/               Add/edit vehicle screen and tests
         state/
           vehicle/             Vehicle state used by all vehicle screens
       refuel-form/

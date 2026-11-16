@@ -1,0 +1,45 @@
+<ion-content class="[--background:var(--background)]"
+  ><main
+    class="mx-auto min-h-full max-w-372 px-10 pt-8 pb-16 text-foreground max-[600px]:px-4.5 max-[600px]:pt-5 max-[600px]:pb-10"
+  >
+    <header class="pb-8 max-[600px]:pb-4">
+      <app-back-button class="mb-4 inline-flex p-0" /><span
+        class="block text-xs font-[650] tracking-[0.09em] text-primary uppercase"
+        >{{ 'Every kilometre, accounted for.' | translate }}</span
+      >
+      <h1
+        class="mt-3 mb-3.5 text-[clamp(2.2rem,4.5vw,3.6rem)] leading-[1.15] font-[450] tracking-[-0.035em]"
+      >
+        {{ 'Fuel' | translate }}
+        <span class="text-primary">{{ '& vehicles' | translate }}</span>
+      </h1>
+      <p class="m-0 text-base leading-[1.6] text-(--text-secondary) max-[600px]:text-[0.9rem]">
+        {{ 'A clearer view of what it costs to keep moving.' | translate }}
+      </p>
+    </header>
+    <nav
+      class="mb-7 flex gap-6 border-b border-border max-[600px]:mb-5 max-[600px]:max-w-full max-[600px]:flex-nowrap max-[600px]:gap-5 max-[600px]:overflow-x-auto max-[600px]:overscroll-x-contain max-[600px]:scroll-px-1 max-[600px]:scrollbar-none max-[600px]:[&::-webkit-scrollbar]:hidden"
+      [attr.aria-label]="'Fuel sections' | translate"
+    >
+      @for (option of sections; track option.route) {
+        <a
+          [routerLink]="option.route"
+          class="inline-flex min-h-13 items-center border-b-2 border-transparent px-0 py-2.5 text-[0.9rem] whitespace-nowrap text-(--text-secondary) no-underline hover:text-primary focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-ring aria-[current=page]:border-primary aria-[current=page]:text-primary max-[600px]:min-h-11 max-[600px]:flex-none max-[600px]:justify-start max-[600px]:px-0.5 max-[600px]:text-[0.85rem] max-[600px]:font-medium"
+          [attr.aria-current]="selected() === option.route ? 'page' : null"
+          >{{ option.label | translate }}</a
+        >
+      }
+    </nav>
+    @defer (when isEditor()) {
+      @if (isEditor()) {
+        <div inert aria-hidden="true">
+          @if (selected().includes('car')) {
+            <app-vehicles />
+          } @else {
+            <app-fuel-dashboard />
+          }
+        </div>
+      }
+    }
+    <router-outlet /></main
+></ion-content>

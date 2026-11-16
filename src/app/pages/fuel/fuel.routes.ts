@@ -19,15 +19,16 @@ export const fuelRoutes: Routes = [
       },
       {
         path: 'add-car',
-        loadComponent: () => import('@pages/fuel/add-car/add-car').then((m) => m.AddCar),
+        loadComponent: () => import('@pages/fuel/vehicles/add-car/add-car').then((m) => m.AddCar),
       },
       {
         path: 'edit-car/:id',
-        loadComponent: () => import('@pages/fuel/add-car/add-car').then((m) => m.AddCar),
+        loadComponent: () => import('@pages/fuel/vehicles/add-car/add-car').then((m) => m.AddCar),
       },
       {
         path: 'insights',
-        loadComponent: () => import('@pages/fuel/insights/insights').then((m) => m.Insights),
+        redirectTo: '/fuel',
+        pathMatch: 'full',
       },
       {
         path: 'history',

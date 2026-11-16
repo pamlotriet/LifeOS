@@ -69,7 +69,15 @@ describe('RefuelForm', () => {
   });
 
   it('saves a first refuel with its manual range', async () => {
-    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockImplementation(async () => {
+      expect(fixture.componentInstance.saving()).toBe(false);
+      expect(fixture.componentInstance.modalOpen()).toBe(false);
+      return true;
+    });
+    save.mockImplementationOnce(async () => {
+      expect(fixture.componentInstance.saving()).toBe(true);
+      expect(fixture.componentInstance.modalOpen()).toBe(true);
+    });
     fixture.componentInstance.form.patchValue({
       dop: '2026-09-22',
       pop: 'Shell',
@@ -87,6 +95,27 @@ describe('RefuelForm', () => {
       undefined,
     );
     expect(navigate).toHaveBeenCalledWith('/fuel/history', { replaceUrl: true });
+  });
+
+  it('unlocks the form and keeps it open when saving fails', async () => {
+    save.mockRejectedValueOnce(new Error('Could not save the refuel.'));
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
+    fixture.componentInstance.form.patchValue({
+      pop: 'Shell',
+      fuelType: 'Petrol',
+      areaTown: 'Sandton',
+      odometer: 13600,
+      qtyLiters: 40,
+      amountPaid: 900,
+      initialRangeKm: 600,
+    });
+
+    await fixture.componentInstance.submit();
+
+    expect(fixture.componentInstance.saving()).toBe(false);
+    expect(fixture.componentInstance.modalOpen()).toBe(true);
+    expect(fixture.componentInstance.error()).toBe('Could not save the refuel.');
+    expect(navigate).not.toHaveBeenCalled();
   });
 
   it('accepts decimal commas and saves numeric values', async () => {

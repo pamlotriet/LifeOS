@@ -199,6 +199,7 @@ export class RefuelForm {
     try {
       await this.refuels.save(value.vehicleId, input, this.entryId ?? undefined);
       this.refuels.selectVehicle(value.vehicleId);
+      this.saving.set(false);
       this.modalOpen.set(false);
       await this.router.navigateByUrl('/fuel/history', { replaceUrl: true });
     } catch (error) {
@@ -214,6 +215,7 @@ export class RefuelForm {
     this.error.set('');
     try {
       await this.refuels.delete(this.routeVehicleId, this.entryId);
+      this.deleting.set(false);
       this.modalOpen.set(false);
       await this.router.navigateByUrl('/fuel/history', { replaceUrl: true });
     } catch (error) {
