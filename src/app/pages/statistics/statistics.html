@@ -77,27 +77,6 @@
         >
       }
     </section>
-    @if (selected() === 'nutrition' && range() !== '1M') {
-      <div class="stats-date-range">
-        <label
-          >{{ 'From' | translate
-          }}<input
-            appInput="field"
-            type="date"
-            class="lifeos-select"
-            [ngModel]="nutritionStart()"
-            (ngModelChange)="nutritionStart.set($event)" /></label
-        ><label
-          >{{ 'Through' | translate
-          }}<input
-            appInput="field"
-            type="date"
-            class="lifeos-select"
-            [ngModel]="nutritionEnd()"
-            (ngModelChange)="nutritionEnd.set($event)"
-        /></label>
-      </div>
-    }
     @if (loading()) {
       <app-statistics-skeleton [module]="selected()" [label]="option().label | translate" />
     } @else if (error()) {

@@ -2,7 +2,6 @@ import translationTestProviders from '@src/test-providers';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { describe, expect, it } from 'vitest';
 import { StatsService } from '@pages/statistics/state/overview/stats.service';
-import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import { BookStore } from '@pages/books/state/book/book-store';
 import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
@@ -14,22 +13,6 @@ describe('Selected month reports', () => {
       Injector.create({
         providers: [
           ...translationTestProviders,
-          {
-            provide: NutritionService,
-            useValue: {
-              logs: () => [
-                {
-                  date: `${year}-01-10`,
-                  nutrition: { calories: 100, protein: 1, carbs: 2, fat: 3 },
-                },
-                {
-                  date: `${year}-12-10`,
-                  nutrition: { calories: 900, protein: 9, carbs: 2, fat: 3 },
-                },
-              ],
-              profile: () => ({ targets: { calories: 2000, protein: 100, carbs: 200, fat: 60 } }),
-            },
-          },
           { provide: VehicleStore, useValue: { vehicles: () => [] } },
           {
             provide: BookStore,
@@ -82,12 +65,6 @@ describe('Selected month reports', () => {
       }),
       () => new StatsService(),
     );
-  it('filters nutrition to the chosen month independently of custom range inputs', () => {
-    const stats = service();
-    stats.nutritionStart = `${year}-12-01`;
-    expect(stats.dashboard('nutrition', '1M', `${year}-01`).kpis[0].value).toBe('100 kcal');
-    expect(stats.dashboard('nutrition', '1M', `${year}-12`).kpis[0].value).toBe('900 kcal');
-  });
   it('uses the selected month for fuel charts and completed books', () => {
     const stats = service();
     expect(stats.dashboard('fuel', '1M', `${year}-01`).secondary.data.labels).toEqual(['Jan']);

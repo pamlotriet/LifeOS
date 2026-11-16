@@ -1,5 +1,4 @@
 import { TranslatePipe } from '@ngx-translate/core';
-import { AppInput } from '@shared/components/app-input/app-input';
 import { addIcons } from 'ionicons';
 import {
   arrowBackOutline,
@@ -33,7 +32,6 @@ import {
   selector: 'app-statistics',
   imports: [
     TranslatePipe,
-    AppInput,
     FormsModule,
     IonContent,
     IonIcon,
@@ -53,13 +51,9 @@ export class Statistics {
   readonly range = signal<StatsRange>('6M');
   readonly monthOptions = statsMonthOptions();
   readonly selectedMonth = signal(this.monthOptions[new Date().getMonth()].value);
-  readonly nutritionStart = signal('');
-  readonly nutritionEnd = signal('');
-  readonly dashboard = computed(() => {
-    this.service.nutritionStart = this.nutritionStart();
-    this.service.nutritionEnd = this.nutritionEnd();
-    return this.service.dashboard(this.selected(), this.range(), this.selectedMonth());
-  });
+  readonly dashboard = computed(() =>
+    this.service.dashboard(this.selected(), this.range(), this.selectedMonth()),
+  );
   readonly loading = computed(() => this.service.loading(this.selected()));
   readonly error = computed(() => this.service.error(this.selected()));
   constructor() {

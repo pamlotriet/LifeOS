@@ -1,0 +1,81 @@
+<ion-content>
+  <main appBudgetPage class="budget-page max-w-3xl! md:m-0! md:w-full md:max-w-none! md:px-8!">
+    <header class="page-header">
+      <app-back-button fallback="/budget" />
+      <h1 class="compact-title">{{ (id ? 'Edit account' : 'Add account') | translate }}</h1>
+      <button
+        appButton="primary"
+        class="primary-button"
+        type="submit"
+        form="account-form"
+        [disabled]="busy() || !ready()"
+      >
+        {{ (busy() ? 'Saving...' : 'Save account') | translate }}
+      </button>
+    </header>
+    @if (store.loading()) {
+      <p class="status" role="status">{{ 'Loading your budget...' | translate }}</p>
+    }
+    @if (store.error()) {
+      <div class="status error" role="alert">
+        {{ store.error() | translate }}
+        <button appButton="secondary" type="button" (click)="store.reload()">
+          {{ 'Retry' | translate }}
+        </button>
+      </div>
+    }
+    @if (error()) {
+      <p class="status error" role="alert">{{ error() | translate }}</p>
+    }
+    @if (id && !account() && !store.loading() && !store.error()) {
+      <p class="status error" role="alert">
+        {{ 'Account not found.' | translate }}
+        <a routerLink="/budget">{{ 'Return to Budget' | translate }}</a>
+      </p>
+    }
+    @if (ready()) {
+      <form id="account-form" (ngSubmit)="save()">
+        <fieldset
+          [disabled]="busy()"
+          class="m-0 min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6"
+        >
+          <label class="grid gap-2 text-sm"
+            >{{ (id ? 'Edit account name' : 'Account name') | translate }}
+            <input
+              appInput
+              name="accountName"
+              maxlength="60"
+              required
+              [disabled]="busy()"
+              [ngModel]="name()"
+              (ngModelChange)="name.set($event)"
+            />
+          </label>
+          <label class="mt-4 grid gap-2 text-sm"
+            >{{ 'Current balance (optional)' | translate }}
+            <input
+              appInput
+              appBudgetNumber
+              name="accountBalance"
+              type="text"
+              inputmode="decimal"
+              [disabled]="busy()"
+              [ngModel]="balanceInput()"
+              (ngModelChange)="balanceInput.set($event)"
+            />
+          </label>
+          <p class="mt-2 text-xs text-(--text-secondary)">
+            {{
+              'Leave blank to keep the recorded balance. Enter the balance after transactions already logged here.'
+                | translate
+            }}
+          </p>
+
+          <div class="form-actions mt-6 flex gap-2">
+            <a class="text-link" routerLink="/budget">{{ 'Cancel' | translate }}</a>
+          </div>
+        </fieldset>
+      </form>
+    }
+  </main>
+</ion-content>

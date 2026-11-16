@@ -11,10 +11,97 @@
           {{ 'Save the meals you love.' | translate }}
         </p>
       </div>
-      <button type="button" (click)="editorOpen.set(true)" class="recipe-add">
+      <button type="button" routerLink="/recipes/add" class="recipe-add">
         <ion-icon name="add" aria-hidden="true" /> {{ 'Add recipe' | translate }}
       </button>
     </header>
+    <div class="recipe-book-action">
+      <button
+        appButton="secondary"
+        type="button"
+        (click)="openExport()"
+        [disabled]="store.loading() || !!store.error() || !store.sorted().length || exporting()"
+      >
+        {{ 'Export recipe book' | translate }}
+      </button>
+    </div>
+    @if (exportOpen()) {
+      <section
+        class="recipe-book-panel"
+        aria-labelledby="recipe-book-title"
+        [attr.aria-busy]="exporting()"
+      >
+        <div class="recipe-book-heading">
+          <div>
+            <h2 id="recipe-book-title">{{ 'Your recipe book' | translate }}</h2>
+            <p>
+              {{
+                'Choose recipes and download a printable PDF with a cover and contents.' | translate
+              }}
+            </p>
+          </div>
+          <button
+            appButton="secondary"
+            type="button"
+            [disabled]="exporting()"
+            (click)="exportOpen.set(false)"
+          >
+            {{ 'Close' | translate }}
+          </button>
+        </div>
+        <label
+          >{{ 'Book title' | translate
+          }}<input appInput maxlength="120" [(ngModel)]="bookTitle" [disabled]="exporting()"
+        /></label>
+        <label class="book-checkbox"
+          ><input type="checkbox" [(ngModel)]="includePhotos" [disabled]="exporting()" />{{
+            'Include recipe photos' | translate
+          }}</label
+        >
+        <div class="book-select-actions">
+          <button
+            appButton="secondary"
+            type="button"
+            [disabled]="exporting()"
+            (click)="selectAllForExport()"
+          >
+            {{ 'Select all' | translate }}</button
+          ><button
+            appButton="secondary"
+            type="button"
+            [disabled]="exporting()"
+            (click)="clearExportSelection()"
+          >
+            {{ 'Clear selection' | translate }}
+          </button>
+        </div>
+        <div class="book-recipe-list">
+          @for (recipe of store.sorted(); track recipe.id) {
+            <label class="book-checkbox"
+              ><input
+                type="checkbox"
+                [checked]="selectedRecipes().has(recipe.id)"
+                [disabled]="exporting()"
+                (change)="selectForExport(recipe.id)"
+              /><span>{{ recipe.title }}</span></label
+            >
+          }
+        </div>
+        <button
+          appButton="primary"
+          type="button"
+          [disabled]="exporting() || !exportRecipes().length || store.loading() || !!store.error()"
+          (click)="exportBook()"
+        >
+          {{ (exporting() ? 'Creating recipe book...' : 'Download PDF') | translate }} ({{
+            exportRecipes().length
+          }})
+        </button>
+        @if (exportMessage()) {
+          <p role="status">{{ exportMessage() | translate }}</p>
+        }
+      </section>
+    }
     <label
       class="flex min-h-12 items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4"
       ><ion-icon name="search" class="text-[var(--text-secondary)]"></ion-icon
@@ -52,7 +139,7 @@
             : 'border-[var(--border)] text-[var(--text-secondary)]'
         "
       >
-        {{ 'â™¥ Favourites' | translate }}
+        <span aria-hidden="true">&#9829;</span> {{ 'Favourites' | translate }}
       </button>
       @for (item of categories; track item) {
         <button
@@ -122,7 +209,7 @@
                 ></span>
               }
               @if (recipe.favourite) {
-                <span class="absolute right-2 top-2 text-xl text-pink-400">â™¥</span>
+                <span class="absolute right-2 top-2 text-xl text-pink-400">&#9829;</span>
               }</span
             ><span class="block p-3"
               ><strong class="block line-clamp-2 text-sm">{{ recipe.title | translate }}</strong
@@ -130,10 +217,7 @@
                 'messages.count_count_mins_8342be'
                   | translate
                     : {
-                        p0: recipeCategories(recipe).join(
-                          ' /
-                '
-                        ),
+                        p0: recipeCategories(recipe).join(' / '),
                         p1: recipe.cookTime,
                       }
               }}</span></span
@@ -144,11 +228,3 @@
     }
   </main>
 </ion-content>
-
-@if (editorOpen()) {
-  <app-recipe-form
-    [embedded]="true"
-    (dismissed)="editorOpen.set(false)"
-    (saved)="editorOpen.set(false)"
-  />
-}

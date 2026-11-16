@@ -28,11 +28,9 @@
     <div class="flex flex-wrap items-center gap-3 border-t border-border py-4">
       <div class="min-w-0 flex-1">
         <strong class="block break-words text-sm font-medium">{{ account.name }}</strong>
-        @if (!builtIn(account.id)) {
-          <small class="mt-1 block text-xs text-(--text-secondary)"
-            >{{ 'Balance from records' | translate }}: {{ money(balance(account.id)) }}</small
-          >
-        }
+        <small class="mt-1 block text-xs text-(--text-secondary)"
+          >{{ 'Balance from records' | translate }}: {{ money(balance(account.id)) }}</small
+        >
       </div>
       <div class="flex flex-wrap gap-2">
         <button

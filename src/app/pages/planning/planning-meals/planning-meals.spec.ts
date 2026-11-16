@@ -1,7 +1,7 @@
 import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { DestroyRef, Injector, runInInjectionContext, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { PlanningMeals } from '@pages/planning/planning-meals/planning-meals';
@@ -11,7 +11,13 @@ import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.ser
 import { Ingredients } from '@pages/planning/ingredients/ingredients';
 
 const setup = () => {
-  const store = { saveGrocery: vi.fn(), loading: signal(false), error: signal('') };
+  const store = {
+    saveGrocery: vi.fn(),
+    meals: signal<any[]>([]),
+    groceries: signal<any[]>([]),
+    loading: signal(false),
+    error: signal(''),
+  };
   const page = runInInjectionContext(
     Injector.create({
       providers: [
@@ -19,6 +25,7 @@ const setup = () => {
         { provide: PlanningStore, useValue: store },
         { provide: RecipeStore, useValue: {} },
         { provide: NutritionService, useValue: {} },
+        { provide: Router, useValue: { navigate: vi.fn().mockResolvedValue(true) } },
         { provide: ActivatedRoute, useValue: { snapshot: {}, fragment: of(null) } },
         { provide: DestroyRef, useValue: { onDestroy: () => () => {} } },
       ],
@@ -65,6 +72,34 @@ describe('Meal planning updates', () => {
     page.reset();
     expect(page.quantity).toBe(100);
     expect(page.unit).toBe('g');
+  });
+  it('focuses today and opens a new meal in the selected slot', () => {
+    const { page } = setup();
+    expect(page.selectedDate()).toBe(page.today);
+    page.openMeal('Breakfast');
+    expect(page.mealCategory).toBe('Breakfast');
+    expect(page.editorOpen()).toBe(true);
+    page.choose(page.week[0].iso);
+    expect(page.editorOpen()).toBe(false);
+    expect(page.pendingMeal).toBeNull();
+  });
+  it('counts only the visible week and hides checked groceries without removing them', () => {
+    const { page, store } = setup();
+    store.meals.set([
+      { id: 'a', date: page.week[0].iso },
+      { id: 'b', date: page.week[0].iso },
+      { id: 'old', date: '2001-01-01' },
+    ]);
+    expect(page.weeklyMeals()).toHaveLength(2);
+    expect(page.plannedDays()).toBe(1);
+    store.groceries.set([
+      { id: 'a', section: 'Produce', checked: true },
+      { id: 'b', section: 'Produce', checked: false },
+    ]);
+    expect(page.remainingGroceries()).toBe(1);
+    page.hideChecked.set(true);
+    expect(page.groceriesBySection()[0][1].map((item) => item.id)).toEqual(['b']);
+    expect(store.groceries()).toHaveLength(2);
   });
   it('rejects invalid household portions before adding them', () => {
     const page = runInInjectionContext(

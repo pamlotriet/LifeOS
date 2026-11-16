@@ -25,6 +25,11 @@ import { PasswordStore } from '@pages/passwords/state/vault/password-store';
 })
 export class Passwords {
   readonly store = inject(PasswordStore);
+  readonly vaultLoading = computed(
+    () =>
+      this.store.vaultExists() === null ||
+      (this.store.loading() && !this.store.vault.crypto.unlocked()),
+  );
   readonly categories = PASSWORD_CATEGORIES;
   readonly search = signal('');
   readonly category = signal('All');

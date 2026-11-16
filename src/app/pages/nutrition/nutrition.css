@@ -425,3 +425,19 @@ summary span {
     flex-wrap: wrap;
   }
 }
+
+.composer {
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--primary) 5%, transparent);
+}
+.composer .snapshot-note {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+.composer .field-grid {
+  align-items: start;
+}
+.composer button.wide {
+  width: 100%;
+}

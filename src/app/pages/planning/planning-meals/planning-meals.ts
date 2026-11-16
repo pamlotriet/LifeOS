@@ -24,7 +24,7 @@ import { PLANNING_ICONS } from '@pages/planning/planning-icons';
 import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { PlanningHeader } from '@pages/planning/components/planning-header/planning-header';
 import { GroceryItem } from '@pages/planning/state/plan/planning.model';
@@ -170,12 +170,14 @@ export class PlanningMeals {
     this.logging.set(true);
     this.nutritionError.set('');
     try {
+      if (!this.copyDate) throw new Error('Choose a destination date.');
       if (this.copyDate === this.selectedDate())
         throw new Error('Choose a different destination date.');
       for (const item of this.meals(this.selectedDate())) {
         const { id, ...input } = item;
         await this.store.saveMeal({ ...input, date: this.copyDate });
       }
+      this.copyOpen.set(false);
       this.nutritionError.set('Meals copied.');
     } catch (e) {
       this.nutritionError.set((e as Error).message);
@@ -184,8 +186,18 @@ export class PlanningMeals {
     }
   }
   async generateGroceries(): Promise<void> {
-    if (this.logging() || this.store.loading() || this.store.error()) return;
+    if (
+      this.logging() ||
+      this.store.loading() ||
+      this.store.error() ||
+      this.recipes.loading() ||
+      this.recipes.error() ||
+      this.nutrition.loading() ||
+      this.nutrition.error()
+    )
+      return;
     this.logging.set(true);
+    this.nutritionError.set('');
     try {
       const dates = new Set(this.week.map((d) => d.iso));
       const plans = this.store.meals().filter((m) => dates.has(m.date));
@@ -245,6 +257,7 @@ export class PlanningMeals {
   }
   readonly icons = PLANNING_ICONS;
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   readonly store = inject(PlanningStore);
   readonly tab = signal<'meals' | 'groceries'>(
     this.route.snapshot.fragment === 'groceries' ? 'groceries' : 'meals',
@@ -257,17 +270,60 @@ export class PlanningMeals {
   week = week();
   readonly mealTitle = signal('');
   readonly mealDetail = signal('');
-  readonly selectedDate = signal(this.week[0].iso);
+  readonly selectedDate = signal(localDate());
+  readonly today = localDate();
+  readonly hideChecked = signal(false);
+  readonly copyOpen = signal(false);
   readonly groceryName = signal('');
   readonly grocerySection = signal('Produce');
   readonly groceriesBySection = computed(() => {
     const groups = new Map<string, GroceryItem[]>();
-    for (const item of this.store.groceries()) {
+    for (const item of [...this.store.groceries()].sort(
+      (a, b) => Number(a.checked) - Number(b.checked),
+    )) {
+      if (this.hideChecked() && item.checked) continue;
       const section = item.section || 'Other';
       groups.set(section, [...(groups.get(section) ?? []), item]);
     }
     return [...groups.entries()];
   });
+  weeklyMeals(): MealPlanItem[] {
+    const dates = new Set(this.week.map((day) => day.iso));
+    return this.store.meals().filter((meal) => dates.has(meal.date));
+  }
+  plannedDays(): number {
+    return new Set(this.weeklyMeals().map((meal) => meal.date)).size;
+  }
+  remainingGroceries(): number {
+    return this.store.groceries().filter((item) => !item.checked).length;
+  }
+  mealsForSlot(meal: MealCategory): MealPlanItem[] {
+    return this.meals(this.selectedDate()).filter((item) => (item.meal ?? 'Dinner') === meal);
+  }
+  openMeal(meal: MealCategory = 'Dinner'): void {
+    this.reset();
+    this.mealCategory = meal;
+    this.nutritionError.set('');
+    this.editorOpen.set(true);
+  }
+  closeEditor(): void {
+    this.reset();
+    this.editorOpen.set(false);
+  }
+  currentWeek(): void {
+    this.week = week();
+    this.choose(this.today);
+  }
+  selectedDayLabel(): string {
+    return new Date(`${this.selectedDate()}T12:00:00`).toLocaleDateString(undefined, {
+      weekday: 'long',
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+  async viewShopping(): Promise<void> {
+    await this.router.navigate(['/planning'], { fragment: 'groceries' });
+  }
   shiftWeek(offset: number): void {
     const anchor = new Date(`${this.week[0].iso}T12:00:00`);
     anchor.setDate(anchor.getDate() + offset * 7);
@@ -317,7 +373,9 @@ export class PlanningMeals {
     this.mealDetail.set(item.detail);
   }
   async addMeal(): Promise<void> {
-    if (!this.mealTitle().trim() || this.logging()) return;
+    if (!this.mealTitle().trim() || this.logging() || this.store.loading() || this.store.error())
+      return;
+    this.nutritionError.set('');
     this.logging.set(true);
     try {
       if (
@@ -395,7 +453,8 @@ export class PlanningMeals {
   }
   choose(date: string): void {
     this.selectedDate.set(date);
-    this.reset();
+    this.closeEditor();
+    this.pendingMeal = null;
   }
 }
 function week(anchor = new Date()) {

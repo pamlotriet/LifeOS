@@ -1,3 +1,4 @@
+import { BackButton } from '@shared/components/back-button/back-button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
@@ -5,13 +6,12 @@ import {
   calculateRecipe,
   ingredientNutrition,
 } from '@pages/nutrition/state/calculations/nutrition.calculations';
-import { NutritionSummary } from '@shared/components/nutrition-summary/nutrition-summary';
 import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
 import { NutritionIngredient } from '@pages/nutrition/state/nutrition/nutrition.model';
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, IonIcon, IonModal } from '@ionic/angular';
+import { IonContent, IonIcon } from '@ionic/angular';
 import { AppSelect, SelectOption } from '@shared/components/app-select/app-select';
 import { addIcons } from 'ionicons';
 import {
@@ -36,17 +36,17 @@ import { pickImage } from '@shared/utils/pick-image';
 @Component({
   selector: 'app-recipe-form',
   imports: [
+    BackButton,
     TranslatePipe,
     AppInput,
     AppButton,
-    NutritionSummary,
     IonContent,
     IonIcon,
-    IonModal,
     FormsModule,
     AppSelect,
   ],
   templateUrl: './recipe-form.html',
+  styleUrl: './recipe-form.css',
 })
 export class RecipeForm {
   readonly icons = {
@@ -57,19 +57,25 @@ export class RecipeForm {
     closeOutline,
     cameraOutline,
   };
-  readonly embedded = input(false);
-  readonly dismissed = output<void>();
-  readonly saved = output<void>();
-  readonly modalOpen = signal(true);
-  close(): void {
-    if (!this.saving()) this.modalOpen.set(false);
+  readonly macroKeys = ['protein', 'carbs', 'fat'] as const;
+  readonly editorStep = signal<'details' | 'ingredients' | 'method'>('details');
+  readonly editorSteps = ['details', 'ingredients', 'method'] as const;
+  readonly loadFailed = signal(false);
+  readonly creatingFood = signal(false);
+  readonly linkingIndex = signal<number | null>(null);
+  linkIngredient(index: number): void {
+    this.linkingIndex.set(index);
+    this.foodQuery = '';
+    this.foodId = '';
+    this.error.set('');
   }
-  onDismiss(): void {
-    if (this.embedded()) this.dismissed.emit();
-    else
-      void this.router.navigateByUrl(this.id ? `/recipes/${this.id}` : '/recipes', {
-        replaceUrl: true,
-      });
+  selectFood(): void {
+    const food = this.nutrition.foods().find((item) => item.id === this.foodId);
+    this.foodUnit = food?.baseUnit ?? 'g';
+  }
+  close(): void {
+    if (!this.saving())
+      void this.router.navigateByUrl(this.id ? `/recipes/${this.id}` : '/recipes');
   }
   readonly nutrition = inject(NutritionService);
   readonly nutritionIngredients = signal<NutritionIngredient[]>([]);
@@ -115,6 +121,11 @@ export class RecipeForm {
   scaleFactor = 1;
   scaleRecipe(): void {
     if (!Number.isFinite(this.scaleFactor) || this.scaleFactor <= 0) return;
+    if (this.ingredients().some((item) => item.trim())) {
+      this.error.set('Link ingredient notes before scaling the recipe.');
+      return;
+    }
+    this.error.set('');
     this.nutritionIngredients.update((items) =>
       items.map((x) => ({
         ...x,
@@ -126,6 +137,9 @@ export class RecipeForm {
   }
   quickFoodName = '';
   async createMissing(): Promise<void> {
+    if (this.creatingFood() || !this.quickFoodName.trim()) return;
+    this.creatingFood.set(true);
+    this.error.set('');
     try {
       const id = crypto.randomUUID();
       await this.nutrition.saveFood({
@@ -139,8 +153,11 @@ export class RecipeForm {
       });
       this.foodId = id;
       this.quickFoodName = '';
+      this.selectFood();
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : 'Could not create ingredient.');
+    } finally {
+      this.creatingFood.set(false);
     }
   }
   quickCalories = 0;
@@ -148,6 +165,7 @@ export class RecipeForm {
   quickCarbs = 0;
   quickFat = 0;
   addFood(): void {
+    this.error.set('');
     const food = this.nutrition.foods().find((f) => f.id === this.foodId);
     if (!food || !Number.isFinite(this.foodGrams) || this.foodGrams <= 0) {
       this.error.set('Select a food and enter a positive gram quantity.');
@@ -176,6 +194,14 @@ export class RecipeForm {
         },
       },
     ]);
+    const linkedIndex = this.linkingIndex();
+    if (linkedIndex !== null) {
+      this.ingredients.update((items) => items.filter((_, index) => index !== linkedIndex));
+      this.linkingIndex.set(null);
+    }
+    this.foodId = '';
+    this.foodQuery = '';
+    this.foodGrams = 100;
   }
   removeFood(index: number): void {
     this.nutritionIngredients.update((items) => items.filter((_, i) => i !== index));
@@ -188,7 +214,7 @@ export class RecipeForm {
   readonly loading = signal(!!this.id);
   readonly saving = signal(false);
   readonly error = signal('');
-  readonly ingredients = signal<string[]>(['']);
+  readonly ingredients = signal<string[]>([]);
   readonly steps = signal<RecipeStep[]>([{ id: crypto.randomUUID(), title: '', instruction: '' }]);
   readonly tags = signal<string[]>([]);
   readonly tagInput = signal('');
@@ -230,6 +256,7 @@ export class RecipeForm {
       this.steps.set(recipe.steps.map((step) => ({ ...step })));
       this.tags.set([...recipe.tags]);
     } catch {
+      this.loadFailed.set(true);
       this.error.set('Could not load recipe.');
     } finally {
       this.loading.set(false);
@@ -278,7 +305,7 @@ export class RecipeForm {
     this.tags.update((items) => items.filter((item) => item !== tag));
   }
   async save(): Promise<void> {
-    if (this.saving()) return;
+    if (this.saving() || this.loading() || this.loadFailed() || this.creatingFood()) return;
     const ingredients = this.ingredients()
       .map((item) => item.trim())
       .filter(Boolean);
@@ -286,14 +313,19 @@ export class RecipeForm {
       .map((item) => ({ ...item, title: item.title.trim(), instruction: item.instruction.trim() }))
       .filter((item) => item.instruction);
     if (!this.model.title.trim()) {
+      this.editorStep.set('details');
       this.error.set('Enter a recipe title.');
       return;
     }
     if ((!ingredients.length && !this.nutritionIngredients().length) || !steps.length) {
+      this.editorStep.set(
+        !ingredients.length && !this.nutritionIngredients().length ? 'ingredients' : 'method',
+      );
       this.error.set('Add at least one ingredient and one step.');
       return;
     }
     if (!this.selectedCategories().length) {
+      this.editorStep.set('details');
       this.error.set('Choose at least one recipe category.');
       return;
     }
@@ -312,8 +344,7 @@ export class RecipeForm {
         },
         this.id ?? undefined,
       );
-      if (this.embedded()) this.saved.emit();
-      else await this.router.navigateByUrl(`/recipes/${saved.id}`, { replaceUrl: true });
+      await this.router.navigateByUrl(`/recipes/${saved.id}`, { replaceUrl: true });
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not save recipe.');
     } finally {

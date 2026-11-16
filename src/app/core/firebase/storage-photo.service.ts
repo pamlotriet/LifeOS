@@ -99,6 +99,23 @@ export class StoragePhotoService {
     };
   }
 
+  async downloadRecipePhoto(
+    uid: string,
+    recipeId: string,
+    path: string,
+    token: string,
+  ): Promise<Blob> {
+    if (!path.startsWith(`users/${uid}/recipes/${recipeId}/`))
+      throw new Error('This recipe photo does not belong to the signed-in user.');
+    const response = await fetch(`${this.baseUrl}/${encodeURIComponent(path)}?alt=media`, {
+      headers: { Authorization: `Firebase ${token}` },
+      cache: 'no-store',
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!response.ok) throw new Error(`Could not download recipe photo (${response.status}).`);
+    return response.blob();
+  }
+
   async deleteVehiclePhoto(path: string, token: string): Promise<void> {
     await this.deletePhoto(path, token);
   }

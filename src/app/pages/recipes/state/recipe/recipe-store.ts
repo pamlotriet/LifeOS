@@ -39,6 +39,9 @@ export class RecipeStore {
       if (version === this.version) this.loading.set(false);
     }
   }
+  async photoBlob(recipe: RecipeRecord): Promise<Blob> {
+    return this.service.photoBlob(recipe);
+  }
   async get(id: string): Promise<RecipeRecord> {
     return this.recipes().find((item) => item.id === id) ?? this.service.get(id);
   }

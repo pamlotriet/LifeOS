@@ -25,6 +25,11 @@ export class RecipeService {
   private readonly firestore = inject(FirestoreService);
   private readonly storage = inject(StoragePhotoService);
 
+  async photoBlob(recipe: Pick<RecipeRecord, 'id' | 'photoPath'>): Promise<Blob> {
+    const { uid, token } = await this.auth.getSession();
+    return this.storage.downloadRecipePhoto(uid, recipe.id, recipe.photoPath, token);
+  }
+
   async list(): Promise<RecipeRecord[]> {
     const { ownerId, token } = await this.scope();
     return (await this.firestore.listDocuments(`users/${ownerId}/recipes`, token)).map((doc) =>

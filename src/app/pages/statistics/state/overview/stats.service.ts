@@ -1,8 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
 import { buildBookStats, BookStatsDetail } from '@pages/statistics/state/books/book-stats';
 import { cycleBounds } from '@pages/budget/state/cycle/budget-cycle';
-import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
-import { nutritionStats } from '@pages/nutrition/state/calculations/nutrition.calculations';
 import { budgetSpending } from '@pages/budget/budget-snapshot';
 import { inject, Injectable, Injector, signal } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
@@ -24,7 +22,7 @@ import {
 } from '@pages/statistics/state/overview/stats.calculations';
 import { debtStats } from '@pages/statistics/state/debts/debt-stats';
 
-export type StatsModule = 'fuel' | 'books' | 'budget' | 'nutrition';
+export type StatsModule = 'fuel' | 'books' | 'budget';
 export type StatsRange = '1M' | '3M' | '6M' | '1Y' | 'All';
 export interface StatsModuleOption {
   id: StatsModule;
@@ -67,7 +65,6 @@ export interface StatsDashboard {
 }
 
 export const STATS_MODULES: StatsModuleOption[] = [
-  { id: 'nutrition', label: 'Nutrition', icon: 'restaurant-outline' },
   { id: 'fuel', label: 'Fuel', icon: 'car-sport-outline' },
   { id: 'books', label: 'Books', icon: 'book' },
   { id: 'budget', label: 'Budget', icon: 'wallet' },
@@ -143,9 +140,6 @@ export class StatsService {
   private fuelVersion = 0;
   readonly selectedVehicleId = signal('all');
   /** Stores are resolved on demand so opening Fuel Stats does not load every LifeOS module. */
-  private get nutrition(): NutritionService {
-    return this.injector.get(NutritionService);
-  }
   private get books(): BookStore {
     return this.injector.get(BookStore);
   }
@@ -158,8 +152,6 @@ export class StatsService {
 
   dashboard(module: StatsModule, range: StatsRange, selectedMonth?: string): StatsDashboard {
     switch (module) {
-      case 'nutrition':
-        return this.nutritionDashboard(range, selectedMonth);
       case 'fuel':
         return this.fuel(range, selectedMonth);
       case 'books':
@@ -169,7 +161,6 @@ export class StatsService {
     }
   }
   loading(module: StatsModule): boolean {
-    if (module === 'nutrition') return this.nutrition.loading();
     return module === 'fuel'
       ? this.fuelLoading() || this.vehicles.loading()
       : module === 'books'
@@ -177,7 +168,6 @@ export class StatsService {
         : this.budget.loading();
   }
   error(module: StatsModule): string {
-    if (module === 'nutrition') return this.nutrition.error();
     return module === 'fuel'
       ? this.fuelError() || this.vehicles.error()
       : module === 'books'
@@ -185,10 +175,6 @@ export class StatsService {
         : this.budget.error();
   }
   reload(module: StatsModule): void {
-    if (module === 'nutrition') {
-      void this.nutrition.reload();
-      return;
-    }
     if (module === 'fuel') {
       void this.vehicles.reload();
       void this.ensureFuelLoaded();
@@ -225,96 +211,6 @@ export class StatsService {
       this.selectedVehicleId.set(id);
   }
 
-  nutritionStart = '';
-  nutritionEnd = '';
-  private nutritionDashboard(range: StatsRange, selectedMonth?: string): StatsDashboard {
-    const months = new Set(statsMonths(range, statsAnchor(range, selectedMonth)));
-    const logs = this.nutrition
-      .logs()
-      .filter(
-        (l) =>
-          (range === 'All' || months.has(l.date.slice(0, 7))) &&
-          (range === '1M' || !this.nutritionStart || l.date >= this.nutritionStart) &&
-          (range === '1M' || !this.nutritionEnd || l.date <= this.nutritionEnd),
-      );
-    const stats = nutritionStats(logs);
-    const weekTotals = new Map<string, number>();
-    for (const d of stats.daily) {
-      const date = new Date(`${d.date}T12:00:00`);
-      date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
-      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-      weekTotals.set(key, (weekTotals.get(key) ?? 0) + d.nutrition.calories);
-    }
-    const kpi = (label: string, value: string): StatsKpi => ({
-      label,
-      value,
-      icon: 'restaurant-outline',
-      accent: '#c4a4da',
-    });
-    const target = this.nutrition.profile().targets;
-    return {
-      empty: !stats.daily.length,
-      emptyTitle: 'No consumption recorded',
-      emptyMessage: 'Log food eaten to see nutrition trends. Planned meals are excluded.',
-      action: '/nutrition',
-      kpis: [
-        kpi(
-          'Total consumed',
-          this.i18n.instant('{{p0}} kcal', { p0: Math.round(stats.total.calories) }),
-        ),
-        kpi(
-          'Average calories / logged day',
-          this.i18n.instant('{{p0}} kcal', { p0: Math.round(stats.average.calories) }),
-        ),
-        ...(['protein', 'carbs', 'fat'] as const).map((key) =>
-          kpi(
-            this.i18n.instant('Average {{p0}}', { p0: key }),
-            `${stats.average[key].toFixed(1)} g${target[key] > 0 ? this.i18n.instant(' | {{p0}}% current goal', { p0: ((stats.average[key] / target[key]) * 100).toFixed(0) }) : ''}`,
-          ),
-        ),
-        kpi('Days within recorded calorie goal', String(stats.daysMeetingGoal)),
-      ],
-      primaryTitle: 'Daily calorie consumption',
-      secondaryTitle: 'Weekly calories (week starting Monday)',
-      primary: {
-        type: 'bar',
-        data: {
-          labels: stats.daily.slice(-31).map((d) => d.date.slice(5)),
-          datasets: [
-            {
-              label: 'Consumed kcal',
-              data: stats.daily.slice(-31).map((d) => d.nutrition.calories),
-              backgroundColor: '#c4a4da',
-            },
-            {
-              label: 'Recorded goal',
-              data: stats.daily.slice(-31).map((d) => d.goal?.calories ?? null),
-              backgroundColor: '#7f5d99',
-            },
-          ],
-        },
-        options: chartOptions(),
-      },
-      secondary: {
-        type: 'bar',
-        data: {
-          labels: [...weekTotals.keys()].slice(-16),
-          datasets: [
-            {
-              label: 'Consumed kcal',
-              data: [...weekTotals.values()].slice(-16),
-              backgroundColor: '#9e7eb5',
-            },
-          ],
-        },
-        options: chartOptions(),
-      },
-      insight: this.i18n.instant(
-        "{{p0}} logged days. Averages exclude days without logs. Days within goal means consumed calories at or below that day's recorded goal; older entries without goal snapshots are excluded from goal comparisons. Charts show the latest 31 logged days and 16 weeks in the selected range.",
-        { p0: stats.daily.length },
-      ),
-    };
-  }
   private fuel(range: StatsRange, selectedMonth?: string): StatsDashboard {
     const all = this.fuelEntries().filter(
       (entry) => this.selectedVehicleId() === 'all' || entry.vehicleId === this.selectedVehicleId(),

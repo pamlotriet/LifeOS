@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -24,7 +25,7 @@ import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
 import { PlanningStore } from '@pages/planning/state/plan/planning-store';
 @Component({
   selector: 'app-nutrition',
-  imports: [TranslatePipe, AppInput, FormsModule, RouterLink, IonContent, PageHeader],
+  imports: [AppButton, TranslatePipe, AppInput, FormsModule, RouterLink, IonContent, PageHeader],
   templateUrl: './nutrition.html',
   styleUrl: './nutrition.css',
 })
@@ -80,8 +81,41 @@ export class Nutrition {
     const goal = this.store.profile().targets.calories;
     return goal > 0 ? Math.min(100, (this.total().calories / goal) * 100) : 0;
   });
+  readonly editingEntry = signal<FoodLog | null>(null);
+  changeFood(): void {
+    this.unit = this.store.foods().find((food) => food.id === this.foodId)?.baseUnit ?? 'g';
+  }
+  cancelLogger(): void {
+    if (this.busy()) return;
+    this.loggerOpen.set(false);
+    this.editingEntry.set(null);
+    this.editingId = '';
+    this.error.set('');
+  }
+  private lastEditQuantity = 1;
+  changeEditQuantity(quantity: number): void {
+    if (
+      Number.isFinite(quantity) &&
+      quantity > 0 &&
+      Number.isFinite(this.lastEditQuantity) &&
+      this.lastEditQuantity > 0
+    ) {
+      this.manual = scaleNutrition(this.manual, quantity / this.lastEditQuantity);
+      this.lastEditQuantity = quantity;
+    }
+    this.editQuantity = quantity;
+  }
   openLogger(meal: MealCategory = this.meal): void {
+    if (this.busy()) return;
     this.meal = meal;
+    this.editingEntry.set(null);
+    this.foodId = '';
+    this.recipeId = '';
+    this.grams = 100;
+    this.unit = 'g';
+    this.servings = 1;
+    this.manualName = '';
+    this.manual = zeroMacros();
     this.editingId = '';
     this.loggerOpen.set(true);
     this.error.set('');
@@ -153,13 +187,17 @@ export class Nutrition {
     this.editingId = '';
     this.loggerOpen.set(false);
   }
-  async run(action: () => Promise<void>): Promise<void> {
-    if (this.busy()) return;
+  async run(action: () => Promise<void>, closeOnSuccess = true): Promise<void> {
+    if (this.busy() || this.store.loading() || this.store.error()) return;
     this.busy.set(true);
     this.error.set('');
     try {
       await action();
-      this.loggerOpen.set(false);
+      if (closeOnSuccess) {
+        this.loggerOpen.set(false);
+        this.editingEntry.set(null);
+        this.editingId = '';
+      }
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : 'Could not save nutrition.');
     } finally {
@@ -167,7 +205,7 @@ export class Nutrition {
     }
   }
   removeLog(id: string): void {
-    void this.run(() => this.store.removeLog(id));
+    void this.run(() => this.store.removeLog(id), false);
   }
   logFood(): void {
     const date = this.date();
@@ -233,18 +271,30 @@ export class Nutrition {
     void this.run(() => {
       const { id, plannedMealId, createdAt, goalSnapshot, ...copy } = entry;
       return this.store.saveLog({ ...copy, date });
-    });
+    }, false);
   }
   startEdit(entry: FoodLog): void {
+    if (this.busy()) return;
+    this.editingEntry.set(structuredClone(entry));
+    this.loggerOpen.set(true);
+    this.error.set('');
+    setTimeout(() =>
+      document
+        .getElementById('food-composer')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    );
     this.editingId = entry.id;
     this.editMeal = entry.meal ?? 'Snacks';
     this.editDate = entry.date;
     this.editQuantity = entry.quantity ?? 1;
+    this.lastEditQuantity = this.editQuantity;
     this.manualName = entry.name;
     this.manual = { ...entry.nutrition };
   }
   saveEdit(entry: FoodLog): void {
     void this.run(async () => {
+      if (!Number.isFinite(this.editQuantity) || this.editQuantity <= 0)
+        throw new Error('Enter a positive quantity.');
       await this.store.saveLog(
         {
           ...entry,
@@ -253,7 +303,7 @@ export class Nutrition {
           name: this.manualName,
           quantity: this.editQuantity,
           amount: `${this.editQuantity} ${entry.unit ?? 'portion'}`,
-          nutrition: scaleNutrition(this.manual, this.editQuantity / (entry.quantity ?? 1)),
+          nutrition: structuredClone(this.manual),
         },
         entry.id,
       );

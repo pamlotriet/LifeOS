@@ -7,6 +7,7 @@ import {
   DEFAULT_CATEGORIES,
   TransactionInput,
   customAccountNet,
+  mainAccountNet,
   validateTransaction,
 } from '@pages/budget/state/budget/budget.model';
 
@@ -27,6 +28,7 @@ function fixture() {
     generation: 0,
     transactions: signal<BudgetTransaction[]>([]),
     activeCategories: () => DEFAULT_CATEGORIES,
+    categories: () => DEFAULT_CATEGORIES,
     debts: signal([]),
     auth: { userId: () => 'owner' },
     service: {
@@ -91,6 +93,39 @@ describe('Budget account management', () => {
     await store.saveAccount('Everyday bank', 'main');
     expect(store.accountName('main')).toBe('Everyday bank');
     await expect(store.deleteAccount('main')).rejects.toThrow('built-in');
+  });
+
+  it('uses existing checkpoints for built-in Savings and Spending balances', async () => {
+    const { store } = fixture();
+    store.setSavingsBalance = vi.fn().mockResolvedValue(undefined);
+    store.setSpendingBalance = vi.fn().mockResolvedValue(undefined);
+    await store.saveAccount('Savings', 'savings', 400);
+    await store.saveAccount('Spending', 'spending', 200);
+    expect(store.setSavingsBalance).toHaveBeenCalledWith(400);
+    expect(store.setSpendingBalance).toHaveBeenCalledWith(200);
+    expect(store.accounts().find((account) => account.id === 'savings')?.balance).toBeUndefined();
+  });
+
+  it('checkpoints Main so existing transactions are not counted twice', async () => {
+    const { store } = fixture();
+    store.transactions.set([
+      transfer,
+      { ...transfer, id: 'income', type: 'income', amount: 1000, fromAccount: '', toAccount: '' },
+    ]);
+    await store.saveAccount('Main', 'main', 750);
+    const account = store.accounts().find((account) => account.id === 'main')!;
+    expect(account.recordedNet).toBe(900);
+    expect(
+      account.balance! +
+        mainAccountNet(store.transactions(), DEFAULT_CATEGORIES) -
+        account.recordedNet!,
+    ).toBe(750);
+    store.transactions.update((items) => [...items, { ...transfer, id: 'next', amount: 50 }]);
+    expect(
+      account.balance! +
+        mainAccountNet(store.transactions(), DEFAULT_CATEGORIES) -
+        account.recordedNet!,
+    ).toBe(700);
   });
 
   it('rejects duplicate names and keeps local accounts unchanged on failed writes', async () => {

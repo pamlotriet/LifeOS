@@ -17,6 +17,25 @@ export function customAccountNet(items: BudgetTransaction[], id: string): number
     ) / 100
   );
 }
+/** Main receives income and pays bills, debts and transfers; Spending purchases are separate. */
+export function mainAccountNet(items: BudgetTransaction[], categories: BudgetCategory[]): number {
+  const spendingIds = new Set(categories.filter(isSpendingCategory).map((category) => category.id));
+  return (
+    Math.round(
+      (total(items.filter((item) => item.type === 'income')) +
+        transferNet(items, 'main') -
+        total(
+          items.filter(
+            (item) =>
+              item.type === 'expense' &&
+              !item.account &&
+              (!!item.debtId || !spendingIds.has(item.categoryId)),
+          ),
+        )) *
+        100,
+    ) / 100
+  );
+}
 export function validAccountId(id: unknown): id is string {
   return (
     typeof id === 'string' &&

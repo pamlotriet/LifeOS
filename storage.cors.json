@@ -1,0 +1,13 @@
+[
+  {
+    "origin": [
+      "http://localhost:4200",
+      "http://127.0.0.1:4200",
+      "https://fuel-consumption-92c8c.web.app",
+      "https://fuel-consumption-92c8c.firebaseapp.com"
+    ],
+    "method": ["GET", "HEAD"],
+    "responseHeader": ["Content-Type", "Content-Length", "Content-Disposition"],
+    "maxAgeSeconds": 3600
+  }
+]

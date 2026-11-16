@@ -14,7 +14,7 @@ describe('generatePassword', () => {
     expect(value).toMatch(/[A-Z]/);
     expect(value).toMatch(/[a-z]/);
     expect(value).toMatch(/\d/);
-    expect(value).toMatch(/[^\w]/);
+    expect(value).toMatch(/[!@#$%^&*()\-_=+]/);
   });
   it('rejects an empty character selection', () => {
     expect(() =>

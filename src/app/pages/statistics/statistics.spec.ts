@@ -42,6 +42,20 @@ describe('Statistics', () => {
     await fixture.whenStable();
   });
 
+  it('offers only Fuel, Books and Budget and falls back from a saved Nutrition selection', async () => {
+    expect(component.modules.map((module) => module.id)).toEqual(['fuel', 'books', 'budget']);
+    localStorage.setItem('lifeos.stats.module', 'nutrition');
+    const restored = TestBed.createComponent(Statistics);
+    await restored.whenStable();
+    expect(restored.componentInstance.selected()).toBe('books');
+    expect(
+      Array.from(restored.nativeElement.querySelectorAll('option')).map(
+        (option: any) => option.value,
+      ),
+    ).not.toContain('nutrition');
+    restored.destroy();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });

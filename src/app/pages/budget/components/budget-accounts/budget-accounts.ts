@@ -1,3 +1,4 @@
+import { budgetSnapshot } from '@pages/budget/budget-snapshot';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -8,6 +9,7 @@ import {
   BudgetAccountRecord,
   money,
   customAccountNet,
+  mainAccountNet,
 } from '@pages/budget/state/budget/budget.model';
 
 @Component({
@@ -26,11 +28,23 @@ export class BudgetAccounts {
     return BUDGET_ACCOUNTS.some((account) => account.value === id);
   }
   balance(id: string): number {
+    if (id === 'savings') return this.store.savingsTotal();
+    if (id === 'spending')
+      return budgetSnapshot(
+        this.store.transactions(),
+        this.store.categories(),
+        this.store.plans(),
+        this.store.month(),
+        this.store.cycleStartDay(),
+        this.store.spendingBalances(),
+      ).leftOver.actual;
     const account = this.store.accounts().find((item) => item.id === id);
     return (
       Math.round(
         ((account?.balance ?? 0) +
-          customAccountNet(this.store.transactions(), id) -
+          (id === 'main'
+            ? mainAccountNet(this.store.transactions(), this.store.categories())
+            : customAccountNet(this.store.transactions(), id)) -
           (account?.recordedNet ?? 0)) *
           100,
       ) / 100

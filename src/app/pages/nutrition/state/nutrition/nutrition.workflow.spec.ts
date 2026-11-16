@@ -7,7 +7,6 @@ import { StoragePhotoService } from '@core/firebase/storage-photo.service';
 import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 import { RecipeService } from '@pages/recipes/state/recipe/recipe.service';
 import { PlanningService } from '@pages/planning/state/plan/planning.service';
-import { StatsService } from '@pages/statistics/state/overview/stats.service';
 import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
 import {
   calculateRecipe,
@@ -16,7 +15,7 @@ import {
 } from '@pages/nutrition/state/calculations/nutrition.calculations';
 import { RecipeInput } from '@pages/recipes/state/recipe/recipe.model';
 describe('Nutrition service workflow', () => {
-  it('persists an ingredient, recipe, plan and personal snapshot consumed by Stats', async () => {
+  it('persists an ingredient, recipe, plan and personal consumption snapshot', async () => {
     const updateDocument = vi.fn().mockResolvedValue(undefined);
     const createDocument = vi.fn().mockResolvedValue({});
     TestBed.configureTestingModule({
@@ -109,8 +108,6 @@ describe('Nutrition service workflow', () => {
       nutrition: scaleNutrition(summary.perServing, 1.5),
     });
     expect(sumNutrition(nutrition.logs().map((l) => l.nutrition)).calories).toBe(390);
-    const dashboard = TestBed.inject(StatsService).dashboard('nutrition', 'All');
-    expect(dashboard.kpis.find((k) => k.label === 'Total consumed')?.value).toBe('390 kcal');
     await nutrition.saveFood({ ...nutrition.foods()[0], calories: 200 });
     expect(
       calculateRecipe(recipe.nutritionIngredients!, recipe.servings, nutrition.foods()).perServing

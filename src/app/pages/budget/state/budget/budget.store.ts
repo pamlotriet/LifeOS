@@ -29,6 +29,7 @@ import {
   BudgetAccountRecord,
   BUDGET_ACCOUNTS,
   customAccountNet,
+  mainAccountNet,
 } from '@pages/budget/state/budget/budget.model';
 
 @Injectable({ providedIn: 'root' })
@@ -63,6 +64,8 @@ export class BudgetStore {
       )
     )
       throw new Error('An account with this name already exists.');
+    if (balance !== null && (!Number.isFinite(balance) || balance < 0 || balance > 999999999))
+      throw new Error('Enter a valid current account balance.');
     const existing = this.accounts().find((account) => account.id === id);
     if (existing?.deleted) throw new Error('This account has been deleted.');
     const uid = this.auth.userId();
@@ -71,13 +74,21 @@ export class BudgetStore {
       id,
       name,
       deleted: false,
-      ...(balance !== null
-        ? { balance, recordedNet: customAccountNet(this.transactions(), id) }
+      ...(balance !== null && id !== 'savings' && id !== 'spending'
+        ? {
+            balance,
+            recordedNet:
+              id === 'main'
+                ? mainAccountNet(this.transactions(), this.categories())
+                : customAccountNet(this.transactions(), id),
+          }
         : {}),
     });
     if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget.');
     ++this.generation;
     this.accounts.update((items) => [...items.filter((account) => account.id !== id), saved]);
+    if (balance !== null && id === 'savings') await this.setSavingsBalance(balance);
+    if (balance !== null && id === 'spending') await this.setSpendingBalance(balance);
   }
   async deleteAccount(id: string): Promise<void> {
     if (this.loading() || this.error()) throw new Error('Wait for your budget to load first.');
