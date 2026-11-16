@@ -67,6 +67,22 @@
         </button>
       </div>
     </section>
+    <div class="my-4 flex flex-wrap items-center gap-3">
+      <button
+        appButton="secondary"
+        type="button"
+        (click)="exportCycle()"
+        [disabled]="store.loading() || !!store.error() || exporting()"
+      >
+        {{ (exporting() ? 'Preparing export...' : 'Export selected cycle') | translate }}
+      </button>
+      <span class="text-sm text-(--text-secondary)">{{
+        'PDF report and spreadsheet data (ZIP)' | translate
+      }}</span>
+    </div>
+    @if (exportError()) {
+      <p class="status error" role="alert">{{ exportError() | translate }}</p>
+    }
     @if (store.loading()) {
       <section class="my-6" [attr.aria-label]="'Loading your budget' | translate">
         <app-skeleton variant="cards" [count]="2" />
@@ -105,136 +121,140 @@
           class="grid gap-4 md:grid-cols-2"
           [attr.aria-label]="'Account balances' | translate"
         >
-          <article
-            class="rounded-2xl border border-border bg-card p-5 sm:p-6 [&_h2]:text-sm [&_h2]:font-medium [&>strong]:my-3 [&>strong]:block [&>strong]:text-3xl [&>strong]:font-medium [&>strong]:tabular-nums [&>p]:text-xs [&>p]:leading-relaxed [&>p]:text-(--text-secondary)"
-          >
-            <h2>
-              {{
-                (snapshot().leftOver.confirmed
-                  ? 'Spending account balance'
-                  : 'Estimated spending left'
-                ) | translate
-              }}
-            </h2>
-            <strong [class.negative]="snapshot().leftOver.actual < 0" aria-live="polite">{{
-              money(snapshot().leftOver.actual)
-            }}</strong>
-            <p>
-              {{
-                (snapshot().leftOver.confirmed
-                  ? 'Transfers in increase Spending; transfers out and Spending purchases reduce it.'
-                  : 'Estimate from your budget. Set your real Spending account balance below.'
-                ) | translate
-              }}
-            </p>
-            <a
-              class="text-link spending-transfer-link"
-              routerLink="/budget/transactions/add"
-              [queryParams]="{ type: 'transfer', from: 'main', to: 'spending' }"
-              >{{ 'Record transfer' | translate }}</a
+          @if (hasAccount('spending')) {
+            <article
+              class="rounded-2xl border border-border bg-card p-5 sm:p-6 [&_h2]:text-sm [&_h2]:font-medium [&>strong]:my-3 [&>strong]:block [&>strong]:text-3xl [&>strong]:font-medium [&>strong]:tabular-nums [&>p]:text-xs [&>p]:leading-relaxed [&>p]:text-(--text-secondary)"
             >
-            <details class="spending-balance-editor">
-              <summary>{{ 'Set current Spending balance' | translate }}</summary>
+              <h2>
+                {{
+                  (snapshot().leftOver.confirmed
+                    ? 'Spending account balance'
+                    : 'Estimated spending left'
+                  ) | translate
+                }}
+              </h2>
+              <strong [class.negative]="snapshot().leftOver.actual < 0" aria-live="polite">{{
+                money(snapshot().leftOver.actual)
+              }}</strong>
               <p>
                 {{
-                  'Enter what is in your Spending account now, after transfers and purchases already recorded here. Existing purchases will not be deducted again. Main-account bills, savings and other accounts stay separate.'
-                    | translate
+                  (snapshot().leftOver.confirmed
+                    ? 'Transfers in increase Spending; transfers out and Spending purchases reduce it.'
+                    : 'Estimate from your budget. Set your real Spending account balance below.'
+                  ) | translate
                 }}
               </p>
-              <form (ngSubmit)="saveSpendingBalance()">
-                <label
-                  >{{ 'Current balance (R)' | translate
-                  }}<input
-                    appInput="field"
-                    type="text"
-                    appBudgetNumber
-                    inputmode="decimal"
-                    name="spendingBalance"
-                    [ngModel]="balanceInput()"
-                    (ngModelChange)="balanceInput.set($event); balanceSaved.set(false)"
-                    [disabled]="savingBalance()"
-                    required /></label
-                ><button
-                  appButton="secondary"
-                  type="submit"
-                  class="secondary-button"
-                  [disabled]="savingBalance()"
-                >
-                  {{ (savingBalance() ? 'Saving...' : 'Confirm current balance') | translate }}
-                </button>
-              </form>
-              @if (balanceSaved()) {
-                <p class="positive" role="status">{{ 'Spending balance saved.' | translate }}</p>
-              }
-              @if (balanceError()) {
-                <p class="negative" role="alert">{{ balanceError() | translate }}</p>
-              }
-              <p>
-                {{
-                  'Set this once to get started. Your balance carries forward across cycles. Record each actual transfer into Spending and each Spending purchase; no monthly balance adjustment is needed.'
-                    | translate
-                }}
-              </p>
-            </details>
-          </article>
-          <section
-            class="rounded-2xl border border-border bg-card p-5 sm:p-6 [&_h2]:text-sm [&_h2]:font-medium [&>strong]:my-3 [&>strong]:block [&>strong]:text-3xl [&>strong]:font-medium [&>strong]:tabular-nums [&>p]:text-xs [&>p]:leading-relaxed [&>p]:text-(--text-secondary)"
-            [attr.aria-label]="'Savings account' | translate"
-          >
-            <h2>{{ 'Total savings' | translate }}</h2>
-            <strong aria-live="polite">{{ money(store.savingsTotal()) }}</strong>
-            <p>
-              {{
-                'Across all cycles. Transfers in increase Savings; transfers out and Savings purchases reduce it.'
-                  | translate
-              }}
-            </p>
-            <div class="form-actions">
               <a
-                class="text-link"
+                class="text-link spending-transfer-link"
                 routerLink="/budget/transactions/add"
-                [queryParams]="{ type: 'transfer', from: 'main', to: 'savings' }"
+                [queryParams]="{ type: 'transfer', from: 'main', to: 'spending' }"
                 >{{ 'Record transfer' | translate }}</a
-              ><a
-                class="text-link"
-                routerLink="/budget/transactions/add"
-                [queryParams]="{ type: 'expense', account: 'savings' }"
-                >{{ 'Record a purchase' | translate }}</a
               >
-            </div>
-            <details class="spending-balance-editor">
-              <summary>{{ 'Set current total savings' | translate }}</summary>
+              <details class="spending-balance-editor">
+                <summary>{{ 'Set current Spending balance' | translate }}</summary>
+                <p>
+                  {{
+                    'Enter what is in your Spending account now, after transfers and purchases already recorded here. Existing purchases will not be deducted again. Main-account bills, savings and other accounts stay separate.'
+                      | translate
+                  }}
+                </p>
+                <form (ngSubmit)="saveSpendingBalance()">
+                  <label
+                    >{{ 'Current balance (R)' | translate
+                    }}<input
+                      appInput="field"
+                      type="text"
+                      appBudgetNumber
+                      inputmode="decimal"
+                      name="spendingBalance"
+                      [ngModel]="balanceInput()"
+                      (ngModelChange)="balanceInput.set($event); balanceSaved.set(false)"
+                      [disabled]="savingBalance()"
+                      required /></label
+                  ><button
+                    appButton="secondary"
+                    type="submit"
+                    class="secondary-button"
+                    [disabled]="savingBalance()"
+                  >
+                    {{ (savingBalance() ? 'Saving...' : 'Confirm current balance') | translate }}
+                  </button>
+                </form>
+                @if (balanceSaved()) {
+                  <p class="positive" role="status">{{ 'Spending balance saved.' | translate }}</p>
+                }
+                @if (balanceError()) {
+                  <p class="negative" role="alert">{{ balanceError() | translate }}</p>
+                }
+                <p>
+                  {{
+                    'Set this once to get started. Your balance carries forward across cycles. Record each actual transfer into Spending and each Spending purchase; no monthly balance adjustment is needed.'
+                      | translate
+                  }}
+                </p>
+              </details>
+            </article>
+          }
+          @if (hasAccount('savings')) {
+            <section
+              class="rounded-2xl border border-border bg-card p-5 sm:p-6 [&_h2]:text-sm [&_h2]:font-medium [&>strong]:my-3 [&>strong]:block [&>strong]:text-3xl [&>strong]:font-medium [&>strong]:tabular-nums [&>p]:text-xs [&>p]:leading-relaxed [&>p]:text-(--text-secondary)"
+              [attr.aria-label]="'Savings account' | translate"
+            >
+              <h2>{{ 'Total savings' | translate }}</h2>
+              <strong aria-live="polite">{{ money(store.savingsTotal()) }}</strong>
               <p>
                 {{
-                  'Enter your savings balance after all transactions already recorded here. Future transactions update it automatically.'
+                  'Across all cycles. Transfers in increase Savings; transfers out and Savings purchases reduce it.'
                     | translate
                 }}
               </p>
-              <form (ngSubmit)="saveSavingsBalance()">
-                <label
-                  >{{ 'Total savings (R)' | translate
-                  }}<input
-                    appInput="field"
-                    type="text"
-                    appBudgetNumber
-                    inputmode="decimal"
-                    name="savingsBalance"
-                    [ngModel]="savingsInput()"
-                    (ngModelChange)="savingsInput.set($event)"
-                    required
-                    [disabled]="savingsBusy()" /></label
-                ><button
-                  appButton="secondary"
-                  type="submit"
-                  class="secondary-button"
-                  [disabled]="savingsBusy()"
+              <div class="form-actions">
+                <a
+                  class="text-link"
+                  routerLink="/budget/transactions/add"
+                  [queryParams]="{ type: 'transfer', from: 'main', to: 'savings' }"
+                  >{{ 'Record transfer' | translate }}</a
+                ><a
+                  class="text-link"
+                  routerLink="/budget/transactions/add"
+                  [queryParams]="{ type: 'expense', account: 'savings' }"
+                  >{{ 'Record a purchase' | translate }}</a
                 >
-                  {{ (savingsBusy() ? 'Saving...' : 'Save savings balance') | translate }}
-                </button>
-              </form>
-              <p role="status">{{ savingsMessage() | translate }}</p>
-            </details>
-          </section>
+              </div>
+              <details class="spending-balance-editor">
+                <summary>{{ 'Set current total savings' | translate }}</summary>
+                <p>
+                  {{
+                    'Enter your savings balance after all transactions already recorded here. Future transactions update it automatically.'
+                      | translate
+                  }}
+                </p>
+                <form (ngSubmit)="saveSavingsBalance()">
+                  <label
+                    >{{ 'Total savings (R)' | translate
+                    }}<input
+                      appInput="field"
+                      type="text"
+                      appBudgetNumber
+                      inputmode="decimal"
+                      name="savingsBalance"
+                      [ngModel]="savingsInput()"
+                      (ngModelChange)="savingsInput.set($event)"
+                      required
+                      [disabled]="savingsBusy()" /></label
+                  ><button
+                    appButton="secondary"
+                    type="submit"
+                    class="secondary-button"
+                    [disabled]="savingsBusy()"
+                  >
+                    {{ (savingsBusy() ? 'Saving...' : 'Save savings balance') | translate }}
+                  </button>
+                </form>
+                <p role="status">{{ savingsMessage() | translate }}</p>
+              </details>
+            </section>
+          }
         </section>
       }
       @if (!monthlyView) {

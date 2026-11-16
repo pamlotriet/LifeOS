@@ -4,6 +4,7 @@
 src/app/
   shared/
     components/
+      app-data-backup/         Full account ZIP download control
       app-input/               Native text, number and multiline fields
       app-button/              Primary, secondary and destructive actions
       app-carousel/            Projected slides, autoplay, desktop arrows and themed scrolling
@@ -20,6 +21,7 @@ src/app/
     utils/
     validators/
   core/
+    backups/                   User-scoped export, archive manifest and completeness checks
     authentication/            App-wide authentication and guards
     firebase/                  Firebase configuration and persistence infrastructure
     layout/                    App navigation shell
@@ -44,6 +46,7 @@ src/app/
         covers/                Cover and ISBN lookup service
         reading-goal/          Annual goal persistence and tests
     budget/
+      finance-export.ts        Selected cycle PDF, CSV and JSON archive (read-only)
       budget-overview/
       budget-account-form/     Dedicated account creation and editing
       budget-transaction-form/

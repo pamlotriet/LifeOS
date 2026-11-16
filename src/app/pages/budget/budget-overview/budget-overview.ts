@@ -20,6 +20,8 @@ import {
   localDate,
   money,
   transferAccounts,
+  mainAccountNet,
+  customAccountNet,
 } from '@pages/budget/state/budget/budget.model';
 import { BudgetSummary } from '@pages/budget/components/budget-summary/budget-summary';
 import { BudgetTransactions } from '@pages/budget/components/budget-transactions/budget-transactions';
@@ -56,6 +58,64 @@ export class BudgetOverview {
   private readonly i18n = inject(TranslateService);
 
   readonly store = inject(BudgetStore);
+  readonly exporting = signal(false);
+  readonly exportError = signal('');
+  async exportCycle(): Promise<void> {
+    if (this.exporting() || this.store.loading() || this.store.error()) return;
+    this.exporting.set(true);
+    this.exportError.set('');
+    try {
+      // Capture the selection and data before loading the PDF library.
+      const transactions = this.store.transactions();
+      const categories = this.store.categories();
+      const input = {
+        month: this.store.month(),
+        startDay: this.store.cycleStartDay(),
+        transactions,
+        categories,
+        plans: this.store.plans(),
+        debts: this.store.debts(),
+        checkpoints: this.store.spendingBalances(),
+        accounts: this.store.accounts().map((a) => ({
+          id: a.id,
+          name: a.name + (a.deleted ? ' (deleted)' : ''),
+          balance:
+            a.id === 'spending'
+              ? this.snapshot().leftOver.actual
+              : a.id === 'savings'
+                ? this.store.savingsTotal()
+                : Math.round(
+                    ((a.balance ?? 0) +
+                      (a.id === 'main'
+                        ? mainAccountNet(transactions, categories)
+                        : customAccountNet(transactions, a.id)) -
+                      (a.recordedNet ?? 0)) *
+                      100,
+                  ) / 100,
+          basis: a.id === 'spending' ? 'Selected cycle calculation' : 'Current balance at export',
+        })),
+      };
+      const { createFinanceExport } = await import('@pages/budget/finance-export');
+      const bytes = createFinanceExport(input);
+      const url = URL.createObjectURL(
+        new Blob([new Uint8Array(bytes).buffer], { type: 'application/zip' }),
+      );
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `LifeOS-Finances-${input.month}.zip`;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch {
+      this.exportError.set('Could not export this cycle. Please try again.');
+    } finally {
+      this.exporting.set(false);
+    }
+  }
+  hasAccount(id: string): boolean {
+    return this.store.activeAccounts().some((account) => account.id === id);
+  }
   readonly monthlyView = !!inject(ActivatedRoute).snapshot.data['monthly'];
   readonly transfersView = !!inject(ActivatedRoute).snapshot.data['transfers'];
   readonly selectedDate = signal('');

@@ -28,6 +28,7 @@
     "@ngx-translate/core": "^18.1.0",
     "@spartan-ng/brain": "^1.4.1",
     "chart.js": "^4.5.1",
+    "fflate": "^0.8.2",
     "firebase": "^12.19.0",
     "html5-qrcode": "^2.3.8",
     "ionicons": "^8.1.0",

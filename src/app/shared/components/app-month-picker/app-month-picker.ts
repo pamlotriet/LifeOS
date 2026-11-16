@@ -1,9 +1,10 @@
+import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, forwardRef, input, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, FormsModule],
   selector: 'app-month-picker',
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => AppMonthPicker), multi: true },
@@ -11,18 +12,18 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   template: `<div class="month-fields">
     <select
       [attr.aria-label]="ariaLabel() + ' month' | translate"
-      [value]="month()"
+      [ngModel]="month()"
       [disabled]="disabled()"
-      (change)="choose($any($event.target).value, year())"
+      (ngModelChange)="choose($event, year())"
     >
       @for (label of months; track $index) {
         <option [value]="pad($index + 1)">{{ label | translate }}</option>
       }</select
     ><select
       [attr.aria-label]="ariaLabel() + ' year' | translate"
-      [value]="year()"
+      [ngModel]="year()"
       [disabled]="disabled()"
-      (change)="choose(month(), $any($event.target).value)"
+      (ngModelChange)="choose(month(), $event)"
     >
       @for (item of years(); track item) {
         <option [value]="item">{{ item }}</option>

@@ -1,3 +1,4 @@
+import { AppDataBackup } from '@shared/components/app-data-backup/app-data-backup';
 import { TranslatePipe } from '@ngx-translate/core';
 import { nutritionOutline } from 'ionicons/icons';
 import { Component, inject, signal } from '@angular/core';
@@ -7,7 +8,7 @@ import { AuthService } from '@core/authentication/authentication.service';
 import { AppUpdates } from '@core/updates/app-updates.service';
 
 @Component({
-  imports: [TranslatePipe, IonContent, IonIcon, RouterLink],
+  imports: [AppDataBackup, TranslatePipe, IonContent, IonIcon, RouterLink],
   selector: 'app-more',
   styleUrl: './more.css',
   templateUrl: './more.html',

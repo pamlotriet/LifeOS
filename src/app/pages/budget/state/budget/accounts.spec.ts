@@ -88,12 +88,30 @@ describe('Budget account management', () => {
     await expect(store.saveTransaction({ ...transfer, amount: 75 }, 't')).resolves.toBeUndefined();
   });
 
-  it('allows renaming built-ins but protects their special balance tracking from deletion', async () => {
+  it('protects Main from deletion while allowing it to be renamed', async () => {
     const { store } = fixture();
     await store.saveAccount('Everyday bank', 'main');
     expect(store.accountName('main')).toBe('Everyday bank');
-    await expect(store.deleteAccount('main')).rejects.toThrow('built-in');
+    await expect(store.deleteAccount('main')).rejects.toThrow('Main account');
   });
+
+  it.each(['spending', 'savings'])(
+    'deletes %s but retains its history and prevents new transfers to it',
+    async (id) => {
+      const { store } = fixture();
+      const previous = { ...transfer, id: 'previous', toAccount: id };
+      store.transactions.set([previous]);
+      await store.deleteAccount(id);
+      expect(store.activeAccounts().some((account) => account.id === id)).toBe(false);
+      expect(store.accounts().find((account) => account.id === id)?.deleted).toBe(true);
+      expect(store.accountName(id)).toBe(id === 'savings' ? 'Savings' : 'Spending');
+      expect(store.transactions()).toEqual([previous]);
+      await expect(store.saveTransaction({ ...previous })).rejects.toThrow('active account');
+      await expect(
+        store.saveTransaction({ ...previous, amount: 50 }, previous.id),
+      ).resolves.toBeUndefined();
+    },
+  );
 
   it('uses existing checkpoints for built-in Savings and Spending balances', async () => {
     const { store } = fixture();

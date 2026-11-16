@@ -62,7 +62,7 @@ export class BudgetTransactionForm {
   });
   readonly archivedPurchaseAccount = computed(() => {
     const id = this.store.transactions().find((item) => item.id === this.id)?.account;
-    return id?.startsWith('custom-') &&
+    return (id === 'savings' || id?.startsWith('custom-')) &&
       !this.store.activeAccounts().some((account) => account.id === id)
       ? { id, name: this.store.accountName(id) }
       : null;
@@ -147,10 +147,13 @@ export class BudgetTransactionForm {
             ? (this.store
                 .activeAccounts()
                 .find((account) => account.id === this.route.snapshot.queryParamMap.get('to'))
-                ?.id ?? (requested === 'spending-transfer' ? 'spending' : 'savings'))
+                ?.id ??
+              this.defaultDestination(requested === 'spending-transfer' ? 'spending' : 'savings'))
             : '',
         account:
-          type === 'expense' && this.route.snapshot.queryParamMap.get('account') === 'savings'
+          type === 'expense' &&
+          this.route.snapshot.queryParamMap.get('account') === 'savings' &&
+          this.store.activeAccounts().some((account) => account.id === 'savings')
             ? 'savings'
             : '',
       };
@@ -160,11 +163,19 @@ export class BudgetTransactionForm {
       this.confirmDelete.set(false);
     }
   }
+  private defaultDestination(preferred = 'savings'): string {
+    const accounts = this.store.activeAccounts();
+    return (
+      accounts.find((account) => account.id === preferred)?.id ??
+      accounts.find((account) => account.id !== 'main')?.id ??
+      ''
+    );
+  }
   changeType(type: TransactionType): void {
     this.type.set(type);
     this.model.type = type;
     this.model.fromAccount = type === 'transfer' ? 'main' : '';
-    this.model.toAccount = type === 'transfer' ? 'savings' : '';
+    this.model.toAccount = type === 'transfer' ? this.defaultDestination() : '';
     if (type === 'transfer') this.model.paymentMethod = 'Bank transfer';
     if (type !== 'expense') {
       this.model.account = '';

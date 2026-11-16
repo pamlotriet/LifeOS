@@ -7,8 +7,7 @@
       <h2 class="text-base font-medium">{{ 'Manage accounts' | translate }}</h2>
       <p class="mt-1 text-xs text-(--text-secondary)">
         {{
-          'Add accounts for your transfers and purchases. Built-in accounts can be renamed.'
-            | translate
+          'Add accounts for your transfers and purchases. Only Main cannot be deleted.' | translate
         }}
       </p>
     </div>
@@ -42,7 +41,7 @@
         >
           {{ 'Edit' | translate }}
         </button>
-        @if (!builtIn(account.id)) {
+        @if (canDelete(account.id)) {
           <button
             appButton="secondary"
             type="button"

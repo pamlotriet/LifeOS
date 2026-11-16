@@ -1,3 +1,4 @@
+import { AppDataBackup } from '@shared/components/app-data-backup/app-data-backup';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +10,7 @@ import { ThemeService } from '@core/theme/theme.service';
 
 @Component({
   selector: 'app-password-settings',
-  imports: [TranslatePipe, FormsModule, IonContent, IonIcon, PageHeader],
+  imports: [AppDataBackup, TranslatePipe, FormsModule, IonContent, IonIcon, PageHeader],
   templateUrl: './password-settings.html',
 })
 export class PasswordSettings {

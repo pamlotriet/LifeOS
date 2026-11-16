@@ -1150,6 +1150,13 @@ ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button::part(native)
 @media (min-width: 768px) {
   ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button::part(native) {
     height: 39px !important;
+    justify-content: flex-start;
+    text-align: left;
+  }
+  ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button > div {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
   }
   ion-app.lifeos-app app-tabs-shell ion-tab-button.lifeos-tab-button {
     flex-basis: 39px !important;

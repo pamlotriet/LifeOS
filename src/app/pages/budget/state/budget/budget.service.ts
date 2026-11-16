@@ -103,6 +103,8 @@ export class BudgetService {
     };
   }
   async saveAccount(account: BudgetAccountRecord): Promise<BudgetAccountRecord> {
+    if (account.id === 'main' && account.deleted)
+      throw new Error('The Main account cannot be deleted.');
     if (!validAccountId(account.id) || !account.name.trim() || account.name.trim().length > 60)
       throw new Error('Enter an account name of up to 60 characters.');
     if (

@@ -92,8 +92,7 @@ export class BudgetStore {
   }
   async deleteAccount(id: string): Promise<void> {
     if (this.loading() || this.error()) throw new Error('Wait for your budget to load first.');
-    if (BUDGET_ACCOUNTS.some((account) => account.value === id))
-      throw new Error('Main, Spending and Savings are built-in accounts. You can rename them.');
+    if (id === 'main') throw new Error('The Main account cannot be deleted.');
     const account = this.accounts().find((item) => item.id === id && !item.deleted);
     if (!account) throw new Error('This account no longer exists.');
     const uid = this.auth.userId();
@@ -263,7 +262,7 @@ export class BudgetStore {
         throw new Error('Choose an active account.');
     }
     if (
-      input.account?.startsWith('custom-') &&
+      (input.account === 'savings' || input.account?.startsWith('custom-')) &&
       !this.activeAccounts().some((account) => account.id === input.account) &&
       previous?.account !== input.account
     )

@@ -5,7 +5,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
-  BUDGET_ACCOUNTS,
   BudgetAccountRecord,
   money,
   customAccountNet,
@@ -24,8 +23,8 @@ export class BudgetAccounts {
   readonly error = signal('');
   readonly pendingDelete = signal<BudgetAccountRecord | null>(null);
   readonly money = money;
-  builtIn(id: string): boolean {
-    return BUDGET_ACCOUNTS.some((account) => account.value === id);
+  canDelete(id: string): boolean {
+    return id !== 'main';
   }
   balance(id: string): number {
     if (id === 'savings') return this.store.savingsTotal();

@@ -69,6 +69,10 @@ service cloud.firestore {
         allow read, write: if owns(userId);
       }
 
+      // Legacy planning records remain available for a complete owner data export.
+      match /planningEvents/{eventId} { allow read: if owns(userId); }
+      match /planningReminders/{reminderId} { allow read: if owns(userId); }
+
       match /mealPlan/{mealId} {
         allow read, write: if owns(userId);
       }
@@ -109,7 +113,7 @@ service cloud.firestore {
               && request.resource.data.recordedNet is number))
           && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 60
           && request.resource.data.deleted is bool
-          && (!(accountId in ['main', 'spending', 'savings']) || request.resource.data.deleted == false);
+          && (accountId != 'main' || request.resource.data.deleted == false);
       }
       function validTransaction() {
         let d = request.resource.data;
@@ -152,6 +156,8 @@ service cloud.firestore {
         allow read, delete: if owns(userId);
         allow create, update: if owns(userId) && validCategory();
       }
+      // Export can list all owner settings; writes keep their specific validation below.
+      match /settings/{settingId} { allow read: if owns(userId); }
       match /settings/savings {
         allow read: if owns(userId);
         allow create, update: if owns(userId)

@@ -170,7 +170,11 @@
                 "
               >
                 <option value="">{{ 'Main / Spending account' | translate }}</option>
-                <option value="savings">{{ store.accountName('savings') }}</option>
+                @for (account of store.activeAccounts(); track account.id) {
+                  @if (account.id === 'savings') {
+                    <option value="savings">{{ account.name }}</option>
+                  }
+                }
                 @for (account of store.activeAccounts(); track account.id) {
                   @if (account.id.startsWith('custom-')) {
                     <option [value]="account.id">{{ account.name }}</option>
