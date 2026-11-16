@@ -6,58 +6,75 @@
   (touchend)="onTouchEnd()"
   (touchcancel)="onTouchEnd()"
 >
-  <app-write-toast />
-  @if (updates.available()) {
-    <aside
-      class="fixed top-[max(12px,env(safe-area-inset-top))] left-1/2 z-10000 box-border flex w-[calc(100%-24px)] max-w-140 -translate-x-1/2 items-center gap-4 rounded-xl border border-primary bg-card px-4 py-3.5 text-foreground shadow-[0_6px_24px_#0003]"
-      role="status"
-    >
-      <div class="min-w-0 flex-1">
-        <strong class="block text-[0.9rem]">{{ 'Update available' | translate }}</strong>
-        <span class="mt-1 block text-xs leading-normal text-(--text-secondary)">{{
-          'Save any changes, then refresh for the latest LifeOS.' | translate
-        }}</span>
-      </div>
-      <button
-        class="min-h-11 rounded-lg border-0 bg-primary px-4 py-2.5 font-semibold text-primary-foreground"
-        type="button"
-        (click)="updates.refresh()"
-      >
-        {{ 'Refresh' | translate }}
-      </button>
-    </aside>
-  }
-  @if (authService.isAuthenticated() && (pullDistance() || refreshCoordinator.refreshing())) {
-    <div
-      class="pointer-events-none fixed inset-x-0 top-[env(safe-area-inset-top)] z-100 flex justify-center"
-    >
-      <div
-        class="mt-2 flex min-h-9 items-center gap-2 rounded-full border border-cyan-300/50 bg-(--card)/95 px-4 py-2 text-xs font-semibold text-cyan-100 shadow-[0_5px_20px_rgba(0,0,0,0.35)] backdrop-blur"
-        [style.transform]="'translateY(' + pullIndicatorOffset() + 'px)'"
-      >
-        <span
-          class="h-3.5 w-3.5 rounded-full border-2 border-cyan-300 border-t-transparent"
-          [class.animate-spin]="refreshCoordinator.refreshing()"
-        ></span>
-        {{
-          (refreshCoordinator.refreshing()
-            ? 'Refreshing...'
-            : pullDistance() >= 58
-              ? 'Release to refresh'
-              : 'Pull to refresh'
-          ) | translate
-        }}
-      </div>
+  @if (startup.loading()) {
+    <div class="lifeos-launch" role="status" aria-live="polite" aria-label="Loading LifeOS">
+      <img src="icons/lifeos-plum-192.png" alt="" width="64" height="64" />
+      <strong>LifeOS</strong>
+      <p>{{ 'Getting your space ready...' | translate }}</p>
+      <span class="lifeos-launch-spinner" aria-hidden="true"></span>
+      @if (startup.slow()) {
+        <button type="button" (click)="startup.reload()">{{ 'Reload' | translate }}</button>
+      }
     </div>
   }
-  <ion-router-outlet
-    class="app-route-outlet bg-transparent"
-    [class]="authService.authReady() && !authService.isAuthenticated() ? 'hidden!' : ''"
-    [class.auth-route-hidden]="authService.authReady() && !authService.isAuthenticated()"
-    [animated]="false"
-    [swipeGesture]="false"
-  ></ion-router-outlet>
-  @if (authService.authReady() && !authService.isAuthenticated()) {
-    <app-login />
-  }
+  <div
+    class="contents"
+    [attr.inert]="startup.loading() ? '' : null"
+    [attr.aria-hidden]="startup.loading() ? 'true' : null"
+  >
+    <app-write-toast />
+    @if (updates.available()) {
+      <aside
+        class="fixed top-[max(12px,env(safe-area-inset-top))] left-1/2 z-10000 box-border flex w-[calc(100%-24px)] max-w-140 -translate-x-1/2 items-center gap-4 rounded-xl border border-primary bg-card px-4 py-3.5 text-foreground shadow-[0_6px_24px_#0003]"
+        role="status"
+      >
+        <div class="min-w-0 flex-1">
+          <strong class="block text-[0.9rem]">{{ 'Update available' | translate }}</strong>
+          <span class="mt-1 block text-xs leading-normal text-(--text-secondary)">{{
+            'Save any changes, then refresh for the latest LifeOS.' | translate
+          }}</span>
+        </div>
+        <button
+          class="min-h-11 rounded-lg border-0 bg-primary px-4 py-2.5 font-semibold text-primary-foreground"
+          type="button"
+          (click)="updates.refresh()"
+        >
+          {{ 'Refresh' | translate }}
+        </button>
+      </aside>
+    }
+    @if (authService.isAuthenticated() && (pullDistance() || refreshCoordinator.refreshing())) {
+      <div
+        class="pointer-events-none fixed inset-x-0 top-[env(safe-area-inset-top)] z-100 flex justify-center"
+      >
+        <div
+          class="mt-2 flex min-h-9 items-center gap-2 rounded-full border border-cyan-300/50 bg-(--card)/95 px-4 py-2 text-xs font-semibold text-cyan-100 shadow-[0_5px_20px_rgba(0,0,0,0.35)] backdrop-blur"
+          [style.transform]="'translateY(' + pullIndicatorOffset() + 'px)'"
+        >
+          <span
+            class="h-3.5 w-3.5 rounded-full border-2 border-cyan-300 border-t-transparent"
+            [class.animate-spin]="refreshCoordinator.refreshing()"
+          ></span>
+          {{
+            (refreshCoordinator.refreshing()
+              ? 'Refreshing...'
+              : pullDistance() >= 58
+                ? 'Release to refresh'
+                : 'Pull to refresh'
+            ) | translate
+          }}
+        </div>
+      </div>
+    }
+    <ion-router-outlet
+      class="app-route-outlet bg-transparent"
+      [class]="authService.authReady() && !authService.isAuthenticated() ? 'hidden!' : ''"
+      [class.auth-route-hidden]="authService.authReady() && !authService.isAuthenticated()"
+      [animated]="false"
+      [swipeGesture]="false"
+    ></ion-router-outlet>
+    @if (authService.authReady() && !authService.isAuthenticated()) {
+      <app-login />
+    }
+  </div>
 </ion-app>

@@ -1,7 +1,7 @@
 import translationTestProviders from '@src/test-providers';
 import '@angular/compiler';
 import { computed, Injector, runInInjectionContext, signal } from '@angular/core';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { BudgetPlanned } from '@pages/budget/budget-planned/budget-planned';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
@@ -78,5 +78,98 @@ describe('Planning balance forecast', () => {
     expect(page.predictedBalance()).toBe(500);
     month.set('2026-12');
     expect(page.predictedBalance()).toBe(0);
+  });
+});
+
+describe('Planned payment editor', () => {
+  function create() {
+    const store = { month: signal('2026-11'), savePlanItem: vi.fn().mockResolvedValue(undefined) };
+    const page = runInInjectionContext(
+      Injector.create({
+        providers: [...translationTestProviders, { provide: BudgetStore, useValue: store }],
+      }),
+      () => new BudgetPlanned(),
+    );
+    return { page, store };
+  }
+
+  it('creates no placeholder and saves the name and amount together', async () => {
+    const { page, store } = create();
+    page.editItem('bills');
+    expect(store.savePlanItem).not.toHaveBeenCalled();
+    page.draftName.set('  Internet  ');
+    page.draftAmount.set(599.95);
+    await page.saveDraft();
+    expect(store.savePlanItem).toHaveBeenCalledWith(
+      '2026-11',
+      'bills',
+      'Internet',
+      599.95,
+      undefined,
+    );
+    expect(page.editorCategoryId()).toBeNull();
+  });
+
+  it('rejects missing amounts and keeps an unsuccessful edit for retry', async () => {
+    const { page, store } = create();
+    const item: BudgetPlan = {
+      id: 'bill-1',
+      month: '2026-11',
+      categoryId: 'bills',
+      name: 'Internet',
+      amount: 500,
+    };
+    Object.assign(store, { transactions: signal([]) });
+    page.editItem('bills', item);
+    page.draftAmount.set(null);
+    await page.saveDraft();
+    expect(store.savePlanItem).not.toHaveBeenCalled();
+    page.draftName.set('Fibre');
+    page.draftAmount.set(600);
+    store.savePlanItem.mockRejectedValueOnce(new Error('Offline'));
+    await page.saveDraft();
+    expect(page.planItemError()).toBe('Offline');
+    expect(page.draftName()).toBe('Fibre');
+    expect(page.draftAmount()).toBe(600);
+    expect(page.editingId()).toBe('bill-1');
+    expect(item.amount).toBe(500);
+    await page.saveDraft();
+    expect(store.savePlanItem).toHaveBeenLastCalledWith('2026-11', 'bills', 'Fibre', 600, 'bill-1');
+    expect(page.editorCategoryId()).toBeNull();
+  });
+
+  it('cancels without writing and starts the next item with empty fields', () => {
+    const { page, store } = create();
+    page.editItem('bills');
+    page.draftName.set('Internet');
+    page.draftAmount.set(500);
+    page.cancelEdit();
+    expect(store.savePlanItem).not.toHaveBeenCalled();
+    expect(page.editorCategoryId()).toBeNull();
+    page.editItem('savings');
+    expect(page.draftName()).toBe('');
+    expect(page.draftAmount()).toBeNull();
+  });
+
+  it('prevents duplicate submissions and changing cycle during a save', async () => {
+    const { page, store } = create();
+    let finish!: () => void;
+    store.savePlanItem.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          finish = resolve;
+        }),
+    );
+    page.editItem('bills');
+    page.draftName.set('Internet');
+    page.draftAmount.set(500);
+    const pending = page.saveDraft();
+    await page.saveDraft();
+    page.setMonth('2026-12');
+    expect(store.month()).toBe('2026-11');
+    expect(store.savePlanItem).toHaveBeenCalledTimes(1);
+    finish();
+    await pending;
+    expect(page.savingPlanItem()).toBe(false);
   });
 });

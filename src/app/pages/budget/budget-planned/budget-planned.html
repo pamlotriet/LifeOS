@@ -1,8 +1,11 @@
 <ion-content
-  ><main class="budget-page budget-planning-page">
+  ><main
+    appBudgetPage
+    class="budget-page budget-planning-page md:m-0! md:w-full md:max-w-none! md:px-8!"
+  >
     <div class="planning-topbar"><app-back-button fallback="/budget" /></div>
     <header class="page-header planning-header">
-      <div class="planning-title">
+      <div class="planning-title max-sm:col-span-full">
         <div>
           <p class="planning-eyebrow">{{ 'Personal finance / Planning' | translate }}</p>
           <h1>
@@ -12,8 +15,13 @@
         </div>
       </div>
     </header>
-    <section class="planning-cycle" [attr.aria-label]="'Planning cycle' | translate">
-      <div class="planning-cycle-controls">
+    <section
+      class="planning-cycle max-sm:grid! max-sm:grid-cols-[44px_minmax(0,1fr)_44px]! max-sm:gap-3! max-sm:p-3!"
+      [attr.aria-label]="'Planning cycle' | translate"
+    >
+      <div
+        class="planning-cycle-controls max-sm:contents! [&>label]:max-sm:col-span-full [&>label]:max-sm:row-start-1 [&>button:first-child]:max-sm:col-start-1 [&>button:first-child]:max-sm:row-start-2 [&>button:last-child]:max-sm:col-start-3 [&>button:last-child]:max-sm:row-start-2 [&>button]:max-sm:size-11!"
+      >
         <button
           type="button"
           class="icon-button"
@@ -39,7 +47,9 @@
           <ion-icon name="chevron-forward" />
         </button>
       </div>
-      <div class="planning-cycle-details">
+      <div
+        class="planning-cycle-details max-sm:col-start-2 max-sm:row-start-2 max-sm:mt-0! max-sm:text-center [&_p]:max-sm:text-[0.65rem]!"
+      >
         <p aria-live="polite">{{ store.cycleLabel() | translate }}</p>
         <button
           type="button"
@@ -60,7 +70,10 @@
         <button class="text-link" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </p>
     } @else {
-      <section class="planning-summary" [attr.aria-label]="'Cycle plan forecast' | translate">
+      <section
+        class="planning-summary max-sm:grid-cols-2! max-sm:gap-2! [&_article]:max-sm:p-3! [&_strong]:max-sm:text-xl! [&_small]:max-sm:text-[0.65rem]! [&_span]:max-sm:text-xs!"
+        [attr.aria-label]="'Cycle plan forecast' | translate"
+      >
         <article>
           <span>{{ 'Recorded income' | translate }}</span
           ><strong>{{ money(income()) }}</strong
@@ -150,7 +163,7 @@
             <h2 id="plan-title">{{ 'Category plans' | translate }}</h2>
             <p>
               {{
-                'Changes save when you leave a field. Copying keeps existing plans and skips previously copied items.'
+                'Add a named payment and amount, then save. Edit existing payments without changing them until you save.'
                   | translate
               }}
             </p>
@@ -189,7 +202,9 @@
               class="category-plan"
               [attr.aria-label]="item.name + ' planned items' | translate"
             >
-              <div class="plan-row">
+              <div
+                class="plan-row max-sm:flex-wrap! max-sm:gap-3! [&>label]:max-sm:flex-1 [&>label]:max-sm:w-auto! [&>button]:max-sm:self-end"
+              >
                 <span class="category-icon" [style.background]="item.colour"
                   ><ion-icon [name]="item.icon" /></span
                 ><span class="row-copy"
@@ -197,18 +212,12 @@
                   ><small>{{
                     'messages.actual_count_ed8ff8' | translate: { p0: money(item.actual) }
                   }}</small></span
-                ><span class="plan-category-total"
+                ><span
+                  class="plan-category-total max-sm:w-full max-sm:border-t max-sm:border-border max-sm:pt-2 max-sm:text-left!"
                   ><small>{{ 'Planned total' | translate }}</small
                   ><strong>{{ money(item.planned) }}</strong></span
                 >
               </div>
-              @if (item.items.length) {
-                <div class="plan-column-labels" aria-hidden="true">
-                  <span>{{ 'Payment / item' | translate }}</span
-                  ><span>{{ 'Amount (R)' | translate }}</span
-                  ><span></span>
-                </div>
-              }
               @if (item.type === 'savings' && item.items.length) {
                 <label class="savings-transfer-date"
                   >{{ 'Transfer date' | translate
@@ -226,46 +235,30 @@
                 </p>
               }
               @for (entry of item.items; track entry.id) {
-                <div class="plan-item-row">
-                  <input
-                    appInput="field"
-                    type="text"
-                    maxlength="80"
-                    [attr.aria-label]="'Item name in ' + item.name | translate"
-                    [ngModel]="entry.name || 'Existing plan'"
+                <div class="flex flex-wrap items-center gap-3 border-t border-border py-3">
+                  <span class="min-w-0 flex-1 break-words text-sm">{{
+                    entry.name || 'Existing plan' | translate
+                  }}</span>
+                  <strong class="text-sm font-medium tabular-nums">{{
+                    money(entry.amount)
+                  }}</strong>
+                  <button
+                    appButton="secondary"
+                    type="button"
                     [disabled]="savingPlanItem() || !!movedTransaction(entry.id)"
-                    (change)="saveItem(item.id, $any($event.target).value, entry.amount, entry.id)"
-                  />
-                  <input
-                    appInput="field"
-                    type="text"
-                    appBudgetNumber
-                    inputmode="decimal"
-                    min="0"
-                    max="999999999"
-                    step="0.01"
-                    [attr.aria-label]="
-                      'Planned amount for ' + (entry.name || 'Existing plan') | translate
-                    "
-                    [ngModel]="entry.amount"
-                    [disabled]="savingPlanItem() || !!movedTransaction(entry.id)"
-                    (change)="
-                      saveItem(
-                        item.id,
-                        entry.name || 'Existing plan',
-                        parseNumber($any($event.target).value),
-                        entry.id
-                      )
-                    "
-                  />
+                    (click)="editItem(item.id, entry)"
+                    [attr.aria-label]="'Edit ' + (entry.name || 'Existing plan') | translate"
+                  >
+                    {{ 'Edit' | translate }}
+                  </button>
                   <button
                     type="button"
-                    class="text-link"
+                    class="grid min-h-11 min-w-11 place-items-center rounded-lg text-(--text-secondary) hover:bg-muted"
                     [disabled]="savingPlanItem() || !!movedTransaction(entry.id)"
                     [attr.aria-label]="'Remove ' + (entry.name || 'Existing plan') | translate"
                     (click)="removeItem(entry)"
                   >
-                    <ion-icon name="trash-outline" />
+                    <ion-icon name="trash-outline" aria-hidden="true" />
                   </button>
                 </div>
                 @if (item.type === 'savings') {
@@ -279,7 +272,7 @@
                     <button
                       type="button"
                       class="text-link"
-                      [disabled]="savingPlanItem() || entry.amount <= 0"
+                      [disabled]="savingPlanItem() || entry.amount <= 0 || editingId() === entry.id"
                       (click)="toggleSavingsMoved(entry)"
                     >
                       {{
@@ -291,12 +284,73 @@
               } @empty {
                 <p class="category-empty">{{ 'No payments planned.' | translate }}</p>
               }
-              <div class="category-actions">
+              @if (editorCategoryId() === item.id) {
+                <form
+                  class="my-4 rounded-xl border border-border bg-background p-4"
+                  (ngSubmit)="saveDraft()"
+                >
+                  <h3 class="mb-4 text-sm font-medium">
+                    {{ (editingId() ? 'Edit payment' : 'Add payment') | translate }}
+                  </h3>
+                  <fieldset
+                    class="m-0 grid min-w-0 gap-4 border-0 p-0 sm:grid-cols-[minmax(0,1fr)_160px]"
+                    [disabled]="savingPlanItem()"
+                  >
+                    <label class="grid gap-2 text-xs text-(--text-secondary)"
+                      >{{ 'Payment / item' | translate }}
+                      <input
+                        appInput
+                        name="planName"
+                        type="text"
+                        maxlength="80"
+                        required
+                        [ngModel]="draftName()"
+                        (ngModelChange)="draftName.set($event)"
+                      />
+                    </label>
+                    <label class="grid gap-2 text-xs text-(--text-secondary)"
+                      >{{ 'Amount (R)' | translate }}
+                      <input
+                        appInput
+                        appBudgetNumber
+                        name="planAmount"
+                        type="text"
+                        inputmode="decimal"
+                        required
+                        [ngModel]="draftAmount()"
+                        (focus)="draftAmount.set(null)"
+                        (ngModelChange)="draftAmount.set($event)"
+                      />
+                    </label>
+                  </fieldset>
+                  @if (planItemError()) {
+                    <p class="mt-3 text-sm text-destructive" role="alert">
+                      {{ planItemError() | translate }}
+                    </p>
+                  }
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    <button appButton="primary" type="submit" [disabled]="savingPlanItem()">
+                      {{ (savingPlanItem() ? 'Saving...' : 'Save payment') | translate }}
+                    </button>
+                    <button
+                      appButton="secondary"
+                      type="button"
+                      [disabled]="savingPlanItem()"
+                      (click)="cancelEdit()"
+                    >
+                      {{ 'Cancel' | translate }}
+                    </button>
+                  </div>
+                </form>
+              }
+              <div
+                class="category-actions max-sm:flex-wrap! max-sm:gap-2! [&_button]:max-sm:ml-0! [&_button]:max-sm:min-h-11"
+              >
                 <button
                   type="button"
                   class="text-link plan-add-item"
                   [disabled]="savingPlanItem()"
-                  (click)="saveItem(item.id, 'New item', 0)"
+                  (click)="editItem(item.id)"
                 >
                   <ion-icon name="add" /> {{ 'Add item' | translate }}
                 </button>
@@ -340,7 +394,9 @@
         }
         <div class="debt-plan-grid">
           @for (item of debtPlans(); track item.id) {
-            <div class="plan-row">
+            <div
+              class="plan-row max-sm:flex-wrap! max-sm:gap-3! [&>label]:max-sm:flex-1 [&>label]:max-sm:w-auto! [&>button]:max-sm:self-end"
+            >
               <span class="category-icon bg-[var(--secondary)] text-[var(--primary)]"
                 ><ion-icon [name]="item.type === 'credit-card' ? 'card-outline' : 'cash'"
               /></span>
@@ -365,8 +421,17 @@
                   [attr.aria-label]="'Planned payment for ' + item.name | translate"
                   [disabled]="savingDebtPlan() || item.paid"
                   [ngModel]="item.planned"
-                  (change)="saveDebtPlan(item.id, parseNumber($any($event.target).value))"
+                  #debtAmount="ngModel"
+                  (focus)="debtAmount.reset(null)"
               /></label>
+              <button
+                appButton="secondary"
+                type="button"
+                [disabled]="savingDebtPlan() || item.paid"
+                (click)="saveDebtPlan(item.id, debtAmount.value)"
+              >
+                {{ (savingDebtPlan() ? 'Saving...' : 'Save') | translate }}
+              </button>
             </div>
           } @empty {
             <p class="muted">

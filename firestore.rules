@@ -95,11 +95,31 @@ service cloud.firestore {
     }
 
     match /budgets/{userId} {
+      function validAccountId(id) {
+        return id in ['main', 'spending', 'savings'] || (id is string && id.matches('custom-[a-zA-Z0-9_-]{1,128}'));
+      }
+      match /accounts/{accountId} {
+        allow read: if owns(userId);
+        allow create, update: if owns(userId) && validAccountId(accountId)
+          && request.resource.data.keys().hasAll(['name', 'deleted'])
+          && request.resource.data.keys().hasOnly(['name', 'deleted', 'balance', 'recordedNet'])
+          && ((!('balance' in request.resource.data) && !('recordedNet' in request.resource.data))
+            || ('balance' in request.resource.data && 'recordedNet' in request.resource.data
+              && request.resource.data.balance is number && request.resource.data.balance >= 0 && request.resource.data.balance <= 999999999
+              && request.resource.data.recordedNet is number))
+          && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 60
+          && request.resource.data.deleted is bool
+          && (!(accountId in ['main', 'spending', 'savings']) || request.resource.data.deleted == false);
+      }
       function validTransaction() {
         let d = request.resource.data;
         return d.keys().hasAll(['amount', 'type', 'categoryId', 'title', 'date', 'paymentMethod', 'notes', 'receiptUrl', 'receiptPath'])
-          && d.keys().hasOnly(['amount', 'type', 'categoryId', 'title', 'date', 'paymentMethod', 'notes', 'receiptUrl', 'receiptPath', 'debtId', 'paymentStatus', 'account'])
-          && (!('account' in d) || d.account == '' || (d.type == 'expense' && (d.account == 'savings' || (d.account is string && d.account.matches('credit:[^/]{1,128}') && (!('debtId' in d) || d.debtId == '')))))
+          && d.keys().hasOnly(['amount', 'type', 'categoryId', 'title', 'date', 'paymentMethod', 'notes', 'receiptUrl', 'receiptPath', 'debtId', 'paymentStatus', 'account', 'fromAccount', 'toAccount'])
+          && ((!(('fromAccount' in d) && d.fromAccount != '') && !(('toAccount' in d) && d.toAccount != ''))
+            || (d.type == 'transfer' && 'fromAccount' in d && 'toAccount' in d
+              && validAccountId(d.fromAccount) && validAccountId(d.toAccount)
+              && d.fromAccount != d.toAccount))
+          && (!('account' in d) || d.account == '' || (d.type == 'expense' && (d.account == 'savings' || (d.account is string && d.account.matches('custom-[a-zA-Z0-9_-]{1,128}')) || (d.account is string && d.account.matches('credit:[^/]{1,128}') && (!('debtId' in d) || d.debtId == '')))))
           && (!('paymentStatus' in d) || d.paymentStatus in ['paid', 'planned'])
           && (!('paymentStatus' in d) || d.paymentStatus != 'planned' || (d.type == 'expense' && 'debtId' in d && d.debtId != ''))
           && d.amount is number && d.amount > 0 && d.amount <= 999999999
@@ -153,7 +173,7 @@ service cloud.firestore {
           && request.resource.data.keys().hasOnly(['balance', 'recordedSpending', 'recordedFunding'])
           && request.resource.data.balance is number
           && request.resource.data.balance >= -999999999 && request.resource.data.balance <= 999999999
-          && (!('recordedFunding' in request.resource.data) || (request.resource.data.recordedFunding is number && request.resource.data.recordedFunding >= 0))
+          && (!('recordedFunding' in request.resource.data) || request.resource.data.recordedFunding is number)
           && request.resource.data.recordedSpending is number && request.resource.data.recordedSpending >= 0;
       }
       match /plans/{planId} {

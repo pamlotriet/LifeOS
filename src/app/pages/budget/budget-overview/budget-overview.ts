@@ -1,3 +1,5 @@
+import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
+import { BudgetAccounts } from '@pages/budget/components/budget-accounts/budget-accounts';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { AppButton } from '@shared/components/app-button/app-button';
@@ -5,24 +7,31 @@ import { AppInput } from '@shared/components/app-input/app-input';
 import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
 import { BudgetNumber } from '@shared/directives/budget-number';
 import { BackButton } from '@shared/components/back-button/back-button';
-import { budgetSnapshot, budgetSpending } from '@pages/budget/budget-snapshot';
+import { budgetSnapshot } from '@pages/budget/budget-snapshot';
 import { cycleMonth } from '@pages/budget/state/cycle/budget-cycle';
 import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
-import { ChartConfiguration } from 'chart.js';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
-import { localDate, money, summary } from '@pages/budget/state/budget/budget.model';
-import { AppChart } from '@shared/components/app-chart/app-chart';
+import {
+  isTransfer,
+  localDate,
+  money,
+  transferAccounts,
+} from '@pages/budget/state/budget/budget.model';
 import { BudgetSummary } from '@pages/budget/components/budget-summary/budget-summary';
 import { BudgetTransactions } from '@pages/budget/components/budget-transactions/budget-transactions';
 import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
+import { AppSearch } from '@shared/components/app-search/app-search';
+import { AppSelect } from '@shared/components/app-select/app-select';
 
 @Component({
   selector: 'app-budget-overview',
   imports: [
+    BudgetPage,
+    BudgetAccounts,
     TranslatePipe,
     AppInput,
     AppButton,
@@ -34,10 +43,11 @@ import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
     IonIcon,
     FormsModule,
     RouterLink,
-    AppChart,
     BudgetSummary,
     BudgetTransactions,
     AppSkeleton,
+    AppSearch,
+    AppSelect,
   ],
   templateUrl: './budget-overview.html',
   styleUrls: ['../budget.css', '../budget-layout.css', './budget-overview.css'],
@@ -47,7 +57,16 @@ export class BudgetOverview {
 
   readonly store = inject(BudgetStore);
   readonly monthlyView = !!inject(ActivatedRoute).snapshot.data['monthly'];
+  readonly transfersView = !!inject(ActivatedRoute).snapshot.data['transfers'];
   readonly selectedDate = signal('');
+  readonly search = signal('');
+  readonly transactionType = signal(this.transfersView ? 'transfer' : 'all');
+  readonly transactionTypes = [
+    { value: 'all', label: 'All transactions' },
+    { value: 'expense', label: 'Expenses' },
+    { value: 'income', label: 'Income' },
+    { value: 'transfer', label: 'Transfers' },
+  ];
   readonly money = money;
   readonly balanceInput = signal<number | null>(null);
   readonly balanceSaved = signal(false);
@@ -91,10 +110,32 @@ export class BudgetOverview {
       this.savingsBusy.set(false);
     }
   }
-  readonly totals = computed(() => summary(this.store.monthly(), this.store.categories()));
-  readonly filtered = computed(() =>
-    this.store.monthly().filter((x) => !this.selectedDate() || x.date === this.selectedDate()),
-  );
+  readonly filtered = computed(() => {
+    const query = this.search().trim().toLowerCase();
+    const type = this.transactionType();
+    return this.store
+      .monthly()
+      .filter(
+        (item) =>
+          (!this.selectedDate() || item.date === this.selectedDate()) &&
+          (!this.transfersView || isTransfer(item)) &&
+          (type === 'all' || (type === 'transfer' ? isTransfer(item) : item.type === type)) &&
+          (!query ||
+            [
+              item.title,
+              item.notes,
+              transferAccounts(item)?.from,
+              transferAccounts(item)?.to,
+              transferAccounts(item)?.from
+                ? this.store.accountName(transferAccounts(item)!.from)
+                : undefined,
+              transferAccounts(item)?.to
+                ? this.store.accountName(transferAccounts(item)!.to)
+                : undefined,
+              this.store.categories().find((category) => category.id === item.categoryId)?.name,
+            ].some((value) => value?.toLowerCase().includes(query))),
+      );
+  });
   readonly snapshot = computed(() =>
     budgetSnapshot(
       this.store.transactions(),
@@ -105,33 +146,6 @@ export class BudgetOverview {
       this.store.spendingBalances?.() ?? [],
     ),
   );
-  readonly spending = computed(() => budgetSpending(this.store.monthly(), this.store.categories()));
-  readonly donut = computed<ChartConfiguration>(() => ({
-    type: 'doughnut',
-    data: {
-      labels: this.spending().map((x) => x.name),
-      datasets: [
-        {
-          data: this.spending().map((x) => x.amount),
-          backgroundColor: this.spending().map((x) => x.colour),
-          borderWidth: 0,
-          hoverOffset: 5,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: false,
-      cutout: '72%',
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: { label: (context) => `${context.label}: ${money(Number(context.raw))}` },
-        },
-      },
-    },
-  }));
   readonly transactionDates = computed(() =>
     [...new Set(this.store.monthly().map((item) => item.date))]
       .sort()
@@ -145,6 +159,10 @@ export class BudgetOverview {
         }),
       })),
   );
+  readonly dateOptions = computed(() => [
+    { value: '', label: 'All dates in this cycle' },
+    ...this.transactionDates(),
+  ]);
   readonly cycleDates = computed(() => {
     const format = (date: string) =>
       new Date(`${date}T12:00:00`).toLocaleDateString('en-ZA', {

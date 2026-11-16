@@ -1,7 +1,9 @@
+import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
 import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
+import { AppSelect } from '@shared/components/app-select/app-select';
 import { BackButton } from '@shared/components/back-button/back-button';
 import { BudgetNumber } from '@shared/directives/budget-number';
 import { Component, computed, effect, inject, signal } from '@angular/core';
@@ -15,11 +17,14 @@ import {
   localDate,
   TransactionInput,
   TransactionType,
+  transferAccounts,
 } from '@pages/budget/state/budget/budget.model';
 
 @Component({
   selector: 'app-budget-transaction-form',
   imports: [
+    BudgetPage,
+    AppSelect,
     TranslatePipe,
     AppInput,
     AppButton,
@@ -45,7 +50,23 @@ export class BudgetTransactionForm {
   readonly confirmDelete = signal(false);
   readonly localReceipt = signal('');
   readonly type = signal<TransactionType>('expense');
-  readonly types: TransactionType[] = ['expense', 'income', 'transfer', 'spending-transfer'];
+  readonly types: TransactionType[] = ['expense', 'income', 'transfer'];
+  readonly accounts = computed(() => {
+    const options = [...this.store.accountOptions()];
+    const previous = this.store.transactions().find((item) => item.id === this.id);
+    for (const id of [previous?.fromAccount, previous?.toAccount]) {
+      if (id && !options.some((option) => option.value === id))
+        options.push({ value: id, label: this.store.accountName(id) + ' (deleted)' });
+    }
+    return options;
+  });
+  readonly archivedPurchaseAccount = computed(() => {
+    const id = this.store.transactions().find((item) => item.id === this.id)?.account;
+    return id?.startsWith('custom-') &&
+      !this.store.activeAccounts().some((account) => account.id === id)
+      ? { id, name: this.store.accountName(id) }
+      : null;
+  });
   readonly categories = computed(() =>
     this.store
       .activeCategories()
@@ -75,7 +96,13 @@ export class BudgetTransactionForm {
         if (item) {
           const { id, ...input } = item;
           this.model = { ...input };
-          this.type.set(item.type);
+          const route = transferAccounts(item);
+          this.type.set(route ? 'transfer' : item.type);
+          if (route) {
+            this.model.type = 'transfer';
+            this.model.fromAccount = route.from;
+            this.model.toAccount = route.to;
+          }
           this.loaded.set(true);
         }
       } else if (!this.id && !this.store.loading()) {
@@ -90,7 +117,9 @@ export class BudgetTransactionForm {
       const requested = this.route.snapshot.queryParamMap.get('type');
       const type: TransactionType =
         requested === 'income' || requested === 'transfer' || requested === 'spending-transfer'
-          ? requested
+          ? requested === 'spending-transfer'
+            ? 'transfer'
+            : requested
           : 'expense';
       const today = localDate();
       const date = this.store.inMonth(today) ? today : this.store.cycle().start;
@@ -106,6 +135,24 @@ export class BudgetTransactionForm {
         receiptUrl: '',
         receiptPath: '',
         debtId: '',
+        fromAccount:
+          type === 'transfer'
+            ? (this.store
+                .activeAccounts()
+                .find((account) => account.id === this.route.snapshot.queryParamMap.get('from'))
+                ?.id ?? 'main')
+            : '',
+        toAccount:
+          type === 'transfer'
+            ? (this.store
+                .activeAccounts()
+                .find((account) => account.id === this.route.snapshot.queryParamMap.get('to'))
+                ?.id ?? (requested === 'spending-transfer' ? 'spending' : 'savings'))
+            : '',
+        account:
+          type === 'expense' && this.route.snapshot.queryParamMap.get('account') === 'savings'
+            ? 'savings'
+            : '',
       };
       this.type.set(type);
       this.localReceipt.set('');
@@ -116,6 +163,9 @@ export class BudgetTransactionForm {
   changeType(type: TransactionType): void {
     this.type.set(type);
     this.model.type = type;
+    this.model.fromAccount = type === 'transfer' ? 'main' : '';
+    this.model.toAccount = type === 'transfer' ? 'savings' : '';
+    if (type === 'transfer') this.model.paymentMethod = 'Bank transfer';
     if (type !== 'expense') {
       this.model.account = '';
       this.model.debtId = '';
@@ -154,6 +204,22 @@ export class BudgetTransactionForm {
     this.busy.set(true);
     this.error.set('');
     try {
+      if (this.type() === 'transfer') {
+        if (!this.model.fromAccount || !this.model.toAccount)
+          throw new Error('Choose a source and destination account.');
+        const route = transferAccounts(this.model);
+        const savings = route?.from === 'savings' || route?.to === 'savings';
+        this.model.categoryId =
+          this.store
+            .activeCategories()
+            .find((category) =>
+              savings ? category.type === 'savings' : isSpendingCategory(category),
+            )?.id ?? 'account-transfer';
+        if (!this.model.title.trim()) {
+          const label = (account: string | undefined) => this.store.accountName(account ?? '');
+          this.model.title = `${label(this.model.fromAccount)} → ${label(this.model.toAccount)}`;
+        }
+      }
       const paymentStatus = this.model.debtId ? this.model.paymentStatus : 'paid';
       await this.store.saveTransaction(
         { ...this.model, paymentStatus, type: this.type(), amount: Number(this.model.amount) },
@@ -162,7 +228,11 @@ export class BudgetTransactionForm {
       );
       this.store.month.set(this.store.monthForDate(this.model.date));
       await this.router.navigateByUrl(
-        paymentStatus === 'planned' ? '/budget/debts' : '/budget/month',
+        paymentStatus === 'planned'
+          ? '/budget/debts'
+          : this.type() === 'transfer'
+            ? '/budget/transfers'
+            : '/budget/month',
         { replaceUrl: true },
       );
     } catch (error) {
@@ -178,7 +248,10 @@ export class BudgetTransactionForm {
     this.error.set('');
     try {
       await this.store.deleteTransaction(item);
-      await this.router.navigateByUrl('/budget/month', { replaceUrl: true });
+      await this.router.navigateByUrl(
+        this.type() === 'transfer' ? '/budget/transfers' : '/budget/month',
+        { replaceUrl: true },
+      );
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not delete transaction.');
     } finally {

@@ -101,7 +101,7 @@ export class BudgetSummary {
       {
         label: 'Savings transfers',
         amount: v.savings,
-        note: 'Moved to savings, separate from spending',
+        note: 'Net transferred into Savings, after transfers out',
         balance: false,
       },
       {

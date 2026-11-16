@@ -1,3 +1,4 @@
+import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { AppButton } from '@shared/components/app-button/app-button';
@@ -8,7 +9,7 @@ import { budgetSnapshot } from '@pages/budget/budget-snapshot';
 import { cycleMonth } from '@pages/budget/state/cycle/budget-cycle';
 import { BackButton } from '@shared/components/back-button/back-button';
 import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
-import { BudgetNumber, parseBudgetNumber } from '@shared/directives/budget-number';
+import { BudgetNumber } from '@shared/directives/budget-number';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -17,19 +18,20 @@ import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   BudgetPlan,
   categoryPlanItems,
-  compatibleCategory,
   debtPlanId,
   localDate,
   money,
   isSpendingCategory,
   supportsPlan,
   total,
+  categoryActual,
 } from '@pages/budget/state/budget/budget.model';
 import { BudgetTransactions } from '@pages/budget/components/budget-transactions/budget-transactions';
 
 @Component({
   selector: 'app-budget-planned',
   imports: [
+    BudgetPage,
     TranslatePipe,
     AppInput,
     AppButton,
@@ -52,7 +54,6 @@ export class BudgetPlanned {
 
   readonly store = inject(BudgetStore);
   readonly money = money;
-  readonly parseNumber = (value: string): number => parseBudgetNumber(value) ?? NaN;
   readonly plannedOnly = signal(false);
   readonly visibleCategories = computed(() =>
     this.planned().filter((item) => !this.plannedOnly() || item.items.length > 0),
@@ -79,6 +80,61 @@ export class BudgetPlanned {
   readonly savingPlanItem = signal(false);
   readonly planItemError = signal('');
   readonly copyNotice = signal('');
+  readonly editorCategoryId = signal<string | null>(null);
+  readonly editingId = signal<string | undefined>(undefined);
+  readonly draftName = signal('');
+  readonly draftAmount = signal<number | null>(null);
+
+  editItem(categoryId: string, item?: BudgetPlan): void {
+    if (this.savingPlanItem() || (item && this.movedTransaction(item.id))) return;
+    this.editorCategoryId.set(categoryId);
+    this.editingId.set(item?.id);
+    this.draftName.set(item?.name ?? (item ? 'Existing plan' : ''));
+    this.draftAmount.set(item?.amount ?? null);
+    this.planItemError.set('');
+  }
+
+  cancelEdit(): void {
+    if (this.savingPlanItem()) return;
+    this.editorCategoryId.set(null);
+    this.editingId.set(undefined);
+    this.draftName.set('');
+    this.draftAmount.set(null);
+    this.planItemError.set('');
+  }
+
+  async saveDraft(): Promise<void> {
+    const categoryId = this.editorCategoryId();
+    if (!categoryId || this.savingPlanItem()) return;
+    const name = this.draftName().trim();
+    const amount = this.draftAmount();
+    if (
+      !name ||
+      name.length > 80 ||
+      amount === null ||
+      !Number.isFinite(amount) ||
+      amount < 0 ||
+      amount > 999999999
+    ) {
+      this.planItemError.set('Enter an item name and a valid planned amount.');
+      return;
+    }
+    this.savingPlanItem.set(true);
+    this.planItemError.set('');
+    try {
+      await this.store.savePlanItem(this.store.month(), categoryId, name, amount, this.editingId());
+      this.editorCategoryId.set(null);
+      this.editingId.set(undefined);
+      this.draftName.set('');
+      this.draftAmount.set(null);
+    } catch (error) {
+      this.planItemError.set(
+        error instanceof Error ? error.message : 'Could not save planned item.',
+      );
+    } finally {
+      this.savingPlanItem.set(false);
+    }
+  }
   readonly debtPlans = computed(() =>
     this.store.debts().map((debt) => {
       const transaction = this.store
@@ -100,15 +156,9 @@ export class BudgetPlanned {
       .filter((category) => supportsPlan(category.type) && !isSpendingCategory(category))
       .map((category) => {
         const plan = categoryPlanItems(this.store.plans(), this.store.month(), category.id);
-        const actual = total(
-          this.store
-            .monthly()
-            .filter(
-              (item) =>
-                !item.debtId &&
-                compatibleCategory(item.type, category.type) &&
-                item.categoryId === category.id,
-            ),
+        const actual = categoryActual(
+          this.store.monthly().filter((item) => !item.debtId && item.categoryId === category.id),
+          category.type,
         );
         return { ...category, planned: plan.amount, items: plan.items, actual };
       }),
@@ -171,7 +221,9 @@ export class BudgetPlanned {
     }
   }
   setMonth(value: string): void {
+    if (this.savingPlanItem() || this.savingDebtPlan()) return;
     if (/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) {
+      if (value !== this.store.month()) this.cancelEdit();
       this.store.month.set(value);
       this.copyNotice.set('');
       this.planItemError.set('');
@@ -197,26 +249,16 @@ export class BudgetPlanned {
       this.savingPlanItem.set(false);
     }
   }
-  async saveItem(categoryId: string, name: string, amount: number, id?: string): Promise<void> {
-    if (this.savingPlanItem()) return;
-    this.savingPlanItem.set(true);
-    this.planItemError.set('');
-    try {
-      await this.store.savePlanItem(this.store.month(), categoryId, name, amount, id);
-    } catch (error) {
-      this.planItemError.set(
-        error instanceof Error ? error.message : 'Could not save planned item.',
-      );
-    } finally {
-      this.savingPlanItem.set(false);
-    }
-  }
   async removeItem(item: BudgetPlan): Promise<void> {
     if (this.savingPlanItem()) return;
     this.savingPlanItem.set(true);
     this.planItemError.set('');
     try {
       await this.store.deletePlanItem(item.id);
+      if (this.editingId() === item.id) {
+        this.editorCategoryId.set(null);
+        this.editingId.set(undefined);
+      }
     } catch (error) {
       this.planItemError.set(
         error instanceof Error ? error.message : 'Could not remove planned item.',

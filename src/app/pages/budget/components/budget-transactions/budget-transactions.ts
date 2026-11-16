@@ -3,7 +3,12 @@ import { Component, inject, signal, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
-import { BudgetCategory, BudgetTransaction, money } from '@pages/budget/state/budget/budget.model';
+import {
+  BudgetCategory,
+  BudgetTransaction,
+  money,
+  transferAccounts,
+} from '@pages/budget/state/budget/budget.model';
 import { AppButton } from '@shared/components/app-button/app-button';
 @Component({
   selector: 'app-budget-transactions',
@@ -11,7 +16,7 @@ import { AppButton } from '@shared/components/app-button/app-button';
   styleUrls: ['../../budget.css', '../../budget-layout.css', './budget-transactions.css'],
   template: ` <div class="transaction-list">
     @for (item of transactions; track item.id) {
-      <div class="transaction-entry">
+      <div class="transaction-entry max-sm:gap-2! max-sm:px-3!">
         <a class="transaction-row" [routerLink]="['/budget/transactions', item.id, 'edit']">
           <span
             class="category-icon"
@@ -21,8 +26,8 @@ import { AppButton } from '@shared/components/app-button/app-button';
           <span class="row-copy"
             ><strong>{{ item.title | translate }}</strong
             ><small
-              >{{ category(item.categoryId)?.name || 'Uncategorised' | translate
-              }}{{ accountLabel(item) | translate }} · {{ date(item.date) }}</small
+              >{{ rowLabel(item) | translate }}{{ accountLabel(item) | translate }} ·
+              {{ date(item.date) }}</small
             ></span
           >
           <strong
@@ -129,11 +134,20 @@ export class BudgetTransactions {
   }
   @Input() transactions: BudgetTransaction[] = [];
   @Input() categories: BudgetCategory[] = [];
+  rowLabel(item: BudgetTransaction): string {
+    const route = transferAccounts(item);
+    if (route) {
+      const label = (id: string) => this.store.accountName(id);
+      return `${label(route.from)} → ${label(route.to)}`;
+    }
+    return this.category(item.categoryId)?.name ?? 'Uncategorised';
+  }
   accountLabel(item: BudgetTransaction): string {
-    if (item.account === 'savings') return ' ? Savings';
+    if (item.account === 'savings' || item.account?.startsWith('custom-'))
+      return ' · ' + this.store.accountName(item.account);
     if (item.account?.startsWith('credit:'))
       return (
-        ' ? ' +
+        ' · ' +
         (this.store.debts().find((debt) => debt.id === item.account?.slice(7))?.name ??
           'Credit card')
       );

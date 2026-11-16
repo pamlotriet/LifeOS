@@ -38,17 +38,12 @@
         <h2 id="browse-title">
           {{ 'Browse' | translate }} <span>{{ filtered().length }}</span>
         </h2>
-        <label class="shelf-search">
-          <ion-icon name="search-outline" aria-hidden="true" />
-          <input
-            appInput="field"
-            type="search"
-            [attr.aria-label]="'Search books' | translate"
-            [placeholder]="'Search title or author...' | translate"
-            [value]="search()"
-            (input)="search.set($any($event.target).value)"
-          />
-        </label>
+        <app-search
+          class="w-80 max-w-full max-[720px]:w-full"
+          ariaLabel="Search books"
+          placeholder="Search title or author..."
+          [(value)]="search"
+        />
       </div>
       <div
         class="shelf-filters"

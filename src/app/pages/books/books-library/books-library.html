@@ -1,6 +1,12 @@
 <ion-content class="books-content">
-  <main class="books-overview" [attr.aria-busy]="loading()">
-    <nav class="books-topbar" [attr.aria-label]="'Library navigation' | translate">
+  <main
+    class="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-6 px-4 py-6 text-foreground min-[1100px]:grid-cols-[minmax(0,1fr)_300px] sm:px-8 [&>*]:min-w-0"
+    [attr.aria-busy]="loading()"
+  >
+    <nav
+      class="flex min-h-11 items-center justify-between gap-4 text-xs text-(--text-secondary) min-[1100px]:col-span-2 [&_a]:inline-flex [&_a]:items-center [&_a]:gap-2 [&_span]:inline-flex [&_span]:items-center [&_span]:gap-2"
+      [attr.aria-label]="'Library navigation' | translate"
+    >
       <a routerLink="/home"
         ><ion-icon name="arrow-back-outline" aria-hidden="true" /> {{ 'LifeOS' | translate }}</a
       >
@@ -8,29 +14,40 @@
         ><ion-icon name="book-outline" aria-hidden="true" /> {{ 'Reading space' | translate }}</span
       >
     </nav>
-    <header class="books-header">
+    <header
+      class="flex flex-wrap items-end justify-between gap-5 min-[1100px]:col-span-2 [&_h1]:m-0 [&_h1]:text-4xl [&_h1]:font-medium [&_h1]:tracking-tight [&_h1_span]:text-(--text-secondary)"
+    >
       <div>
         <p class="books-eyebrow">{{ 'Your personal library' | translate }}</p>
         <h1>
           {{ 'Books' | translate }} <span>{{ '& chapters' | translate }}</span>
         </h1>
-        <p>{{ 'A little less scrolling. A few more pages.' | translate }}</p>
+        <p class="mt-2 text-sm text-(--text-secondary)">
+          {{ 'A little less scrolling. A few more pages.' | translate }}
+        </p>
       </div>
-      <div class="books-header-actions">
+      <div
+        class="flex flex-wrap items-stretch gap-2 [&>:is(a,button)]:h-11! [&>:is(a,button)]:min-h-11! [&>:is(a,button)]:rounded-xl! [&>:is(a,button)]:px-4! [&>:is(a,button)]:py-0! [&>:is(a,button)]:text-sm! [&>:is(a,button)]:font-semibold! [&_ion-icon]:text-lg"
+      >
         <a routerLink="/books/tags" class="books-secondary"
           ><ion-icon name="pricetags-outline" aria-hidden="true" /> {{ 'Tags' | translate }}</a
         >
         <a routerLink="/books/shelf" class="books-secondary"
           ><ion-icon name="library-outline" aria-hidden="true" /> {{ 'Bookshelf' | translate }}</a
         >
-        <button type="button" (click)="addBookSheet.open()" class="books-primary">
+        <button
+          appButton="primary"
+          type="button"
+          (click)="addBookSheet.open()"
+          class="inline-flex items-center gap-2"
+        >
           <ion-icon name="add" aria-hidden="true" /> {{ 'Add book' | translate }}
         </button>
       </div>
     </header>
     @if (loading()) {
       <div
-        class="books-loading"
+        class="books-loading min-[1100px]:col-span-2"
         role="status"
         [attr.aria-label]="'Loading your library and reading goal' | translate"
       >
@@ -59,7 +76,7 @@
       </div>
     } @else {
       <section
-        class="books-totals"
+        class="grid grid-cols-2 gap-3 min-[700px]:grid-cols-4 min-[1100px]:col-span-2 [&_a]:flex [&_a]:items-center [&_a]:gap-3 [&_a]:rounded-2xl [&_a]:border [&_a]:border-border [&_a]:bg-card [&_a]:p-4 [&_a:hover]:bg-muted [&_ion-icon]:text-lg [&_ion-icon]:text-(--text-secondary) [&_strong]:block [&_strong]:text-2xl [&_strong]:font-medium [&_strong]:tabular-nums [&_small]:mt-1 [&_small]:block [&_small]:text-xs [&_small]:text-(--text-secondary)"
         [attr.aria-label]="'Library totals' | translate"
         data-section="library-totals"
       >
@@ -88,7 +105,10 @@
           ></a
         >
       </section>
-      <section aria-labelledby="reading-now-title" class="reading-section">
+      <section
+        aria-labelledby="reading-now-title"
+        class="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6"
+      >
         <div class="reading-heading">
           <h2 id="reading-now-title">{{ 'Currently reading' | translate }}</h2>
           <a routerLink="/books/shelf"
@@ -101,9 +121,11 @@
             <button type="button" (click)="store.reload()">{{ 'Retry' | translate }}</button>
           </p>
         } @else {
-          <div class="reading-list">
+          <div class="grid gap-4 min-[1500px]:grid-cols-2">
             @for (book of currentlyReading(); track book.id) {
-              <article class="reading-card">
+              <article
+                class="grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 rounded-xl border border-border bg-background p-4 sm:grid-cols-[96px_minmax(0,1fr)]"
+              >
                 <a
                   [routerLink]="['/books', book.id, 'edit']"
                   class="reading-cover"
@@ -147,7 +169,7 @@
                   >
                     <span [style.width.%]="pagePercent(book)"></span>
                   </div>
-                  <div class="reading-footer">
+                  <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
                     <p class="reading-remaining">
                       {{
                         (trackingMode(book) === 'pages' && book.pageCount > 0
@@ -158,7 +180,8 @@
                     </p>
                     <button
                       type="button"
-                      class="reading-update"
+                      appButton="secondary"
+                      class="shrink-0 text-xs"
                       (click)="openProgress(book)"
                       [attr.aria-label]="'Update progress for ' + book.title | translate"
                     >
@@ -176,19 +199,11 @@
             }
           </div>
         }
-        @if (estimatedPagesLogged() > 0) {
-          <p class="reading-feedback">
-            {{
-              'messages.count_estimated_pages_logged_from_kindle_locations_244a48'
-                | translate: { p0: estimatedPagesLogged() }
-            }}
-          </p>
-        }
         @if (progressNotice()) {
           <p role="status" class="reading-feedback">{{ progressNotice() | translate }}</p>
         }
       </section>
-      <aside class="books-sidebar">
+      <aside class="min-w-0 self-start rounded-2xl border border-border bg-card p-5 sm:p-6">
         <section class="books-goal" aria-labelledby="reading-goal-title">
           <div class="books-goal-heading">
             <p class="books-eyebrow">
@@ -247,11 +262,6 @@
             ><ion-icon name="checkmark-done-outline" aria-hidden="true" />
             {{ 'Finished books' | translate }} <ion-icon name="arrow-up-outline" aria-hidden="true"
           /></a>
-        </section>
-        <section class="books-note">
-          <ion-icon name="bookmark-outline" aria-hidden="true" />
-          <h2>{{ 'One chapter at a time.' | translate }}</h2>
-          <p>{{ 'There’s no rush to the last page.' | translate }}</p>
         </section>
       </aside>
     }
@@ -317,14 +327,23 @@
   >
     <ng-template>
       @if (progressBook(); as book) {
-        <form class="progress-editor" (submit)="$event.preventDefault(); saveProgress()">
-          <div class="progress-dialog-heading">
+        <form
+          class="max-h-[85dvh] overflow-y-auto p-6 text-foreground [&_button:disabled]:cursor-wait [&_button:disabled]:opacity-55"
+          (submit)="$event.preventDefault(); saveProgress()"
+        >
+          <div class="mb-2 flex items-start justify-between gap-4">
             <div>
-              <p class="reading-eyebrow">{{ 'One chapter at a time' | translate }}</p>
-              <h2 id="progress-dialog-title">{{ 'Update progress' | translate }}</h2>
+              <p
+                class="mb-1.5 text-[0.65rem] font-semibold tracking-widest text-(--text-secondary) uppercase"
+              >
+                {{ 'One chapter at a time' | translate }}
+              </p>
+              <h2 id="progress-dialog-title" class="text-xl font-semibold">
+                {{ 'Update progress' | translate }}
+              </h2>
             </div>
             <button
-              class="progress-close"
+              class="grid size-10 shrink-0 place-items-center rounded-full border border-border bg-transparent text-2xl text-(--text-secondary) hover:bg-muted"
               type="button"
               [attr.aria-label]="'Close progress editor' | translate"
               (click)="closeProgress()"
@@ -333,11 +352,13 @@
               ×
             </button>
           </div>
-          <p class="progress-book-name">{{ book.title | translate }}</p>
-          <fieldset [disabled]="progressSaving()">
+          <p class="mb-6 text-sm break-words text-(--text-secondary)">
+            {{ book.title | translate }}
+          </p>
+          <fieldset class="m-0 min-w-0 border-0 p-0" [disabled]="progressSaving()">
             @if (book.progressMode !== 'locations') {
               <div
-                class="progress-modes"
+                class="mb-5 flex w-fit gap-1 rounded-xl border border-border bg-background p-1 [&_button]:min-h-9 [&_button]:rounded-lg [&_button]:px-4 [&_button]:text-xs [&_button]:text-(--text-secondary) [&_button[aria-pressed=true]]:bg-secondary [&_button[aria-pressed=true]]:text-foreground"
                 role="group"
                 [attr.aria-label]="'Progress unit' | translate"
               >
@@ -361,7 +382,7 @@
                 </button>
               </div>
             }
-            <label class="progress-label" for="reading-position">{{
+            <label class="mb-2 block text-sm" for="reading-position">{{
               (progressMode() === 'locations'
                 ? 'What Kindle location are you on?'
                 : progressMode() === 'pages'
@@ -369,9 +390,12 @@
                   : 'How far have you read?'
               ) | translate
             }}</label>
-            <div class="progress-number">
+            <div
+              class="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 focus-within:border-ring [&_input]:min-w-0 [&_input]:flex-1 [&_input]:border-0 [&_input]:bg-transparent [&_input]:text-3xl [&_input]:font-semibold [&_input]:text-foreground [&_input]:outline-none [&_span]:shrink-0 [&_span]:text-xs [&_span]:text-(--text-secondary)"
+            >
               <input
                 id="reading-position"
+                (focus)="progressInput.set('')"
                 type="number"
                 inputmode="numeric"
                 min="0"
@@ -396,7 +420,7 @@
                 ) | translate
               }}</span>
             </div>
-            <p class="reading-remaining">
+            <p class="mt-3 text-xs leading-relaxed text-(--text-secondary)">
               {{
                 'messages.previously_count_you_can_also_correct_an_725fa7'
                   | translate
@@ -411,15 +435,22 @@
               }}
             </p>
             @if (book.progressMode === 'locations') {
-              <p class="progress-label" role="status">{{ locationSessionPreview(book) }}</p>
+              <p class="mb-2 block text-sm" role="status">{{ locationSessionPreview(book) }}</p>
             }
             @if (progressError()) {
-              <p role="alert" class="progress-error">{{ progressError() | translate }}</p>
+              <p role="alert" class="mt-3 text-sm text-destructive">
+                {{ progressError() | translate }}
+              </p>
             }
-            <button appButton="primary" class="reading-update progress-save" type="submit">
+            <button appButton="primary" class="mt-5 w-full" type="submit">
               {{ (progressSaving() ? 'Saving...' : 'Save progress') | translate }}
             </button>
-            <button type="button" class="progress-finish" (click)="saveProgress(true)">
+            <button
+              appButton="secondary"
+              type="button"
+              class="mt-3 flex w-full items-center justify-center gap-3 text-left [&_ion-icon]:shrink-0 [&_ion-icon]:text-xl [&_strong]:block [&_strong]:text-sm [&_small]:mt-1 [&_small]:block [&_small]:text-xs [&_small]:font-normal [&_small]:text-(--text-secondary)"
+              (click)="saveProgress(true)"
+            >
               <ion-icon name="checkmark-done-outline" aria-hidden="true" />
               <span
                 ><strong>{{ 'Finish now' | translate }}</strong

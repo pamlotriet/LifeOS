@@ -25,6 +25,10 @@ import {
   localDate,
   supportsPlan,
   TransactionInput,
+  transferNet,
+  BudgetAccountRecord,
+  BUDGET_ACCOUNTS,
+  customAccountNet,
 } from '@pages/budget/state/budget/budget.model';
 
 @Injectable({ providedIn: 'root' })
@@ -33,6 +37,60 @@ export class BudgetStore {
   private readonly auth = inject(AuthService);
   private generation = 0;
   readonly transactions = signal<BudgetTransaction[]>([]);
+  readonly accounts = signal<BudgetAccountRecord[]>(
+    BUDGET_ACCOUNTS.map((account) => ({ id: account.value, name: account.label })),
+  );
+  readonly activeAccounts = computed(() => this.accounts().filter((account) => !account.deleted));
+  readonly accountOptions = computed(() =>
+    this.activeAccounts().map((account) => ({ value: account.id, label: account.name })),
+  );
+  accountName(id: string): string {
+    return (
+      this.accounts().find((account) => account.id === id)?.name ??
+      BUDGET_ACCOUNTS.find((account) => account.value === id)?.label ??
+      'Deleted account'
+    );
+  }
+  async saveAccount(
+    name: string,
+    id = `custom-${crypto.randomUUID()}`,
+    balance: number | null = null,
+  ): Promise<void> {
+    if (this.loading() || this.error()) throw new Error('Wait for your budget to load first.');
+    if (
+      this.activeAccounts().some(
+        (account) => account.id !== id && account.name.toLowerCase() === name.trim().toLowerCase(),
+      )
+    )
+      throw new Error('An account with this name already exists.');
+    const existing = this.accounts().find((account) => account.id === id);
+    if (existing?.deleted) throw new Error('This account has been deleted.');
+    const uid = this.auth.userId();
+    const saved = await this.service.saveAccount({
+      ...existing,
+      id,
+      name,
+      deleted: false,
+      ...(balance !== null
+        ? { balance, recordedNet: customAccountNet(this.transactions(), id) }
+        : {}),
+    });
+    if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget.');
+    ++this.generation;
+    this.accounts.update((items) => [...items.filter((account) => account.id !== id), saved]);
+  }
+  async deleteAccount(id: string): Promise<void> {
+    if (this.loading() || this.error()) throw new Error('Wait for your budget to load first.');
+    if (BUDGET_ACCOUNTS.some((account) => account.value === id))
+      throw new Error('Main, Spending and Savings are built-in accounts. You can rename them.');
+    const account = this.accounts().find((item) => item.id === id && !item.deleted);
+    if (!account) throw new Error('This account no longer exists.');
+    const uid = this.auth.userId();
+    const saved = await this.service.saveAccount({ ...account, deleted: true });
+    if (uid !== this.auth.userId()) throw new Error('Your account changed. Reopen Budget.');
+    ++this.generation;
+    this.accounts.update((items) => items.map((item) => (item.id === id ? saved : item)));
+  }
   readonly categories = signal<BudgetCategory[]>(DEFAULT_CATEGORIES.map((x) => ({ ...x })));
   readonly plans = signal<BudgetPlan[]>([]);
   readonly spendingBalances = signal<SpendingBalanceCheckpoint[]>([]);
@@ -89,6 +147,9 @@ export class BudgetStore {
       untracked(() => {
         ++this.generation;
         this.transactions.set([]);
+        this.accounts.set(
+          BUDGET_ACCOUNTS.map((account) => ({ id: account.value, name: account.label })),
+        );
         this.categories.set(DEFAULT_CATEGORIES.map((x) => ({ ...x })));
         this.savingsBalance.set(undefined);
         this.plans.set([]);
@@ -111,6 +172,14 @@ export class BudgetStore {
       const data = await this.service.load();
       if (version !== this.generation) return;
       this.transactions.set(data.transactions);
+      const accounts = new Map(
+        BUDGET_ACCOUNTS.map((account) => [
+          account.value,
+          { id: account.value, name: account.label } as BudgetAccountRecord,
+        ]),
+      );
+      (data.accounts ?? []).forEach((account) => accounts.set(account.id, account));
+      this.accounts.set([...accounts.values()]);
       this.plans.set(data.plans);
       this.debts.set(data.debts);
       this.savingsBalance.set(data.savingsBalance);
@@ -150,10 +219,9 @@ export class BudgetStore {
           this.inMonth(t.date, month),
       ),
     );
-    const recordedFunding = total(
-      this.transactions().filter(
-        (t) => t.type === 'spending-transfer' && this.inMonth(t.date, month),
-      ),
+    const recordedFunding = transferNet(
+      this.transactions().filter((t) => this.inMonth(t.date, month)),
+      'spending',
     );
     const checkpoint = {
       recordedFunding,
@@ -173,9 +241,26 @@ export class BudgetStore {
     if (this.loading() || this.error())
       throw new Error('Wait for your budget to load, or retry loading it first.');
     const category = this.activeCategories().find((x) => x.id === input.categoryId);
+    const previous = this.transactions().find((item) => item.id === id);
+    for (const field of ['fromAccount', 'toAccount'] as const) {
+      const value = input[field];
+      if (
+        value &&
+        !this.activeAccounts().some((account) => account.id === value) &&
+        previous?.[field] !== value
+      )
+        throw new Error('Choose an active account.');
+    }
+    if (
+      input.account?.startsWith('custom-') &&
+      !this.activeAccounts().some((account) => account.id === input.account) &&
+      previous?.account !== input.account
+    )
+      throw new Error('Choose an active account.');
+    const accountTransfer = input.type === 'transfer' && !!input.fromAccount && !!input.toAccount;
     if (input.type === 'spending-transfer' && (!category || !isSpendingCategory(category)))
       throw new Error('Choose the Spending category for an account transfer.');
-    if (!category || !compatibleCategory(input.type, category.type))
+    if (!accountTransfer && (!category || !compatibleCategory(input.type, category.type)))
       throw new Error('Choose a category for this transaction type.');
     if (input.debtId && !this.debts().some((debt) => debt.id === input.debtId))
       throw new Error('Choose an existing debt account.');

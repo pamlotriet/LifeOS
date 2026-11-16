@@ -1,3 +1,4 @@
+import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '@shared/components/app-input/app-input';
 import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
@@ -20,6 +21,7 @@ import { compareBudgetCategories } from '@pages/budget/budget-comparison/budget-
 @Component({
   selector: 'app-budget-comparison',
   imports: [
+    BudgetPage,
     TranslatePipe,
     AppInput,
     AppMonthPicker,

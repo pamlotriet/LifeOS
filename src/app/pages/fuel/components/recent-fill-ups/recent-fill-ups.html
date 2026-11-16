@@ -1,0 +1,42 @@
+<section
+  class="[&_h3]:text-xl [&_h3]:font-medium [&_p]:mt-1.5 [&_p]:text-[0.82rem] [&_p]:leading-relaxed [&_p]:text-(--text-secondary) [&_small]:text-xs [&_small]:leading-relaxed [&_small]:text-(--text-secondary) [&_a:focus-visible]:outline-3 [&_a:focus-visible]:outline-offset-3 [&_a:focus-visible]:outline-ring rounded-[20px] border border-border bg-card p-6 max-[600px]:rounded-[18px] max-[600px]:p-4.5"
+>
+  <div
+    class="mb-5 flex items-start justify-between gap-4 max-[600px]:flex-wrap max-[500px]:gap-2.5 [&_a]:text-[0.8rem] [&_a]:text-primary [&_a]:no-underline"
+  >
+    <div>
+      <h3>{{ 'Recent fill-ups' | translate }}</h3>
+      <p>
+        {{ 'Select a fill-up to edit its details.' | translate }}
+      </p>
+    </div>
+    <a routerLink="/fuel/history">{{ 'View all history →' | translate }}</a>
+  </div>
+  <div class="mt-2">
+    @for (entry of entries().slice(0, 5); track entry.id) {
+      <a
+        class="grid grid-cols-[2fr_1fr_1.4fr_1fr] items-center gap-4 border-t border-border py-5 text-[0.82rem] text-foreground no-underline hover:bg-muted max-[600px]:text-[0.78rem] max-[500px]:grid-cols-2 max-[500px]:gap-2.5 [&_small]:block [&>strong]:text-right [&>strong]:text-[1.15rem] [&>strong]:font-medium [&>strong]:max-[600px]:text-base [&>strong]:max-[500px]:text-left"
+        [routerLink]="['/fuel/refuels', entry.vehicleId, entry.id, 'edit']"
+        ><div>
+          <strong>{{ entry.pop || 'Fill-up' | translate }}</strong
+          ><small>{{ date(entry.dop) }} · {{ entry.areaTown }}</small>
+        </div>
+        <span
+          >{{ 'messages.count_l_5be18b' | translate: { p0: number(entry.qtyLiters) }
+          }}<small>{{
+            'messages.count_l_5418f7' | translate: { p0: money(entry.randPerLiter) }
+          }}</small></span
+        ><span
+          >{{
+            (entry.litersPer100Km === null
+              ? 'No distance'
+              : number(entry.litersPer100Km) + ' L/100 km'
+            ) | translate
+          }}<small>{{
+            'messages.count_km_odometer_4e8d62' | translate: { p0: number(entry.odometer, 0) }
+          }}</small></span
+        ><strong>{{ money(entry.amountPaid) }}</strong></a
+      >
+    }
+  </div>
+</section>

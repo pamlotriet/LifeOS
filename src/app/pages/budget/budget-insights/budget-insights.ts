@@ -1,3 +1,4 @@
+import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
 import { BackButton } from '@shared/components/back-button/back-button';
@@ -15,6 +16,7 @@ import { AppChart } from '@shared/components/app-chart/app-chart';
 @Component({
   selector: 'app-budget-insights',
   imports: [
+    BudgetPage,
     TranslatePipe,
     AppMonthPicker,
     BackButton,

@@ -7,11 +7,12 @@ import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 import { AppSelect } from '@shared/components/app-select/app-select';
 import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
+import { AppButton } from '@shared/components/app-button/app-button';
 
 @Component({
-  imports: [TranslatePipe, IonIcon, RouterLink, AppSelect, AppDatePicker, FuelLoading],
+  imports: [TranslatePipe, IonIcon, RouterLink, AppSelect, AppDatePicker, FuelLoading, AppButton],
   selector: 'app-fuel-history',
-  styleUrl: './fuel-history.css',
+  host: { class: 'block' },
   templateUrl: './fuel-history.html',
 })
 export class FuelHistory {

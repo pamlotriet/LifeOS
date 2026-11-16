@@ -59,6 +59,7 @@
                 {{ 'Vehicle' | translate }}
                 <app-select
                   class="mt-1 block"
+                  appearance="neutral"
                   [ariaLabel]="'Select vehicle' | translate"
                   [placeholder]="'Select vehicle' | translate"
                   [options]="vehicleOptions()"
@@ -87,6 +88,7 @@
               <div class="grid gap-1 text-xs">
                 {{ 'Fuel type' | translate }}
                 <app-select
+                  appearance="neutral"
                   [ariaLabel]="'Select fuel type' | translate"
                   [placeholder]="'Select fuel type' | translate"
                   [options]="fuelOptions"

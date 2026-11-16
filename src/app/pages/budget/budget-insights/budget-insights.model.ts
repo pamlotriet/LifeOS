@@ -1,6 +1,7 @@
 import { englishText, TranslateText } from '@core/i18n/translation-text';
 import { cycleBounds, inCycle } from '@pages/budget/state/cycle/budget-cycle';
 import {
+  categoryActual,
   BudgetCategory,
   BudgetDebt,
   BudgetPlan,
@@ -73,13 +74,9 @@ export function budgetInsights(
     .map((category) => ({
       category,
       ...categoryPlanItems(plans, month, category.id),
-      actual: total(
-        monthly.filter(
-          (t) =>
-            t.categoryId === category.id &&
-            !t.debtId &&
-            (category.type === 'savings' ? t.type === 'transfer' : t.type === 'expense'),
-        ),
+      actual: categoryActual(
+        monthly.filter((t) => t.categoryId === category.id && !t.debtId),
+        category.type,
       ),
     }));
   const debtPlans = debts.reduce(

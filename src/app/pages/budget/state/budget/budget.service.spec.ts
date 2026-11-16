@@ -77,6 +77,69 @@ describe('BudgetService', () => {
       service().saveSpendingBalance({ id: 'bad', balance: 4537, recordedSpending: 0 }),
     ).rejects.toThrow();
   });
+  it('saves checkpoints after net transfers out of Spending', async () => {
+    await service().saveSpendingBalance({
+      id: '2026-10',
+      balance: 900,
+      recordedSpending: 0,
+      recordedFunding: -100,
+    });
+    expect(firestore.updateDocument).toHaveBeenCalledWith(
+      'budgets/owner/spendingBalances/2026-10',
+      expect.objectContaining({ recordedFunding: { doubleValue: -100 } }),
+      'token',
+    );
+  });
+
+  it('persists both transfer accounts and clears them when an entry becomes an expense', async () => {
+    await service().saveTransaction(
+      { ...input, type: 'transfer', fromAccount: 'savings', toAccount: 'main' },
+      't1',
+    );
+    expect(firestore.updateDocument).toHaveBeenLastCalledWith(
+      'budgets/owner/transactions/t1',
+      expect.objectContaining({
+        fromAccount: { stringValue: 'savings' },
+        toAccount: { stringValue: 'main' },
+      }),
+      'token',
+    );
+    await service().saveTransaction({ ...input, fromAccount: '', toAccount: '' }, 't1');
+    expect(firestore.updateDocument).toHaveBeenLastCalledWith(
+      'budgets/owner/transactions/t1',
+      expect.objectContaining({
+        type: { stringValue: 'expense' },
+        fromAccount: { stringValue: '' },
+        toAccount: { stringValue: '' },
+      }),
+      'token',
+    );
+  });
+
+  it('saves account names, deletion markers and balance checkpoints', async () => {
+    const result = await service().saveAccount({
+      id: 'custom-travel',
+      name: ' Travel ',
+      deleted: true,
+      balance: 500,
+      recordedNet: 100,
+    });
+    expect(result.name).toBe('Travel');
+    expect(firestore.updateDocument).toHaveBeenCalledWith(
+      'budgets/owner/accounts/custom-travel',
+      expect.objectContaining({
+        name: { stringValue: 'Travel' },
+        deleted: { booleanValue: true },
+        balance: { doubleValue: 500 },
+      }),
+      'token',
+    );
+    await expect(service().saveAccount({ id: 'custom-bad', name: ' ' })).rejects.toThrow();
+    await expect(
+      service().saveAccount({ id: 'custom-bad', name: 'Test', balance: NaN, recordedNet: 0 }),
+    ).rejects.toThrow();
+  });
+
   it('creates and updates transactions without duplicating them', async () => {
     await service().saveTransaction(input);
     expect(firestore.createDocument).toHaveBeenCalledWith(

@@ -27,6 +27,7 @@ export function pageName(url: string): string {
     '/gym': 'Gym',
     '/budget': 'Budget',
     '/budget/month': 'Transactions',
+    '/budget/transfers': 'Transfers',
     '/budget/planned': 'Planned payments',
     '/budget/comparison': 'Planned vs actual',
     '/budget/debts': 'Debt',

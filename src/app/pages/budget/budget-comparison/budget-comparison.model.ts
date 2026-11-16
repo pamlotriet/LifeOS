@@ -6,7 +6,7 @@ import {
   categoryPlanItems,
   debtPlanId,
   supportsPlan,
-  total,
+  categoryActual,
 } from '@pages/budget/state/budget/budget.model';
 
 export function compareBudgetCategories(
@@ -32,13 +32,11 @@ export function compareBudgetCategories(
         Math.round(
           plan.amount * 100 + debtPlans.reduce((sum, t) => sum + Math.round(t.amount * 100), 0),
         ) / 100;
-      const actual = total(
+      const actual = categoryActual(
         transactions.filter(
-          (t) =>
-            t.categoryId === category.id &&
-            inCycle(t.date, month, startDay) &&
-            (category.type === 'savings' ? t.type === 'transfer' : t.type === 'expense'),
+          (t) => t.categoryId === category.id && inCycle(t.date, month, startDay),
         ),
+        category.type,
       );
       const hasPlan = plan.items.length > 0 || debtPlans.length > 0;
       const difference = Math.round((planned - actual) * 100) / 100;

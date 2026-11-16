@@ -1,5 +1,5 @@
 <ion-content
-  ><main class="budget-page">
+  ><main appBudgetPage class="budget-page md:m-0! md:w-full md:max-w-none! md:px-8!">
     <p class="muted text-sm" [attr.aria-label]="'Budget cycle dates' | translate">
       {{ 'messages.cycle_count_1e4cb8' | translate: { p0: store.cycleLabel() } }}
     </p>
@@ -12,7 +12,7 @@
         [disabled]="busy() || store.loading() || !!store.error()"
         (click)="open()"
       >
-        <ion-icon name="add" />
+        <ion-icon name="add" aria-hidden="true" /> {{ 'Add category' | translate }}
       </button>
     </header>
     <app-budget-nav />

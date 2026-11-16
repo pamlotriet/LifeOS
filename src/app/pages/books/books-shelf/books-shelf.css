@@ -138,35 +138,6 @@ h2 span {
   font-size: 14px;
   font-weight: 400;
 }
-.shelf-search {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  width: 256px;
-  min-height: 40px;
-  padding: 0 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--card);
-  color: var(--shelf-muted);
-}
-.shelf-search:focus-within {
-  border-color: var(--shelf-accent);
-}
-.shelf-search input {
-  width: 100%;
-  min-width: 0;
-  height: 38px;
-  border: 0;
-  outline: none;
-  background: transparent;
-  color: var(--shelf-text);
-  font-size: 14px;
-}
-.shelf-search input::placeholder {
-  color: var(--muted-foreground);
-  opacity: 1;
-}
 .shelf-filters {
   display: flex;
   flex-wrap: wrap;
@@ -331,9 +302,6 @@ h2 span {
     align-items: stretch;
     flex-direction: column;
     gap: 18px;
-  }
-  .shelf-search {
-    width: 100%;
   }
   .shelf-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

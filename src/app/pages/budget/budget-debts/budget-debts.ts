@@ -1,3 +1,4 @@
+import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
@@ -21,6 +22,7 @@ import {
 @Component({
   selector: 'app-budget-debts',
   imports: [
+    BudgetPage,
     TranslatePipe,
     AppInput,
     AppButton,

@@ -5,16 +5,17 @@ import { ActivatedRoute } from '@angular/router';
 import { describe, expect, it, vi } from 'vitest';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import { BudgetOverview } from '@pages/budget/budget-overview/budget-overview';
+import { BudgetTransaction } from '@pages/budget/state/budget/budget.model';
 
 describe('Budget cycle navigation', () => {
-  const create = () => {
-    const store = { month: signal('2026-01'), cycleStartDay: signal(25) };
+  const create = (data = {}) => {
+    const store = { month: signal('2026-01'), cycleStartDay: signal(25), accountName: (id: string) => id };
     const page = runInInjectionContext(
       Injector.create({
         providers: [
           ...translationTestProviders,
           { provide: BudgetStore, useValue: store },
-          { provide: ActivatedRoute, useValue: { snapshot: { data: {} } } },
+          { provide: ActivatedRoute, useValue: { snapshot: { data } } },
         ],
       }),
       () => new BudgetOverview(),
@@ -86,5 +87,85 @@ describe('Budget cycle navigation', () => {
     expect(page.savingBalance()).toBe(false);
     await page.saveSpendingBalance();
     expect(page.balanceSaved()).toBe(true);
+  });
+
+  it('combines transaction search, type and date without changing the records', () => {
+    const { page, store } = create();
+    const transactions = [
+      {
+        id: '1',
+        title: 'Groceries',
+        type: 'expense',
+        date: '2026-01-26',
+        categoryId: 'food',
+        notes: '',
+      },
+      {
+        id: '2',
+        title: 'Salary',
+        type: 'income',
+        date: '2026-01-26',
+        categoryId: 'salary',
+        notes: '',
+      },
+      {
+        id: '3',
+        title: 'Lunch',
+        type: 'expense',
+        date: '2026-01-27',
+        categoryId: 'food',
+        notes: 'Work meal',
+      },
+      {
+        id: '4',
+        title: 'Savings',
+        type: 'transfer',
+        date: '2026-01-27',
+        categoryId: 'savings',
+        notes: '',
+      },
+    ] as BudgetTransaction[];
+    Object.assign(store, {
+      monthly: signal(transactions),
+      categories: signal([{ id: 'food', name: 'Food & dining' }]),
+    });
+    page.search.set('  FOOD  ');
+    expect(page.filtered().map((item) => item.id)).toEqual(['1', '3']);
+    page.transactionType.set('expense');
+    page.selectedDate.set('2026-01-27');
+    expect(page.filtered().map((item) => item.id)).toEqual(['3']);
+    page.search.set('work');
+    expect(page.filtered().map((item) => item.id)).toEqual(['3']);
+    page.transactionType.set('income');
+    expect(page.filtered()).toEqual([]);
+    page.search.set('');
+    page.selectedDate.set('');
+    page.transactionType.set('all');
+    expect(page.filtered()).toEqual(transactions);
+  });
+
+  it('keeps the Transfers screen limited to transfers, including legacy records', () => {
+    const { page, store } = create({ monthly: true, transfers: true });
+    Object.assign(store, {
+      monthly: signal([
+        { id: '1', type: 'income', title: 'Salary' },
+        { id: '2', type: 'spending-transfer', title: 'Old transfer' },
+        {
+          id: '3',
+          type: 'transfer',
+          fromAccount: 'savings',
+          toAccount: 'main',
+          title: 'Withdrawal',
+        },
+      ]),
+      categories: signal([]),
+    });
+    expect(page.filtered().map((item) => item.id)).toEqual(['2', '3']);
+    page.transactionType.set('all');
+    expect(page.filtered().map((item) => item.id)).toEqual(['2', '3']);
+    page.search.set('main');
+    expect(page.filtered().map((item) => item.id)).toEqual(['2', '3']);
+    page.search.set('savings');
+    expect(page.filtered().map((item) => item.id)).toEqual(['3']);
   });
 });

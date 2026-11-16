@@ -1,9 +1,11 @@
 <ion-content>
-  <main class="budget-page">
+  <main appBudgetPage class="budget-page md:m-0! md:w-full md:max-w-none! md:px-8!">
     <header class="page-header">
       <app-back-button fallback="/budget" />
       <h1 class="compact-title">{{ 'Manage debt' | translate }}</h1>
-      <div class="debt-header-actions">
+      <div
+        class="debt-header-actions max-sm:grid! max-sm:grid-cols-2 max-sm:gap-2 [&>button]:max-sm:min-w-0 [&>button]:max-sm:px-2! [&>button]:max-sm:text-xs!"
+      >
         <button
           appButton="secondary"
           class="secondary-button"
@@ -315,7 +317,9 @@
                 </p>
                 <h2>{{ row.debt.name }}</h2>
               </div>
-              <div class="debt-header-actions">
+              <div
+                class="debt-header-actions max-sm:grid! max-sm:grid-cols-2 max-sm:gap-2 [&>button]:max-sm:min-w-0 [&>button]:max-sm:px-2! [&>button]:max-sm:text-xs!"
+              >
                 <button
                   appButton="secondary"
                   type="button"

@@ -16,6 +16,29 @@ export const budgetRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'transfers',
+    loadComponent: () =>
+      import('@pages/budget/budget-overview/budget-overview').then((m) => m.BudgetOverview),
+    data: { monthly: true, transfers: true },
+    canActivate: [authGuard],
+  },
+  {
+    path: 'accounts/add',
+    loadComponent: () =>
+      import('@pages/budget/budget-account-form/budget-account-form').then(
+        (m) => m.BudgetAccountForm,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'accounts/:id/edit',
+    loadComponent: () =>
+      import('@pages/budget/budget-account-form/budget-account-form').then(
+        (m) => m.BudgetAccountForm,
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: 'transactions/add',
     loadComponent: () =>
       import('@pages/budget/budget-transaction-form/budget-transaction-form').then(

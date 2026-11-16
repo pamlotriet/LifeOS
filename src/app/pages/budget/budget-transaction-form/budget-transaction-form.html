@@ -1,9 +1,13 @@
 <ion-content
-  ><main class="budget-page">
+  ><main appBudgetPage class="budget-page max-w-3xl! md:m-0! md:w-full md:max-w-none! md:px-8!">
     <header class="page-header">
-      <app-back-button fallback="/budget" />
+      <app-back-button [fallback]="type() === 'transfer' ? '/budget/transfers' : '/budget'" />
       <h1 class="compact-title">
-        {{ 'messages.count_transaction_41d434' | translate: { p0: id ? 'Edit' : 'Add' } }}
+        @if (type() === 'transfer') {
+          {{ (id ? 'Edit transfer' : 'Add transfer') | translate }}
+        } @else {
+          {{ 'messages.count_transaction_41d434' | translate: { p0: id ? 'Edit' : 'Add' } }}
+        }
       </h1>
       <button
         appButton="primary"
@@ -35,7 +39,10 @@
     }
     @if ((!id || loaded()) && !store.loading() && !store.error()) {
       <form id="transaction-form" (ngSubmit)="save()">
-        <fieldset [disabled]="busy()" style="border: 0; padding: 0; margin: 0; min-width: 0">
+        <fieldset
+          [disabled]="busy()"
+          class="m-0 min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6"
+        >
           <div class="segments" [attr.aria-label]="'Transaction type' | translate">
             @for (item of types; track item) {
               <button
@@ -46,33 +53,44 @@
                 (click)="changeType(item)"
               >
                 {{
-                  (item === 'expense'
-                    ? 'Expense'
-                    : item === 'income'
-                      ? 'Income'
-                      : item === 'spending-transfer'
-                        ? 'To Spending'
-                        : 'To savings'
-                  ) | translate
+                  (item === 'expense' ? 'Expense' : item === 'income' ? 'Income' : 'Transfers')
+                    | translate
                 }}
               </button>
             }
           </div>
-          @if (type() === 'spending-transfer') {
-            <p class="status">
-              {{
-                'Record money moved from your main account to Spending. This increases your Spending balance without counting as income or an expense.'
-                  | translate
-              }}
-            </p>
-          }
           @if (type() === 'transfer') {
+            <a class="text-link mb-3" routerLink="/budget">{{ 'Manage accounts' | translate }}</a>
             <p class="status">
               {{
-                'Transfers move money into savings. They reduce your remaining balance and are excluded from expenses.'
+                'Move money between your accounts. Transfers are not income or expenses.'
                   | translate
               }}
             </p>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="field"
+                ><span>{{ 'From account' | translate }}</span>
+                <app-select
+                  appearance="neutral"
+                  ariaLabel="From account"
+                  name="fromAccount"
+                  [options]="accounts()"
+                  [(ngModel)]="model.fromAccount"
+                  required
+                />
+              </label>
+              <label class="field"
+                ><span>{{ 'To account' | translate }}</span>
+                <app-select
+                  appearance="neutral"
+                  ariaLabel="To account"
+                  name="toAccount"
+                  [options]="accounts()"
+                  [(ngModel)]="model.toAccount"
+                  required
+                />
+              </label>
+            </div>
           }
           <label class="field"
             ><span>{{ 'Amount (R)' | translate }} <em>*</em></span
@@ -96,33 +114,48 @@
               [ariaLabel]="'Transaction date' | translate"
               [(ngModel)]="model.date"
           /></label>
-          <label class="field"
-            ><span>{{ 'Category' | translate }} <em>*</em></span
-            ><select class="lifeos-select" name="category" required [(ngModel)]="model.categoryId">
-              <option value="" disabled>{{ 'Choose a category' | translate }}</option>
-              @for (category of categories(); track category.id) {
-                <option [value]="category.id">
-                  {{ category.name }}{{ (category.type === 'bills' ? ' (Bill)' : '') | translate }}
-                </option>
-              }
-            </select></label
-          >
-          @if (!categories().length) {
-            <p class="status">
-              {{ 'Create a category before saving.' | translate }}
-              <a class="text-link" routerLink="/budget/categories">{{
-                'Manage categories' | translate
-              }}</a>
-            </p>
+          @if (type() !== 'transfer') {
+            <label class="field"
+              ><span>{{ 'Category' | translate }} <em>*</em></span
+              ><select
+                class="lifeos-select"
+                name="category"
+                required
+                [(ngModel)]="model.categoryId"
+              >
+                <option value="" disabled>{{ 'Choose a category' | translate }}</option>
+                @for (category of categories(); track category.id) {
+                  <option [value]="category.id">
+                    {{ category.name
+                    }}{{ (category.type === 'bills' ? ' (Bill)' : '') | translate }}
+                  </option>
+                }
+              </select></label
+            >
+            @if (!categories().length) {
+              <p class="status">
+                {{ 'Create a category before saving.' | translate }}
+                <a class="text-link" routerLink="/budget/categories">{{
+                  'Manage categories' | translate
+                }}</a>
+              </p>
+            }
           }
           <label class="field"
-            ><span>{{ 'Title / Description' | translate }} <em>*</em></span
+            ><span
+              >{{ 'Title / Description' | translate }}
+              @if (type() !== 'transfer') {
+                <em>*</em>
+              }</span
             ><input
               appInput="field"
               name="title"
-              required
+              [required]="type() !== 'transfer'"
               maxlength="120"
-              [placeholder]="'e.g. Checkers groceries' | translate"
+              [placeholder]="
+                (type() === 'transfer' ? 'Optional description' : 'e.g. Checkers groceries')
+                  | translate
+              "
               [(ngModel)]="model.title"
           /></label>
           @if (type() === 'expense') {
@@ -137,7 +170,17 @@
                 "
               >
                 <option value="">{{ 'Main / Spending account' | translate }}</option>
-                <option value="savings">{{ 'Savings' | translate }}</option>
+                <option value="savings">{{ store.accountName('savings') }}</option>
+                @for (account of store.activeAccounts(); track account.id) {
+                  @if (account.id.startsWith('custom-')) {
+                    <option [value]="account.id">{{ account.name }}</option>
+                  }
+                }
+                @if (archivedPurchaseAccount(); as account) {
+                  <option [value]="account.id">
+                    {{ account.name }} ({{ 'Deleted' | translate }})
+                  </option>
+                }
                 @for (card of store.debts(); track card.id) {
                   @if (card.type === 'credit-card') {
                     <option [value]="'credit:' + card.id">
@@ -154,106 +197,117 @@
               }}
             </p>
           }
-          <label class="field"
-            ><span>{{ 'Payment Method' | translate }}</span
-            ><select class="lifeos-select" name="payment" [(ngModel)]="model.paymentMethod">
-              @for (
-                method of ['Card', 'Cash', 'Bank transfer', 'Debit order', 'Other'];
-                track method
-              ) {
-                <option>{{ method }}</option>
-              }
-            </select></label
+          <details
+            class="my-5 rounded-xl border border-border p-4"
+            [open]="!!id || !!model.debtId || !!model.receiptUrl || !!localReceipt()"
           >
-          @if (
-            type() === 'expense' && !model.account?.startsWith('credit:') && store.debts().length
-          ) {
+            <summary class="cursor-pointer text-sm font-medium">
+              {{ 'Payment details, notes & receipt' | translate }}
+            </summary>
             <label class="field"
-              ><span>{{ 'Debt payment' | translate }}</span
-              ><select class="lifeos-select" name="debtId" [(ngModel)]="model.debtId">
-                <option value="">{{ 'Not a debt payment' | translate }}</option>
-                @for (debt of store.debts(); track debt.id) {
-                  <option [value]="debt.id">{{ debt.name }}</option>
+              ><span>{{ 'Payment Method' | translate }}</span
+              ><select class="lifeos-select" name="payment" [(ngModel)]="model.paymentMethod">
+                @for (
+                  method of ['Card', 'Cash', 'Bank transfer', 'Debit order', 'Other'];
+                  track method
+                ) {
+                  <option>{{ method }}</option>
                 }
               </select></label
             >
-          }
-          @if (type() === 'expense' && model.debtId) {
-            <label class="field"
-              ><span>{{ 'Payment status' | translate }}</span
-              ><select
-                class="lifeos-select"
-                name="paymentStatus"
-                [ngModel]="model.paymentStatus || 'paid'"
-                (ngModelChange)="model.paymentStatus = $event"
+            @if (
+              type() === 'expense' && !model.account?.startsWith('credit:') && store.debts().length
+            ) {
+              <label class="field"
+                ><span>{{ 'Debt payment' | translate }}</span
+                ><select class="lifeos-select" name="debtId" [(ngModel)]="model.debtId">
+                  <option value="">{{ 'Not a debt payment' | translate }}</option>
+                  @for (debt of store.debts(); track debt.id) {
+                    <option [value]="debt.id">{{ debt.name }}</option>
+                  }
+                </select></label
               >
-                <option value="paid">{{ 'Already paid' | translate }}</option>
-                <option value="planned">{{ 'Planned' | translate }}</option>
-              </select></label
-            >
-          }
-          <label class="field"
-            ><span>{{ 'Notes' | translate }}</span
-            ><textarea
-              appInput="field"
-              name="notes"
-              maxlength="2000"
-              [placeholder]="'Any additional notes...' | translate"
-              [(ngModel)]="model.notes"
-            ></textarea>
-          </label>
-          <section class="panel receipt-panel">
-            <h2>
-              <ion-icon name="camera-outline" aria-hidden="true" />
-              {{ 'Receipt photo' | translate }}
-            </h2>
-            <p class="muted">{{ 'Optional · up to 5 MB' | translate }}</p>
-            @if (localReceipt() || model.receiptUrl) {
-              <img
-                [src]="localReceipt() || model.receiptUrl"
-                [attr.alt]="'Transaction receipt' | translate"
-              />
             }
-            <div class="receipt-actions">
-              <button
-                appButton="secondary"
-                class="secondary-button"
-                type="button"
-                (click)="receiptCamera.click()"
+            @if (type() === 'expense' && model.debtId) {
+              <label class="field"
+                ><span>{{ 'Payment status' | translate }}</span
+                ><select
+                  class="lifeos-select"
+                  name="paymentStatus"
+                  [ngModel]="model.paymentStatus || 'paid'"
+                  (ngModelChange)="model.paymentStatus = $event"
+                >
+                  <option value="paid">{{ 'Already paid' | translate }}</option>
+                  <option value="planned">{{ 'Planned' | translate }}</option>
+                </select></label
               >
-                {{ 'Take photo' | translate }}</button
-              ><button
-                appButton="secondary"
-                class="secondary-button"
-                type="button"
-                (click)="receiptFile.click()"
-              >
-                {{ 'Choose photo' | translate }}</button
-              ><input
-                #receiptCamera
-                hidden
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-                capture="environment"
-                (change)="pickFile($event)"
-              /><input
-                #receiptFile
-                hidden
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-                (change)="pickFile($event)"
-              />
+            }
+            <label class="field"
+              ><span>{{ 'Notes' | translate }}</span
+              ><textarea
+                appInput="field"
+                name="notes"
+                maxlength="2000"
+                [placeholder]="'Any additional notes...' | translate"
+                [(ngModel)]="model.notes"
+              ></textarea>
+            </label>
+            <section class="panel receipt-panel">
+              <h2>
+                <ion-icon name="camera-outline" aria-hidden="true" />
+                {{ 'Receipt photo' | translate }}
+              </h2>
+              <p class="muted">{{ 'Optional · up to 5 MB' | translate }}</p>
               @if (localReceipt() || model.receiptUrl) {
-                <button class="text-link" type="button" (click)="removeReceipt()">
-                  {{ 'Remove photo' | translate }}
-                </button>
+                <img
+                  [src]="localReceipt() || model.receiptUrl"
+                  [attr.alt]="'Transaction receipt' | translate"
+                />
               }
-            </div>
-          </section>
+              <div class="receipt-actions">
+                <button
+                  appButton="secondary"
+                  class="secondary-button"
+                  type="button"
+                  (click)="receiptCamera.click()"
+                >
+                  {{ 'Take photo' | translate }}</button
+                ><button
+                  appButton="secondary"
+                  class="secondary-button"
+                  type="button"
+                  (click)="receiptFile.click()"
+                >
+                  {{ 'Choose photo' | translate }}</button
+                ><input
+                  #receiptCamera
+                  hidden
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                  capture="environment"
+                  (change)="pickFile($event)"
+                /><input
+                  #receiptFile
+                  hidden
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                  (change)="pickFile($event)"
+                />
+                @if (localReceipt() || model.receiptUrl) {
+                  <button class="text-link" type="button" (click)="removeReceipt()">
+                    {{ 'Remove photo' | translate }}
+                  </button>
+                }
+              </div>
+            </section>
+          </details>
           <div class="form-actions">
-            <a class="secondary-button" routerLink="/budget">{{ 'Cancel' | translate }}</a
+            <a
+              class="secondary-button"
+              [routerLink]="type() === 'transfer' ? '/budget/transfers' : '/budget'"
+              >{{ 'Cancel' | translate }}</a
             ><button appButton="primary" class="primary-button" type="submit">
-              {{ 'Save transaction' | translate }}
+              {{ (type() === 'transfer' ? 'Save transfer' : 'Save transaction') | translate }}
             </button>
           </div>
           @if (id) {

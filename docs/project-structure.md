@@ -45,6 +45,7 @@ src/app/
         reading-goal/          Annual goal persistence and tests
     budget/
       budget-overview/
+      budget-account-form/     Dedicated account creation and editing
       budget-transaction-form/
       budget-planned/
       budget-debts/
@@ -52,6 +53,8 @@ src/app/
       budget-comparison/
       budget-insights/
       components/              Budget navigation, summary and transactions
+        budget-page/           Shared Tailwind page frame and mobile layout rules
+        budget-accounts/       Account names, balances and deletion controls
       state/
         budget/
         cycle/
@@ -66,6 +69,9 @@ src/app/
       insights/
       fuel-dashboard/
       components/
+        fuel-consumption-chart/ Consumption and fuel price panel with metric controls
+        fuel-monthly-spend-chart/ Monthly spend panel and recorded totals
+        recent-fill-ups/       Latest fill-ups with links to edit their details
       state/
         analytics/             Fuel chart calculations and tests
         refuel/                Refuel models, store, service and tests

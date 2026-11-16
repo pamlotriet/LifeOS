@@ -1,5 +1,5 @@
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AppInput } from '@shared/components/app-input/app-input';
+import { AppSearch } from '@shared/components/app-search/app-search';
 import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -12,14 +12,13 @@ import {
   bookOutline,
   checkmarkOutline,
   heartOutline,
-  searchOutline,
 } from 'ionicons/icons';
 import { kindleSummary } from '@pages/books/state/book/book.model';
 import { BookStore } from '@pages/books/state/book/book-store';
 
 @Component({
   selector: 'app-books-shelf',
-  imports: [TranslatePipe, AppInput, IonContent, IonIcon, RouterLink],
+  imports: [TranslatePipe, AppSearch, IonContent, IonIcon, RouterLink],
   templateUrl: './books-shelf.html',
   styleUrls: ['../books-loading.css', './books-shelf.css'],
 })
@@ -58,7 +57,6 @@ export class BooksShelf {
       bookOutline,
       checkmarkOutline,
       heartOutline,
-      searchOutline,
     });
   }
 }

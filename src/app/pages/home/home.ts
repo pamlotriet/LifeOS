@@ -10,7 +10,8 @@ import { PlanningStore } from '@pages/planning/state/plan/planning-store';
 import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { money } from '@pages/budget/state/budget/budget.model';
 import { localDate } from '@pages/nutrition/state/nutrition/nutrition.model';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, DestroyRef, inject } from '@angular/core';
+import { AppStartup } from '@core/startup/app-startup.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HomeStateService } from '@pages/home/state/dashboard/home-state.service';
 import { addIcons } from 'ionicons';
@@ -53,6 +54,20 @@ export class Home {
   });
 
   constructor() {
+    inject(AppStartup).waitFor(
+      computed(
+        () =>
+          this.budget.loading() ||
+          this.books.loading() ||
+          this.planning.loading() ||
+          this.vehicles.loading() ||
+          this.passwords.loading() ||
+          this.nutrition.loading() ||
+          this.gym.loading() ||
+          this.dashboardState.overviewMetrics().some((metric) => metric.loading),
+      ),
+      inject(DestroyRef),
+    );
     addIcons({
       restaurantOutline,
       barbell,

@@ -8,6 +8,7 @@ import { AuthService } from '@core/authentication/authentication.service';
 import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 import { ThemeService } from '@core/theme/theme.service';
 import { ClearZeroOnFocus } from '@shared/directives/clear-zero-on-focus';
+import { AppStartup } from '@core/startup/app-startup.service';
 
 @Component({
   imports: [TranslatePipe, IonApp, IonRouterOutlet, ClearZeroOnFocus, WriteToast, Login],
@@ -15,6 +16,7 @@ import { ClearZeroOnFocus } from '@shared/directives/clear-zero-on-focus';
   templateUrl: './app.html',
 })
 export class App {
+  readonly startup = inject(AppStartup);
   readonly updates = inject(AppUpdates);
   readonly refreshCoordinator = inject(RefreshCoordinator);
   readonly theme = inject(ThemeService);

@@ -12,6 +12,7 @@ import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Home } from '@pages/home/home';
 import { TranslateService } from '@ngx-translate/core';
+import { AppStartup } from '@core/startup/app-startup.service';
 
 describe('Home', () => {
   let component: Home;
@@ -24,6 +25,7 @@ describe('Home', () => {
       imports: [Home],
       providers: [
         provideRouter([]),
+        { provide: AppStartup, useValue: { waitFor: vi.fn() } },
         {
           provide: PasswordStore,
           useValue: {

@@ -1,5 +1,33 @@
 import { cycleStart, inCycle } from '@pages/budget/state/cycle/budget-cycle';
 export type TransactionType = 'expense' | 'income' | 'transfer' | 'spending-transfer';
+export type BudgetAccount = string;
+export interface BudgetAccountRecord {
+  id: string;
+  name: string;
+  deleted?: boolean;
+  balance?: number;
+  recordedNet?: number;
+}
+export function customAccountNet(items: BudgetTransaction[], id: string): number {
+  return (
+    Math.round(
+      (transferNet(items, id) -
+        total(items.filter((item) => item.type === 'expense' && item.account === id))) *
+        100,
+    ) / 100
+  );
+}
+export function validAccountId(id: unknown): id is string {
+  return (
+    typeof id === 'string' &&
+    (['main', 'spending', 'savings'].includes(id) || /^custom-[a-zA-Z0-9_-]{1,128}$/.test(id))
+  );
+}
+export const BUDGET_ACCOUNTS: Array<{ value: BudgetAccount; label: string }> = [
+  { value: 'main', label: 'Main' },
+  { value: 'spending', label: 'Spending' },
+  { value: 'savings', label: 'Savings' },
+];
 export type CategoryType = 'expense' | 'income' | 'bills' | 'savings';
 export function supportsPlan(type: CategoryType): boolean {
   return type === 'expense' || type === 'bills' || type === 'savings';
@@ -25,6 +53,8 @@ export interface BudgetTransaction {
   receiptUrl: string;
   receiptPath: string;
   account?: string;
+  fromAccount?: BudgetAccount | '';
+  toAccount?: BudgetAccount | '';
   debtId?: string;
   paymentStatus?: 'paid' | 'planned';
 }
@@ -129,6 +159,32 @@ export function compatibleCategory(type: TransactionType, category: CategoryType
         ? category === 'savings'
         : category === 'expense' || category === 'bills';
 }
+export function isTransfer(item: Pick<BudgetTransaction, 'type'>): boolean {
+  return item.type === 'transfer' || item.type === 'spending-transfer';
+}
+export function transferAccounts(
+  item: Pick<BudgetTransaction, 'type' | 'fromAccount' | 'toAccount'>,
+): { from: BudgetAccount; to: BudgetAccount } | null {
+  if (!isTransfer(item)) return null;
+  if (item.fromAccount && item.toAccount) return { from: item.fromAccount, to: item.toAccount };
+  return { from: 'main', to: item.type === 'spending-transfer' ? 'spending' : 'savings' };
+}
+export function transferNet(items: BudgetTransaction[], account: BudgetAccount): number {
+  return (
+    items.reduce((cents, item) => {
+      if (item.paymentStatus === 'planned') return cents;
+      const route = transferAccounts(item);
+      if (!route) return cents;
+      const direction = (route.to === account ? 1 : 0) - (route.from === account ? 1 : 0);
+      return cents + direction * Math.round(item.amount * 100);
+    }, 0) / 100
+  );
+}
+export function categoryActual(items: BudgetTransaction[], type: CategoryType): number {
+  return type === 'savings'
+    ? transferNet(items, 'savings')
+    : total(items.filter((item) => item.type === 'expense'));
+}
 export function summary(items: BudgetTransaction[], categories: BudgetCategory[]) {
   const income = total(items.filter((x) => x.type === 'income'));
   const expenses = total(items.filter((x) => x.type === 'expense'));
@@ -138,7 +194,7 @@ export function summary(items: BudgetTransaction[], categories: BudgetCategory[]
         x.type === 'expense' && categories.find((c) => c.id === x.categoryId)?.type === 'bills',
     ),
   );
-  const savings = total(items.filter((x) => x.type === 'transfer'));
+  const savings = transferNet(items, 'savings');
   return {
     income,
     expenses,
@@ -199,7 +255,22 @@ export function debtSummary(
   };
 }
 export function validateTransaction(input: TransactionInput): void {
-  if (input.account && input.account !== 'savings' && !/^credit:[^/]{1,128}$/.test(input.account))
+  if (input.fromAccount || input.toAccount) {
+    if (
+      input.type !== 'transfer' ||
+      !validAccountId(input.fromAccount) ||
+      !validAccountId(input.toAccount)
+    )
+      throw new Error('Choose a source and destination account.');
+    if (input.fromAccount === input.toAccount)
+      throw new Error('Choose two different accounts for a transfer.');
+  }
+  if (
+    input.account &&
+    input.account !== 'savings' &&
+    !/^custom-[a-zA-Z0-9_-]{1,128}$/.test(input.account) &&
+    !/^credit:[^/]{1,128}$/.test(input.account)
+  )
     throw new Error('Choose a valid account.');
   if (input.account && input.type !== 'expense')
     throw new Error('Choose an account only for expenses.');
@@ -256,7 +327,7 @@ export interface SavingsBalance {
 export function savingsNet(items: BudgetTransaction[]): number {
   return (
     Math.round(
-      (total(items.filter((t) => t.type === 'transfer')) -
+      (transferNet(items, 'savings') -
         total(items.filter((t) => t.type === 'expense' && t.account === 'savings'))) *
         100,
     ) / 100

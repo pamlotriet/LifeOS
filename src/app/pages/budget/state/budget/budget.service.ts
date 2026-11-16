@@ -18,6 +18,8 @@ import {
   CATEGORY_TYPES,
   TransactionInput,
   validateTransaction,
+  BudgetAccountRecord,
+  validAccountId,
 } from '@pages/budget/state/budget/budget.model';
 
 function fields(record: object): Record<string, FirestoreValue> {
@@ -63,20 +65,31 @@ export class BudgetService {
     cycleStartDay: number;
     spendingBalances: SpendingBalanceCheckpoint[];
     savingsBalance?: SavingsBalance;
+    accounts: BudgetAccountRecord[];
   }> {
     const { uid, token } = await this.auth.getSession();
-    const [transactions, categories, plans, debts, cycle, spendingBalances, savingsBalance] =
-      await Promise.all([
-        this.firestore.listDocuments(`budgets/${uid}/transactions`, token),
-        this.firestore.listDocuments(`budgets/${uid}/categories`, token),
-        this.firestore.listDocuments(`budgets/${uid}/plans`, token),
-        this.firestore.listDocuments(`budgets/${uid}/debts`, token),
-        this.firestore.tryGetDocument(`budgets/${uid}/settings/cycle`, token),
-        this.firestore.listDocuments(`budgets/${uid}/spendingBalances`, token),
-        this.firestore.tryGetDocument(`budgets/${uid}/settings/savings`, token),
-      ]);
+    const [
+      transactions,
+      categories,
+      plans,
+      debts,
+      cycle,
+      spendingBalances,
+      savingsBalance,
+      accounts,
+    ] = await Promise.all([
+      this.firestore.listDocuments(`budgets/${uid}/transactions`, token),
+      this.firestore.listDocuments(`budgets/${uid}/categories`, token),
+      this.firestore.listDocuments(`budgets/${uid}/plans`, token),
+      this.firestore.listDocuments(`budgets/${uid}/debts`, token),
+      this.firestore.tryGetDocument(`budgets/${uid}/settings/cycle`, token),
+      this.firestore.listDocuments(`budgets/${uid}/spendingBalances`, token),
+      this.firestore.tryGetDocument(`budgets/${uid}/settings/savings`, token),
+      this.firestore.listDocuments(`budgets/${uid}/accounts`, token),
+    ]);
     const cycleStartDay = cycle ? Number(decode<{ startDay: number }>(cycle).startDay) : 1;
     return {
+      accounts: accounts.map((document) => decode<BudgetAccountRecord>(document)),
       savingsBalance: savingsBalance ? decode<SavingsBalance>(savingsBalance) : undefined,
       spendingBalances: spendingBalances.map((x) => decode<SpendingBalanceCheckpoint>(x)),
       cycleStartDay,
@@ -88,6 +101,26 @@ export class BudgetService {
         return { ...debt, openingOverride: debt.openingOverride ?? null };
       }),
     };
+  }
+  async saveAccount(account: BudgetAccountRecord): Promise<BudgetAccountRecord> {
+    if (!validAccountId(account.id) || !account.name.trim() || account.name.trim().length > 60)
+      throw new Error('Enter an account name of up to 60 characters.');
+    if (
+      (account.balance !== undefined || account.recordedNet !== undefined) &&
+      (!Number.isFinite(account.balance) ||
+        account.balance! < 0 ||
+        account.balance! > 999999999 ||
+        !Number.isFinite(account.recordedNet))
+    )
+      throw new Error('Enter a valid current account balance.');
+    const { uid, token } = await this.auth.getSession();
+    const saved = { ...account, name: account.name.trim(), deleted: !!account.deleted };
+    await this.firestore.updateDocument(
+      `budgets/${uid}/accounts/${encodeURIComponent(account.id)}`,
+      fields(saved),
+      token,
+    );
+    return saved;
   }
   async saveSavingsBalance(balance: SavingsBalance): Promise<void> {
     if (
@@ -107,8 +140,7 @@ export class BudgetService {
       Math.abs(checkpoint.balance) > 999999999 ||
       !Number.isFinite(checkpoint.recordedSpending) ||
       checkpoint.recordedSpending < 0 ||
-      (checkpoint.recordedFunding !== undefined &&
-        (!Number.isFinite(checkpoint.recordedFunding) || checkpoint.recordedFunding < 0))
+      (checkpoint.recordedFunding !== undefined && !Number.isFinite(checkpoint.recordedFunding))
     )
       throw new Error('Enter a valid current account balance.');
     const { uid, token } = await this.auth.getSession();

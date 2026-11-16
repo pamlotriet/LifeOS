@@ -9,6 +9,8 @@ import {
   summary,
   supportsPlan,
   total,
+  transferNet,
+  categoryActual,
 } from '@pages/budget/state/budget/budget.model';
 const round = (value: number) => Math.round(value * 100) / 100;
 export function budgetSnapshot(
@@ -28,13 +30,9 @@ export function budgetSnapshot(
     .filter((c) => supportsPlan(c.type) && !spendingIds.has(c.id))
     .map((category) => {
       const plan = categoryPlanItems(plans, month, category.id);
-      const actual = total(
-        recorded.filter(
-          (t) =>
-            t.categoryId === category.id &&
-            !t.debtId &&
-            (category.type === 'savings' ? t.type === 'transfer' : t.type === 'expense'),
-        ),
+      const actual = categoryActual(
+        recorded.filter((t) => t.categoryId === category.id && !t.debtId),
+        category.type,
       );
       return { planned: plan.amount, actual, hasPlan: plan.items.length > 0 };
     });
@@ -89,13 +87,13 @@ export function budgetSnapshot(
       )
     : 0;
   const funding = checkpoint
-    ? total(
+    ? transferNet(
         transactions.filter(
           (t) =>
-            t.type === 'spending-transfer' &&
             t.date >= cycleStart(checkpoint.id, startDay) &&
             t.date < cycleBounds(month, startDay).endExclusive,
         ),
+        'spending',
       ) - (checkpoint.recordedFunding ?? 0)
     : 0;
   const leftOver = {
