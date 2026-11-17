@@ -1,0 +1,21 @@
+<span
+  class="home-card-icon grid size-9 shrink-0 place-items-center rounded-xl bg-secondary text-(--area-color,var(--primary)) [&_ion-icon]:text-lg"
+  ><ion-icon [name]="space().icon" aria-hidden="true"
+/></span>
+<div>
+  <h3>{{ space().title | translate }}</h3>
+  <p>{{ space().description | translate }}</p>
+</div>
+@if (loading()) {
+  <small class="row-loading" aria-busy="true"
+    ><app-skeleton
+      variant="rectangle"
+      class="shrink-0 home-skeleton skeleton-caption h-3 w-35 max-w-full"
+    /><span class="sr-only">{{
+      'home.loading_count' | translate: { p0: (space().title | translate) }
+    }}</span></small
+  >
+} @else {
+  @let spaceSummary = summary();
+  <small>{{ spaceSummary.key | translate: spaceSummary.params }}</small>
+}

@@ -8,32 +8,6 @@
   background: var(--card);
   box-shadow: none;
 }
-.book-cover-preview {
-  display: grid;
-  min-height: 126px;
-  place-items: center;
-  border-bottom: 1px solid var(--border);
-  background: var(--card);
-  height: 170px;
-  object-fit: contain;
-  background: var(--card);
-}
-.book-cover-preview span {
-  display: grid;
-  place-items: center;
-  gap: 5px;
-  color: var(--text-secondary);
-  text-align: center;
-  font-size: 0.72rem;
-}
-.book-cover-preview ion-icon {
-  color: var(--primary);
-  font-size: 33px;
-}
-.book-cover-preview strong {
-  color: var(--text-secondary);
-  font-size: 0.84rem;
-}
 .book-basic-fields {
   display: grid;
   gap: 12px;
@@ -81,35 +55,9 @@
     display: grid;
     grid-template-columns: 160px 1fr;
   }
-  .book-cover-preview {
-    min-height: 100%;
-    border-right: 1px solid var(--border);
-    border-bottom: 0;
-  }
-  .book-cover-preview img {
-    height: 100%;
-  }
 }
 /* Keep loaded covers inside the preview instead of allowing their intrinsic
    image height to paint over the title, author and ISBN fields. */
-.book-cover-preview {
-  position: relative;
-  overflow: hidden;
-  min-width: 0;
-  isolation: isolate;
-}
-.book-cover-preview img {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  padding: 12px;
-  box-sizing: border-box;
-}
 .book-basic-fields {
   position: relative;
   min-width: 0;
@@ -143,11 +91,6 @@
   color: var(--text-secondary);
   background: var(--background);
   font-size: 0.8rem;
-}
-.tracking-choice button.active {
-  color: var(--primary);
-  border-color: var(--primary);
-  background: var(--secondary);
 }
 .tracking-choice button:disabled {
   opacity: 0.4;
@@ -223,29 +166,6 @@
   gap: 20px;
   overflow: visible;
 }
-.book-sheet .book-cover-preview {
-  height: auto;
-  min-height: 285px;
-  border: 1px solid var(--border);
-  border-radius: 13px;
-  background: var(--secondary);
-}
-.book-sheet .book-cover-preview span {
-  gap: 14px;
-  padding: 20px;
-}
-.book-sheet .book-cover-preview ion-icon {
-  color: var(--primary);
-  font-size: 40px;
-}
-.book-sheet .book-cover-preview strong {
-  color: var(--foreground);
-  font-size: 17px;
-  font-weight: 400;
-}
-.book-sheet .book-cover-preview small {
-  font-size: 13px;
-}
 .book-sheet .book-basic-fields {
   padding: 0;
   gap: 16px;
@@ -308,10 +228,6 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 22px;
-  }
-  .book-sheet .book-cover-preview {
-    height: 148px;
-    min-height: 148px;
   }
 }
 

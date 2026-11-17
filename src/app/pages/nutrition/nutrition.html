@@ -49,75 +49,15 @@
       </p>
     }
     <section
+      appDailyNutritionOverview
+      [progress]="progress()"
+      [total]="total()"
+      [targets]="store.profile().targets"
+      [remaining]="remaining()"
+      [plannedCalories]="planned().calories"
       class="surface daily-overview"
       [attr.aria-label]="'Daily calorie progress' | translate"
-    >
-      <div class="calorie-ring" [style.--progress]="progress() + '%'">
-        <div>
-          <strong>{{ total().calories.toFixed(0) }}</strong
-          ><span>{{ 'kcal eaten' | translate }}</span>
-        </div>
-      </div>
-      <div class="calorie-context">
-        <span class="eyebrow">{{
-          (store.profile().targets.calories > 0
-            ? remaining() < 0
-              ? 'Above goal'
-              : 'Remaining today'
-            : 'Your daily intake'
-          ) | translate
-        }}</span>
-        <h2>
-          {{
-            store.profile().targets.calories > 0
-              ? remaining() < 0
-                ? (-remaining()).toFixed(0)
-                : remaining().toFixed(0)
-              : total().calories.toFixed(0)
-          }}
-          <small>{{ 'kcal' | translate }}</small>
-        </h2>
-        @if (store.profile().targets.calories > 0) {
-          <p>
-            {{
-              'messages.of_count_kcal_daily_goal_1220d3'
-                | translate: { p0: store.profile().targets.calories }
-            }}
-          </p>
-        } @else {
-          <a routerLink="/nutrition/profile">{{
-            'Set your calorie and macro goals' | translate
-          }}</a>
-        }
-        <a class="planned-note" routerLink="/planning">{{
-          'messages.count_kcal_planned_separately_13dfb3'
-            | translate: { p0: planned().calories.toFixed(0) }
-        }}</a>
-      </div>
-      <div class="macro-grid">
-        @for (key of macros; track key) {
-          <div class="macro" [attr.data-macro]="key">
-            <div>
-              <span class="capitalize">{{ (key === 'carbs' ? 'Carbs' : key) | translate }}</span
-              ><strong
-                >{{ total()[key].toFixed(1) }}<small> {{ 'g' | translate }}</small></strong
-              >
-            </div>
-            <progress
-              [attr.aria-label]="key + ' goal progress' | translate"
-              [value]="total()[key]"
-              [max]="store.profile().targets[key] || 1"
-            ></progress
-            ><small>{{
-              (store.profile().targets[key] > 0
-                ? 'of ' + store.profile().targets[key] + ' g'
-                : 'No goal set'
-              ) | translate
-            }}</small>
-          </div>
-        }
-      </div>
-    </section>
+    ></section>
     @if (loggerOpen()) {
       <section
         [attr.aria-busy]="busy()"
@@ -342,78 +282,25 @@
     </div>
     <div class="meal-grid">
       @for (m of categories; track m) {
-        <section class="surface meal-card">
-          <header>
-            <div>
-              <h3>{{ m }}</h3>
-              <span>{{
-                'messages.count_kcal_46a76a' | translate: { p0: mealCalories(m).toFixed(0) }
-              }}</span>
-            </div>
-            <button
-              class="add-meal"
-              [attr.aria-label]="'Add food to ' + m | translate"
-              (click)="openLogger(m)"
-            >
-              +
-            </button>
-          </header>
-          @for (entry of grouped(m); track entry.id) {
-            <article class="food-row">
-              <div class="food-row-title">
-                <div>
-                  <strong>{{ entry.name }}</strong
-                  ><small>{{ entry.amount }}</small>
-                </div>
-                <strong
-                  >{{ entry.nutrition.calories.toFixed(0) }}
-                  <small>{{ 'kcal' | translate }}</small></strong
-                >
-              </div>
-              <p class="food-macros">
-                {{
-                  'messages.p_count_g_c_count_g_f_630337'
-                    | translate
-                      : {
-                          p0: entry.nutrition.protein.toFixed(1),
-                          p1: entry.nutrition.carbs.toFixed(1),
-                          p2: entry.nutrition.fat.toFixed(1),
-                        }
-                }}
-              </p>
-              <div class="entry-actions">
-                <button (click)="startEdit(entry)">{{ 'Edit' | translate }}</button
-                ><button (click)="copy(entry)" [disabled]="busy()">
-                  {{ 'Log again' | translate }}</button
-                ><button (click)="removeLog(entry.id)" [disabled]="busy()">
-                  {{ 'Remove' | translate }}
-                </button>
-              </div>
-            </article>
-          } @empty {
-            <button class="empty-meal" (click)="openLogger(m)">
-              {{ 'Nothing logged yet.' | translate }}
-              <span>{{ 'messages.add_count_044e7c' | translate: { p0: m.toLowerCase() } }}</span>
-            </button>
-          }
-        </section>
+        <section
+          appNutritionMealCard
+          [meal]="m"
+          [calories]="mealCalories(m)"
+          [entries]="grouped(m)"
+          [busy]="busy()"
+          (add)="openLogger(m)"
+          (edit)="startEdit($event)"
+          (logAgain)="copy($event)"
+          (remove)="removeLog($event)"
+          class="surface meal-card"
+        ></section>
       }
     </div>
-    <details class="surface recent-history">
-      <summary>
-        {{ 'Recent foods' | translate }} <span>{{ 'Copy to this day' | translate }}</span>
-      </summary>
-      @for (entry of history(); track entry.id) {
-        <div class="history-row">
-          <div>
-            <strong>{{ entry.name }}</strong
-            ><small>{{ entry.date }} / {{ entry.amount }}</small>
-          </div>
-          <button (click)="copy(entry)" [disabled]="busy()">{{ '+ Add' | translate }}</button>
-        </div>
-      } @empty {
-        <p>{{ 'Your recently logged foods will appear here.' | translate }}</p>
-      }
-    </details>
-  </main></ion-content
->
+    <details
+      appNutritionHistory
+      [entries]="history()"
+      [busy]="busy()"
+      (logAgain)="copy($event)"
+      class="surface recent-history"
+    ></details></main
+></ion-content>

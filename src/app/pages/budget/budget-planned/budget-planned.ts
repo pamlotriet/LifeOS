@@ -1,3 +1,4 @@
+import { BudgetPlanningSummary } from '@pages/budget/components/budget-planning-summary/budget-planning-summary';
 import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
@@ -13,7 +14,8 @@ import { BudgetNumber } from '@shared/directives/budget-number';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   BudgetPlan,
@@ -29,8 +31,10 @@ import {
 import { BudgetTransactions } from '@pages/budget/components/budget-transactions/budget-transactions';
 
 @Component({
+  host: { class: 'budget-screen' },
   selector: 'app-budget-planned',
   imports: [
+    BudgetPlanningSummary,
     BudgetPage,
     TranslatePipe,
     AppInput,
@@ -47,7 +51,7 @@ import { BudgetTransactions } from '@pages/budget/components/budget-transactions
     BudgetTransactions,
   ],
   templateUrl: './budget-planned.html',
-  styleUrls: ['../budget.css', '../budget-layout.css', './budget-planned.css'],
+  styleUrls: ['./budget-planned.css'],
 })
 export class BudgetPlanned {
   private readonly i18n = inject(TranslateService);

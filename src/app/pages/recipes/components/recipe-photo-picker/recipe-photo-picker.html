@@ -1,0 +1,21 @@
+<summary>{{ 'Recipe photo (optional)' | translate }}</summary>
+<button
+  type="button"
+  (click)="pick.emit()"
+  class="relative grid min-h-44 w-full place-items-center overflow-hidden rounded-3xl border border-dashed border-cyan-300/70 bg-[var(--card)]"
+>
+  @if (photoUrl()) {
+    <img
+      [src]="photoUrl()"
+      [attr.alt]="'Recipe preview' | translate"
+      class="absolute inset-0 h-full w-full object-cover"
+    /><span class="absolute inset-x-0 bottom-0 bg-black/60 py-2 text-sm">{{
+      'Change photo' | translate
+    }}</span>
+  } @else {
+    <span class="text-center text-sm text-[var(--text-secondary)]"
+      ><ion-icon [icon]="cameraIcon()" class="mb-2 block text-4xl text-cyan-300"></ion-icon
+      >{{ 'Add a recipe photo' | translate }}</span
+    >
+  }
+</button>

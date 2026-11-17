@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { AuthService } from '@core/authentication/authentication.service';
 import { TranslatePipe } from '@ngx-translate/core';
-import { IonIcon } from '@ionic/angular';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import {
   chevronForwardOutline,
   eyeOffOutline,

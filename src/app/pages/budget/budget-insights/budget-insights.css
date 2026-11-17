@@ -22,50 +22,11 @@
   padding: 22px;
   border-top: 3px solid var(--primary);
 }
-.insight-status {
-  font-size: 0.68rem;
-  color: var(--primary);
-  margin-bottom: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.insight-card h3 {
-  font-size: 1rem;
-}
-.insight-value {
-  display: block;
-  margin: 12px 0;
-  font-size: 1.8rem;
-  line-height: 1.2;
-  overflow-wrap: anywhere;
-  font-variant-numeric: tabular-nums;
-}
-.insight-card p {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  line-height: 1.7;
-  margin: 0 0 20px;
-}
-.insight-card a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: auto;
-  text-decoration: none;
-  font-size: 0.83rem;
-}
 .insight-attention {
   border-top-color: var(--warning);
 }
-.insight-attention .insight-status {
-  color: var(--warning);
-}
 .insight-good {
   border-top-color: var(--success);
-}
-.insight-good .insight-status {
-  color: var(--success);
 }
 .segments button.active {
   background: var(--primary);

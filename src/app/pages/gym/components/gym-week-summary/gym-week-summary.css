@@ -1,0 +1,88 @@
+:host > div {
+  padding: 18px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary) 10%, var(--card));
+  border: 1px solid var(--border);
+}
+:host strong {
+  display: block;
+  font-size: 1.8rem;
+  color: var(--primary);
+}
+:host span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 5px;
+}
+:host > div:nth-child(1) {
+  border-top: 3px solid var(--primary);
+}
+:host > div:nth-child(2) {
+  border-top: 3px solid var(--palette-mauve);
+}
+:host > div:nth-child(3) {
+  border-top: 3px solid var(--palette-purple);
+}
+@media (max-width: 650px) {
+  :host > div {
+    padding: 12px;
+  }
+  :host strong {
+    font-size: 1.4rem;
+  }
+}
+
+.gym-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+:host > div,
+:host > div:nth-child(n) {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  padding: 0 24px;
+}
+:host > div + div {
+  border-left: 1px solid var(--border);
+}
+:host strong {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--foreground);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+:host strong .gym-icon {
+  color: var(--primary);
+  width: 20px;
+  height: 20px;
+}
+:host > div:nth-child(2) .gym-icon {
+  color: var(--primary);
+}
+:host > div:nth-child(3) .gym-icon {
+  color: var(--palette-purple);
+}
+:host span {
+  font-size: 12px;
+  margin-top: 8px;
+  color: var(--text-secondary);
+}
+@media (max-width: 650px) {
+  :host > div,
+  :host > div:nth-child(n) {
+    padding: 0 12px;
+  }
+  :host strong {
+    font-size: 32px;
+  }
+  :host strong .gym-icon {
+    display: none;
+  }
+}

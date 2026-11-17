@@ -1,10 +1,13 @@
+import { NutritionMealCard } from '@pages/nutrition/components/nutrition-meal-card/nutrition-meal-card';
+import { DailyNutritionOverview } from '@pages/nutrition/components/daily-nutrition-overview/daily-nutrition-overview';
+import { NutritionHistory } from '@pages/nutrition/components/nutrition-history/nutrition-history';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { IonContent } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
 import { PageHeader } from '@shared/components/page-header/page-header';
 import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
 import {
@@ -25,7 +28,18 @@ import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
 import { PlanningStore } from '@pages/planning/state/plan/planning-store';
 @Component({
   selector: 'app-nutrition',
-  imports: [AppButton, TranslatePipe, AppInput, FormsModule, RouterLink, IonContent, PageHeader],
+  imports: [
+    NutritionMealCard,
+    DailyNutritionOverview,
+    NutritionHistory,
+    AppButton,
+    TranslatePipe,
+    AppInput,
+    FormsModule,
+    RouterLink,
+    IonContent,
+    PageHeader,
+  ],
   templateUrl: './nutrition.html',
   styleUrl: './nutrition.css',
 })

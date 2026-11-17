@@ -1,0 +1,19 @@
+<span>{{ item().name }}</span
+><label
+  ><span class="sr-only">{{ 'Quantity' | translate }} {{ item().name }}</span
+  ><input
+    appInput
+    type="number"
+    min="0.01"
+    step="any"
+    [ngModelOptions]="{ standalone: true }"
+    [ngModel]="item().quantity ?? item().grams"
+    (ngModelChange)="quantityChange.emit($event)" /></label
+><small>{{ item().unit || 'g' }}</small
+><button
+  type="button"
+  (click)="remove.emit()"
+  [attr.aria-label]="'Remove ' + item().name | translate"
+>
+  &#215;
+</button>

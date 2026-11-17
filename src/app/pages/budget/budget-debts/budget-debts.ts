@@ -1,3 +1,4 @@
+import { DebtOverviewCard } from '@pages/budget/components/debt-overview-card/debt-overview-card';
 import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
@@ -7,7 +8,8 @@ import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { BudgetNumber } from '@shared/directives/budget-number';
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picker';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
@@ -20,8 +22,10 @@ import {
 } from '@pages/budget/state/budget/budget.model';
 
 @Component({
+  host: { class: 'budget-screen' },
   selector: 'app-budget-debts',
   imports: [
+    DebtOverviewCard,
     BudgetPage,
     TranslatePipe,
     AppInput,
@@ -35,7 +39,7 @@ import {
     AppDatePicker,
   ],
   templateUrl: './budget-debts.html',
-  styleUrls: ['../budget.css', '../budget-layout.css', './budget-debts.css'],
+  styleUrls: ['./budget-debts.css'],
 })
 export class BudgetDebts {
   private readonly i18n = inject(TranslateService);

@@ -1,0 +1,53 @@
+:host-context(.editor-fields) label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+:host-context(.editor-fields) p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+:host-context(.editor-fields) .lifeos-select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+:host-context(.editor-fields) summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 550;
+  margin-bottom: 12px;
+}
+button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+:host-context(.editor-fields) label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  line-height: 1.4;
+}
+:host-context(.editor-fields) .lifeos-select {
+  height: 44px;
+  min-height: 44px;
+  padding: 9px 12px;
+  font-size: 14px;
+}
+:host > label,
+:host > button {
+  margin: 12px 0;
+}
+.quick-food-macros {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+:host summary {
+  color: var(--primary);
+  font-weight: 400;
+}

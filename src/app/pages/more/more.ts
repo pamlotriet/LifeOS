@@ -3,7 +3,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { nutritionOutline } from 'ionicons/icons';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { AuthService } from '@core/authentication/authentication.service';
 import { AppUpdates } from '@core/updates/app-updates.service';
 

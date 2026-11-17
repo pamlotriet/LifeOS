@@ -1,0 +1,33 @@
+:host > .panel {
+  --metric-accent: var(--primary);
+  border-top: 3px solid var(--metric-accent);
+}
+:host .metric-spent {
+  --metric-accent: var(--hue-sky);
+}
+:host .metric-left {
+  --metric-accent: var(--success);
+}
+:host .metric-over {
+  --metric-accent: var(--destructive);
+}
+:host small,
+:host span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+:host strong {
+  display: block;
+  margin: 12px 0;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  color: var(--metric-accent);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  :host strong {
+    margin: 8px 0;
+  }
+}

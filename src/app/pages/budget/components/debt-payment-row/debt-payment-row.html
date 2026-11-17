@@ -1,0 +1,32 @@
+<div class="row-copy">
+  <strong>{{ money(item().amount) }}</strong
+  ><small
+    >{{ date(item().date) }}
+    @if (planned()) {
+      <span class="payment-badge" [class.overdue]="item().date < today()">{{
+        (item().date < today() ? 'Overdue' : 'Planned') | translate
+      }}</span>
+    }</small
+  ><small>{{ item().title | translate }}</small>
+  @if (item().notes) {
+    <p class="payment-notes">{{ item().notes }}</p>
+  }
+</div>
+<div class="payment-actions">
+  @if (planned()) {
+    <button
+      appButton="secondary"
+      type="button"
+      class="secondary-button"
+      [disabled]="busy()"
+      (click)="markPaid.emit()"
+    >
+      {{ 'Mark paid' | translate }}
+    </button>
+  }
+  <button class="text-link" type="button" [disabled]="busy()" (click)="edit.emit()">
+    {{ 'Edit' | translate }}</button
+  ><button class="text-link" type="button" [disabled]="busy()" (click)="remove.emit()">
+    {{ 'Delete' | translate }}
+  </button>
+</div>

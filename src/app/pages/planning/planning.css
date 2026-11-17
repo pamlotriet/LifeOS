@@ -32,28 +32,6 @@
   gap: 12px;
   margin-bottom: 24px;
 }
-.planner-overview > div {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 18px 20px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--card);
-}
-.planner-overview strong {
-  font-size: 28px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-.planner-overview small {
-  font-size: 14px;
-  font-weight: 400;
-}
-.planner-overview span {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
 .week-navigation,
 .week-navigation-dates,
 .day-heading,
@@ -339,16 +317,6 @@ summary:focus-visible {
   }
   .planner-overview {
     gap: 8px;
-  }
-  .planner-overview > div {
-    padding: 14px 10px;
-  }
-  .planner-overview strong {
-    font-size: 23px;
-  }
-  .planner-overview span {
-    font-size: 10px;
-    line-height: 1.4;
   }
   .week-navigation {
     gap: 10px;

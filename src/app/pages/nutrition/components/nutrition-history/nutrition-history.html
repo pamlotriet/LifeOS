@@ -1,0 +1,14 @@
+<summary>
+  {{ 'Recent foods' | translate }} <span>{{ 'Copy to this day' | translate }}</span>
+</summary>
+@for (entry of entries(); track entry.id) {
+  <div class="history-row">
+    <div>
+      <strong>{{ entry.name }}</strong
+      ><small>{{ entry.date }} / {{ entry.amount }}</small>
+    </div>
+    <button (click)="logAgain.emit(entry)" [disabled]="busy()">{{ '+ Add' | translate }}</button>
+  </div>
+} @empty {
+  <p>{{ 'Your recently logged foods will appear here.' | translate }}</p>
+}

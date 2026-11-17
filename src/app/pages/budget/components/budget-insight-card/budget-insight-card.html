@@ -1,0 +1,17 @@
+<span class="insight-status">{{
+  (item().tone === 'attention'
+    ? 'Worth reviewing'
+    : item().tone === 'good'
+      ? 'Looking ahead'
+      : 'Your figures'
+  ) | translate
+}}</span>
+<h3>{{ item().title | translate }}</h3>
+<strong class="insight-value">{{ item().value }}</strong>
+<p>{{ item().detail | translate }}</p>
+<a appButton="secondary"
+  class="secondary-button"
+  [routerLink]="item().route"
+  [queryParams]="item().id === 'income' ? { type: 'income' } : {}"
+  >{{ item().action | translate }} <ion-icon name="chevron-forward" aria-hidden="true"
+/></a>

@@ -1,7 +1,7 @@
 <ion-content
   ><main
     appBudgetPage
-    class="budget-page budget-planning-page md:m-0! md:w-full md:max-w-none! md:px-8!"
+    class="budget-page budget-planning-page"
   >
     <div class="planning-topbar"><app-back-button fallback="/budget" /></div>
     <header class="page-header planning-header">
@@ -71,51 +71,14 @@
       </p>
     } @else {
       <section
+        appBudgetPlanningSummary
+        [income]="income()"
+        [plannedTotal]="plannedTotal()"
+        [predictedBalance]="predictedBalance()"
+        [outlook]="outlook()"
         class="planning-summary max-sm:grid-cols-2! max-sm:gap-2! [&_article]:max-sm:p-3! [&_strong]:max-sm:text-xl! [&_small]:max-sm:text-[0.65rem]! [&_span]:max-sm:text-xs!"
         [attr.aria-label]="'Cycle plan forecast' | translate"
-      >
-        <article>
-          <span>{{ 'Recorded income' | translate }}</span
-          ><strong>{{ money(income()) }}</strong
-          ><small>{{ 'Income entered for this cycle' | translate }}</small>
-        </article>
-        <article>
-          <span>{{ 'Total planned' | translate }}</span
-          ><strong>{{ money(plannedTotal()) }}</strong
-          ><small>{{ 'Expenses, savings and debt payments' | translate }}</small>
-        </article>
-        <article class="forecast-card">
-          <span>{{ 'Planned spending money' | translate }}</span
-          ><strong [class.negative]="predictedBalance() < 0" aria-live="polite">{{
-            money(predictedBalance())
-          }}</strong
-          ><small>{{
-            'Recorded income minus planned values; excludes unplanned spending' | translate
-          }}</small>
-        </article>
-        <article class="forecast-card">
-          <span>{{
-            (outlook().leftOver.confirmed ? 'Spending account balance' : 'Estimated spending left')
-              | translate
-          }}</span
-          ><strong [class.negative]="outlook().leftOver.actual < 0" aria-live="polite">{{
-            money(outlook().leftOver.actual)
-          }}</strong
-          ><small>{{
-            'Confirm the actual account balance on Budget. Transfers into Spending increase it; Spending purchases reduce it.'
-              | translate
-          }}</small>
-        </article>
-        <article class="forecast-card">
-          <span>{{ 'After spending & remaining plans' | translate }}</span
-          ><strong [class.negative]="outlook().afterPlans < 0" aria-live="polite">{{
-            money(outlook().afterPlans)
-          }}</strong
-          ><small>{{
-            'Recorded balance less unspent category plans and unpaid debt plans' | translate
-          }}</small>
-        </article>
-      </section>
+      ></section>
       @if (!income()) {
         <p class="planning-hint">
           {{ 'Add income for this cycle to complete your forecast.' | translate }}

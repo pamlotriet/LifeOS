@@ -1,0 +1,41 @@
+<div class="mb-3 flex items-center justify-between">
+  <h2 class="font-bold">{{ 'Steps' | translate }}</h2>
+  <button
+    type="button"
+    (click)="add.emit()"
+    class="rounded-full border border-cyan-400/60 px-3 py-1 text-xs text-cyan-200"
+  >
+    {{ '+ Add' | translate }}
+  </button>
+</div>
+@for (step of steps(); track step.id; let index = $index) {
+  <div class="mb-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-2">
+    <div class="flex gap-2">
+      <span
+        class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-cyan-400 font-bold text-[var(--card)]"
+        >{{ index + 1 }}</span
+      ><input
+        appInput="inline"
+        [value]="step.title"
+        (input)="update.emit({ index, field: 'title', value: $any($event.target).value })"
+        [placeholder]="'Step title' | translate"
+        class="min-w-0 flex-1 font-semibold"
+      /><button
+        type="button"
+        (click)="remove.emit(index)"
+        [attr.aria-label]="'Remove step' | translate"
+        class="px-2 text-rose-300"
+      >
+        <ion-icon [icon]="closeIcon()" aria-hidden="true" />
+      </button>
+    </div>
+    <textarea
+      appInput="inline"
+      [value]="step.instruction"
+      (input)="update.emit({ index, field: 'instruction', value: $any($event.target).value })"
+      rows="2"
+      [placeholder]="'Describe this step...' | translate"
+      class="mt-2 block w-full resize-none"
+    ></textarea>
+  </div>
+}

@@ -1,3 +1,9 @@
+.gym-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
 :host {
   display: block;
   background: var(--background);
@@ -8,12 +14,6 @@
   margin: auto;
   padding: 0 24px 48px;
   box-sizing: border-box;
-}
-.gym-icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  vertical-align: middle;
 }
 .gym-topbar {
   height: 56px;
@@ -80,41 +80,6 @@
   padding: 20px 0;
   margin: 0 0 32px;
   gap: 0;
-}
-.week-summary > div,
-.week-summary > div:nth-child(n) {
-  border: 0;
-  border-radius: 0;
-  background: none;
-  padding: 0 24px;
-}
-.week-summary > div + div {
-  border-left: 1px solid var(--border);
-}
-.week-summary strong {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--foreground);
-  font-size: 32px;
-  font-weight: 400;
-  line-height: 1.1;
-}
-.week-summary strong .gym-icon {
-  color: var(--primary);
-  width: 20px;
-  height: 20px;
-}
-.week-summary > div:nth-child(2) .gym-icon {
-  color: var(--primary);
-}
-.week-summary > div:nth-child(3) .gym-icon {
-  color: var(--palette-purple);
-}
-.week-summary span {
-  font-size: 12px;
-  margin-top: 8px;
-  color: var(--text-secondary);
 }
 .gym-tabs {
   display: flex;
@@ -212,133 +177,9 @@
   border-radius: 0;
   box-shadow: none;
 }
-.day-card header {
-  margin: 0 0 16px;
-  align-items: center;
-}
-.day-heading {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-.day-number {
-  font-size: 30px;
-  font-weight: 300;
-  color: var(--muted-foreground);
-  letter-spacing: -0.06em;
-}
-.day-heading h3 {
-  font-size: 20px;
-  font-weight: 400;
-}
-.day-count {
-  background: none;
-  border-radius: 0;
-  padding: 0;
-  margin-top: 3px;
-  font-size: 12px;
-}
-.header-add {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--foreground);
-  font-size: 12px;
-  padding: 0 12px;
-}
-.workout-item,
-.focused-workout .workout-item {
-  display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
-  gap: 0 12px;
-  align-items: start;
-  padding: 20px 0;
-  border-top: 1px solid var(--border);
-}
-.workout-title {
-  display: contents;
-}
-.exercise-number {
-  grid-column: 1;
-  width: 32px;
-  height: 32px;
-  background: var(--secondary);
-  color: var(--primary);
-  border-radius: 10px;
-  font-weight: 400;
-}
-.workout-title > div {
-  grid-column: 2;
-}
-.workout-title h4 {
-  font-size: 14px;
-  font-weight: 600;
-}
-.workout-title small {
-  font-size: 12px;
-  margin-top: 5px;
-}
-.prescription,
-.focused-workout .prescription {
-  grid-column: 3;
-  grid-row: 1;
-  margin: 4px 0 0;
-  gap: 8px;
-}
-.prescription span {
-  background: var(--secondary);
-  padding: 5px 8px;
-  border-radius: 16px;
-  font-size: 11px;
-  color: var(--text-secondary);
-}
-.workout-notes,
 .focused-workout .workout-notes {
   grid-column: 2/-1;
   margin-top: 10px;
-  font-size: 12px;
-}
-.item-actions,
-.focused-workout .item-actions {
-  grid-column: 2/-1;
-  justify-content: flex-start;
-  margin: 12px 0 0;
-  gap: 16px;
-}
-.item-actions .text-button {
-  width: 20px;
-  min-height: 26px;
-  color: var(--text-secondary);
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-}
-.item-actions button:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-.item-actions .gym-icon {
-  width: 16px;
-  height: 16px;
-}
-.day-card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  border-top: 1px solid var(--border);
-  padding: 16px 0;
-}
-.button.day-add {
-  width: auto;
-  background: none;
-  color: var(--primary);
-  border: 0;
-  padding: 0;
-}
-.day-create {
-  font-size: 12px;
-}
-.day-card-actions > .text-button {
   font-size: 12px;
 }
 .copy-workout {
@@ -371,16 +212,6 @@
   .week-summary {
     margin-bottom: 32px;
   }
-  .week-summary > div,
-  .week-summary > div:nth-child(n) {
-    padding: 0 12px;
-  }
-  .week-summary strong {
-    font-size: 32px;
-  }
-  .week-summary strong .gym-icon {
-    display: none;
-  }
   .gym-tabs {
     gap: 20px;
   }
@@ -396,24 +227,6 @@
   .day-selector strong {
     font-size: 14px;
   }
-  .header-add span {
-    display: none;
-  }
-  .header-add {
-    padding: 0 12px;
-  }
-  .workout-item,
-  .focused-workout .workout-item {
-    grid-template-columns: 32px minmax(0, 1fr);
-    gap: 0 12px;
-  }
-  .prescription,
-  .focused-workout .prescription {
-    grid-column: 2;
-    grid-row: auto;
-    margin-top: 10px;
-  }
-  .workout-notes,
   .focused-workout .workout-notes {
     grid-column: 2;
   }

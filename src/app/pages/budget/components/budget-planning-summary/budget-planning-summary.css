@@ -1,0 +1,45 @@
+:host span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+:host strong {
+  display: block;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+:host small {
+  color: var(--text-secondary);
+  font-size: 0.73rem;
+  line-height: 1.5;
+}
+:host .forecast-card {
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+}
+.forecast-card strong {
+  color: var(--primary);
+}
+.forecast-card strong.negative {
+  color: var(--destructive);
+}
+@media (max-width: 700px) {
+  :host .forecast-card {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 600px) {
+  :host .forecast-card {
+    grid-column: auto;
+  }
+  :host small {
+    display: block;
+  }
+}
+@media (max-width: 600px) {
+  :host-context(.budget-planning-page) :host .forecast-card {
+    grid-column: auto;
+  }
+}

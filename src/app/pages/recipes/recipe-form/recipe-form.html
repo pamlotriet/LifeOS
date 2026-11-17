@@ -41,106 +41,23 @@
         <form id="recipe-editor" (ngSubmit)="save()">
           <fieldset class="editor-fields" [disabled]="saving()">
             @if (editorStep() === 'details') {
-              <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
-                <h2 class="mb-3 font-bold">{{ 'Basics' | translate }}</h2>
-                <label class="block text-xs"
-                  >{{ 'Title *' | translate
-                  }}<input
-                    appInput="field"
-                    name="title"
-                    [(ngModel)]="model.title"
-                    [placeholder]="'e.g. Creamy chicken pasta' | translate"
-                    class="mt-1 block w-full" /></label
-                ><label class="mt-3 block text-xs"
-                  >{{ 'Description' | translate
-                  }}<textarea
-                    appInput="field"
-                    name="description"
-                    [(ngModel)]="model.description"
-                    rows="3"
-                    [placeholder]="'A short description...' | translate"
-                    class="mt-1 block w-full"
-                  ></textarea>
-                </label>
-                <div class="mt-3 grid grid-cols-2 gap-2">
-                  <fieldset class="col-span-2 min-w-0">
-                    <legend class="text-xs">{{ 'Categories' | translate }}</legend>
-                    <p class="mt-1 text-xs text-[var(--text-secondary)]">
-                      {{ 'Choose all that apply.' | translate }}
-                    </p>
-                    <div class="mt-2 flex flex-wrap gap-2">
-                      @for (category of categories; track category) {
-                        <label
-                          class="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
-                          ><input
-                            type="checkbox"
-                            [checked]="selectedCategories().includes(category)"
-                            (change)="toggleCategory(category)"
-                            class="accent-cyan-400"
-                          />{{ category }}</label
-                        >
-                      }
-                    </div>
-                  </fieldset>
-                  <label class="min-w-0 text-xs"
-                    >{{ 'Difficulty' | translate
-                    }}<app-select
-                      class="mt-1 block"
-                      [ariaLabel]="'Recipe difficulty' | translate"
-                      [options]="difficultyOptions"
-                      [selectedValue]="model.difficulty"
-                      (valueChange)="setDifficulty($event)"
-                  /></label>
-                </div>
-                <div class="mt-3 grid grid-cols-2 gap-2">
-                  <label class="text-xs"
-                    >{{ 'Cook time (mins)' | translate
-                    }}<input
-                      appInput="field"
-                      type="number"
-                      min="0"
-                      name="cookTime"
-                      [(ngModel)]="model.cookTime"
-                      class="mt-1 block w-full" /></label
-                  ><label class="text-xs"
-                    >{{ 'Servings' | translate
-                    }}<input
-                      appInput="field"
-                      type="number"
-                      min="0.01"
-                      step="any"
-                      name="servings"
-                      [(ngModel)]="model.servings"
-                      class="mt-1 block w-full"
-                  /></label>
-                </div>
-              </section>
-              <details class="editor-photo">
-                <summary>{{ 'Recipe photo (optional)' | translate }}</summary>
-                <button
-                  type="button"
-                  (click)="pickPhoto()"
-                  class="relative grid min-h-44 w-full place-items-center overflow-hidden rounded-3xl border border-dashed border-cyan-300/70 bg-[var(--card)]"
-                >
-                  @if (model.photoUrl) {
-                    <img
-                      [src]="model.photoUrl"
-                      [attr.alt]="'Recipe preview' | translate"
-                      class="absolute inset-0 h-full w-full object-cover"
-                    /><span class="absolute inset-x-0 bottom-0 bg-black/60 py-2 text-sm">{{
-                      'Change photo' | translate
-                    }}</span>
-                  } @else {
-                    <span class="text-center text-sm text-[var(--text-secondary)]"
-                      ><ion-icon
-                        [icon]="icons.cameraOutline"
-                        class="mb-2 block text-4xl text-cyan-300"
-                      ></ion-icon
-                      >{{ 'Add a recipe photo' | translate }}</span
-                    >
-                  }
-                </button>
-              </details>
+              <section
+                appRecipeBasicsFields
+                [draft]="model"
+                [categories]="categories"
+                [selectedCategories]="selectedCategories()"
+                [difficultyOptions]="difficultyOptions"
+                (toggleCategory)="toggleCategory($event)"
+                (difficultyChange)="setDifficulty($event)"
+                class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3"
+              ></section>
+              <details
+                appRecipePhotoPicker
+                [photoUrl]="model.photoUrl"
+                [cameraIcon]="icons.cameraOutline"
+                (pick)="pickPhoto()"
+                class="editor-photo"
+              ></details>
             }
             @if (editorStep() === 'ingredients') {
               <section class="ingredient-builder">
@@ -225,27 +142,13 @@
                 }
                 <div class="recipe-ingredient-list">
                   @for (item of nutritionIngredients(); track $index) {
-                    <div class="recipe-ingredient-row">
-                      <span>{{ item.name }}</span
-                      ><label
-                        ><span class="sr-only">{{ 'Quantity' | translate }} {{ item.name }}</span
-                        ><input
-                          appInput
-                          type="number"
-                          min="0.01"
-                          step="any"
-                          [ngModelOptions]="{ standalone: true }"
-                          [ngModel]="item.quantity ?? item.grams"
-                          (ngModelChange)="updateFood($index, $event)" /></label
-                      ><small>{{ item.unit || 'g' }}</small
-                      ><button
-                        type="button"
-                        (click)="removeFood($index)"
-                        [attr.aria-label]="'Remove ' + item.name | translate"
-                      >
-                        &#215;
-                      </button>
-                    </div>
+                    <div
+                      appRecipeIngredientRow
+                      [item]="item"
+                      (quantityChange)="updateFood($index, $event)"
+                      (remove)="removeFood($index)"
+                      class="recipe-ingredient-row"
+                    ></div>
                   } @empty {
                     <div class="ingredient-empty">
                       <strong>{{ 'Your ingredients will appear here' | translate }}</strong>
@@ -257,108 +160,25 @@
                     </div>
                   }
                 </div>
-                <details class="quick-food">
-                  <summary>
-                    {{ 'Food missing? Create an ingredient' | translate }}
-                  </summary>
-                  <label
-                    >{{ 'Name' | translate
-                    }}<input
-                      appInput="field"
-                      name="quickName"
-                      [(ngModel)]="quickFoodName"
-                      class="lifeos-select"
-                  /></label>
-                  <p>{{ 'Label values per 100 g' | translate }}</p>
-                  <div class="quick-food-macros">
-                    <label
-                      >{{ 'Calories' | translate
-                      }}<input
-                        appInput="field"
-                        name="quickCalories"
-                        type="number"
-                        [(ngModel)]="quickCalories"
-                        class="lifeos-select" /></label
-                    ><label
-                      >{{ 'Protein' | translate
-                      }}<input
-                        appInput="field"
-                        name="quickProtein"
-                        type="number"
-                        [(ngModel)]="quickProtein"
-                        class="lifeos-select" /></label
-                    ><label
-                      >{{ 'Carbohydrates' | translate
-                      }}<input
-                        appInput="field"
-                        name="quickCarbs"
-                        type="number"
-                        [(ngModel)]="quickCarbs"
-                        class="lifeos-select" /></label
-                    ><label
-                      >{{ 'Fat' | translate
-                      }}<input
-                        appInput="field"
-                        name="quickFat"
-                        type="number"
-                        [(ngModel)]="quickFat"
-                        class="lifeos-select"
-                    /></label>
-                  </div>
-                  <button
-                    appButton="secondary"
-                    type="button"
-                    (click)="createMissing()"
-                    [disabled]="creatingFood() || !quickFoodName.trim()"
-                  >
-                    {{ 'Create ingredient' | translate }}
-                  </button>
-                </details>
+                <details
+                  appRecipeQuickFood
+                  [(name)]="quickFoodName"
+                  [(calories)]="quickCalories"
+                  [(protein)]="quickProtein"
+                  [(carbs)]="quickCarbs"
+                  [(fat)]="quickFat"
+                  [creating]="creatingFood()"
+                  (create)="createMissing()"
+                  class="quick-food"
+                ></details>
               </section>
-              <details class="recipe-adjustments">
-                <summary>{{ 'Servings & scaling' | translate }}</summary>
-                <p>
-                  {{
-                    'Changing servings divides the same recipe into portions. Scaling changes ingredient quantities too.'
-                      | translate
-                  }}
-                </p>
-                <div class="adjustment-fields">
-                  <label
-                    >{{ 'Servings' | translate
-                    }}<input
-                      appInput
-                      name="ingredientServings"
-                      type="number"
-                      min="0.01"
-                      step="any"
-                      [(ngModel)]="model.servings" /></label
-                  ><label
-                    >{{ 'Optional serving weight (g)' | translate
-                    }}<input
-                      appInput
-                      name="servingWeight"
-                      type="number"
-                      min="0.01"
-                      step="any"
-                      [(ngModel)]="model.servingWeight"
-                  /></label>
-                </div>
-                <div class="scale-fields">
-                  <label
-                    >{{ 'Scale factor' | translate
-                    }}<input
-                      appInput
-                      name="scaleFactor"
-                      type="number"
-                      min="0.01"
-                      step="any"
-                      [(ngModel)]="scaleFactor" /></label
-                  ><button appButton="secondary" type="button" (click)="scaleRecipe()">
-                    {{ 'Scale recipe' | translate }}
-                  </button>
-                </div>
-              </details>
+              <details
+                appRecipeScalingControls
+                [draft]="model"
+                [(scaleFactor)]="scaleFactor"
+                (scale)="scaleRecipe()"
+                class="recipe-adjustments"
+              ></details>
               <details class="unlinked-notes" [open]="ingredients().length > 0">
                 <summary>
                   {{ 'Unlinked ingredient notes' | translate }} ({{ ingredients().length }})
@@ -399,49 +219,15 @@
               </details>
             }
             @if (editorStep() === 'method') {
-              <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
-                <div class="mb-3 flex items-center justify-between">
-                  <h2 class="font-bold">{{ 'Steps' | translate }}</h2>
-                  <button
-                    type="button"
-                    (click)="addStep()"
-                    class="rounded-full border border-cyan-400/60 px-3 py-1 text-xs text-cyan-200"
-                  >
-                    {{ '+ Add' | translate }}
-                  </button>
-                </div>
-                @for (step of steps(); track step.id; let index = $index) {
-                  <div class="mb-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-2">
-                    <div class="flex gap-2">
-                      <span
-                        class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-cyan-400 font-bold text-[var(--card)]"
-                        >{{ index + 1 }}</span
-                      ><input
-                        appInput="inline"
-                        [value]="step.title"
-                        (input)="updateStep(index, 'title', $any($event.target).value)"
-                        [placeholder]="'Step title' | translate"
-                        class="min-w-0 flex-1 font-semibold"
-                      /><button
-                        type="button"
-                        (click)="removeStep(index)"
-                        [attr.aria-label]="'Remove step' | translate"
-                        class="px-2 text-rose-300"
-                      >
-                        <ion-icon [icon]="icons.closeOutline" aria-hidden="true" />
-                      </button>
-                    </div>
-                    <textarea
-                      appInput="inline"
-                      [value]="step.instruction"
-                      (input)="updateStep(index, 'instruction', $any($event.target).value)"
-                      rows="2"
-                      [placeholder]="'Describe this step...' | translate"
-                      class="mt-2 block w-full resize-none"
-                    ></textarea>
-                  </div>
-                }
-              </section>
+              <section
+                appRecipeMethodEditor
+                [steps]="steps()"
+                [closeIcon]="icons.closeOutline"
+                (add)="addStep()"
+                (remove)="removeStep($event)"
+                (update)="updateStep($event.index, $event.field, $event.value)"
+                class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3"
+              ></section>
               <details>
                 <summary>{{ 'Tags, source & preferences' | translate }}</summary>
                 <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
@@ -552,47 +338,13 @@
             </div>
           </fieldset>
         </form>
-        <aside class="recipe-nutrition-panel">
-          @let totals = summary();
-          <p class="panel-eyebrow">{{ 'Recipe nutrition' | translate }}</p>
-          <h2>{{ 'Per serving' | translate }}</h2>
-          @if (nutritionIngredients().length) {
-            <div class="panel-calories">
-              <strong>{{ totals.perServing.calories.toFixed(0) }}</strong
-              ><span>kcal</span>
-            </div>
-            <p class="panel-servings">
-              {{ 'Makes {{p0}} servings' | translate: { p0: model.servings } }}
-            </p>
-            <dl class="panel-macros">
-              @for (key of macroKeys; track key) {
-                <div>
-                  <dt>{{ key | translate }}</dt>
-                  <dd>{{ totals.perServing[key].toFixed(1) }} <span>g</span></dd>
-                </div>
-              }
-            </dl>
-            <div class="panel-total">
-              <span>{{ 'Entire recipe' | translate }}</span
-              ><strong>{{ totals.total.calories.toFixed(0) }} kcal</strong>
-            </div>
-            @if (!totals.complete) {
-              <p class="panel-status">
-                {{
-                  'Partial totals. Link all ingredient notes for complete nutrition.' | translate
-                }}
-              </p>
-            }
-          } @else {
-            <div class="panel-calories panel-empty"><strong>&#8212;</strong><span>kcal</span></div>
-            <p class="panel-servings">
-              {{ 'Add ingredients to calculate nutrition per serving.' | translate }}
-            </p>
-          }
-          <p class="panel-footnote">
-            {{ 'Recipes stay separate from your diary until you log a serving.' | translate }}
-          </p>
-        </aside>
+        <aside
+          appRecipeNutritionPanel
+          [summary]="summary()"
+          [ingredientCount]="nutritionIngredients().length"
+          [servings]="model.servings"
+          class="recipe-nutrition-panel"
+        ></aside>
       </div>
     }
   </main>

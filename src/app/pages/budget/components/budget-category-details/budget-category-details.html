@@ -1,0 +1,35 @@
+<section>
+  <h3>{{ 'Planned category items' | translate }}</h3>
+  @for (entry of details().plans; track entry.id) {
+    <div class="detail-line">
+      <span>{{ entry.name || 'Existing plan' | translate }}</span
+      ><strong>{{ money(entry.amount) }}</strong>
+    </div>
+  } @empty {
+    <p class="muted">
+      {{
+        'No category items planned. Scheduled debt plans, when present, are included in the category total.'
+          | translate
+      }}
+    </p>
+  }
+  <a class="text-link" routerLink="/budget/planned">{{ 'Edit your plan →' | translate }}</a>
+</section>
+<section>
+  <h3>
+    {{ (savings() ? 'Recorded transfers' : 'Recorded payments') | translate }}
+  </h3>
+  @for (payment of details().payments; track payment.id) {
+    <a
+      class="detail-line detail-payment"
+      [routerLink]="['/budget/transactions', payment.id, 'edit']"
+      ><span
+        >{{ payment.title | translate }}<small>{{ payment.date }}</small></span
+      ><strong>{{ money(payment.amount) }}</strong></a
+    >
+  } @empty {
+    <p class="muted">
+      {{ 'No recorded payments for this category in the selected cycle.' | translate }}
+    </p>
+  }
+</section>

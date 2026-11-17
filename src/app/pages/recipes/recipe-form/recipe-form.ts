@@ -1,3 +1,10 @@
+import { RecipeQuickFood } from '@pages/recipes/components/recipe-quick-food/recipe-quick-food';
+import { RecipeScalingControls } from '@pages/recipes/components/recipe-scaling-controls/recipe-scaling-controls';
+import { RecipeMethodEditor } from '@pages/recipes/components/recipe-method-editor/recipe-method-editor';
+import { RecipeIngredientRow } from '@pages/recipes/components/recipe-ingredient-row/recipe-ingredient-row';
+import { RecipePhotoPicker } from '@pages/recipes/components/recipe-photo-picker/recipe-photo-picker';
+import { RecipeBasicsFields } from '@pages/recipes/components/recipe-basics-fields/recipe-basics-fields';
+import { RecipeNutritionPanel } from '@pages/recipes/components/recipe-nutrition-panel/recipe-nutrition-panel';
 import { BackButton } from '@shared/components/back-button/back-button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
@@ -11,8 +18,9 @@ import { NutritionIngredient } from '@pages/nutrition/state/nutrition/nutrition.
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
-import { AppSelect, SelectOption } from '@shared/components/app-select/app-select';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
+import { SelectOption } from '@shared/components/app-select/app-select';
 import { addIcons } from 'ionicons';
 import {
   heart,
@@ -36,6 +44,13 @@ import { pickImage } from '@shared/utils/pick-image';
 @Component({
   selector: 'app-recipe-form',
   imports: [
+    RecipeQuickFood,
+    RecipeScalingControls,
+    RecipeMethodEditor,
+    RecipeIngredientRow,
+    RecipePhotoPicker,
+    RecipeBasicsFields,
+    RecipeNutritionPanel,
     BackButton,
     TranslatePipe,
     AppInput,
@@ -43,7 +58,6 @@ import { pickImage } from '@shared/utils/pick-image';
     IonContent,
     IonIcon,
     FormsModule,
-    AppSelect,
   ],
   templateUrl: './recipe-form.html',
   styleUrl: './recipe-form.css',

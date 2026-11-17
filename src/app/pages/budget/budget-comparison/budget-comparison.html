@@ -1,7 +1,7 @@
 <ion-content
   ><main
     appBudgetPage
-    class="budget-page comparison-page md:m-0! md:w-full md:max-w-none! md:px-8!"
+    class="budget-page comparison-page"
   >
     <header class="page-header">
       <app-back-button fallback="/budget" />
@@ -9,7 +9,7 @@
         <p class="eyebrow">{{ 'Budget comparison' | translate }}</p>
         <h1>{{ 'Planned vs actual' | translate }}</h1>
       </div>
-      <a class="secondary-button" routerLink="/budget/planned">{{
+      <a appButton="secondary" class="secondary-button" routerLink="/budget/planned">{{
         'Edit planned amounts' | translate
       }}</a>
     </header>
@@ -55,39 +55,11 @@
       </p>
     } @else {
       <section
+        appBudgetComparisonSummary
+        [totals]="totals()"
         class="comparison-summary"
         [attr.aria-label]="'Expense comparison totals' | translate"
-      >
-        <div class="panel metric-plan">
-          <small>{{ 'Planned expenses & bills' | translate }}</small
-          ><strong>{{ money(totals().planned) }}</strong
-          ><span>{{ 'Your spending plan' | translate }}</span>
-        </div>
-        <div class="panel metric-spent">
-          <small>{{ 'Actually spent' | translate }}</small
-          ><strong>{{ money(totals().actual) }}</strong
-          ><span>{{ 'Recorded expenses this cycle' | translate }}</span>
-        </div>
-        <div class="panel metric-left" [class.metric-over]="totals().actual > totals().planned">
-          <small>{{
-            (totals().actual > totals().planned ? 'Over total plan' : 'Left in total plan')
-              | translate
-          }}</small
-          ><strong [class.negative]="totals().actual > totals().planned">{{
-            money(
-              totals().actual > totals().planned
-                ? totals().actual - totals().planned
-                : totals().planned - totals().actual
-            )
-          }}</strong
-          ><span>{{
-            (totals().actual > totals().planned
-              ? 'Time to review your plan'
-              : 'Room within your plan'
-            ) | translate
-          }}</span>
-        </div>
-      </section>
+      ></section>
       <section class="panel comparison-panel" [attr.aria-label]="'Left over category' | translate">
         <h2>{{ 'Spending account' | translate }}</h2>
         <p class="muted help-text">
@@ -158,145 +130,14 @@
         {{ 'Select a category to explore its planned items and recorded payments.' | translate }}
       </p>
       @for (group of groups(); track group.title) {
-        <section class="panel comparison-panel">
-          <h2>{{ group.title | translate }}</h2>
-          @if (group.savings) {
-            <p class="muted help-text">
-              {{ 'Actual amounts are transfers into savings, not spending.' | translate }}
-            </p>
-          }
-          <table>
-            <caption class="sr-only">
-              {{
-                'messages.count_planned_and_actual_amounts_b4027d' | translate: { p0: group.title }
-              }}
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">{{ 'Category' | translate }}</th>
-                <th scope="col">{{ 'Planned' | translate }}</th>
-                <th scope="col">
-                  {{ (group.savings ? 'Transferred' : 'Actual spent') | translate }}
-                </th>
-                <th scope="col">{{ 'Difference' | translate }}</th>
-                <th scope="col">{{ 'Status' | translate }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (row of group.rows; track row.id) {
-                <tr
-                  class="category-summary"
-                  [class.row-expanded]="expanded() === row.id"
-                  [style.--category-colour]="row.colour"
-                >
-                  <th scope="row">
-                    <button
-                      class="category-toggle"
-                      type="button"
-                      [attr.aria-expanded]="expanded() === row.id"
-                      [attr.aria-controls]="'category-detail-' + row.id"
-                      (click)="toggleCategory(row.id)"
-                    >
-                      <span class="category-dot" aria-hidden="true"></span>{{ row.name
-                      }}<span class="expand-mark" aria-hidden="true">{{
-                        expanded() === row.id ? '−' : '+'
-                      }}</span>
-                    </button>
-                    @if (row.deleted) {
-                      <small>{{ '(archived)' | translate }}</small>
-                    }
-                    <div class="comparison-track" aria-hidden="true">
-                      <span
-                        [style.width.%]="row.usage"
-                        [class.exceeded]="row.difference < 0"
-                      ></span>
-                    </div>
-                  </th>
-                  <td data-label="Planned">
-                    {{ (row.hasPlan ? money(row.planned) : 'No plan') | translate }}
-                  </td>
-                  <td [attr.data-label]="group.savings ? 'Transferred' : 'Actual spent'">
-                    {{ money(row.actual) }}
-                  </td>
-                  <td data-label="Difference" [class.negative]="row.difference < 0">
-                    @if (row.difference < 0) {
-                      {{ 'messages.count_over_b3f5a3' | translate: { p0: money(-row.difference) } }}
-                    } @else if (row.hasPlan) {
-                      {{ 'messages.count_left_765fba' | translate: { p0: money(row.difference) } }}
-                    } @else {
-                      &mdash;
-                    }
-                  </td>
-                  <td data-label="Status">
-                    <span
-                      class="comparison-badge"
-                      [class.badge-over]="row.hasPlan && row.difference < 0"
-                      [class.badge-good]="row.hasPlan && row.difference >= 0"
-                      [class.badge-unplanned]="!row.hasPlan && row.actual > 0"
-                      >{{ row.status | translate }}</span
-                    >
-                  </td>
-                </tr>
-                <tr class="category-detail-row" [hidden]="expanded() !== row.id">
-                  <td colspan="5" [id]="'category-detail-' + row.id">
-                    <div class="category-detail-grid">
-                      <section>
-                        <h3>{{ 'Planned category items' | translate }}</h3>
-                        @for (entry of details().plans; track entry.id) {
-                          <div class="detail-line">
-                            <span>{{ entry.name || 'Existing plan' | translate }}</span
-                            ><strong>{{ money(entry.amount) }}</strong>
-                          </div>
-                        } @empty {
-                          <p class="muted">
-                            {{
-                              'No category items planned. Scheduled debt plans, when present, are included in the category total.'
-                                | translate
-                            }}
-                          </p>
-                        }
-                        <a class="text-link" routerLink="/budget/planned">{{
-                          'Edit your plan →' | translate
-                        }}</a>
-                      </section>
-                      <section>
-                        <h3>
-                          {{
-                            (group.savings ? 'Recorded transfers' : 'Recorded payments') | translate
-                          }}
-                        </h3>
-                        @for (payment of details().payments; track payment.id) {
-                          <a
-                            class="detail-line detail-payment"
-                            [routerLink]="['/budget/transactions', payment.id, 'edit']"
-                            ><span
-                              >{{ payment.title | translate
-                              }}<small>{{ payment.date }}</small></span
-                            ><strong>{{ money(payment.amount) }}</strong></a
-                          >
-                        } @empty {
-                          <p class="muted">
-                            {{
-                              'No recorded payments for this category in the selected cycle.'
-                                | translate
-                            }}
-                          </p>
-                        }
-                      </section>
-                    </div>
-                  </td>
-                </tr>
-              } @empty {
-                <tr>
-                  <td colspan="5" class="empty-state">
-                    {{ 'No categories match this filter.' | translate }}
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </section>
+        <section
+          appBudgetComparisonTable
+          [group]="group"
+          [expanded]="expanded()"
+          [details]="details()"
+          (toggleCategory)="toggleCategory($event)"
+          class="panel comparison-panel"
+        ></section>
       }
-    }
-  </main></ion-content
->
+    }</main
+></ion-content>

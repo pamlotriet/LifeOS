@@ -9,7 +9,8 @@ import { BudgetNumber } from '@shared/directives/budget-number';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   compatibleCategory,
@@ -21,6 +22,7 @@ import {
 } from '@pages/budget/state/budget/budget.model';
 
 @Component({
+  host: { class: 'budget-screen' },
   selector: 'app-budget-transaction-form',
   imports: [
     BudgetPage,
@@ -37,7 +39,7 @@ import {
     RouterLink,
   ],
   templateUrl: './budget-transaction-form.html',
-  styleUrls: ['../budget.css', '../budget-layout.css'],
+  
 })
 export class BudgetTransactionForm {
   readonly store = inject(BudgetStore);

@@ -1,0 +1,129 @@
+<div class="debt-card-heading">
+  <div>
+    <p class="eyebrow">
+      {{
+        (row().debt.type === 'credit-card'
+          ? 'Credit card'
+          : row().debt.type === 'loan'
+            ? 'Loan'
+            : 'Other debt'
+        ) | translate
+      }}
+    </p>
+    <h2>{{ row().debt.name }}</h2>
+  </div>
+  <div
+    class="debt-header-actions max-sm:grid! max-sm:grid-cols-2 max-sm:gap-2 [&>button]:max-sm:min-w-0 [&>button]:max-sm:px-2! [&>button]:max-sm:text-xs!"
+  >
+    <button
+      appButton="secondary"
+      type="button"
+      class="secondary-button"
+      [disabled]="busy()"
+      (click)="exportPdf.emit()"
+      [attr.aria-label]="'Export PDF for ' + row().debt.name | translate"
+    >
+      {{ 'Export PDF' | translate }}</button
+    ><button
+      appButton="secondary"
+      type="button"
+      class="secondary-button"
+      [disabled]="busy()"
+      (click)="editDebt.emit()"
+    >
+      {{ 'Edit debt' | translate }}
+    </button>
+  </div>
+</div>
+<div class="debt-balance">
+  <span class="muted">{{ 'Remaining balance' | translate }}</span
+  ><strong>{{ money(row().closing) }}</strong>
+</div>
+<dl class="debt-metrics">
+  <div>
+    <dt>{{ 'Paid so far' | translate }}</dt>
+    <dd class="positive">{{ money(row().paid) }}</dd>
+  </div>
+  <div>
+    <dt>{{ 'Planned' | translate }}</dt>
+    <dd>{{ money(row().planned) }}</dd>
+  </div>
+  <div>
+    <dt>{{ 'After planned payments' | translate }}</dt>
+    <dd>{{ money(row().projected) }}</dd>
+  </div>
+</dl>
+@if (row().debt.type === 'credit-card') {
+  <p class="muted help-text">
+    {{
+      'messages.includes_count_estimated_interest_for_this_month_2b6754'
+        | translate: { p0: money(row().interest) }
+    }}
+  </p>
+}
+<div class="debt-actions">
+  <button appButton="primary"
+    class="primary-button"
+    type="button"
+    [disabled]="busy()"
+    (click)="payment.emit({ status: 'paid' })"
+  >
+    {{ 'Record payment' | translate }}</button
+  ><button
+    appButton="secondary"
+    class="secondary-button"
+    type="button"
+    [disabled]="busy()"
+    (click)="payment.emit({ status: 'planned' })"
+  >
+    {{ 'Plan payment' | translate }}</button
+  ><button
+    class="text-link"
+    type="button"
+    [attr.aria-expanded]="expanded()"
+    (click)="toggle.emit()"
+  >
+    {{ (expanded() ? 'Hide payments' : 'View payments') | translate }}
+    ({{ row().history.length + row().upcoming.length }})
+  </button>
+</div>
+@if (expanded()) {
+  <section class="payment-section">
+    <h3>{{ 'Planned payments' | translate }}</h3>
+    @for (item of row().upcoming; track item.id) {
+      <div
+        appDebtPaymentRow
+        [item]="item"
+        [planned]="true"
+        [today]="today()"
+        [busy]="busy()"
+        (markPaid)="payment.emit({ status: 'paid', item })"
+        (edit)="payment.emit({ status: 'planned', item })"
+        (remove)="removePayment.emit(item)"
+        class="payment-row"
+      ></div>
+    } @empty {
+      <p class="muted help-text">
+        {{ 'No planned payments. Add one with its expected date and amount.' | translate }}
+      </p>
+    }
+  </section>
+  <section class="payment-section">
+    <h3>{{ 'Payment history' | translate }}</h3>
+    @for (item of row().history; track item.id) {
+      <div
+        appDebtPaymentRow
+        [item]="item"
+        [today]="today()"
+        [busy]="busy()"
+        (edit)="payment.emit({ status: 'paid', item })"
+        (remove)="removePayment.emit(item)"
+        class="payment-row"
+      ></div>
+    } @empty {
+      <p class="muted help-text">
+        {{ 'No payments recorded yet. You can add payments from earlier months.' | translate }}
+      </p>
+    }
+  </section>
+}

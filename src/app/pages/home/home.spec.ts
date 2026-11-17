@@ -107,6 +107,17 @@ describe('Home', () => {
     expect(component.dashboardState.overviewMetrics()[0].hint).toBe('home.no_food_logged_today');
   });
 
+  it('keeps navigation available and shows per-card placeholders while feature data loads', async () => {
+    TestBed.inject(NutritionService).loading.set(true);
+    TestBed.inject(BudgetStore).loading.set(true);
+    await fixture.whenStable();
+    const metric = fixture.nativeElement.querySelector('.metric-card[href="/nutrition"]');
+    expect(metric.getAttribute('aria-busy')).toBe('true');
+    expect(metric.querySelector('app-skeleton')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.space-row[href="/books"]')).toBeTruthy();
+    expect(TestBed.inject(AppStartup).waitFor).not.toHaveBeenCalled();
+  });
+
   it('shows reusable placeholders while metrics load and replaces them with data', async () => {
     const nutrition = TestBed.inject(NutritionService);
     (nutrition.loading as ReturnType<typeof signal<boolean>>).set(true);

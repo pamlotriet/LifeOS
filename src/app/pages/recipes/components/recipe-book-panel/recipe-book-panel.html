@@ -1,0 +1,57 @@
+<div class="recipe-book-heading">
+  <div>
+    <h2 id="recipe-book-title">{{ 'Your recipe book' | translate }}</h2>
+    <p>
+      {{ 'Choose recipes and download a printable PDF with a cover and contents.' | translate }}
+    </p>
+  </div>
+  <button appButton="secondary" type="button" [disabled]="exporting()" (click)="close.emit()">
+    {{ 'Close' | translate }}
+  </button>
+</div>
+<label
+  >{{ 'Book title' | translate
+  }}<input appInput maxlength="120" [(ngModel)]="bookTitle" [disabled]="exporting()"
+/></label>
+<label class="book-checkbox"
+  ><input type="checkbox" [(ngModel)]="includePhotos" [disabled]="exporting()" />{{
+    'Include recipe photos' | translate
+  }}</label
+>
+<div class="book-select-actions">
+  <button appButton="secondary" type="button" [disabled]="exporting()" (click)="selectAll.emit()">
+    {{ 'Select all' | translate }}</button
+  ><button
+    appButton="secondary"
+    type="button"
+    [disabled]="exporting()"
+    (click)="clearSelection.emit()"
+  >
+    {{ 'Clear selection' | translate }}
+  </button>
+</div>
+<div class="book-recipe-list">
+  @for (recipe of recipes(); track recipe.id) {
+    <label class="book-checkbox"
+      ><input
+        type="checkbox"
+        [checked]="selectedRecipes().has(recipe.id)"
+        [disabled]="exporting()"
+        (change)="selectRecipe.emit(recipe.id)"
+      /><span>{{ recipe.title }}</span></label
+    >
+  }
+</div>
+<button
+  appButton="primary"
+  type="button"
+  [disabled]="exporting() || !selectedCount() || unavailable()"
+  (click)="download.emit()"
+>
+  {{ (exporting() ? 'Creating recipe book...' : 'Download PDF') | translate }} ({{
+    selectedCount()
+  }})
+</button>
+@if (message()) {
+  <p role="status">{{ message() | translate }}</p>
+}

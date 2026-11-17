@@ -1,0 +1,19 @@
+:host-context(.editor-fields) h2 {
+  font-size: 16px;
+  font-weight: 600;
+}
+:host-context(.editor-fields) label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+:host-context(.editor-fields) p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+:host-context(.editor-fields) label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  line-height: 1.4;
+}

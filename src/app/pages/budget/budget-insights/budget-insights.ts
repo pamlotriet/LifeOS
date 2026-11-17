@@ -1,3 +1,4 @@
+import { BudgetInsightCard } from '@pages/budget/components/budget-insight-card/budget-insight-card';
 import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
@@ -7,15 +8,18 @@ import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import { localDate, money, summary, total } from '@pages/budget/state/budget/budget.model';
 import { AppChart } from '@shared/components/app-chart/app-chart';
 
 @Component({
+  host: { class: 'budget-screen' },
   selector: 'app-budget-insights',
   imports: [
+    BudgetInsightCard,
     BudgetPage,
     TranslatePipe,
     AppMonthPicker,
@@ -28,7 +32,7 @@ import { AppChart } from '@shared/components/app-chart/app-chart';
     AppChart,
   ],
   templateUrl: './budget-insights.html',
-  styleUrls: ['../budget.css', '../budget-layout.css', './budget-insights.css'],
+  styleUrls: ['./budget-insights.css'],
 })
 export class BudgetInsights {
   private readonly i18n = inject(TranslateService);

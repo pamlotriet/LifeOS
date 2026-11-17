@@ -1,7 +1,7 @@
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject, signal, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonIcon } from '@ionic/angular';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   BudgetCategory,
@@ -13,7 +13,7 @@ import { AppButton } from '@shared/components/app-button/app-button';
 @Component({
   selector: 'app-budget-transactions',
   imports: [TranslatePipe, AppButton, RouterLink, IonIcon],
-  styleUrls: ['../../budget.css', '../../budget-layout.css', './budget-transactions.css'],
+  styleUrl: './budget-transactions.css',
   template: ` <div class="transaction-list">
     @for (item of transactions; track item.id) {
       <div class="transaction-entry max-sm:gap-2! max-sm:px-3!">

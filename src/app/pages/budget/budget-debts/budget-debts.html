@@ -1,5 +1,5 @@
 <ion-content>
-  <main appBudgetPage class="budget-page md:m-0! md:w-full md:max-w-none! md:px-8!">
+  <main appBudgetPage class="budget-page">
     <header class="page-header">
       <app-back-button fallback="/budget" />
       <h1 class="compact-title">{{ 'Manage debt' | translate }}</h1>
@@ -14,7 +14,7 @@
           [disabled]="busy() || store.loading() || !!store.error() || !rows().length"
         >
           {{ 'Export PDF' | translate }}</button
-        ><button
+        ><button appButton="primary"
           class="primary-button"
           type="button"
           (click)="edit()"
@@ -302,191 +302,19 @@
       }
       <div class="debt-list">
         @for (row of rows(); track row.debt.id) {
-          <article class="panel debt-card">
-            <div class="debt-card-heading">
-              <div>
-                <p class="eyebrow">
-                  {{
-                    (row.debt.type === 'credit-card'
-                      ? 'Credit card'
-                      : row.debt.type === 'loan'
-                        ? 'Loan'
-                        : 'Other debt'
-                    ) | translate
-                  }}
-                </p>
-                <h2>{{ row.debt.name }}</h2>
-              </div>
-              <div
-                class="debt-header-actions max-sm:grid! max-sm:grid-cols-2 max-sm:gap-2 [&>button]:max-sm:min-w-0 [&>button]:max-sm:px-2! [&>button]:max-sm:text-xs!"
-              >
-                <button
-                  appButton="secondary"
-                  type="button"
-                  class="secondary-button"
-                  [disabled]="busy()"
-                  (click)="exportPdf(row.debt.id)"
-                  [attr.aria-label]="'Export PDF for ' + row.debt.name | translate"
-                >
-                  {{ 'Export PDF' | translate }}</button
-                ><button
-                  appButton="secondary"
-                  type="button"
-                  class="secondary-button"
-                  [disabled]="busy()"
-                  (click)="edit(row.debt.id)"
-                >
-                  {{ 'Edit debt' | translate }}
-                </button>
-              </div>
-            </div>
-            <div class="debt-balance">
-              <span class="muted">{{ 'Remaining balance' | translate }}</span
-              ><strong>{{ money(row.closing) }}</strong>
-            </div>
-            <dl class="debt-metrics">
-              <div>
-                <dt>{{ 'Paid so far' | translate }}</dt>
-                <dd class="positive">{{ money(row.paid) }}</dd>
-              </div>
-              <div>
-                <dt>{{ 'Planned' | translate }}</dt>
-                <dd>{{ money(row.planned) }}</dd>
-              </div>
-              <div>
-                <dt>{{ 'After planned payments' | translate }}</dt>
-                <dd>{{ money(row.projected) }}</dd>
-              </div>
-            </dl>
-            @if (row.debt.type === 'credit-card') {
-              <p class="muted help-text">
-                {{
-                  'messages.includes_count_estimated_interest_for_this_month_2b6754'
-                    | translate: { p0: money(row.interest) }
-                }}
-              </p>
-            }
-            <div class="debt-actions">
-              <button
-                class="primary-button"
-                type="button"
-                [disabled]="busy()"
-                (click)="editPayment(row.debt.id, 'paid')"
-              >
-                {{ 'Record payment' | translate }}</button
-              ><button
-                appButton="secondary"
-                class="secondary-button"
-                type="button"
-                [disabled]="busy()"
-                (click)="editPayment(row.debt.id, 'planned')"
-              >
-                {{ 'Plan payment' | translate }}</button
-              ><button
-                class="text-link"
-                type="button"
-                [attr.aria-expanded]="expanded() === row.debt.id"
-                (click)="expanded.set(expanded() === row.debt.id ? null : row.debt.id)"
-              >
-                {{ (expanded() === row.debt.id ? 'Hide payments' : 'View payments') | translate }}
-                ({{ row.history.length + row.upcoming.length }})
-              </button>
-            </div>
-            @if (expanded() === row.debt.id) {
-              <section class="payment-section">
-                <h3>{{ 'Planned payments' | translate }}</h3>
-                @for (item of row.upcoming; track item.id) {
-                  <div class="payment-row">
-                    <div class="row-copy">
-                      <strong>{{ money(item.amount) }}</strong
-                      ><small
-                        >{{ date(item.date) }}
-                        <span class="payment-badge" [class.overdue]="item.date < today">{{
-                          (item.date < today ? 'Overdue' : 'Planned') | translate
-                        }}</span></small
-                      ><small>{{ item.title | translate }}</small>
-                      @if (item.notes) {
-                        <p class="payment-notes">{{ item.notes }}</p>
-                      }
-                    </div>
-                    <div class="payment-actions">
-                      <button
-                        appButton="secondary"
-                        type="button"
-                        class="secondary-button"
-                        [disabled]="busy()"
-                        (click)="editPayment(row.debt.id, 'paid', item)"
-                      >
-                        {{ 'Mark paid' | translate }}</button
-                      ><button
-                        class="text-link"
-                        type="button"
-                        [disabled]="busy()"
-                        (click)="editPayment(row.debt.id, 'planned', item)"
-                      >
-                        {{ 'Edit' | translate }}</button
-                      ><button
-                        class="text-link"
-                        type="button"
-                        [disabled]="busy()"
-                        (click)="confirmDelete(item)"
-                      >
-                        {{ 'Delete' | translate }}
-                      </button>
-                    </div>
-                  </div>
-                } @empty {
-                  <p class="muted help-text">
-                    {{
-                      'No planned payments. Add one with its expected date and amount.' | translate
-                    }}
-                  </p>
-                }
-              </section>
-              <section class="payment-section">
-                <h3>{{ 'Payment history' | translate }}</h3>
-                @for (item of row.history; track item.id) {
-                  <div class="payment-row">
-                    <div class="row-copy">
-                      <strong>{{ money(item.amount) }}</strong
-                      ><small>{{
-                        'messages.count_count_6ff1e6'
-                          | translate: { p0: date(item.date), p1: item.paymentMethod }
-                      }}</small
-                      ><small>{{ item.title | translate }}</small>
-                      @if (item.notes) {
-                        <p class="payment-notes">{{ item.notes }}</p>
-                      }
-                    </div>
-                    <div class="payment-actions">
-                      <button
-                        class="text-link"
-                        type="button"
-                        [disabled]="busy()"
-                        (click)="editPayment(row.debt.id, 'paid', item)"
-                      >
-                        {{ 'Edit' | translate }}</button
-                      ><button
-                        class="text-link"
-                        type="button"
-                        [disabled]="busy()"
-                        (click)="confirmDelete(item)"
-                      >
-                        {{ 'Delete' | translate }}
-                      </button>
-                    </div>
-                  </div>
-                } @empty {
-                  <p class="muted help-text">
-                    {{
-                      'No payments recorded yet. You can add payments from earlier months.'
-                        | translate
-                    }}
-                  </p>
-                }
-              </section>
-            }
-          </article>
+          <article
+            appDebtOverviewCard
+            [row]="row"
+            [today]="today"
+            [busy]="busy()"
+            [expanded]="expanded() === row.debt.id"
+            (exportPdf)="exportPdf(row.debt.id)"
+            (editDebt)="edit(row.debt.id)"
+            (toggle)="expanded.set(expanded() === row.debt.id ? null : row.debt.id)"
+            (payment)="editPayment(row.debt.id, $event.status, $event.item)"
+            (removePayment)="confirmDelete($event)"
+            class="panel debt-card"
+          ></article>
         } @empty {
           <section class="panel empty-state">
             <ion-icon name="wallet" />

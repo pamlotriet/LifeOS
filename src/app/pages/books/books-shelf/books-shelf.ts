@@ -3,7 +3,8 @@ import { AppSearch } from '@shared/components/app-search/app-search';
 import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { addIcons } from 'ionicons';
 import {
   addOutline,

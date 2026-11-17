@@ -1,3 +1,6 @@
+import { BookStatistics } from '@pages/statistics/components/book-statistics/book-statistics';
+import { StatisticsInsight } from '@pages/statistics/components/statistics-insight/statistics-insight';
+import { StatisticsKpi } from '@pages/statistics/components/statistics-kpi/statistics-kpi';
 import { TranslatePipe } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import {
@@ -17,7 +20,8 @@ import { statsMonthOptions } from '@pages/statistics/state/overview/stats.calcul
 import { FormsModule } from '@angular/forms';
 import { BudgetStatistics } from '@pages/statistics/components/budget-statistics/budget-statistics';
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { RouterLink } from '@angular/router';
 import { AppChart } from '@shared/components/app-chart/app-chart';
 import { StatisticsSkeleton } from '@pages/statistics/components/statistics-skeleton/statistics-skeleton';
@@ -31,6 +35,9 @@ import {
 @Component({
   selector: 'app-statistics',
   imports: [
+    BookStatistics,
+    StatisticsInsight,
+    StatisticsKpi,
     TranslatePipe,
     FormsModule,
     IonContent,

@@ -1,7 +1,7 @@
 <ion-content>
   <main
     appBudgetPage
-    class="budget-page budget-overview-page m-0! w-full max-w-none! px-4! sm:px-8!"
+    class="budget-page budget-overview-page"
   >
     <div class="mb-5"><app-back-button fallback="/home" /></div>
     <header
@@ -17,7 +17,7 @@
           {{ 'Track your accounts and everyday transactions.' | translate }}
         </p>
       </div>
-      <a
+      <a appButton="primary"
         class="primary-button"
         routerLink="/budget/transactions/add"
         [queryParams]="transfersView ? { type: 'transfer' } : null"
@@ -101,19 +101,19 @@
         <div
           class="my-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap [&>a]:min-w-0 [&>a]:justify-center [&>a]:px-3! [&>a]:text-center [&>a]:text-sm!"
         >
-          <a
+          <a appButton="secondary"
             class="secondary-button"
             routerLink="/budget/transactions/add"
             [queryParams]="{ type: 'expense' }"
             >{{ 'Add expense' | translate }}</a
           >
-          <a
+          <a appButton="secondary"
             class="secondary-button"
             routerLink="/budget/transactions/add"
             [queryParams]="{ type: 'income' }"
             >{{ 'Add income' | translate }}</a
           >
-          <a class="secondary-button" routerLink="/budget/transfers">{{
+          <a appButton="secondary" class="secondary-button" routerLink="/budget/transfers">{{
             'Transfers' | translate
           }}</a>
         </div>
@@ -339,7 +339,7 @@
               ) | translate
             }}
           </p>
-          <a
+          <a appButton="secondary"
             class="secondary-button"
             routerLink="/budget/transactions/add"
             [queryParams]="{ type: 'transfer' }"

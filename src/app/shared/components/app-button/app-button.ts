@@ -2,7 +2,7 @@ import { Component, input } from '@angular/core';
 
 /** Shared actions use native buttons so submit, disabled and focus behaviour is preserved. */
 @Component({
-  selector: 'button[appButton]',
+  selector: 'button[appButton], a[appButton]',
   template: '<ng-content />',
   host: {
     '[class.secondary-action]': 'appearance() === "secondary"',

@@ -13,7 +13,8 @@ import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   isTransfer,
@@ -30,6 +31,7 @@ import { AppSearch } from '@shared/components/app-search/app-search';
 import { AppSelect } from '@shared/components/app-select/app-select';
 
 @Component({
+  host: { class: 'budget-screen' },
   selector: 'app-budget-overview',
   imports: [
     BudgetPage,
@@ -52,7 +54,7 @@ import { AppSelect } from '@shared/components/app-select/app-select';
     AppSelect,
   ],
   templateUrl: './budget-overview.html',
-  styleUrls: ['../budget.css', '../budget-layout.css', './budget-overview.css'],
+  styleUrls: ['./budget-overview.css'],
 })
 export class BudgetOverview {
   private readonly i18n = inject(TranslateService);

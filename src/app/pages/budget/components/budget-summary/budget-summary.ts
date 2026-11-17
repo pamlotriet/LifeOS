@@ -12,7 +12,7 @@ import {
   selector: 'app-budget-summary',
   template: `<div class="budget-kpis" [attr.aria-label]="'Recorded budget figures' | translate">
     @for (card of cards(); track card.label) {
-      <article [class.balance-kpi]="card.balance">
+      <article class="budget-metric" [class.balance-kpi]="card.balance">
         <span>{{ card.label | translate }}</span
         ><strong [class.deficit]="card.balance && card.amount < 0">{{ money(card.amount) }}</strong
         ><small>{{ card.note }}</small>
@@ -28,13 +28,7 @@ import {
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
     }
-    .budget-kpis article {
-      min-width: 0;
-      padding: 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-    }
+    
     .budget-kpis span {
       font-size: 0.78rem;
       color: var(--text-secondary);
@@ -69,9 +63,7 @@ import {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
       }
-      .budget-kpis article {
-        padding: 16px;
-      }
+      
     }
   `,
 })

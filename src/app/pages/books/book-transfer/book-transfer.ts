@@ -3,7 +3,7 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { IonContent } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
 import { PageHeader } from '@shared/components/page-header/page-header';
 import { BookService } from '@pages/books/state/book/book.service';
 import { BookStore } from '@pages/books/state/book/book-store';

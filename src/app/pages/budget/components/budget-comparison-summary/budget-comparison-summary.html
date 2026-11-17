@@ -1,0 +1,26 @@
+<div class="budget-metric panel metric-plan">
+  <small>{{ 'Planned expenses & bills' | translate }}</small
+  ><strong>{{ money(totals().planned) }}</strong
+  ><span>{{ 'Your spending plan' | translate }}</span>
+</div>
+<div class="budget-metric panel metric-spent">
+  <small>{{ 'Actually spent' | translate }}</small
+  ><strong>{{ money(totals().actual) }}</strong
+  ><span>{{ 'Recorded expenses this cycle' | translate }}</span>
+</div>
+<div class="budget-metric panel metric-left" [class.metric-over]="totals().actual > totals().planned">
+  <small>{{
+    (totals().actual > totals().planned ? 'Over total plan' : 'Left in total plan') | translate
+  }}</small
+  ><strong [class.negative]="totals().actual > totals().planned">{{
+    money(
+      totals().actual > totals().planned
+        ? totals().actual - totals().planned
+        : totals().planned - totals().actual
+    )
+  }}</strong
+  ><span>{{
+    (totals().actual > totals().planned ? 'Time to review your plan' : 'Room within your plan')
+      | translate
+  }}</span>
+</div>

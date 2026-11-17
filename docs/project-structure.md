@@ -17,6 +17,7 @@ src/app/
       back-button/
       page-header/
       nutrition-summary/
+      empty-state/             Translated icon, heading and description for empty lists
     directives/
     utils/
     validators/
@@ -105,6 +106,7 @@ src/app/
       state/
         plan/
     recipes/
+      components/              Recipe cards and recipe-book export controls
       recipe-form/
       recipe-detail/
       state/
@@ -117,6 +119,7 @@ src/app/
         debts/
         vehicles/
     home/
+      components/              Overview metric cards and space rows
       state/
         dashboard/             Computed Home metrics and filtered space lists
     more/
@@ -195,6 +198,54 @@ Domain-specific UI belongs in `pages/<feature>/components/<component>/`. Promote
 stateless UI used across features into `shared/components/<component>/`; do not
 move whole page screens into `shared`. Keep business logic in feature state rather
 than shared controls.
+
+Presentational components take signal inputs and emit user actions to their page.
+Use `model()` when a form field must remain bound to page state. The page keeps
+loading, persistence, filtering, export workflows and error handling. For example,
+the vault form emits an unlock action; the Passwords page still owns vault access.
+
+Components such as `a[appRecipeCard]`, `article[appFoodLogRow]` and
+`section[appNutritionMealCard]` attach to existing semantic elements. Keep route
+bindings and layout classes on these host elements. Their internal styling belongs
+with the component; page-scoped styles cannot reach a child's template.
+
+Feature presentation components include finished-book covers and rows, Budget
+insight cards, refuel history cards, gym and meal-planning summaries, Home metric
+cards and space rows, nutrition progress, meal cards, food rows and recent history,
+vault unlock forms and password rows, recipe cards and book export panels, and
+book statistics, statistics KPIs and insights. These use `OnPush` change detection.
+
+The book editor also separates its detail hero, owned copies, reading dates,
+basics fields and tracking choice. The recipe editor separates basics, photos,
+ingredient rows, quick ingredient creation, scaling, method editing and nutrition
+totals. Gym day and exercise-library cards emit edit, reorder, copy and removal
+actions. Budget separates debt cards and payment rows, comparison totals, category
+tables and details, and the planning forecast.
+
+When extracting controls from a template-driven form, forward the parent
+`ControlContainer` through `viewProviders` so named controls remain registered with
+the original form. Keep native field names and disabled fieldsets intact. Pass the
+existing `FormGroup` to reactive field sections; pass asynchronously updated display
+values such as matched covers explicitly so `OnPush` views refresh when they change.
+
+## Startup performance
+
+Import Ionic components and controllers from their public individual entry points,
+such as `@ionic/angular/ion-content`, `@ionic/angular/modal-controller` and
+`@ionic/angular/provide`. This keeps unrelated Ionic controls out of the bootstrap
+dependency graph. Use the same entry points in tests to preserve DI token identity.
+
+Firebase application initialization remains synchronous for session restoration.
+Optional analytics loads dynamically after application stability, during browser
+idle time (with a delayed fallback). Failures must not block startup or sign-in.
+Home uses its existing per-card skeletons while feature data loads, rather than
+holding the global splash screen until every feature request has completed.
+
+Run `npm.cmd run build:stats`, then `npm.cmd run analyze:bundle` to inspect the
+bootstrap's static JavaScript and stylesheet graph. Dynamic route and analytics
+chunks are excluded from that total; the active route still downloads its own
+dependencies when visited. The service worker retains its existing offline
+prefetch behavior.
 
 ## Validation
 

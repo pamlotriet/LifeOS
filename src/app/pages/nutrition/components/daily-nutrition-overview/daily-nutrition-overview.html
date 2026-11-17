@@ -1,0 +1,57 @@
+<div class="calorie-ring" [style.--progress]="progress() + '%'">
+  <div>
+    <strong>{{ total().calories.toFixed(0) }}</strong
+    ><span>{{ 'kcal eaten' | translate }}</span>
+  </div>
+</div>
+<div class="calorie-context">
+  <span class="eyebrow">{{
+    (targets().calories > 0
+      ? remaining() < 0
+        ? 'Above goal'
+        : 'Remaining today'
+      : 'Your daily intake'
+    ) | translate
+  }}</span>
+  <h2>
+    {{
+      targets().calories > 0
+        ? remaining() < 0
+          ? (-remaining()).toFixed(0)
+          : remaining().toFixed(0)
+        : total().calories.toFixed(0)
+    }}
+    <small>{{ 'kcal' | translate }}</small>
+  </h2>
+  @if (targets().calories > 0) {
+    <p>
+      {{ 'messages.of_count_kcal_daily_goal_1220d3' | translate: { p0: targets().calories } }}
+    </p>
+  } @else {
+    <a routerLink="/nutrition/profile">{{ 'Set your calorie and macro goals' | translate }}</a>
+  }
+  <a class="planned-note" routerLink="/planning">{{
+    'messages.count_kcal_planned_separately_13dfb3'
+      | translate: { p0: plannedCalories().toFixed(0) }
+  }}</a>
+</div>
+<div class="macro-grid">
+  @for (key of macros; track key) {
+    <div class="macro" [attr.data-macro]="key">
+      <div>
+        <span class="capitalize">{{ (key === 'carbs' ? 'Carbs' : key) | translate }}</span
+        ><strong
+          >{{ total()[key].toFixed(1) }}<small> {{ 'g' | translate }}</small></strong
+        >
+      </div>
+      <progress
+        [attr.aria-label]="key + ' goal progress' | translate"
+        [value]="total()[key]"
+        [max]="targets()[key] || 1"
+      ></progress
+      ><small>{{
+        (targets()[key] > 0 ? 'of ' + targets()[key] + ' g' : 'No goal set') | translate
+      }}</small>
+    </div>
+  }
+</div>

@@ -1,10 +1,13 @@
+import { EmptyState } from '@shared/components/empty-state/empty-state';
+import { VaultUnlockForm } from '@pages/passwords/components/vault-unlock-form/vault-unlock-form';
+import { PasswordListItem } from '@pages/passwords/components/password-list-item/password-list-item';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { PageHeader } from '@shared/components/page-header/page-header';
 import { PASSWORD_CATEGORIES } from '@pages/passwords/state/vault/password.model';
 import { PasswordStore } from '@pages/passwords/state/vault/password-store';
@@ -12,13 +15,15 @@ import { PasswordStore } from '@pages/passwords/state/vault/password-store';
 @Component({
   selector: 'app-passwords',
   imports: [
+    EmptyState,
+    VaultUnlockForm,
+    PasswordListItem,
     TranslatePipe,
     AppInput,
     AppButton,
     IonContent,
     IonIcon,
     RouterLink,
-    FormsModule,
     PageHeader,
   ],
   templateUrl: './passwords.html',

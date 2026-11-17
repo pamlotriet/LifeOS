@@ -16,7 +16,8 @@ import {
 } from '@pages/nutrition/state/nutrition/nutrition.model';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { PageHeader } from '@shared/components/page-header/page-header';
 import { RecipeRecord, recipeCategories } from '@pages/recipes/state/recipe/recipe.model';
 import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';

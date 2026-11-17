@@ -1,0 +1,23 @@
+<span
+  class="relative block aspect-[2/3] overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-[var(--border)] via-[var(--card)] to-[var(--card)] shadow-[0_9px_20px_rgba(0,0,0,0.35)] transition-transform group-active:scale-95"
+>
+  @if (book().coverUrl) {
+    <img
+      [src]="book().coverUrl"
+      [alt]="'Cover of ' + book().title | translate"
+      class="h-full w-full object-cover"
+      loading="lazy"
+    />
+  } @else {
+    <span class="flex h-full flex-col items-center justify-center p-2 text-center"
+      ><ion-icon name="book" class="text-3xl text-cyan-200" aria-hidden="true"></ion-icon
+      ><strong class="mt-2 line-clamp-4 text-xs leading-tight">{{
+        book().title | translate
+      }}</strong></span
+    >
+  }
+  <span
+    class="absolute bottom-1.5 right-1.5 grid h-6 w-6 place-items-center rounded-full border border-emerald-200/40 bg-emerald-500/90 text-white shadow"
+    ><ion-icon name="checkmark" aria-hidden="true"></ion-icon
+  ></span>
+</span>

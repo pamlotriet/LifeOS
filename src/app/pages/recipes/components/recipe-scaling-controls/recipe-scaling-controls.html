@@ -1,0 +1,42 @@
+<summary>{{ 'Servings & scaling' | translate }}</summary>
+<p>
+  {{
+    'Changing servings divides the same recipe into portions. Scaling changes ingredient quantities too.'
+      | translate
+  }}
+</p>
+<div class="adjustment-fields">
+  <label
+    >{{ 'Servings' | translate
+    }}<input
+      appInput
+      name="ingredientServings"
+      type="number"
+      min="0.01"
+      step="any"
+      [(ngModel)]="draft().servings" /></label
+  ><label
+    >{{ 'Optional serving weight (g)' | translate
+    }}<input
+      appInput
+      name="servingWeight"
+      type="number"
+      min="0.01"
+      step="any"
+      [(ngModel)]="draft().servingWeight"
+  /></label>
+</div>
+<div class="scale-fields">
+  <label
+    >{{ 'Scale factor' | translate
+    }}<input
+      appInput
+      name="scaleFactor"
+      type="number"
+      min="0.01"
+      step="any"
+      [(ngModel)]="scaleFactor" /></label
+  ><button appButton="secondary" type="button" (click)="scale.emit()">
+    {{ 'Scale recipe' | translate }}
+  </button>
+</div>

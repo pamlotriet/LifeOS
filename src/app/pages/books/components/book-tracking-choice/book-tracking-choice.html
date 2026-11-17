@@ -1,0 +1,32 @@
+<h2>{{ 'Track reading by' | translate }}</h2>
+<p>
+  {{
+    'Use one progress value across your copies. Choose pages, Kindle locations, or percentage.'
+      | translate
+  }}
+</p>
+<div role="group" [attr.aria-label]="'Reading progress tracking' | translate">
+  <button
+    type="button"
+    [disabled]="!hasPageFormat()"
+    [class.active]="trackingByPages()"
+    [attr.aria-pressed]="trackingByPages()"
+    (click)="modeChange.emit('pages')"
+  >
+    {{ 'Pages' | translate }}</button
+  ><button
+    type="button"
+    [class.active]="mode() === 'locations'"
+    [attr.aria-pressed]="mode() === 'locations'"
+    (click)="modeChange.emit('locations')"
+  >
+    {{ 'Kindle locations' | translate }}</button
+  ><button
+    type="button"
+    [class.active]="mode() === 'percent'"
+    [attr.aria-pressed]="mode() === 'percent'"
+    (click)="modeChange.emit('percent')"
+  >
+    {{ 'Percentage' | translate }}
+  </button>
+</div>

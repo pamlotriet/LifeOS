@@ -5,7 +5,7 @@ import { BackButton } from '@shared/components/back-button/back-button';
 import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { IonContent } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
 import { filter, map } from 'rxjs';
 @Component({
   selector: 'app-fuel',

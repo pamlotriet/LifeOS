@@ -1,6 +1,7 @@
+import { HomeSpaceRow } from '@pages/home/components/home-space-row/home-space-row';
+import { HomeMetricCard } from '@pages/home/components/home-metric-card/home-metric-card';
 import { AppCarousel } from '@shared/components/app-carousel/app-carousel';
 import { PasswordStore } from '@pages/passwords/state/vault/password-store';
-import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 import { LanguageService } from '@core/i18n/language.service';
 import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
 import { GymStore } from '@pages/gym/state/gym/gym.store';
@@ -10,8 +11,7 @@ import { PlanningStore } from '@pages/planning/state/plan/planning-store';
 import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { money } from '@pages/budget/state/budget/budget.model';
 import { localDate } from '@pages/nutrition/state/nutrition/nutrition.model';
-import { Component, computed, DestroyRef, inject } from '@angular/core';
-import { AppStartup } from '@core/startup/app-startup.service';
+import { Component, computed, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HomeStateService } from '@pages/home/state/dashboard/home-state.service';
 import { addIcons } from 'ionicons';
@@ -26,10 +26,10 @@ import {
   checkmark,
 } from 'ionicons/icons';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
 
 @Component({
-  imports: [AppCarousel, TranslatePipe, AppSkeleton, IonContent, IonIcon, RouterLink],
+  imports: [HomeSpaceRow, HomeMetricCard, AppCarousel, TranslatePipe, IonContent, RouterLink],
   providers: [HomeStateService],
   selector: 'app-home',
   templateUrl: './home.html',
@@ -54,20 +54,6 @@ export class Home {
   });
 
   constructor() {
-    inject(AppStartup).waitFor(
-      computed(
-        () =>
-          this.budget.loading() ||
-          this.books.loading() ||
-          this.planning.loading() ||
-          this.vehicles.loading() ||
-          this.passwords.loading() ||
-          this.nutrition.loading() ||
-          this.gym.loading() ||
-          this.dashboardState.overviewMetrics().some((metric) => metric.loading),
-      ),
-      inject(DestroyRef),
-    );
     addIcons({
       restaurantOutline,
       barbell,

@@ -1,11 +1,14 @@
-import { FormsModule } from '@angular/forms';
+import { EmptyState } from '@shared/components/empty-state/empty-state';
+import { RecipeBookPanel } from '@pages/recipes/components/recipe-book-panel/recipe-book-panel';
+import { RecipeCard } from '@pages/recipes/components/recipe-card/recipe-card';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppInput } from '@shared/components/app-input/app-input';
 import { BackButton } from '@shared/components/back-button/back-button';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { RECIPE_CATEGORIES, recipeCategories } from '@pages/recipes/state/recipe/recipe.model';
 import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
 import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
@@ -13,7 +16,9 @@ import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 @Component({
   selector: 'app-recipes',
   imports: [
-    FormsModule,
+    EmptyState,
+    RecipeBookPanel,
+    RecipeCard,
     AppButton,
     TranslatePipe,
     AppInput,

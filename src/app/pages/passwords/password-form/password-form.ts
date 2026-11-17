@@ -4,7 +4,7 @@ import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
 import { AppSelect, SelectOption } from '@shared/components/app-select/app-select';
 import { PageHeader } from '@shared/components/page-header/page-header';
 import { generatePassword } from '@pages/passwords/state/generator/password-generator';

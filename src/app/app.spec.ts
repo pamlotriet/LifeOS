@@ -1,13 +1,14 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { provideIonicAngular } from '@ionic/angular';
+import { provideIonicAngular } from '@ionic/angular/provide';
 import { App } from '@app/app';
 import { AuthService } from '@core/authentication/authentication.service';
 import { AppNavigation } from '@core/navigation/app-navigation.service';
 import { AppUpdates } from '@core/updates/app-updates.service';
 import { ThemeService } from '@core/theme/theme.service';
 import { AppStartup } from '@core/startup/app-startup.service';
+import { AppAnalytics } from '@core/firebase/analytics.service';
 
 describe('App startup', () => {
   const ready = signal(false);
@@ -23,6 +24,7 @@ describe('App startup', () => {
       providers: [
         provideRouter([]),
         provideIonicAngular(),
+        { provide: AppAnalytics, useValue: {} },
         { provide: AppStartup, useValue: { loading, slow: signal(false), reload: vi.fn() } },
         { provide: AuthService, useValue: { authReady: ready, isAuthenticated: authenticated } },
         { provide: AppNavigation, useValue: {} },

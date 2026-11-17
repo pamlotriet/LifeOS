@@ -1,0 +1,363 @@
+button:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+h3,
+h4,
+p {
+  margin: 0;
+}
+h3 {
+  font-size: 1.1rem;
+}
+h4 {
+  font-size: 0.95rem;
+}
+button {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+small {
+  color: var(--text-secondary);
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--foreground);
+  background: var(--card);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.button:hover:not(:disabled) {
+  filter: brightness(0.96);
+}
+.text-button {
+  min-height: 40px;
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.remove {
+  color: var(--destructive);
+}
+:host header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.day-count {
+  border-radius: 8px;
+  background: var(--muted);
+  padding: 5px 8px;
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.workout-item {
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+}
+.workout-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.workout-title > div {
+  min-width: 0;
+}
+.workout-title h4 {
+  overflow-wrap: anywhere;
+}
+.workout-title small {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.72rem;
+}
+.exercise-number {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  flex-shrink: 0;
+  border-radius: 7px;
+  color: var(--day-color);
+  background: color-mix(in srgb, var(--day-color) 12%, var(--card));
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.prescription {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.prescription span {
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: var(--muted);
+  color: var(--foreground);
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
+}
+.workout-notes {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-top: 12px;
+}
+.item-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+.day-add {
+  width: 100%;
+  border-style: dashed;
+  color: var(--day-color);
+  margin-top: 12px;
+}
+.day-empty {
+  text-align: center;
+  padding: 16px 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.day-empty > span {
+  font-size: 2rem;
+  color: var(--day-color);
+}
+.day-card-actions {
+  margin-top: auto;
+  padding-top: 16px;
+  display: grid;
+  gap: 6px;
+}
+.button.day-add {
+  margin: 0;
+  border-style: solid;
+  background: color-mix(in srgb, var(--day-color) 16%, var(--card));
+  border-color: color-mix(in srgb, var(--day-color) 55%, var(--border));
+  color: var(--foreground);
+}
+.day-add:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--day-color) 28%, var(--card));
+}
+.day-create {
+  color: var(--primary);
+  border-radius: 8px;
+}
+.day-create:hover:not(:disabled) {
+  background: var(--secondary);
+}
+.day-empty {
+  padding: 20px 8px;
+}
+.day-empty > span {
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 10px;
+  border: 1px dashed var(--day-color);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--day-color) 8%, var(--card));
+}
+.gym-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.button {
+  font-weight: 500;
+  min-height: 36px;
+  padding: 8px 16px;
+}
+:host header {
+  margin: 0 0 16px;
+  align-items: center;
+}
+.day-heading {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.day-number {
+  font-size: 30px;
+  font-weight: 300;
+  color: var(--muted-foreground);
+  letter-spacing: -0.06em;
+}
+.day-heading h3 {
+  font-size: 20px;
+  font-weight: 400;
+}
+.day-count {
+  background: none;
+  border-radius: 0;
+  padding: 0;
+  margin-top: 3px;
+  font-size: 12px;
+}
+.header-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--foreground);
+  font-size: 12px;
+  padding: 0 12px;
+}
+.workout-item,
+:host-context(.focused-workout) .workout-item {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: 0 12px;
+  align-items: start;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.workout-title {
+  display: contents;
+}
+.exercise-number {
+  grid-column: 1;
+  width: 32px;
+  height: 32px;
+  background: var(--secondary);
+  color: var(--primary);
+  border-radius: 10px;
+  font-weight: 400;
+}
+.workout-title > div {
+  grid-column: 2;
+}
+.workout-title h4 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.workout-title small {
+  font-size: 12px;
+  margin-top: 5px;
+}
+.prescription,
+:host-context(.focused-workout) .prescription {
+  grid-column: 3;
+  grid-row: 1;
+  margin: 4px 0 0;
+  gap: 8px;
+}
+.prescription span {
+  background: var(--secondary);
+  padding: 5px 8px;
+  border-radius: 16px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.workout-notes,
+:host-context(.focused-workout) .workout-notes {
+  grid-column: 2/-1;
+  margin-top: 10px;
+  font-size: 12px;
+}
+.item-actions,
+:host-context(.focused-workout) .item-actions {
+  grid-column: 2/-1;
+  justify-content: flex-start;
+  margin: 12px 0 0;
+  gap: 16px;
+}
+.item-actions .text-button {
+  width: 20px;
+  min-height: 26px;
+  color: var(--text-secondary);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+.item-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.item-actions .gym-icon {
+  width: 16px;
+  height: 16px;
+}
+.day-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  padding: 16px 0;
+}
+.button.day-add {
+  width: auto;
+  background: none;
+  color: var(--primary);
+  border: 0;
+  padding: 0;
+}
+.day-create {
+  font-size: 12px;
+}
+.day-card-actions > .text-button {
+  font-size: 12px;
+}
+@media (max-width: 650px) {
+  .header-add span {
+    display: none;
+  }
+  .header-add {
+    padding: 0 12px;
+  }
+  .workout-item,
+  :host-context(.focused-workout) .workout-item {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 0 12px;
+  }
+  .prescription,
+  :host-context(.focused-workout) .prescription {
+    grid-column: 2;
+    grid-row: auto;
+    margin-top: 10px;
+  }
+  .workout-notes,
+  :host-context(.focused-workout) .workout-notes {
+    grid-column: 2;
+  }
+}
+
+:host header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+:host .eyebrow {
+  color: var(--day-color);
+  margin-top: 0;
+}
+
+:host header {
+  margin: 0 0 16px;
+  align-items: center;
+}

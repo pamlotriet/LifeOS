@@ -1,0 +1,94 @@
+<h2>{{ group().title | translate }}</h2>
+@if (group().savings) {
+  <p class="muted help-text">
+    {{ 'Actual amounts are transfers into savings, not spending.' | translate }}
+  </p>
+}
+<table>
+  <caption class="sr-only">
+    {{
+      'messages.count_planned_and_actual_amounts_b4027d' | translate: { p0: group().title }
+    }}
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">{{ 'Category' | translate }}</th>
+      <th scope="col">{{ 'Planned' | translate }}</th>
+      <th scope="col">
+        {{ (group().savings ? 'Transferred' : 'Actual spent') | translate }}
+      </th>
+      <th scope="col">{{ 'Difference' | translate }}</th>
+      <th scope="col">{{ 'Status' | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (row of group().rows; track row.id) {
+      <tr
+        class="category-summary"
+        [class.row-expanded]="expanded() === row.id"
+        [style.--category-colour]="row.colour"
+      >
+        <th scope="row">
+          <button
+            class="category-toggle"
+            type="button"
+            [attr.aria-expanded]="expanded() === row.id"
+            [attr.aria-controls]="'category-detail-' + row.id"
+            (click)="toggleCategory.emit(row.id)"
+          >
+            <span class="category-dot" aria-hidden="true"></span>{{ row.name
+            }}<span class="expand-mark" aria-hidden="true">{{
+              expanded() === row.id ? '−' : '+'
+            }}</span>
+          </button>
+          @if (row.deleted) {
+            <small>{{ '(archived)' | translate }}</small>
+          }
+          <div class="comparison-track" aria-hidden="true">
+            <span [style.width.%]="row.usage" [class.exceeded]="row.difference < 0"></span>
+          </div>
+        </th>
+        <td data-label="Planned">
+          {{ (row.hasPlan ? money(row.planned) : 'No plan') | translate }}
+        </td>
+        <td [attr.data-label]="group().savings ? 'Transferred' : 'Actual spent'">
+          {{ money(row.actual) }}
+        </td>
+        <td data-label="Difference" [class.negative]="row.difference < 0">
+          @if (row.difference < 0) {
+            {{ 'messages.count_over_b3f5a3' | translate: { p0: money(-row.difference) } }}
+          } @else if (row.hasPlan) {
+            {{ 'messages.count_left_765fba' | translate: { p0: money(row.difference) } }}
+          } @else {
+            &mdash;
+          }
+        </td>
+        <td data-label="Status">
+          <span
+            class="comparison-badge"
+            [class.badge-over]="row.hasPlan && row.difference < 0"
+            [class.badge-good]="row.hasPlan && row.difference >= 0"
+            [class.badge-unplanned]="!row.hasPlan && row.actual > 0"
+            >{{ row.status | translate }}</span
+          >
+        </td>
+      </tr>
+      <tr class="category-detail-row" [hidden]="expanded() !== row.id">
+        <td colspan="5" [id]="'category-detail-' + row.id">
+          <div
+            appBudgetCategoryDetails
+            [details]="details()"
+            [savings]="group().savings"
+            class="category-detail-grid"
+          ></div>
+        </td>
+      </tr>
+    } @empty {
+      <tr>
+        <td colspan="5" class="empty-state">
+          {{ 'No categories match this filter.' | translate }}
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

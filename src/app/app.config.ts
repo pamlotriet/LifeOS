@@ -1,7 +1,7 @@
 import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideRouter } from '@angular/router';
-import { provideIonicAngular } from '@ionic/angular';
+import { provideIonicAngular } from '@ionic/angular/provide';
 import { addIcons } from 'ionicons';
 import {
   barbell,
@@ -62,6 +62,7 @@ import {
   phonePortrait,
   shieldCheckmark,
 } from 'ionicons/icons';
+
 import { routes } from '@app/app.routes';
 import { provideAppTranslations } from '@core/i18n/translation.providers';
 

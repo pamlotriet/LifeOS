@@ -9,7 +9,8 @@ import {
   signal,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { IonIcon, IonModal } from '@ionic/angular';
+import { IonIcon } from '@ionic/angular/ion-icon';
+import { IonModal } from '@ionic/angular/ion-modal';
 
 const localIso = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;

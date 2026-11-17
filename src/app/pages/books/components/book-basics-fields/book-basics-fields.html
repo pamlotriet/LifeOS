@@ -1,0 +1,36 @@
+<div class="book-cover-preview">
+  @if (coverUrl()) {
+    <img [src]="coverUrl()" [attr.alt]="'Book cover' | translate" />
+  } @else {
+    <span
+      ><ion-icon name="book" aria-hidden="true"></ion-icon
+      ><strong>{{ 'Your cover will appear here' | translate }}</strong
+      ><small>{{ 'An ISBN gives the best match.' | translate }}</small></span
+    >
+  }
+</div>
+<div class="book-basic-fields" [formGroup]="form()">
+  <label
+    >{{ 'Title' | translate }} <em>*</em
+    ><input
+      appInput="field"
+      formControlName="title"
+      [placeholder]="'Enter book title' | translate"
+      (blur)="lookupCover.emit()" /></label
+  ><label
+    >{{ 'Author' | translate }} <em>*</em
+    ><input
+      appInput="field"
+      formControlName="author"
+      [placeholder]="'Enter author name' | translate"
+      (blur)="lookupCover.emit()" /></label
+  ><label
+    >{{ 'ISBN' | translate }}
+    <input
+      appInput="field"
+      formControlName="isbn"
+      inputmode="numeric"
+      [placeholder]="'Scan or enter ISBN' | translate"
+      (blur)="lookupCover.emit()"
+  /></label>
+</div>

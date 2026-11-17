@@ -1,3 +1,6 @@
+import { GymLibraryCard } from '@pages/gym/components/gym-library-card/gym-library-card';
+import { GymDayCard } from '@pages/gym/components/gym-day-card/gym-day-card';
+import { GymWeekSummary } from '@pages/gym/components/gym-week-summary/gym-week-summary';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { AppButton } from '@shared/components/app-button/app-button';
@@ -6,7 +9,8 @@ import { GymExercisePicker } from '@pages/gym/components/gym-exercise-picker/gym
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonModal } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonModal } from '@ionic/angular/ion-modal';
 import { GYM_DAYS, GymEntry, GymExercise, MUSCLE_GROUPS } from '@pages/gym/state/gym/gym.model';
 import { GymStore } from '@pages/gym/state/gym/gym.store';
 type WorkoutDraft = Omit<GymEntry, 'id' | 'sets' | 'rest'> & {
@@ -17,6 +21,9 @@ type WorkoutDraft = Omit<GymEntry, 'id' | 'sets' | 'rest'> & {
 @Component({
   selector: 'app-gym',
   imports: [
+    GymLibraryCard,
+    GymDayCard,
+    GymWeekSummary,
     TranslatePipe,
     AppInput,
     AppButton,

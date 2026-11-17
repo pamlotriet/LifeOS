@@ -3,12 +3,14 @@ import { WriteToast } from '@shared/components/write-toast/write-toast';
 import { Login } from '@pages/login/login';
 import { AppUpdates } from '@core/updates/app-updates.service';
 import { Component, inject, signal } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular';
+import { IonApp } from '@ionic/angular/ion-app';
+import { IonRouterOutlet } from '@ionic/angular/ion-router-outlet';
 import { AuthService } from '@core/authentication/authentication.service';
 import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 import { ThemeService } from '@core/theme/theme.service';
 import { ClearZeroOnFocus } from '@shared/directives/clear-zero-on-focus';
 import { AppStartup } from '@core/startup/app-startup.service';
+import { AppAnalytics } from '@core/firebase/analytics.service';
 
 @Component({
   imports: [TranslatePipe, IonApp, IonRouterOutlet, ClearZeroOnFocus, WriteToast, Login],
@@ -16,6 +18,7 @@ import { AppStartup } from '@core/startup/app-startup.service';
   templateUrl: './app.html',
 })
 export class App {
+  private readonly analytics = inject(AppAnalytics);
   readonly startup = inject(AppStartup);
   readonly updates = inject(AppUpdates);
   readonly refreshCoordinator = inject(RefreshCoordinator);

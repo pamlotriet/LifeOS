@@ -1,0 +1,72 @@
+<h2 class="mb-3 font-bold">{{ 'Basics' | translate }}</h2>
+<label class="block text-xs"
+  >{{ 'Title *' | translate
+  }}<input
+    appInput="field"
+    name="title"
+    [(ngModel)]="draft().title"
+    [placeholder]="'e.g. Creamy chicken pasta' | translate"
+    class="mt-1 block w-full" /></label
+><label class="mt-3 block text-xs"
+  >{{ 'Description' | translate
+  }}<textarea
+    appInput="field"
+    name="description"
+    [(ngModel)]="draft().description"
+    rows="3"
+    [placeholder]="'A short description...' | translate"
+    class="mt-1 block w-full"
+  ></textarea>
+</label>
+<div class="mt-3 grid grid-cols-2 gap-2">
+  <fieldset class="col-span-2 min-w-0">
+    <legend class="text-xs">{{ 'Categories' | translate }}</legend>
+    <p class="mt-1 text-xs text-[var(--text-secondary)]">
+      {{ 'Choose all that apply.' | translate }}
+    </p>
+    <div class="mt-2 flex flex-wrap gap-2">
+      @for (category of categories(); track category) {
+        <label
+          class="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+          ><input
+            type="checkbox"
+            [checked]="selectedCategories().includes(category)"
+            (change)="toggleCategory.emit(category)"
+            class="accent-cyan-400"
+          />{{ category }}</label
+        >
+      }
+    </div>
+  </fieldset>
+  <label class="min-w-0 text-xs"
+    >{{ 'Difficulty' | translate
+    }}<app-select
+      class="mt-1 block"
+      [ariaLabel]="'Recipe difficulty' | translate"
+      [options]="difficultyOptions()"
+      [selectedValue]="draft().difficulty"
+      (valueChange)="difficultyChange.emit($event)"
+  /></label>
+</div>
+<div class="mt-3 grid grid-cols-2 gap-2">
+  <label class="text-xs"
+    >{{ 'Cook time (mins)' | translate
+    }}<input
+      appInput="field"
+      type="number"
+      min="0"
+      name="cookTime"
+      [(ngModel)]="draft().cookTime"
+      class="mt-1 block w-full" /></label
+  ><label class="text-xs"
+    >{{ 'Servings' | translate
+    }}<input
+      appInput="field"
+      type="number"
+      min="0.01"
+      step="any"
+      name="servings"
+      [(ngModel)]="draft().servings"
+      class="mt-1 block w-full"
+  /></label>
+</div>

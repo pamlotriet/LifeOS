@@ -18,7 +18,9 @@ import {
 } from 'ionicons/icons';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { IonContent, IonIcon, IonModal } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
+import { IonModal } from '@ionic/angular/ion-modal';
 import {
   bookProgressMode,
   kindleSummary,

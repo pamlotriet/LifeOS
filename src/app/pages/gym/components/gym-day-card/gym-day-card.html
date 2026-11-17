@@ -1,0 +1,142 @@
+<header>
+  <div class="day-heading">
+    <span class="day-number">{{ (day().day + 1).toString().padStart(2, '0') }}</span>
+    <div>
+      <h3>{{ day().name | translate }}</h3>
+      <p class="day-count">
+        {{
+          (day().entries.length
+            ? day().entries.length + ' exercises ? Planned session'
+            : 'Rest day ? Room to recharge'
+          ) | translate
+        }}
+      </p>
+    </div>
+  </div>
+  <button
+    type="button"
+    class="text-button header-add"
+    [disabled]="saving()"
+    (click)="add.emit()"
+    [attr.aria-label]="'Add exercise to ' + day().name | translate"
+  >
+    <svg
+      class="gym-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 5v14M5 12h14" /></svg
+    ><span>{{ 'Add exercise' | translate }}</span>
+  </button>
+</header>
+@for (item of day().entries; track item.id; let index = $index) {
+  <div class="workout-item">
+    <div class="workout-title">
+      <span class="exercise-number">{{ index + 1 }}</span>
+      <div>
+        <h4>{{ item.exercise?.name || 'Exercise unavailable' | translate }}</h4>
+        <small
+          >{{ item.exercise?.muscle }}
+          @if (item.exercise?.equipment) {
+            · {{ item.exercise?.equipment }}
+          }
+        </small>
+      </div>
+    </div>
+    <div class="prescription">
+      <span>{{ item.sets }} {{ (item.sets === 1 ? 'set' : 'sets') | translate }}</span
+      ><span>{{ item.reps }}</span
+      ><span>{{ 'messages.count_s_rest_8b99a9' | translate: { p0: item.rest } }}</span>
+      @if (item.weight) {
+        <span>{{ item.weight }}</span>
+      }
+    </div>
+    @if (item.notes) {
+      <p class="workout-notes">{{ item.notes }}</p>
+    }
+    <div class="item-actions">
+      <button
+        type="button"
+        class="text-button order-button"
+        [disabled]="saving() || index === 0"
+        [attr.aria-label]="'Move ' + item.exercise?.name + ' up' | translate"
+        (click)="move.emit({ id: item.id, direction: -1 })"
+      >
+        &uarr;</button
+      ><button
+        type="button"
+        class="text-button order-button"
+        [disabled]="saving() || index === day().entries.length - 1"
+        [attr.aria-label]="'Move ' + item.exercise?.name + ' down' | translate"
+        (click)="move.emit({ id: item.id, direction: 1 })"
+      >
+        &darr;</button
+      ><button
+        class="text-button"
+        type="button"
+        [disabled]="saving()"
+        (click)="edit.emit(item)"
+        [attr.aria-label]="'Edit ' + item.exercise?.name | translate"
+      >
+        <svg
+          class="gym-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m16 3 5 5-12 12-6 1 1-6L16 3ZM14 5l5 5" />
+        </svg></button
+      ><button
+        class="text-button remove"
+        type="button"
+        [disabled]="saving()"
+        [attr.aria-label]="'Remove ' + item.exercise?.name + ' from ' + day().name | translate"
+        (click)="remove.emit(item.id)"
+      >
+        <svg
+          class="gym-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+} @empty {
+  <div class="day-empty">
+    <span aria-hidden="true">○</span>
+    <p>{{ 'Room to recharge' | translate }}<br />{{ 'or build a workout.' | translate }}</p>
+  </div>
+}
+<div class="day-card-actions">
+  @if (day().entries.length) {
+    <button type="button" class="text-button" [disabled]="saving()" (click)="copy.emit()">
+      {{ 'Copy workout to another day' | translate }}
+    </button>
+  }
+  <button type="button" class="button day-add" [disabled]="saving()" (click)="add.emit()">
+    {{ '+ Add exercise' | translate }}</button
+  ><button
+    type="button"
+    class="text-button day-create"
+    [disabled]="saving()"
+    (click)="create.emit()"
+  >
+    {{ '+ Create a new exercise' | translate }}
+  </button>
+</div>

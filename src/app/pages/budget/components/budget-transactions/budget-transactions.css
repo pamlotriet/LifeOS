@@ -4,8 +4,6 @@
 .transaction-entry {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
   border-bottom: 1px solid var(--border);
 }
 .transaction-entry:last-child {
@@ -17,7 +15,6 @@
   flex: 1;
   min-width: 0;
   min-height: 48px;
-  gap: 12px;
   padding: 0;
   border: 0;
 }
@@ -98,11 +95,6 @@
 }
 :host-context(.dark) .transaction-confirm {
   background: var(--card);
-}
-:host-context(.dark) .confirm-actions .danger-button {
-  background: #73324a;
-  border-color: #b65d79;
-  color: #ffe3eb;
 }
 @media (max-width: 520px) {
   .transaction-entry {

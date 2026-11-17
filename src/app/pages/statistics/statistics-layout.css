@@ -109,30 +109,12 @@
   width: 100%;
   min-width: 0;
 }
-.kpi-grid,
-.book-kpis {
+.kpi-grid {
   margin-bottom: 16px;
 }
-.kpi-card,
-.book-kpi {
+.kpi-card {
   min-width: 0;
   min-height: 132px;
-}
-.kpi-card > div {
-  min-width: 0;
-}
-.kpi-card strong,
-.book-value {
-  font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
-  font-size: clamp(22px, 2vw, 28px);
-}
-.kpi-card small {
-  line-height: 1.5;
-}
-.book-kpi-label {
-  letter-spacing: 0.06em;
-  line-height: 1.5;
 }
 .stats-charts-grid {
   display: grid;
@@ -143,8 +125,7 @@
   margin-top: 0;
   min-width: 0;
 }
-.chart-heading h2,
-.book-card h2 {
+.chart-heading h2 {
   font-size: 17px;
   font-weight: 600;
   line-height: 1.4;
@@ -153,44 +134,8 @@
   line-height: 1.6;
   margin: 6px 0 0;
 }
-.stats-chart-card,
-.book-card {
+.stats-chart-card {
   padding: 20px;
-}
-.book-main-grid,
-.book-lower-grid,
-.book-details {
-  gap: 16px;
-}
-.book-main-grid {
-  margin-bottom: 16px;
-}
-.book-heading {
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.book-heading > span {
-  line-height: 1.5;
-}
-.book-insights {
-  margin-top: 16px;
-}
-.category-content {
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.category-chart {
-  max-width: 100%;
-  margin-inline: auto;
-}
-.category-legend {
-  min-width: 160px;
-}
-.category-legend > div {
-  grid-template-columns: 10px minmax(0, 1fr) auto auto;
-}
-.category-legend span {
-  overflow-wrap: anywhere;
 }
 .vehicle-filter {
   flex-wrap: wrap;
@@ -206,18 +151,6 @@
 .stats-date-range input:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 3px;
-}
-@media (max-width: 1100px) {
-  .book-kpis {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .book-main-grid,
-  .book-lower-grid {
-    grid-template-columns: 1fr;
-  }
-  .category-content {
-    flex-direction: row;
-  }
 }
 @media (max-width: 900px) {
   .stats-charts-grid {
@@ -271,11 +204,6 @@
   .stats-period .stats-range-field {
     grid-column: 1/-1;
   }
-  .book-kpis {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-  .book-kpi,
   .kpi-card {
     padding: 16px;
     min-height: 132px;
@@ -285,22 +213,9 @@
     flex-direction: column;
     gap: 10px;
   }
-  .book-value {
-    margin-top: 10px;
-  }
-  .book-card,
   .stats-chart-card {
     padding: 16px;
     border-radius: 17px;
-  }
-  .category-content {
-    flex-direction: column;
-  }
-  .book-highlights {
-    grid-template-columns: 1fr;
-  }
-  .book-insights p {
-    font-size: 13px;
   }
   .stats-date-range {
     gap: 10px;

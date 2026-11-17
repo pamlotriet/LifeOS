@@ -1,3 +1,4 @@
+import { PlanningOverview } from '@pages/planning/components/planning-overview/planning-overview';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { AppButton } from '@shared/components/app-button/app-button';
@@ -25,7 +26,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { PlanningHeader } from '@pages/planning/components/planning-header/planning-header';
 import { GroceryItem } from '@pages/planning/state/plan/planning.model';
 import { PlanningStore } from '@pages/planning/state/plan/planning-store';
@@ -33,6 +35,7 @@ import { PlanningStore } from '@pages/planning/state/plan/planning-store';
 @Component({
   selector: 'app-planning-meals',
   imports: [
+    PlanningOverview,
     TranslatePipe,
     AppInput,
     AppButton,

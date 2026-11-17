@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IonContent } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
@@ -11,6 +11,7 @@ import { BackButton } from '@shared/components/back-button/back-button';
 import { BudgetNumber } from '@shared/directives/budget-number';
 
 @Component({
+  host: { class: 'budget-screen' },
   selector: 'app-budget-account-form',
   imports: [
     FormsModule,
@@ -24,7 +25,7 @@ import { BudgetNumber } from '@shared/directives/budget-number';
     BudgetNumber,
   ],
   templateUrl: './budget-account-form.html',
-  styleUrls: ['../budget.css', '../budget-layout.css'],
+  
 })
 export class BudgetAccountForm {
   readonly store = inject(BudgetStore);

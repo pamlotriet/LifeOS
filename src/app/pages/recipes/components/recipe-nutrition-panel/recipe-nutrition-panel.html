@@ -1,0 +1,35 @@
+@let totals = summary();
+<p class="panel-eyebrow">{{ 'Recipe nutrition' | translate }}</p>
+<h2>{{ 'Per serving' | translate }}</h2>
+@if (ingredientCount()) {
+  <div class="panel-calories">
+    <strong>{{ totals.perServing.calories.toFixed(0) }}</strong
+    ><span>kcal</span>
+  </div>
+  <p class="panel-servings">{{ 'Makes {{p0}} servings' | translate: { p0: servings() } }}</p>
+  <dl class="panel-macros">
+    @for (key of macroKeys; track key) {
+      <div>
+        <dt>{{ key | translate }}</dt>
+        <dd>{{ totals.perServing[key].toFixed(1) }} <span>g</span></dd>
+      </div>
+    }
+  </dl>
+  <div class="panel-total">
+    <span>{{ 'Entire recipe' | translate }}</span
+    ><strong>{{ totals.total.calories.toFixed(0) }} kcal</strong>
+  </div>
+  @if (!totals.complete) {
+    <p class="panel-status">
+      {{ 'Partial totals. Link all ingredient notes for complete nutrition.' | translate }}
+    </p>
+  }
+} @else {
+  <div class="panel-calories panel-empty"><strong>&#8212;</strong><span>kcal</span></div>
+  <p class="panel-servings">
+    {{ 'Add ingredients to calculate nutrition per serving.' | translate }}
+  </p>
+}
+<p class="panel-footnote">
+  {{ 'Recipes stay separate from your diary until you log a serving.' | translate }}
+</p>

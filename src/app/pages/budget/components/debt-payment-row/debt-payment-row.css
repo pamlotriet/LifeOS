@@ -1,0 +1,46 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+:host(:last-child) {
+  border-bottom: 0;
+}
+
+.payment-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.payment-actions .text-link {
+  min-height: 40px;
+}
+.payment-notes {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 6px 0 0;
+}
+.payment-badge {
+  display: inline-block;
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 99px;
+  margin-left: 5px;
+  color: var(--lifeos-cyan);
+  font-size: 0.65rem;
+}
+.payment-badge.overdue {
+  color: var(--destructive);
+}
+@media (max-width: 520px) {
+  .payment-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width:520px) { :host { align-items:flex-start; flex-direction:column; } }

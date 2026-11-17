@@ -1,0 +1,46 @@
+<summary>
+  {{ 'Food missing? Create an ingredient' | translate }}
+</summary>
+<label
+  >{{ 'Name' | translate
+  }}<input appInput="field" name="quickName" [(ngModel)]="name" class="lifeos-select"
+/></label>
+<p>{{ 'Label values per 100 g' | translate }}</p>
+<div class="quick-food-macros">
+  <label
+    >{{ 'Calories' | translate
+    }}<input
+      appInput="field"
+      name="quickCalories"
+      type="number"
+      [(ngModel)]="calories"
+      class="lifeos-select" /></label
+  ><label
+    >{{ 'Protein' | translate
+    }}<input
+      appInput="field"
+      name="quickProtein"
+      type="number"
+      [(ngModel)]="protein"
+      class="lifeos-select" /></label
+  ><label
+    >{{ 'Carbohydrates' | translate
+    }}<input
+      appInput="field"
+      name="quickCarbs"
+      type="number"
+      [(ngModel)]="carbs"
+      class="lifeos-select" /></label
+  ><label
+    >{{ 'Fat' | translate
+    }}<input appInput="field" name="quickFat" type="number" [(ngModel)]="fat" class="lifeos-select"
+  /></label>
+</div>
+<button
+  appButton="secondary"
+  type="button"
+  (click)="create.emit()"
+  [disabled]="creating() || !name().trim()"
+>
+  {{ 'Create ingredient' | translate }}
+</button>

@@ -12,7 +12,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonIcon, IonModal } from '@ionic/angular';
+import { IonIcon } from '@ionic/angular/ion-icon';
+import { IonModal } from '@ionic/angular/ion-modal';
 import { RefuelStore } from '@pages/fuel/state/refuel/refuel-store';
 import { RefuelInput } from '@pages/fuel/state/refuel/refuel.model';
 import { AppSelect } from '@shared/components/app-select/app-select';

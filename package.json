@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:stats": "ng build --stats-json",
+    "analyze:bundle": "node scripts/analyze-bundle.cjs",
     "deploy:app": "npm run build && firebase deploy --only hosting,firestore:rules --project fuel-consumption-92c8c",
     "deploy:rules": "firebase deploy --only firestore:rules,storage --project fuel-consumption-92c8c",
     "deploy": "npm run build && firebase deploy --only hosting,firestore:rules,storage --project fuel-consumption-92c8c",

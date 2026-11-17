@@ -1,3 +1,8 @@
+import { BookTrackingChoice } from '@pages/books/components/book-tracking-choice/book-tracking-choice';
+import { BookBasicsFields } from '@pages/books/components/book-basics-fields/book-basics-fields';
+import { BookReadingDates } from '@pages/books/components/book-reading-dates/book-reading-dates';
+import { BookOwnedCopies } from '@pages/books/components/book-owned-copies/book-owned-copies';
+import { BookDetailHero } from '@pages/books/components/book-detail-hero/book-detail-hero';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { AppButton } from '@shared/components/app-button/app-button';
@@ -5,7 +10,9 @@ import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, inject, signal, Input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IonContent, IonIcon, ModalController } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
+import { ModalController } from '@ionic/angular/modal-controller';
 import { PageHeader } from '@shared/components/page-header/page-header';
 import {
   BookCopy,
@@ -31,6 +38,11 @@ import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 @Component({
   selector: 'app-book-form',
   imports: [
+    BookTrackingChoice,
+    BookBasicsFields,
+    BookReadingDates,
+    BookOwnedCopies,
+    BookDetailHero,
     TranslatePipe,
     AppInput,
     AppButton,

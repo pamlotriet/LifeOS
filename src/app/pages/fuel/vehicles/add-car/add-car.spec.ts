@@ -1,4 +1,4 @@
-import { IonModal } from '@ionic/angular';
+import { IonModal } from '@ionic/angular/ion-modal';
 import { FuelModalStub } from '@pages/fuel/testing/fuel-modal.testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';

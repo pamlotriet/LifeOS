@@ -8,7 +8,8 @@ import { BackButton } from '@shared/components/back-button/back-button';
 import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   BudgetCategory,
@@ -22,6 +23,7 @@ import {
 } from '@pages/budget/state/budget/budget.model';
 
 @Component({
+  host: { class: 'budget-screen' },
   selector: 'app-budget-categories',
   imports: [
     BudgetPage,
@@ -36,7 +38,7 @@ import {
     IonIcon,
   ],
   templateUrl: './budget-categories.html',
-  styleUrls: ['../budget.css', '../budget-layout.css'],
+  
 })
 export class BudgetCategories {
   readonly store = inject(BudgetStore);

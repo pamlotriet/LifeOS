@@ -1,0 +1,15 @@
+:host > ion-icon {
+  color: var(--success);
+}
+:host h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 450;
+}
+:host p {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+:host > ion-icon {
+  font-size: 24px;
+}

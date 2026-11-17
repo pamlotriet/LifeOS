@@ -99,166 +99,12 @@
         </section>
       } @else {
         @if (data.books; as book) {
-          <section class="book-kpis" [attr.aria-label]="'Book statistics' | translate">
-            @for (card of book.cards; track card.label) {
-              <article class="book-card book-kpi">
-                <div class="book-kpi-label">
-                  <ion-icon [name]="card.icon" />{{ card.label | translate }}
-                </div>
-                <div class="book-value">
-                  {{ card.value }} <span>{{ card.unit | translate }}</span>
-                </div>
-                <p>{{ card.note | translate }}</p>
-              </article>
-            }
-          </section>
-          <div class="book-main-grid">
-            <section class="book-card reading-chart">
-              <div class="book-heading">
-                <h2>{{ 'Books read by month' | translate }}</h2>
-                <span>{{
-                  'messages.count_books_count_714b38'
-                    | translate: { p0: book.totalFinished, p1: range() }
-                }}</span>
-              </div>
-              <app-chart
-                [config]="data.primary"
-                [height]="240"
-                [label]="'Books finished each month' | translate"
-              />
-              <div class="book-divider"></div>
-              <div class="book-heading">
-                <h3>{{ 'Pages read' | translate }}</h3>
-                <span>{{
-                  'messages.count_pages_e7f389' | translate: { p0: book.totalPages }
-                }}</span>
-              </div>
-              <app-chart
-                [config]="book.pages"
-                [height]="150"
-                [label]="'Pages in books finished each month' | translate"
-              />
-              <p class="chart-note">
-                {{ 'Pages in finished books' | translate }}
-                @if (range() === 'All') {
-                  {{ '? Charts show the latest 24 months; totals include all books.' | translate }}
-                }
-              </p>
-            </section>
-            <section class="book-card">
-              <h2>{{ 'Top authors' | translate }}</h2>
-              <p class="book-subtitle">{{ 'Most finished books' | translate }}</p>
-              @for (row of book.authors; track row.label) {
-                <div class="book-bar-row">
-                  <div>
-                    <span>{{ row.label | translate }}</span
-                    ><span>{{ row.value }}</span>
-                  </div>
-                  <div class="book-track">
-                    <i [style.width.%]="(row.value / book.authors[0].value) * 100"></i>
-                  </div>
-                </div>
-              } @empty {
-                <p class="book-subtitle">
-                  {{ 'Finish a book to see your top authors.' | translate }}
-                </p>
-              }
-              <div class="book-divider"></div>
-              <h3 class="rating-heading">
-                <ion-icon name="star-outline" /> {{ 'Ratings spread' | translate }}
-              </h3>
-              @for (row of book.ratings; track row.label) {
-                <div class="rating-row">
-                  <span>{{ row.label | translate }}</span>
-                  <div class="book-track">
-                    <i
-                      [style.width.%]="(row.value / (book.totalFinished || 1)) * 100"
-                      [style.background]="row.color"
-                    ></i>
-                  </div>
-                  <span>{{ row.value }}</span>
-                </div>
-              }
-            </section>
-          </div>
-          <div class="book-lower-grid">
-            <section class="book-card">
-              <h2>{{ 'Books by category' | translate }}</h2>
-              <p class="book-subtitle">
-                {{ 'Across everything finished in this period' | translate }}
-              </p>
-              <div class="category-content">
-                <div class="category-chart">
-                  <app-chart
-                    [config]="data.secondary"
-                    [height]="200"
-                    [label]="'Finished books by category' | translate"
-                  />
-                </div>
-                <div class="category-legend">
-                  @for (row of book.categories; track row.label) {
-                    <div>
-                      <i [style.background]="row.color"></i><span>{{ row.label | translate }}</span
-                      ><strong>{{ row.value }}</strong
-                      ><span>{{ row.percent }}%</span>
-                    </div>
-                  } @empty {
-                    <p>{{ 'No finished books in this period.' | translate }}</p>
-                  }
-                </div>
-              </div>
-            </section>
-            <div class="book-details">
-              <div class="book-highlights">
-                <article class="book-card">
-                  <ion-icon name="trophy-outline" />
-                  <div class="book-value">
-                    {{ book.bestMonth }}
-                    <span>{{
-                      'messages.count_books_4eaf31' | translate: { p0: book.bestCount }
-                    }}</span>
-                  </div>
-                  <p>{{ 'Best month in this period' | translate }}</p>
-                </article>
-                <article class="book-card">
-                  <ion-icon name="flame-outline" />
-                  <div class="book-value">
-                    {{ book.streak }} <span>{{ 'in a row' | translate }}</span>
-                  </div>
-                  <p>{{ 'Consecutive days finishing books' | translate }}</p>
-                </article>
-              </div>
-              <section class="book-card">
-                <h2>{{ 'Formats on the shelf' | translate }}</h2>
-                <p class="book-subtitle">
-                  {{ 'How you own them ï¿½ all recorded copies' | translate }}
-                </p>
-                @for (row of book.formats; track row.label) {
-                  <div class="book-bar-row">
-                    <div>
-                      <span>{{ row.label | translate }}</span
-                      ><span>{{ row.value }}</span>
-                    </div>
-                    <div class="book-track">
-                      <i [style.width.%]="row.percent" [style.background]="row.color"></i>
-                    </div>
-                  </div>
-                } @empty {
-                  <p class="book-subtitle">
-                    {{ 'Add a format to your books to see the breakdown.' | translate }}
-                  </p>
-                }
-              </section>
-            </div>
-          </div>
-          <section class="book-card book-insights">
-            <h2><ion-icon name="bulb-outline" /> {{ 'Insights' | translate }}</h2>
-            <div>
-              @for (insight of book.insights; track insight) {
-                <p><ion-icon name="trending-up-outline" />{{ insight | translate }}</p>
-              }
-            </div>
-          </section>
+          <app-book-statistics
+            [book]="book"
+            [primary]="data.primary"
+            [secondary]="data.secondary"
+            [range]="range()"
+          />
         } @else if (selected() === 'budget') {
           <div class="budget-report-toolbar">
             <div>
@@ -286,15 +132,7 @@
         } @else {
           <section class="kpi-grid" [attr.aria-label]="'Key statistics' | translate">
             @for (item of data.kpis; track item.label) {
-              <article class="kpi-card">
-                <span [style.background]="item.accent"
-                  ><ion-icon [name]="item.icon"></ion-icon
-                ></span>
-                <div>
-                  <small>{{ item.label | translate }}</small
-                  ><strong>{{ item.value }}</strong>
-                </div>
-              </article>
+              <article appStatisticsKpi [item]="item" class="kpi-card"></article>
             }
           </section>
           <div class="stats-charts-grid">
@@ -355,15 +193,7 @@
               } @else {
                 <div class="kpi-grid" [attr.aria-label]="'Debt statistics' | translate">
                   @for (item of debt.kpis; track item.label) {
-                    <article class="kpi-card">
-                      <span [style.background]="item.accent"
-                        ><ion-icon [name]="item.icon"></ion-icon
-                      ></span>
-                      <div>
-                        <small>{{ item.label | translate }}</small
-                        ><strong>{{ item.value }}</strong>
-                      </div>
-                    </article>
+                    <article appStatisticsKpi [item]="item" class="kpi-card"></article>
                   }
                 </div>
                 <h3 class="mt-5 mb-3">{{ 'Outstanding by account' | translate }}</h3>
@@ -392,15 +222,8 @@
               }
             </section>
           }
-          <section class="stats-insight">
-            <ion-icon name="bulb-outline"></ion-icon>
-            <div>
-              <h2>{{ 'Insights' | translate }}</h2>
-              <p>{{ data.insight | translate }}</p>
-            </div>
-          </section>
+          <section appStatisticsInsight [insight]="data.insight" class="stats-insight"></section>
         }
       }
-    }
-  </main></ion-content
->
+    }</main
+></ion-content>

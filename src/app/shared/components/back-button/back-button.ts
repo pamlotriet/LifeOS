@@ -2,7 +2,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline } from 'ionicons/icons';
 import { Component, computed, inject, input } from '@angular/core';
-import { IonIcon } from '@ionic/angular';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { AppNavigation, pageName } from '@core/navigation/app-navigation.service';
 
 @Component({

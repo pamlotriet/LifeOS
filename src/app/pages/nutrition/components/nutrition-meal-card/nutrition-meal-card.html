@@ -1,0 +1,29 @@
+<header>
+  <div>
+    <h3>{{ meal() }}</h3>
+    <span>{{ 'messages.count_kcal_46a76a' | translate: { p0: calories().toFixed(0) } }}</span>
+  </div>
+  <button
+    class="add-meal"
+    [attr.aria-label]="'Add food to ' + meal() | translate"
+    (click)="add.emit()"
+  >
+    +
+  </button>
+</header>
+@for (entry of entries(); track entry.id) {
+  <article
+    appFoodLogRow
+    [entry]="entry"
+    [busy]="busy()"
+    (edit)="edit.emit(entry)"
+    (logAgain)="logAgain.emit(entry)"
+    (remove)="remove.emit(entry.id)"
+    class="food-row"
+  ></article>
+} @empty {
+  <button class="empty-meal" (click)="add.emit()">
+    {{ 'Nothing logged yet.' | translate }}
+    <span>{{ 'messages.add_count_044e7c' | translate: { p0: meal().toLowerCase() } }}</span>
+  </button>
+}

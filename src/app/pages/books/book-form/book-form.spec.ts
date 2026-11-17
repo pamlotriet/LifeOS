@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/modal-controller';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BookForm } from '@pages/books/book-form/book-form';
 import { BookStore } from '@pages/books/state/book/book-store';
@@ -49,6 +49,25 @@ describe('BookForm', () => {
     fixture.componentInstance.cancel();
     expect(dismiss).toHaveBeenCalled();
     expect(TestBed.inject(Router).navigateByUrl).not.toHaveBeenCalled();
+  });
+
+  it('keeps extracted basics bound to the parent form and refreshes asynchronously matched covers', async () => {
+    const page = fixture.componentInstance;
+    const title = fixture.nativeElement.querySelector(
+      'input[formControlName="title"]',
+    ) as HTMLInputElement;
+    title.value = 'A new title';
+    title.dispatchEvent(new Event('input'));
+    expect(page.form.controls.title.value).toBe('A new title');
+    title.value = '';
+    title.dispatchEvent(new Event('input'));
+    expect(page.form.controls.title.hasError('required')).toBe(true);
+    await Promise.resolve();
+    page.form.controls.coverUrl.setValue('https://example.com/matched-cover.jpg');
+    fixture.detectChanges();
+    expect(
+      fixture.nativeElement.querySelector('.book-cover-preview img')?.getAttribute('src'),
+    ).toBe('https://example.com/matched-cover.jpg');
   });
 
   it('opens a finished book directly on its ratings and review fields', async () => {

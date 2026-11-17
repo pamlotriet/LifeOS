@@ -1,7 +1,8 @@
+import { RefuelHistoryCard } from '@pages/fuel/components/refuel-history-card/refuel-history-card';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonIcon } from '@ionic/angular';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { RefuelStore } from '@pages/fuel/state/refuel/refuel-store';
 import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
@@ -10,7 +11,16 @@ import { AppDatePicker } from '@shared/components/app-date-picker/app-date-picke
 import { AppButton } from '@shared/components/app-button/app-button';
 
 @Component({
-  imports: [TranslatePipe, IonIcon, RouterLink, AppSelect, AppDatePicker, FuelLoading, AppButton],
+  imports: [
+    RefuelHistoryCard,
+    TranslatePipe,
+    IonIcon,
+    RouterLink,
+    AppSelect,
+    AppDatePicker,
+    FuelLoading,
+    AppButton,
+  ],
   selector: 'app-fuel-history',
   host: { class: 'block' },
   templateUrl: './fuel-history.html',
@@ -62,17 +72,5 @@ export class FuelHistory {
 
   nextPage(): void {
     this.page.set(Math.min(this.totalPages(), this.currentPage() + 1));
-  }
-
-  date(value: string): string {
-    return new Date(`${value}T12:00:00`).toLocaleDateString('en-ZA', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-  }
-
-  number(value: number | null, digits = 1): string {
-    return value === null ? '—' : value.toFixed(digits);
   }
 }

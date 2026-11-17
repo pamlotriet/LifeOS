@@ -4,61 +4,8 @@
   gap: 16px;
   min-width: 0;
 }
-.planning-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin: 24px 0 20px;
-}
-.planning-toolbar .planned-month-nav {
-  margin: 0;
-  width: 320px;
-  max-width: 100%;
-  padding: 6px;
-  background: var(--card);
-}
-.planning-toolbar .copy-all {
-  font-size: 0.8rem;
-}
 .planning-summary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-.planning-summary article {
-  padding: 22px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--card);
-  min-width: 0;
-}
-.planning-summary span {
-  display: block;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-}
-.planning-summary strong {
-  display: block;
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.03em;
-  margin: 12px 0;
-  overflow-wrap: anywhere;
-}
-.planning-summary small {
-  color: var(--text-secondary);
-  font-size: 0.73rem;
-  line-height: 1.5;
-}
-.planning-summary .forecast-card {
-  border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
-}
-.forecast-card strong {
-  color: var(--primary);
-}
-.forecast-card strong.negative {
-  color: var(--destructive);
 }
 .planning-hint {
   font-size: 0.78rem;
@@ -168,25 +115,9 @@
   display: none;
 }
 @media (max-width: 700px) {
-  .planning-toolbar {
-    flex-wrap: wrap;
-  }
-  .planning-toolbar .planned-month-nav {
-    width: 100%;
-  }
-  .planning-toolbar .copy-all {
-    width: 100%;
-    justify-content: center;
-  }
   .planning-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-  }
-  .planning-summary article {
-    padding: 16px;
-  }
-  .planning-summary .forecast-card {
-    grid-column: 1/-1;
   }
   .plan-section-toolbar {
     align-items: start;
@@ -205,9 +136,6 @@
   .category-plan .plan-row {
     gap: 8px;
   }
-}
-.planning-title h1 {
-  margin: 4px 0;
 }
 .planning-title p {
   margin: 0;
@@ -246,30 +174,6 @@
   font-size: 1.1rem;
   font-variant-numeric: tabular-nums;
 }
-.plan-column-labels,
-.plan-item-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 112px 36px;
-  gap: 8px;
-  padding-inline: 0;
-}
-.plan-column-labels {
-  color: var(--text-secondary);
-  font-size: 0.72rem;
-  padding-bottom: 4px;
-}
-.plan-item-row input {
-  background: var(--background);
-}
-.plan-item-row input:nth-child(2) {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.plan-item-row button:hover {
-  color: var(--destructive);
-  background: var(--muted);
-  border-radius: 8px;
-}
 .category-actions {
   display: flex;
   flex-wrap: wrap;
@@ -294,53 +198,11 @@
   font-size: 0.82rem;
   line-height: 1.6;
 }
-.planning-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  margin: 18px 0 12px;
-}
-.planning-actions > span {
-  font-size: 0.75rem;
-}
-.plan-forecast {
-  border-left: 4px solid var(--primary);
-}
-.plan-forecast .section-heading {
-  margin-top: 0;
-}
-.plan-forecast .forecast-amount {
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-}
-.plan-forecast > p {
-  font-size: 0.82rem;
-  line-height: 1.6;
-}
 @media (min-width: 1000px) {
   .planning-categories {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
     gap: 20px;
-  }
-  .planned-month-nav {
-    max-width: 360px;
-    margin: 0 0 24px auto;
-  }
-  .forecast-breakdown {
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
-  }
-  .forecast-breakdown > span {
-    flex-direction: column;
-  }
-  .forecast-breakdown strong {
-    color: var(--foreground);
-    font-size: 1.25rem;
   }
   .plan-panel {
     padding: 28px;
@@ -361,15 +223,6 @@
   .category-plan {
     padding: 12px;
   }
-  .plan-column-labels,
-  .plan-item-row {
-    grid-template-columns: minmax(0, 1fr) 88px 32px;
-    gap: 6px;
-  }
-}
-
-.budget-planning-page {
-  padding-top: 32px;
 }
 .planning-topbar {
   padding-bottom: 24px;
@@ -400,17 +253,6 @@
   font-size: 1rem;
   line-height: 1.6;
 }
-.planning-cycle {
-  padding: 20px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--card);
-}
-.planning-cycle-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
 .planning-cycle-controls label {
   flex: 1;
   min-width: 0;
@@ -434,14 +276,6 @@
 }
 .planning-cycle-controls .icon-button {
   flex-shrink: 0;
-}
-.planning-cycle-details {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 16px;
 }
 .planning-cycle-details p {
   margin: 0;
@@ -488,17 +322,11 @@
   margin-top: 0;
 }
 @media (max-width: 600px) {
-  .budget-planning-page {
-    padding-top: 20px;
-  }
   .planning-topbar {
     margin-bottom: 28px;
   }
   .planning-title .muted {
     font-size: 0.9rem;
-  }
-  .planning-cycle {
-    padding: 16px;
   }
   .budget-planning-page > app-budget-nav {
     margin: 24px 0;
@@ -506,17 +334,8 @@
   .planning-summary {
     gap: 12px;
   }
-  .planning-summary .forecast-card {
-    grid-column: auto;
-  }
-  .planning-summary article {
-    padding: 16px;
-  }
   .planning-copy .secondary-button {
     width: 100%;
-  }
-  .planning-summary small {
-    display: block;
   }
 }
 
@@ -545,7 +364,6 @@
 }
 
 :host .budget-planning-page .planning-topbar {
-  margin-bottom: 24px;
   padding-bottom: 16px;
 }
 :host .budget-planning-page .planning-header {
@@ -558,29 +376,11 @@
   gap: 16px;
   align-items: stretch;
 }
-:host .budget-planning-page .planning-summary article {
-  display: flex;
-  flex-direction: column;
-  padding: var(--budget-padding);
-}
-:host .budget-planning-page .planning-summary small {
-  display: block;
-  line-height: 1.6;
-}
-:host .budget-planning-page .planning-summary strong {
-  margin-block: 12px;
-}
-:host .budget-planning-page .planning-summary article:last-child {
-  grid-column: 1 / -1;
-}
 :host .budget-planning-page .plan-panel {
   padding: 0;
 }
 :host .budget-planning-page .category-plan {
   padding: 20px;
-}
-:host .budget-planning-page .plan-item-row {
-  padding-block: 8px;
 }
 :host .budget-planning-page .plan-section-toolbar {
   flex-wrap: wrap;
@@ -611,18 +411,8 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
-  :host .budget-planning-page .planning-summary .forecast-card {
-    grid-column: auto;
-  }
-  :host .budget-planning-page .planning-summary article {
-    padding: 18px;
-  }
   :host .budget-planning-page .category-plan {
     padding: 16px;
-  }
-  :host .budget-planning-page .plan-column-labels,
-  :host .budget-planning-page .plan-item-row {
-    grid-template-columns: minmax(0, 1fr) 90px 36px;
   }
   :host .budget-planning-page .category-actions {
     gap: 8px 16px;

@@ -1,7 +1,10 @@
+import { FinishedBookRow } from '@pages/books/components/finished-book-row/finished-book-row';
+import { FinishedBookCover } from '@pages/books/components/finished-book-cover/finished-book-cover';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import { AppSelect, SelectOption } from '@shared/components/app-select/app-select';
 import { PageHeader } from '@shared/components/page-header/page-header';
 import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
@@ -25,7 +28,17 @@ const MONTHS = [
 
 @Component({
   selector: 'app-finished-books',
-  imports: [TranslatePipe, IonContent, IonIcon, RouterLink, AppSelect, PageHeader, AppSkeleton],
+  imports: [
+    FinishedBookRow,
+    FinishedBookCover,
+    TranslatePipe,
+    IonContent,
+    IonIcon,
+    RouterLink,
+    AppSelect,
+    PageHeader,
+    AppSkeleton,
+  ],
   templateUrl: './finished-books.html',
 })
 export class FinishedBooks {

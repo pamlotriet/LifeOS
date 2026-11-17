@@ -23,10 +23,7 @@ a:hover {
 }
 .diary-heading,
 .section-heading,
-.date-nav,
-.meal-card header,
-.food-row-title,
-.history-row {
+.date-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -50,14 +47,6 @@ h2 {
 h3 {
   font-size: 16px;
   font-weight: 700;
-}
-.eyebrow {
-  display: block;
-  font-size: 11px;
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  margin-bottom: 5px;
 }
 .action {
   background: var(--primary, #16b8bd);
@@ -110,106 +99,6 @@ a:focus-visible {
   gap: 24px;
   padding: 28px;
 }
-.calorie-ring {
-  width: 154px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: conic-gradient(var(--primary, #16b8bd) var(--progress), var(--border) 0);
-  display: grid;
-  place-items: center;
-}
-.calorie-ring > div {
-  width: 132px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--card);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.calorie-ring strong {
-  font-size: 32px;
-  font-weight: 750;
-  letter-spacing: -1px;
-}
-.calorie-ring span {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-.calorie-context h2 {
-  font-size: 40px;
-  letter-spacing: -1.5px;
-  line-height: 1.2;
-  margin: 4px 0;
-}
-.calorie-context h2 small {
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0;
-  color: var(--text-secondary);
-}
-.calorie-context p {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-.planned-note {
-  display: block;
-  margin-top: 15px;
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-.macro-grid {
-  grid-column: 1/-1;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
-  border-top: 1px solid var(--border);
-  padding-top: 22px;
-}
-.macro > div {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.macro span,
-.macro small {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-.macro strong {
-  font-size: 20px;
-}
-.macro strong small {
-  font-weight: 400;
-}
-progress {
-  appearance: none;
-  width: 100%;
-  height: 5px;
-  border: 0;
-  border-radius: 8px;
-  overflow: hidden;
-  display: block;
-  margin: 10px 0 5px;
-  background: var(--border);
-}
-progress::-webkit-progress-bar {
-  background: var(--border);
-}
-progress::-webkit-progress-value {
-  background: var(--primary);
-  border-radius: 8px;
-}
-progress::-moz-progress-bar {
-  background: var(--primary);
-}
-[data-macro='carbs'] progress::-webkit-progress-value {
-  background: var(--palette-purple);
-}
-[data-macro='fat'] progress::-webkit-progress-value {
-  background: var(--palette-mauve);
-}
 .meals-heading {
   margin: 28px 0 14px;
 }
@@ -230,68 +119,6 @@ progress::-moz-progress-bar {
 }
 .meal-card {
   padding: 18px;
-}
-.meal-card header span {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-.add-meal {
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  font-size: 22px;
-  color: var(--primary, #16b8bd);
-}
-.empty-meal {
-  text-align: left;
-  width: 100%;
-  padding-top: 22px;
-  color: var(--text-secondary);
-  font-size: 12px;
-}
-.empty-meal span {
-  display: block;
-  margin-top: 7px;
-  color: var(--primary, #16b8bd);
-}
-.food-row {
-  border-top: 1px solid var(--border);
-  margin-top: 16px;
-  padding-top: 14px;
-}
-.food-row-title {
-  align-items: start;
-  gap: 10px;
-}
-.food-row-title strong {
-  font-size: 13px;
-}
-.food-row-title > strong {
-  white-space: nowrap;
-}
-.food-row-title small,
-.history-row small {
-  display: block;
-  font-size: 11px;
-  color: var(--text-secondary);
-  margin-top: 3px;
-}
-.food-row-title > strong small {
-  display: inline;
-  font-weight: 400;
-}
-.food-macros {
-  font-size: 10px;
-  color: var(--text-secondary);
-  margin-top: 8px;
-}
-.entry-actions {
-  display: flex;
-  gap: 16px;
-  margin-top: 10px;
-  font-size: 11px;
-  color: var(--text-secondary);
 }
 .composer,
 .editor,
@@ -346,22 +173,6 @@ label {
   margin-top: 20px;
   padding: 18px;
 }
-summary {
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-}
-summary span {
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  margin-left: 8px;
-}
-.history-row {
-  border-top: 1px solid var(--border);
-  padding: 12px 0;
-  font-size: 12px;
-}
 .notice {
   padding: 14px;
   border: 1px solid var(--border);
@@ -399,21 +210,6 @@ summary span {
     gap: 16px;
     padding: 20px;
   }
-  .calorie-ring {
-    width: 124px;
-  }
-  .calorie-ring > div {
-    width: 104px;
-  }
-  .calorie-ring strong {
-    font-size: 27px;
-  }
-  .calorie-context h2 {
-    font-size: 31px;
-  }
-  .macro-grid {
-    gap: 12px;
-  }
   .meal-grid {
     grid-template-columns: 1fr;
   }
@@ -440,4 +236,13 @@ summary span {
 }
 .composer button.wide {
   width: 100%;
+}
+
+.eyebrow {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
 }

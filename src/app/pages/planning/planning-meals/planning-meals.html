@@ -12,20 +12,14 @@
         </button>
       </div>
     }
-    <section class="planner-overview" [attr.aria-label]="'Weekly overview' | translate">
-      <div>
-        <strong>{{ weeklyMeals().length }}</strong
-        ><span>{{ 'Meals planned' | translate }}</span>
-      </div>
-      <div>
-        <strong>{{ plannedDays() }}<small> / 7</small></strong
-        ><span>{{ 'Days planned' | translate }}</span>
-      </div>
-      <div>
-        <strong>{{ remainingGroceries() }}</strong
-        ><span>{{ 'Items left to shop' | translate }}</span>
-      </div>
-    </section>
+    <section
+      appPlanningOverview
+      [mealCount]="weeklyMeals().length"
+      [plannedDays]="plannedDays()"
+      [remainingGroceries]="remainingGroceries()"
+      class="planner-overview"
+      [attr.aria-label]="'Weekly overview' | translate"
+    ></section>
     <nav class="week-navigation" [attr.aria-label]="'Week navigation' | translate">
       <div class="week-navigation-dates">
         <button

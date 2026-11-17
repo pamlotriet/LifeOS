@@ -1,0 +1,111 @@
+button:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+h3,
+p {
+  margin: 0;
+}
+h3 {
+  font-size: 1.1rem;
+}
+button {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+.muted {
+  color: var(--text-secondary);
+}
+.muted {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--foreground);
+  background: var(--card);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.button.primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+.button:hover:not(:disabled) {
+  filter: brightness(0.96);
+}
+.text-button {
+  min-height: 40px;
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.remove {
+  color: var(--destructive);
+}
+.workout-notes {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-top: 12px;
+}
+:host h3 {
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+.muscle-badge {
+  display: inline-block;
+  background: var(--secondary);
+  color: var(--primary);
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+.library-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.button {
+  font-weight: 500;
+  min-height: 36px;
+  padding: 8px 16px;
+}
+.workout-notes {
+  grid-column: 2/-1;
+  margin-top: 10px;
+  font-size: 12px;
+}
+@media (max-width: 650px) {
+  .workout-notes {
+    grid-column: 2;
+  }
+}
+
+:host h3 {
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}

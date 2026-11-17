@@ -1,0 +1,206 @@
+/* Budget spacing and responsive layout, installed once by BudgetPage. */
+.budget-page .budget-metric {
+  min-width: 0;
+  padding: var(--budget-padding);
+  border: 1px solid var(--border);
+  border-radius: var(--budget-radius);
+  background: var(--card);
+}
+@media (max-width:639px) {
+  .budget-page .segments > button { min-height:44px; padding-inline:8px !important; font-size:12px !important; }
+  .budget-page .month-nav { width:100%; max-width:none; flex-direction:column !important; align-items:stretch !important; }
+  .budget-page .month-nav > app-month-picker { flex:auto !important; }
+}
+.budget-page .plan-panel,
+.budget-page .budget-content-card {
+  padding: 20px;
+  margin-bottom: 18px;
+}.budget-page .plan-panel > .muted {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}.budget-page .editor > h2 {
+  margin-bottom: 20px;
+}.budget-page .form-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}.budget-page .field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}.budget-page .field {
+  min-width: 0;
+}.budget-page .field select {
+  box-sizing: border-box;
+}.budget-page .help-text {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  margin: 0 0 16px;
+}.budget-page .toolbar {
+  flex-wrap: wrap;
+  margin-top: 16px;
+}.budget-page .page-header h1 {
+  min-width: 0;
+}.budget-page .page-header > .icon-button {
+  flex-shrink: 0;
+}@media (max-width: 520px) {
+  .budget-page .field-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .budget-page .plan-panel,
+  .budget-page .budget-content-card {
+    padding: 16px;
+  }
+}.budget-page .plan-category-total {
+  display: grid;
+  gap: 3px;
+  margin-left: auto;
+  text-align: right;
+}.budget-page .plan-add-item {
+  min-height: 44px;
+  margin-left: 12px;
+}.budget-page .category-plan {
+  padding-bottom: 8px;
+}.budget-page .segments[aria-label='Monthly views'] {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}.budget-page .segments[aria-label='Monthly views'] > :is(button, a) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 3px;
+  border: 0;
+  border-radius: 10px;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: clamp(0.65rem, 2.6vw, 0.85rem);
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  background: transparent;
+}.budget-page .segments[aria-label='Monthly views'] > button.active {
+  color: var(--primary-foreground);
+  background: var(--primary);
+}/* Shared spacing and sizing across all Budget pages. */.budget-page :is(input, select, textarea, button, a, article, section) {
+  box-sizing: border-box;
+}.budget-page .page-header {
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: var(--budget-gap);
+}.budget-page .page-header > div {
+  min-width: 0;
+}.budget-page .section-heading {
+  flex-wrap: wrap;
+  gap: 12px;
+}.budget-page .section-heading :is(h2, p) {
+  margin-block: 0;
+}.budget-page :is(.panel, .category-plan) {
+  min-width: 0;
+}.budget-page
+  :is(.plan-panel, .budget-content-card, .editor, .receipt-panel, .chart-panel) {
+  padding: var(--budget-padding);
+}.budget-page :is(.row-copy, .plan-category-total) {
+  line-height: 1.5;
+}.budget-page .row-copy small {
+  margin-top: 4px;
+  line-height: 1.5;
+}.budget-page :is(.primary-button, .secondary-button, .icon-button) {
+  flex-shrink: 0;
+}.budget-page .form-actions {
+  flex-wrap: wrap;
+  gap: 12px;
+}.budget-page .form-actions > * {
+  flex: 1 1 150px;
+}.budget-page .field {
+  margin-bottom: 20px;
+}.budget-page .field-grid {
+  gap: 0 20px;
+}.budget-page .segments {
+  gap: 4px;
+}.budget-page .segments > button {
+  min-width: 0;
+  line-height: 1.4;
+}.budget-page .category-row {
+  padding: 18px 8px;
+  gap: 14px;
+}.budget-page .toolbar {
+  gap: 12px 24px;
+  padding-top: 8px;
+}@media (max-width: 600px) {
+  .budget-page .page-header .compact-title {
+    text-align: left;
+    flex: 1;
+    font-size: 1.35rem;
+  }
+  .budget-page .page-header > .secondary-button {
+    width: 100%;
+  }
+  .budget-page .month-nav {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .budget-page .field-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .budget-page .segments[aria-label='Transaction type'] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}.budget-page > .page-header {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}.budget-page > .page-header app-back-button {
+  align-self: center;
+}.budget-page > .page-header .compact-title {
+  text-align: left;
+}.budget-page app-month-picker {
+  min-width: 0;
+  max-width: 100%;
+}.budget-page .month-nav > app-month-picker {
+  flex: 1 1 220px;
+  max-width: 320px;
+}.budget-page
+  :is(.comparison-month-controls, .cycle-navigation, .planning-cycle-controls)
+  > app-month-picker {
+  flex: 1;
+}.budget-page .savings-transfer-date app-date-picker {
+  flex: 1 1 180px;
+  min-width: 0;
+}@media (max-width: 600px) {
+  .budget-page > .page-header .debt-header-actions,
+  .budget-page > .page-header > a.secondary-button {
+    grid-column: 1/-1;
+    width: 100%;
+  }
+  .budget-page .month-nav > app-month-picker {
+    flex-basis: 100%;
+    max-width: none;
+  }
+  .budget-page :is(.cycle-navigation, .planning-cycle-controls, .comparison-month-controls) {
+    gap: 8px;
+  }
+}.budget-page > * { min-width: 0; }main.budget-page .panel { border-radius: var(--budget-radius); }.budget-page .error { color: var(--budget-error-foreground); background: var(--budget-error-background); border-color: var(--budget-error-border); }@media (max-width: 639px) {
+ .budget-page .page-header { display:grid !important; grid-template-columns:auto minmax(0,1fr) !important; gap:12px !important; border:0 !important; background:none !important; padding:0 !important; }
+ .budget-page .page-header > :nth-child(n+3) { grid-column:1/-1; width:100%; }
+ .budget-page h1 { font-size:24px !important; line-height:1.25 !important; }
+ .budget-page .section-heading { align-items:flex-start !important; gap:12px !important; }
+ .budget-page .form-actions { display:grid !important; grid-template-columns:1fr !important; gap:8px !important; }
+ .budget-page .form-actions > * { min-width:0; width:100%; }
+ .budget-page .segments { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:4px !important; }
+ .budget-page .segments > button { min-height:44px; padding-inline:8px !important; font-size:12px !important; }
+ .budget-page .month-nav { width:100%; max-width:none; flex-direction:column !important; align-items:stretch !important; }
+ .budget-page .month-nav > app-month-picker { flex:auto !important; }
+ .budget-page :is(input,select,textarea) { font-size:16px !important; }
+ .budget-page .data-table { display:block; overflow-x:auto; }
+ main.budget-page .panel { min-width:0; overflow-wrap:break-word; }
+ .budget-page strong { overflow-wrap:anywhere; }
+}.budget-page .field :is(input,textarea) { width:100%; min-width:0; box-sizing:border-box; }.budget-page :is(.cycle-selector,.planning-cycle) { padding:var(--budget-padding); border:1px solid var(--border); border-radius:var(--budget-radius); background:var(--card); }.budget-page :is(.cycle-navigation,.planning-cycle-controls,.comparison-month-controls) { display:flex; align-items:center; gap:12px; min-width:0; }.budget-page :is(.cycle-details,.planning-cycle-details) { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px; margin-top:16px; }

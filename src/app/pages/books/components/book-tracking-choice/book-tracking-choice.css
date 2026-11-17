@@ -1,0 +1,35 @@
+:host h2 {
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+:host p {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 8px 0 14px;
+}
+:host > div {
+  display: flex;
+  gap: 8px;
+}
+:host button {
+  flex: 1;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  background: var(--background);
+  font-size: 0.8rem;
+}
+:host button.active {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--secondary);
+}
+:host button:disabled {
+  opacity: 0.4;
+}
+:host-context(.book-sheet) button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}

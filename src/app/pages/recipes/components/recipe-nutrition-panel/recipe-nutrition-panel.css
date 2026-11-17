@@ -1,0 +1,112 @@
+:host h2 {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+}
+:host .panel-eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin: 0 0 18px;
+}
+:host h2 {
+  font-size: 14px;
+  color: var(--foreground);
+  margin: 0 0 10px;
+  font-weight: 500;
+}
+.panel-calories {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.panel-calories strong {
+  font-size: 44px;
+  line-height: 1.2;
+  font-weight: 450;
+  letter-spacing: -1.5px;
+}
+.panel-calories > span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+:host .panel-servings {
+  font-size: 12px;
+  margin: 8px 0 22px;
+}
+.panel-macros {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 18px 0;
+  border-block: 1px solid var(--border);
+}
+.panel-macros > div,
+.panel-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+}
+.panel-macros dt {
+  text-transform: capitalize;
+  color: var(--text-secondary);
+}
+.panel-macros dd {
+  margin: 0;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+.panel-macros dd span {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.panel-total {
+  margin: 18px 0;
+}
+.panel-total > span {
+  color: var(--text-secondary);
+}
+.panel-total strong {
+  font-weight: 500;
+}
+:host .panel-status {
+  padding: 12px;
+  background: var(--secondary);
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+:host .panel-footnote {
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 18px 0 0;
+}
+
+:host h2 {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+}
+:host > strong {
+  font-size: 36px;
+  font-weight: 500;
+}
+:host > strong small {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+:host > p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+:host h2 {
+  font-size: 14px;
+  color: var(--foreground);
+  margin: 0 0 10px;
+  font-weight: 500;
+}

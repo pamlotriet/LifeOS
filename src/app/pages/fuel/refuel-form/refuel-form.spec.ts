@@ -1,4 +1,4 @@
-import { IonModal } from '@ionic/angular';
+import { IonModal } from '@ionic/angular/ion-modal';
 import { FuelModalStub } from '@pages/fuel/testing/fuel-modal.testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
@@ -69,11 +69,13 @@ describe('RefuelForm', () => {
   });
 
   it('saves a first refuel with its manual range', async () => {
-    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockImplementation(async () => {
-      expect(fixture.componentInstance.saving()).toBe(false);
-      expect(fixture.componentInstance.modalOpen()).toBe(false);
-      return true;
-    });
+    const navigate = vi
+      .spyOn(TestBed.inject(Router), 'navigateByUrl')
+      .mockImplementation(async () => {
+        expect(fixture.componentInstance.saving()).toBe(false);
+        expect(fixture.componentInstance.modalOpen()).toBe(false);
+        return true;
+      });
     save.mockImplementationOnce(async () => {
       expect(fixture.componentInstance.saving()).toBe(true);
       expect(fixture.componentInstance.modalOpen()).toBe(true);

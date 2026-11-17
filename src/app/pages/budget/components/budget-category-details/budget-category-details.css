@@ -1,0 +1,41 @@
+:host section {
+  min-width: 0;
+}
+:host h3 {
+  margin-bottom: 12px;
+}
+:host p {
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.detail-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.5;
+  font-size: 0.82rem;
+}
+.detail-line > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.detail-line strong {
+  flex-shrink: 0;
+}
+.detail-payment {
+  color: var(--foreground);
+  text-decoration: none;
+}
+.detail-payment:hover {
+  color: var(--primary);
+}
+.detail-payment small {
+  display: block;
+  margin-top: 4px;
+}
+:host .text-link {
+  min-height: 44px;
+  margin-top: 8px;
+}

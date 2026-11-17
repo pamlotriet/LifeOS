@@ -1,0 +1,28 @@
+<div class="food-row-title">
+  <div>
+    <strong>{{ entry().name }}</strong
+    ><small>{{ entry().amount }}</small>
+  </div>
+  <strong
+    >{{ entry().nutrition.calories.toFixed(0) }} <small>{{ 'kcal' | translate }}</small></strong
+  >
+</div>
+<p class="food-macros">
+  {{
+    'messages.p_count_g_c_count_g_f_630337'
+      | translate
+        : {
+            p0: entry().nutrition.protein.toFixed(1),
+            p1: entry().nutrition.carbs.toFixed(1),
+            p2: entry().nutrition.fat.toFixed(1),
+          }
+  }}
+</p>
+<div class="entry-actions">
+  <button (click)="edit.emit()">{{ 'Edit' | translate }}</button
+  ><button (click)="logAgain.emit()" [disabled]="busy()">
+    {{ 'Log again' | translate }}</button
+  ><button (click)="remove.emit()" [disabled]="busy()">
+    {{ 'Remove' | translate }}
+  </button>
+</div>

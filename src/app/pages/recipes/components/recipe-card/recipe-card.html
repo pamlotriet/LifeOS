@@ -1,0 +1,27 @@
+<span class="relative block aspect-[4/3] bg-gradient-to-br from-[var(--border)] to-[var(--card)]">
+  @if (recipe().photoUrl) {
+    <img
+      [src]="recipe().photoUrl"
+      [alt]="recipe().title | translate"
+      class="h-full w-full object-cover"
+      loading="lazy"
+    />
+  } @else {
+    <span class="grid h-full place-items-center"
+      ><ion-icon name="restaurant-outline" class="text-4xl text-cyan-200"></ion-icon
+    ></span>
+  }
+  @if (recipe().favourite) {
+    <span class="absolute right-2 top-2 text-xl text-pink-400">&#9829;</span>
+  }</span
+><span class="block p-3"
+  ><strong class="block line-clamp-2 text-sm">{{ recipe().title | translate }}</strong
+  ><span class="mt-1 block text-[11px] text-[var(--text-secondary)]">{{
+    'messages.count_count_mins_8342be'
+      | translate
+        : {
+            p0: recipeCategories(recipe()).join(' / '),
+            p1: recipe().cookTime,
+          }
+  }}</span></span
+>

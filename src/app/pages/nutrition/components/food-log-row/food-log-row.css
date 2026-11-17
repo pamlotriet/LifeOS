@@ -1,0 +1,58 @@
+:host {
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+  padding-top: 14px;
+}
+p {
+  margin: 0;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+button:focus-visible {
+  outline: 2px solid var(--ring, #16b8bd);
+  outline-offset: 4px;
+}
+
+.food-row-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.food-row-title {
+  align-items: start;
+  gap: 10px;
+}
+.food-row-title strong {
+  font-size: 13px;
+}
+.food-row-title > strong {
+  white-space: nowrap;
+}
+.food-row-title small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+.food-row-title > strong small {
+  display: inline;
+  font-weight: 400;
+}
+.food-macros {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+.entry-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}

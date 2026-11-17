@@ -1,3 +1,6 @@
+import { AppButton } from '@shared/components/app-button/app-button';
+import { BudgetComparisonTable } from '@pages/budget/components/budget-comparison-table/budget-comparison-table';
+import { BudgetComparisonSummary } from '@pages/budget/components/budget-comparison-summary/budget-comparison-summary';
 import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '@shared/components/app-input/app-input';
@@ -7,7 +10,7 @@ import { BackButton } from '@shared/components/back-button/back-button';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { IonContent } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/ion-content';
 import { BudgetStore } from '@pages/budget/state/budget/budget.store';
 import {
   categoryPlanItems,
@@ -19,8 +22,11 @@ import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { compareBudgetCategories } from '@pages/budget/budget-comparison/budget-comparison.model';
 
 @Component({
+  host: { class: 'budget-screen' },
   selector: 'app-budget-comparison',
-  imports: [
+  imports: [AppButton, 
+    BudgetComparisonTable,
+    BudgetComparisonSummary,
     BudgetPage,
     TranslatePipe,
     AppInput,
@@ -32,7 +38,7 @@ import { compareBudgetCategories } from '@pages/budget/budget-comparison/budget-
     BudgetNav,
   ],
   templateUrl: './budget-comparison.html',
-  styleUrls: ['../budget.css', '../budget-layout.css', './budget-comparison.css'],
+  styleUrls: ['./budget-comparison.css'],
 })
 export class BudgetComparison {
   readonly store = inject(BudgetStore);
