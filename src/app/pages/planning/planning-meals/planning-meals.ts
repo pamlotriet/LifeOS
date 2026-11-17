@@ -1,8 +1,15 @@
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { GroceryGroup } from '@pages/planning/components/grocery-group/grocery-group';
+import { MealEditor } from '@pages/planning/components/meal-editor/meal-editor';
+import { MealSlot } from '@pages/planning/components/meal-slot/meal-slot';
 import { PlanningOverview } from '@pages/planning/components/planning-overview/planning-overview';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
-import { AppButton } from '@shared/components/app-button/app-button';
-import { AppInput } from '@shared/components/app-input/app-input';
+import { Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
 import {
   aggregateGroceries,
   calculateRecipe,
@@ -14,27 +21,24 @@ import {
   MEAL_CATEGORIES,
   MealCategory,
   localDate,
+  nutritionLabel,
   zeroMacros,
 } from '@pages/nutrition/state/nutrition/nutrition.model';
-import { RouterLink } from '@angular/router';
-import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
 import { NutritionService } from '@pages/nutrition/state/nutrition/nutrition.service';
-import { nutritionLabel } from '@pages/nutrition/state/nutrition/nutrition.model';
-import { MealPlanItem } from '@pages/planning/state/plan/planning.model';
-import { PLANNING_ICONS } from '@pages/planning/planning-icons';
-import { Component, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent } from '@ionic/angular/ion-content';
-import { IonIcon } from '@ionic/angular/ion-icon';
 import { PlanningHeader } from '@pages/planning/components/planning-header/planning-header';
-import { GroceryItem } from '@pages/planning/state/plan/planning.model';
+import { PLANNING_ICONS } from '@pages/planning/planning-icons';
 import { PlanningStore } from '@pages/planning/state/plan/planning-store';
+import { GroceryItem, MealPlanItem } from '@pages/planning/state/plan/planning.model';
+import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
+import { AppButton } from '@shared/components/app-button/app-button';
+import { AppInput } from '@shared/components/app-input/app-input';
 
 @Component({
   selector: 'app-planning-meals',
   imports: [
+    MealSlot,
+    MealEditor,
+    GroceryGroup,
     PlanningOverview,
     TranslatePipe,
     AppInput,
@@ -262,6 +266,21 @@ export class PlanningMeals {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly store = inject(PlanningStore);
+  readonly mealSummaries = computed(
+    () =>
+      new Map(
+        this.store
+          .meals()
+          .filter((item) => item.recipeId || item.ingredientId)
+          .map((item) => [item.id, this.summary(item)]),
+      ),
+  );
+  readonly loggedMealIds = computed(
+    () =>
+      new Set(
+        this.nutrition.logs().flatMap((item) => (item.plannedMealId ? [item.plannedMealId] : [])),
+      ),
+  );
   readonly tab = signal<'meals' | 'groceries'>(
     this.route.snapshot.fragment === 'groceries' ? 'groceries' : 'meals',
   );

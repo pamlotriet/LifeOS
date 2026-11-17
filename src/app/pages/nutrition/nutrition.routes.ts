@@ -1,7 +1,8 @@
+import { protectFormRoutes } from '@core/forms/form-protection.service';
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 
-export const nutritionRoutes: Routes = [
+export const nutritionRoutes: Routes = protectFormRoutes([
   {
     path: 'profile',
     loadComponent: () =>
@@ -15,4 +16,4 @@ export const nutritionRoutes: Routes = [
     loadComponent: () => import('@pages/nutrition/nutrition').then((m) => m.Nutrition),
     canActivate: [authGuard],
   },
-];
+]);

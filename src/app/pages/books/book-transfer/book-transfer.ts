@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { Component, computed, inject, signal } from '@angular/core';
@@ -16,7 +17,7 @@ import {
 import { localDate } from '@pages/nutrition/state/nutrition/nutrition.model';
 @Component({
   selector: 'app-book-transfer',
-  imports: [TranslatePipe, FormsModule, RouterLink, IonContent, PageHeader],
+  imports: [AppButton, TranslatePipe, FormsModule, RouterLink, IonContent, PageHeader],
   templateUrl: './book-transfer.html',
   styles: `
     .transfer-page {

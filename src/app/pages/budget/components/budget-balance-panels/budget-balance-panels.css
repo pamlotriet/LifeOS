@@ -1,0 +1,45 @@
+.spending-balance-editor {
+  margin-top: 12px;
+  font-size: 0.85rem;
+}
+.spending-balance-editor summary {
+  cursor: pointer;
+  color: var(--primary);
+}
+.spending-balance-editor p {
+  margin: 12px 0;
+}
+.spending-balance-editor form,
+.spending-balance-editor label {
+  display: grid;
+  gap: 8px;
+}
+.spending-balance-editor input {
+  min-width: 0;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--foreground);
+}
+.spending-transfer-link {
+  min-height: 44px;
+  margin-top: 8px;
+}
+.spending-balance-editor {
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.spending-balance-editor summary {
+  line-height: 1.5;
+  padding-block: 4px;
+}
+.spending-balance-editor form {
+  gap: 12px;
+  margin-top: 16px;
+}
+.spending-balance-editor input {
+  min-height: 44px;
+  margin-top: 6px;
+}

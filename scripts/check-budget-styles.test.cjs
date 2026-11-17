@@ -7,9 +7,13 @@ const postcss = require('postcss');
 test('shared Budget styles cannot target another feature', () => {
   const directory = 'src/app/pages/budget/components/budget-page';
   for (const name of ['budget-page.css', 'budget-page-layout.css']) {
-    postcss.parse(fs.readFileSync(path.join(directory, name), 'utf8')).walkRules(rule => {
+    postcss.parse(fs.readFileSync(path.join(directory, name), 'utf8')).walkRules((rule) => {
       for (const selector of rule.selectors) {
-        assert.match(selector, /^(?:\.dark\s+)?(?:main)?\.budget-(?:page|screen)(?=[\s.:>]|$)/, `${name}: ${selector}`);
+        assert.match(
+          selector,
+          /^(?:\.dark\s+)?(?:main)?\.budget-(?:page|screen)(?=[\s.:>]|$)/,
+          `${name}: ${selector}`,
+        );
       }
     });
   }

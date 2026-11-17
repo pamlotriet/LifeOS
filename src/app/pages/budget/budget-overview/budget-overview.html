@@ -1,8 +1,5 @@
 <ion-content>
-  <main
-    appBudgetPage
-    class="budget-page budget-overview-page"
-  >
+  <main appBudgetPage class="budget-page budget-overview-page">
     <div class="mb-5"><app-back-button fallback="/home" /></div>
     <header
       class="mb-5 flex flex-wrap items-center justify-between gap-4 max-sm:items-stretch max-sm:[&>div]:w-full max-sm:[&>a]:w-full"
@@ -17,7 +14,8 @@
           {{ 'Track your accounts and everyday transactions.' | translate }}
         </p>
       </div>
-      <a appButton="primary"
+      <a
+        appButton="primary"
         class="primary-button"
         routerLink="/budget/transactions/add"
         [queryParams]="transfersView ? { type: 'transfer' } : null"
@@ -26,47 +24,15 @@
     </header>
     <app-budget-nav />
     <section
+      appBudgetCycleNavigation
+      [month]="store.month()"
+      [dates]="cycleDates()"
+      (monthChange)="setMonth($event)"
+      (shift)="shiftMonth($event)"
+      (current)="goToCurrentCycle()"
       class="cycle-selector max-sm:grid! max-sm:grid-cols-[44px_minmax(0,1fr)_44px]! max-sm:gap-3! max-sm:p-3!"
       [attr.aria-label]="'Budget cycle' | translate"
-    >
-      <div
-        class="cycle-navigation max-sm:contents! [&>button:first-child]:max-sm:col-start-1 [&>button:first-child]:max-sm:row-start-2 [&>button:last-child]:max-sm:col-start-3 [&>button:last-child]:max-sm:row-start-2 [&>button]:max-sm:size-11!"
-      >
-        <button
-          type="button"
-          class="icon-button"
-          [attr.aria-label]="'Previous budget cycle' | translate"
-          (click)="shiftMonth(-1)"
-        >
-          <ion-icon name="chevron-back" aria-hidden="true" />
-        </button>
-        <label class="cycle-picker max-sm:col-span-full max-sm:row-start-1 max-sm:text-left!"
-          ><span>{{ 'Budget cycle' | translate }}</span
-          ><app-month-picker
-            [ariaLabel]="'Budget cycle month' | translate"
-            [ngModel]="store.month()"
-            (ngModelChange)="setMonth($event)"
-        /></label>
-        <button
-          type="button"
-          class="icon-button"
-          [attr.aria-label]="'Next budget cycle' | translate"
-          (click)="shiftMonth(1)"
-        >
-          <ion-icon name="chevron-forward" aria-hidden="true" />
-        </button>
-      </div>
-      <div
-        class="cycle-details max-sm:col-start-2 max-sm:row-start-2 max-sm:mt-0! max-sm:gap-0! max-sm:text-center [&_p]:max-sm:text-[0.65rem]! [&_button]:max-sm:min-h-8"
-      >
-        <p [attr.aria-label]="'Budget cycle dates' | translate" aria-live="polite">
-          {{ cycleDates() }}
-        </p>
-        <button type="button" class="text-link" (click)="goToCurrentCycle()">
-          {{ 'Current cycle' | translate }}
-        </button>
-      </div>
-    </section>
+    ></section>
     <div class="my-4 flex flex-wrap items-center gap-3">
       <button
         appButton="secondary"
@@ -101,13 +67,15 @@
         <div
           class="my-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap [&>a]:min-w-0 [&>a]:justify-center [&>a]:px-3! [&>a]:text-center [&>a]:text-sm!"
         >
-          <a appButton="secondary"
+          <a
+            appButton="secondary"
             class="secondary-button"
             routerLink="/budget/transactions/add"
             [queryParams]="{ type: 'expense' }"
             >{{ 'Add expense' | translate }}</a
           >
-          <a appButton="secondary"
+          <a
+            appButton="secondary"
             class="secondary-button"
             routerLink="/budget/transactions/add"
             [queryParams]="{ type: 'income' }"
@@ -118,144 +86,23 @@
           }}</a>
         </div>
         <section
+          appBudgetBalancePanels
+          [spending]="snapshot().leftOver"
+          [savingsTotal]="store.savingsTotal()"
+          [hasSpending]="hasAccount('spending')"
+          [hasSavings]="hasAccount('savings')"
+          [(balanceInput)]="balanceInput"
+          [(balanceSaved)]="balanceSaved"
+          [savingBalance]="savingBalance()"
+          [balanceError]="balanceError()"
+          [(savingsInput)]="savingsInput"
+          [savingsBusy]="savingsBusy()"
+          [savingsMessage]="savingsMessage()"
+          (spendingSave)="saveSpendingBalance($event)"
+          (savingsSave)="saveSavingsBalance($event)"
           class="grid gap-4 md:grid-cols-2"
           [attr.aria-label]="'Account balances' | translate"
-        >
-          @if (hasAccount('spending')) {
-            <article
-              class="rounded-2xl border border-border bg-card p-5 sm:p-6 [&_h2]:text-sm [&_h2]:font-medium [&>strong]:my-3 [&>strong]:block [&>strong]:text-3xl [&>strong]:font-medium [&>strong]:tabular-nums [&>p]:text-xs [&>p]:leading-relaxed [&>p]:text-(--text-secondary)"
-            >
-              <h2>
-                {{
-                  (snapshot().leftOver.confirmed
-                    ? 'Spending account balance'
-                    : 'Estimated spending left'
-                  ) | translate
-                }}
-              </h2>
-              <strong [class.negative]="snapshot().leftOver.actual < 0" aria-live="polite">{{
-                money(snapshot().leftOver.actual)
-              }}</strong>
-              <p>
-                {{
-                  (snapshot().leftOver.confirmed
-                    ? 'Transfers in increase Spending; transfers out and Spending purchases reduce it.'
-                    : 'Estimate from your budget. Set your real Spending account balance below.'
-                  ) | translate
-                }}
-              </p>
-              <a
-                class="text-link spending-transfer-link"
-                routerLink="/budget/transactions/add"
-                [queryParams]="{ type: 'transfer', from: 'main', to: 'spending' }"
-                >{{ 'Record transfer' | translate }}</a
-              >
-              <details class="spending-balance-editor">
-                <summary>{{ 'Set current Spending balance' | translate }}</summary>
-                <p>
-                  {{
-                    'Enter what is in your Spending account now, after transfers and purchases already recorded here. Existing purchases will not be deducted again. Main-account bills, savings and other accounts stay separate.'
-                      | translate
-                  }}
-                </p>
-                <form (ngSubmit)="saveSpendingBalance()">
-                  <label
-                    >{{ 'Current balance (R)' | translate
-                    }}<input
-                      appInput="field"
-                      type="text"
-                      appBudgetNumber
-                      inputmode="decimal"
-                      name="spendingBalance"
-                      [ngModel]="balanceInput()"
-                      (ngModelChange)="balanceInput.set($event); balanceSaved.set(false)"
-                      [disabled]="savingBalance()"
-                      required /></label
-                  ><button
-                    appButton="secondary"
-                    type="submit"
-                    class="secondary-button"
-                    [disabled]="savingBalance()"
-                  >
-                    {{ (savingBalance() ? 'Saving...' : 'Confirm current balance') | translate }}
-                  </button>
-                </form>
-                @if (balanceSaved()) {
-                  <p class="positive" role="status">{{ 'Spending balance saved.' | translate }}</p>
-                }
-                @if (balanceError()) {
-                  <p class="negative" role="alert">{{ balanceError() | translate }}</p>
-                }
-                <p>
-                  {{
-                    'Set this once to get started. Your balance carries forward across cycles. Record each actual transfer into Spending and each Spending purchase; no monthly balance adjustment is needed.'
-                      | translate
-                  }}
-                </p>
-              </details>
-            </article>
-          }
-          @if (hasAccount('savings')) {
-            <section
-              class="rounded-2xl border border-border bg-card p-5 sm:p-6 [&_h2]:text-sm [&_h2]:font-medium [&>strong]:my-3 [&>strong]:block [&>strong]:text-3xl [&>strong]:font-medium [&>strong]:tabular-nums [&>p]:text-xs [&>p]:leading-relaxed [&>p]:text-(--text-secondary)"
-              [attr.aria-label]="'Savings account' | translate"
-            >
-              <h2>{{ 'Total savings' | translate }}</h2>
-              <strong aria-live="polite">{{ money(store.savingsTotal()) }}</strong>
-              <p>
-                {{
-                  'Across all cycles. Transfers in increase Savings; transfers out and Savings purchases reduce it.'
-                    | translate
-                }}
-              </p>
-              <div class="form-actions">
-                <a
-                  class="text-link"
-                  routerLink="/budget/transactions/add"
-                  [queryParams]="{ type: 'transfer', from: 'main', to: 'savings' }"
-                  >{{ 'Record transfer' | translate }}</a
-                ><a
-                  class="text-link"
-                  routerLink="/budget/transactions/add"
-                  [queryParams]="{ type: 'expense', account: 'savings' }"
-                  >{{ 'Record a purchase' | translate }}</a
-                >
-              </div>
-              <details class="spending-balance-editor">
-                <summary>{{ 'Set current total savings' | translate }}</summary>
-                <p>
-                  {{
-                    'Enter your savings balance after all transactions already recorded here. Future transactions update it automatically.'
-                      | translate
-                  }}
-                </p>
-                <form (ngSubmit)="saveSavingsBalance()">
-                  <label
-                    >{{ 'Total savings (R)' | translate
-                    }}<input
-                      appInput="field"
-                      type="text"
-                      appBudgetNumber
-                      inputmode="decimal"
-                      name="savingsBalance"
-                      [ngModel]="savingsInput()"
-                      (ngModelChange)="savingsInput.set($event)"
-                      required
-                      [disabled]="savingsBusy()" /></label
-                  ><button
-                    appButton="secondary"
-                    type="submit"
-                    class="secondary-button"
-                    [disabled]="savingsBusy()"
-                  >
-                    {{ (savingsBusy() ? 'Saving...' : 'Save savings balance') | translate }}
-                  </button>
-                </form>
-                <p role="status">{{ savingsMessage() | translate }}</p>
-              </details>
-            </section>
-          }
-        </section>
+        ></section>
       }
       @if (!monthlyView) {
         <app-budget-accounts />
@@ -339,7 +186,8 @@
               ) | translate
             }}
           </p>
-          <a appButton="secondary"
+          <a
+            appButton="secondary"
             class="secondary-button"
             routerLink="/budget/transactions/add"
             [queryParams]="{ type: 'transfer' }"
@@ -361,79 +209,13 @@
       }
 
       @if (!monthlyView) {
-        <details class="mt-6 rounded-2xl border border-border bg-card p-5">
-          <summary class="cursor-pointer text-sm font-medium">
-            {{ 'This cycle in detail' | translate }}
-          </summary>
-          <p class="my-4 text-xs text-(--text-secondary)">
-            {{ 'Figures reflect your entries, not your bank balance.' | translate }}
-          </p>
-          <app-budget-summary [transactions]="store.monthly()" [categories]="store.categories()" />
-          <div class="mt-5">
-            <section
-              class="panel balance-panel"
-              [attr.aria-label]="'Balance after remaining plans' | translate"
-            >
-              <div class="section-heading">
-                <h2>{{ 'Your cycle outlook' | translate }}</h2>
-                <a class="text-link" routerLink="/budget/planned">{{ 'Edit plans' | translate }}</a>
-              </div>
-              <span class="outlook-label">{{ 'After remaining plans' | translate }}</span>
-              <strong class="outlook-total" [class.deficit]="snapshot().afterPlans < 0">{{
-                money(snapshot().afterPlans)
-              }}</strong>
-              <p class="outlook-note">
-                {{
-                  (snapshot().hasPlans
-                    ? 'Based on recorded income and the plans still to be covered.'
-                    : 'No plans added yet. Add your expected costs for a fuller picture.'
-                  ) | translate
-                }}
-              </p>
-              <dl class="outlook-breakdown">
-                <div>
-                  <dt>{{ 'Balance from records' | translate }}</dt>
-                  <dd>{{ money(snapshot().remaining) }}</dd>
-                </div>
-                <div>
-                  <dt>{{ 'Unspent category plans' | translate }}</dt>
-                  <dd>− {{ money(snapshot().categoryCommitments) }}</dd>
-                </div>
-                <div>
-                  <dt>{{ 'Unpaid debt plans' | translate }}</dt>
-                  <dd>− {{ money(snapshot().debtCommitments) }}</dd>
-                </div>
-              </dl>
-              <div class="allocation-bar" aria-hidden="true">
-                @for (part of snapshot().allocation; track part.label) {
-                  <span [style.width.%]="part.percent" [style.background]="part.color"></span>
-                }
-              </div>
-              <p class="outlook-note">
-                @if (snapshot().outflowPercent !== null) {
-                  {{
-                    'messages.count_of_recorded_income_spent_or_moved_eb0b97'
-                      | translate: { p0: snapshot().outflowPercent }
-                  }}
-                } @else {
-                  {{ 'No income recorded for this cycle.' | translate }}
-                }
-                {{ 'Figures reflect your entries, not your bank balance.' | translate }}
-              </p>
-              <a class="text-link" routerLink="/budget/comparison">{{
-                'Compare plans with actual spending →' | translate
-              }}</a>
-            </section>
-          </div>
-          <div class="mt-4 flex flex-wrap gap-4">
-            <a class="text-link" routerLink="/budget/planned">{{
-              'Planned payments' | translate
-            }}</a>
-            <a class="text-link" routerLink="/budget/insights">{{
-              'Spending by Category' | translate
-            }}</a>
-          </div>
-        </details>
+        <details
+          appBudgetCycleOutlook
+          [snapshot]="snapshot()"
+          [transactions]="store.monthly()"
+          [categories]="store.categories()"
+          class="mt-6 rounded-2xl border border-border bg-card p-5"
+        ></details>
       }
     }
   </main>

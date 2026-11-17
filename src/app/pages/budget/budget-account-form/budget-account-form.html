@@ -34,7 +34,13 @@
       </p>
     }
     @if (ready()) {
-      <form id="account-form" (ngSubmit)="save()">
+      <form
+        appForm
+        #formUi0="appForm"
+        [formSaving]="busy()"
+        id="account-form"
+        (ngSubmit)="save(formUi0)"
+      >
         <fieldset
           [disabled]="busy()"
           class="m-0 min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6"

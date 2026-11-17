@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { WriteToast } from '@shared/components/write-toast/write-toast';
 import { Login } from '@pages/login/login';
@@ -13,7 +14,7 @@ import { AppStartup } from '@core/startup/app-startup.service';
 import { AppAnalytics } from '@core/firebase/analytics.service';
 
 @Component({
-  imports: [TranslatePipe, IonApp, IonRouterOutlet, ClearZeroOnFocus, WriteToast, Login],
+  imports: [AppButton, TranslatePipe, IonApp, IonRouterOutlet, ClearZeroOnFocus, WriteToast, Login],
   selector: 'app-root',
   templateUrl: './app.html',
 })

@@ -5,6 +5,14 @@ and the shared input, button, chart, select and date controls.
 
 LifeOS is an Angular and Ionic personal organiser, hosted as an installable web app on Firebase Hosting.
 
+## Code quality
+
+Run `npm run quality:check` before committing. It checks application import aliases,
+shared controls and their standalone imports, formatting, translations and checker regressions.
+Use `npm run format` to fix formatting. The same gate runs in GitHub Actions alongside
+the unit suite and production build. See [Code quality](docs/code-quality.md) for rules
+and narrowly scoped control exceptions.
+
 ## UI translations
 
 User-facing text is managed with ngx-translate. Edit the values in

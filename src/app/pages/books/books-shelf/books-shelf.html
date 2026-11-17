@@ -24,6 +24,7 @@
           ><ion-icon name="bookmark-outline" aria-hidden="true" />{{ 'Tags' | translate }}</a
         >
         <button
+          appButton="primary"
           type="button"
           (click)="addBookSheet.open()"
           class="shelf-button shelf-button-primary"
@@ -78,7 +79,9 @@
       } @else if (store.error()) {
         <div role="alert" class="shelf-message">
           {{ store.error() | translate }}
-          <button type="button" (click)="store.reload()">{{ 'Retry' | translate }}</button>
+          <button appButton="secondary" type="button" (click)="store.reload()">
+            {{ 'Retry' | translate }}
+          </button>
         </div>
       } @else if (!filtered().length) {
         <div class="shelf-message">
@@ -91,7 +94,7 @@
             }}
           </p>
           @if (!store.books().length) {
-            <button type="button" (click)="addBookSheet.open()">
+            <button appButton="secondary" type="button" (click)="addBookSheet.open()">
               {{ 'Add your first book' | translate }}
             </button>
           }

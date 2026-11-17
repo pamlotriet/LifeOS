@@ -1,3 +1,6 @@
+import { FieldFeedback } from '@shared/directives/field-feedback';
+import { AppForm, AppDiscard } from '@shared/directives/app-form';
+import { FormProtection } from '@core/forms/form-protection.service';
 import { GymLibraryCard } from '@pages/gym/components/gym-library-card/gym-library-card';
 import { GymDayCard } from '@pages/gym/components/gym-day-card/gym-day-card';
 import { GymWeekSummary } from '@pages/gym/components/gym-week-summary/gym-week-summary';
@@ -21,6 +24,9 @@ type WorkoutDraft = Omit<GymEntry, 'id' | 'sets' | 'rest'> & {
 @Component({
   selector: 'app-gym',
   imports: [
+    FieldFeedback,
+    AppForm,
+    AppDiscard,
     GymLibraryCard,
     GymDayCard,
     GymWeekSummary,
@@ -37,6 +43,8 @@ type WorkoutDraft = Omit<GymEntry, 'id' | 'sets' | 'rest'> & {
   styleUrls: ['./gym.css', './gym-workflow.css', './gym-popup.css'],
 })
 export class Gym {
+  private readonly formProtection = inject(FormProtection);
+  readonly canDismissForm = () => this.formProtection.canLeave();
   private readonly i18n = inject(TranslateService);
 
   readonly mobileSheet = signal(
@@ -163,7 +171,8 @@ export class Gym {
     if (this.store.exercises().some((e) => e.id === id))
       this.entry = { ...this.entry, exerciseId: id };
   }
-  async saveExercise(): Promise<void> {
+  async saveExercise(formUi?: AppForm): Promise<void> {
+    if (this.store.saving()) return;
     this.error.set('');
     try {
       const day = this.createForDay();
@@ -171,6 +180,7 @@ export class Gym {
         this.exercise,
         this.exerciseEditor() === 'new' ? undefined : this.exerciseEditor()!,
       );
+      formUi?.markSaved();
       this.exerciseEditor.set(null);
       this.createForDay.set(null);
       if (day !== null) {
@@ -185,7 +195,8 @@ export class Gym {
       this.fail(error);
     }
   }
-  async saveEntry(): Promise<void> {
+  async saveEntry(formUi?: AppForm): Promise<void> {
+    if (this.store.saving()) return;
     this.error.set('');
     try {
       if (this.entry.sets === null || this.entry.rest === null)
@@ -195,6 +206,7 @@ export class Gym {
         { ...this.entry, sets: this.entry.sets, rest: this.entry.rest },
         this.entryEditor() === 'new' ? undefined : this.entryEditor()!,
       );
+      formUi?.markSaved();
       this.selectedDay.set(this.entry.day);
       this.entryEditor.set(null);
       this.notice.set('Weekly plan saved. This routine repeats each week.');
@@ -233,12 +245,13 @@ export class Gym {
     this.copyTarget = (day + 1) % 7;
     this.error.set('');
   }
-  async copyDay(): Promise<void> {
+  async copyDay(formUi?: AppForm): Promise<void> {
     const source = this.copySource();
     if (source === null) return;
     this.error.set('');
     try {
       await this.store.copyDay(source, this.copyTarget);
+      formUi?.markSaved();
       this.copySource.set(null);
       this.showDay(this.copyTarget);
       this.notice.set(

@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { BookStatistics } from '@pages/statistics/components/book-statistics/book-statistics';
 import { StatisticsInsight } from '@pages/statistics/components/statistics-insight/statistics-insight';
 import { StatisticsKpi } from '@pages/statistics/components/statistics-kpi/statistics-kpi';
@@ -35,6 +36,7 @@ import {
 @Component({
   selector: 'app-statistics',
   imports: [
+    AppButton,
     BookStatistics,
     StatisticsInsight,
     StatisticsKpi,

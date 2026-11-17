@@ -1,9 +1,10 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { ChangeDetectionStrategy, Component, input, output, model } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GymExercise } from '@pages/gym/state/gym/gym.model';
 @Component({
   selector: 'article[appGymLibraryCard]',
-  imports: [TranslatePipe],
+  imports: [AppButton, TranslatePipe],
 
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './gym-library-card.html',

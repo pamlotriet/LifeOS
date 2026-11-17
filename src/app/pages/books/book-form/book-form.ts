@@ -1,3 +1,4 @@
+import { AppForm, AppDiscard } from '@shared/directives/app-form';
 import { BookTrackingChoice } from '@pages/books/components/book-tracking-choice/book-tracking-choice';
 import { BookBasicsFields } from '@pages/books/components/book-basics-fields/book-basics-fields';
 import { BookReadingDates } from '@pages/books/components/book-reading-dates/book-reading-dates';
@@ -38,6 +39,8 @@ import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
 @Component({
   selector: 'app-book-form',
   imports: [
+    AppForm,
+    AppDiscard,
     BookTrackingChoice,
     BookBasicsFields,
     BookReadingDates,
@@ -62,7 +65,7 @@ export class BookForm {
   private readonly i18n = inject(TranslateService);
 
   @Input() embedded = false;
-  private readonly modal = inject(ModalController);
+  private readonly modalController = inject(ModalController);
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -291,7 +294,7 @@ export class BookForm {
   cancel(): void {
     if (this.saving()) return;
     if (this.embedded) {
-      void this.modal.dismiss();
+      void this.modalController.dismiss();
       return;
     }
     if (this.id) {
@@ -367,7 +370,7 @@ export class BookForm {
     target.update((ids) => (ids.includes(id) ? ids.filter((item) => item !== id) : [...ids, id]));
   }
 
-  async save(): Promise<void> {
+  async save(formUi?: AppForm): Promise<void> {
     if (!this.validateBasics()) {
       this.step.set(1);
       return;
@@ -421,12 +424,13 @@ export class BookForm {
         genreTagIds: this.genreTagIds(),
       };
       await this.store.saveBook(input, this.id ?? undefined);
+      formUi?.markSaved();
       if (this.id) {
         this.book.set(await this.store.getBook(this.id));
         this.showEditor.set(false);
         this.step.set(1);
       } else if (this.embedded) {
-        await this.modal.dismiss(undefined, 'saved');
+        await this.modalController.dismiss(undefined, 'saved');
       } else {
         await this.router.navigateByUrl('/books', { replaceUrl: true });
       }

@@ -1,9 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/modal-controller';
+import { FormProtection } from '@core/forms/form-protection.service';
 
 @Injectable({ providedIn: 'root' })
 export class AddBookSheet {
   private readonly modals = inject(ModalController);
+  private readonly forms = inject(FormProtection);
   private opening = false;
 
   async open(): Promise<void> {
@@ -20,7 +22,9 @@ export class AddBookSheet {
         handle: false,
         backdropDismiss: false,
         canDismiss: async (_data, role) =>
-          role === 'saved' || !modal.querySelector('app-book-form button[type="submit"]:disabled'),
+          role === 'saved' ||
+          (!modal.querySelector('app-book-form button[type="submit"]:disabled') &&
+            this.forms.canLeave(modal)),
         htmlAttributes: { 'aria-label': 'Add book' },
       });
       await modal.present();

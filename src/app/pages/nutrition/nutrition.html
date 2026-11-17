@@ -16,6 +16,7 @@
       </button>
     </header>
     <div class="date-nav">
+      <!-- quality-allow shared-button: Compact directional or icon action retains its surrounding control layout. -->
       <button [attr.aria-label]="'Previous day' | translate" (click)="changeDate(-1)">&larr;</button
       ><label
         ><span class="sr-only">{{ 'Diary date' | translate }}</span
@@ -24,9 +25,13 @@
           type="date"
           [ngModel]="date()"
           (ngModelChange)="date.set($event); editingId = ''; loggerOpen.set(false)" /></label
-      ><button [attr.aria-label]="'Next day' | translate" (click)="changeDate(1)">&rarr;</button>
+      ><!-- quality-allow shared-button: Compact directional or icon action retains its surrounding control layout. -->
+      <button [attr.aria-label]="'Next day' | translate" (click)="changeDate(1)">&rarr;</button>
       @if (date() !== today) {
-        <button (click)="date.set(today); editingId = ''; loggerOpen.set(false)">
+        <button
+          appButton="secondary"
+          (click)="date.set(today); editingId = ''; loggerOpen.set(false)"
+        >
           {{ 'Today' | translate }}
         </button>
       }
@@ -37,7 +42,7 @@
     @if (store.error()) {
       <p role="alert" class="notice">
         {{ store.error() | translate }}
-        <button (click)="store.reload()">{{ 'Retry' | translate }}</button>
+        <button appButton="secondary" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </p>
     }
     @if (error()) {
@@ -72,7 +77,7 @@
               {{ (editingEntry() ? 'Edit food entry' : 'Log food') | translate }}
             </h2>
           </div>
-          <button (click)="cancelLogger()" [disabled]="busy()">
+          <button appButton="secondary" (click)="cancelLogger()" [disabled]="busy()">
             {{ 'Cancel' | translate }}
           </button>
         </div>
@@ -88,8 +93,10 @@
               >{{ 'Date' | translate }}<input appInput type="date" [(ngModel)]="editDate"
             /></label>
             <label
-              >{{ 'Meal' | translate
-              }}<select class="lifeos-select" [(ngModel)]="editMeal">
+              >{{
+                'Meal' | translate
+              }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+              <select class="lifeos-select" [(ngModel)]="editMeal">
                 @for (category of categories; track category) {
                   <option [value]="category">{{ category | translate }}</option>
                 }
@@ -135,8 +142,10 @@
           </button>
         } @else {
           <label
-            >{{ 'Meal' | translate
-            }}<select class="lifeos-select" [(ngModel)]="meal">
+            >{{
+              'Meal' | translate
+            }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+            <select class="lifeos-select" [(ngModel)]="meal">
               @for (m of categories; track m) {
                 <option>{{ m }}</option>
               }
@@ -159,8 +168,10 @@
           @switch (logMode()) {
             @case ('ingredient') {
               <label
-                >{{ 'Ingredient' | translate
-                }}<select class="lifeos-select" [(ngModel)]="foodId" (ngModelChange)="changeFood()">
+                >{{
+                  'Ingredient' | translate
+                }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                <select class="lifeos-select" [(ngModel)]="foodId" (ngModelChange)="changeFood()">
                   <option value="">{{ 'Choose ingredient' | translate }}</option>
                   @for (item of store.foods(); track item.id) {
                     @if (!item.archived) {
@@ -183,8 +194,10 @@
                     class="lifeos-select"
                     [(ngModel)]="grams" /></label
                 ><label
-                  >{{ 'Unit' | translate
-                  }}<select class="lifeos-select" [(ngModel)]="unit">
+                  >{{
+                    'Unit' | translate
+                  }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                  <select class="lifeos-select" [(ngModel)]="unit">
                     @for (u of units(); track u) {
                       <option>{{ u }}</option>
                     }
@@ -207,8 +220,10 @@
             }
             @case ('recipe') {
               <label
-                >{{ 'Recipe' | translate
-                }}<select class="lifeos-select" [(ngModel)]="recipeId">
+                >{{
+                  'Recipe' | translate
+                }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                <select class="lifeos-select" [(ngModel)]="recipeId">
                   <option value="">{{ 'Choose recipe' | translate }}</option>
                   @for (r of recipes.sorted(); track r.id) {
                     <option [value]="r.id">{{ r.title }}</option>

@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { AuthService } from '@core/authentication/authentication.service';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -11,7 +12,7 @@ import {
 
 @Component({
   selector: 'app-login',
-  imports: [TranslatePipe, IonIcon],
+  imports: [AppButton, TranslatePipe, IonIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.html',
   host: { class: 'block h-full min-h-0' },

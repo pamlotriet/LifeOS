@@ -1,0 +1,24 @@
+<a routerLink="/books/shelf"
+  ><ion-icon name="library-outline" aria-hidden="true" /><span
+    ><strong>{{ total() }}</strong
+    ><small>{{ 'On your shelf' | translate }}</small></span
+  ></a
+>
+<a routerLink="/books/shelf"
+  ><ion-icon name="book-outline" aria-hidden="true" /><span
+    ><strong>{{ reading() }}</strong
+    ><small>{{ 'Currently reading' | translate }}</small></span
+  ></a
+>
+<a routerLink="/books/finished"
+  ><ion-icon name="checkmark-done-outline" aria-hidden="true" /><span
+    ><strong>{{ finished() }}</strong
+    ><small>{{ 'Finished' | translate }}</small></span
+  ></a
+>
+<a routerLink="/books/shelf"
+  ><ion-icon name="bookmark-outline" aria-hidden="true" /><span
+    ><strong>{{ favourites() }}</strong
+    ><small>{{ 'Favourites' | translate }}</small></span
+  ></a
+>

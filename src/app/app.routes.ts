@@ -1,7 +1,8 @@
+import { protectFormRoutes } from '@core/forms/form-protection.service';
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 
-export const routes: Routes = [
+export const routes: Routes = protectFormRoutes([
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'today/customise', redirectTo: 'planning', pathMatch: 'full' },
   { path: 'today', redirectTo: 'planning', pathMatch: 'full' },
@@ -50,4 +51,4 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
-];
+]);

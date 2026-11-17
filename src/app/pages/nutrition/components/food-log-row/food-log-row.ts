@@ -1,10 +1,11 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { FoodLog } from '@pages/nutrition/state/nutrition/nutrition.model';
 @Component({
   selector: 'article[appFoodLogRow]',
-  imports: [TranslatePipe],
+  imports: [AppButton, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './food-log-row.html',
   styleUrl: './food-log-row.css',

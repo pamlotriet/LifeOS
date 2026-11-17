@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
@@ -22,7 +23,7 @@ const COLORS = [
 
 @Component({
   selector: 'app-reading-wheel',
-  imports: [TranslatePipe, IonContent, IonIcon, RouterLink, AppSkeleton],
+  imports: [AppButton, TranslatePipe, IonContent, IonIcon, RouterLink, AppSkeleton],
   templateUrl: './reading-wheel.html',
   styleUrl: './reading-wheel.css',
 })

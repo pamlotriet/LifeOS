@@ -1,3 +1,5 @@
+import { FieldFeedback } from '@shared/directives/field-feedback';
+import { AppForm } from '@shared/directives/app-form';
 import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
@@ -25,6 +27,8 @@ import {
   host: { class: 'budget-screen' },
   selector: 'app-budget-transaction-form',
   imports: [
+    FieldFeedback,
+    AppForm,
     BudgetPage,
     AppSelect,
     TranslatePipe,
@@ -39,7 +43,6 @@ import {
     RouterLink,
   ],
   templateUrl: './budget-transaction-form.html',
-  
 })
 export class BudgetTransactionForm {
   readonly store = inject(BudgetStore);
@@ -212,7 +215,7 @@ export class BudgetTransactionForm {
     this.model.receiptUrl = '';
     this.model.receiptPath = '';
   }
-  async save(): Promise<void> {
+  async save(formUi?: AppForm): Promise<void> {
     if (this.busy()) return;
     this.busy.set(true);
     this.error.set('');
@@ -239,6 +242,7 @@ export class BudgetTransactionForm {
         this.id ?? undefined,
         this.localReceipt() || undefined,
       );
+      formUi?.markSaved();
       this.store.month.set(this.store.monthForDate(this.model.date));
       await this.router.navigateByUrl(
         paymentStatus === 'planned'

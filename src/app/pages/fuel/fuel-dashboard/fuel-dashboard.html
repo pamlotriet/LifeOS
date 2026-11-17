@@ -6,7 +6,11 @@
   } @else if (vehicles.error() || refuels.error()) {
     <p class="my-6 rounded-[14px] border border-border bg-card p-8 text-destructive" role="alert">
       {{ vehicles.error() || refuels.error() | translate }}
-      <button type="button" (click)="vehicles.error() ? vehicles.reload() : refuels.reload()">
+      <button
+        appButton="secondary"
+        type="button"
+        (click)="vehicles.error() ? vehicles.reload() : refuels.reload()"
+      >
         {{ 'Retry' | translate }}
       </button>
     </p>
@@ -43,8 +47,10 @@
         class="flex items-center justify-end gap-4 max-[1000px]:w-full max-[1000px]:justify-between max-[600px]:flex-wrap max-[600px]:items-end max-[500px]:gap-2.5 [&_label]:max-[600px]:w-full [&_label]:max-[600px]:min-w-0 [&_label]:max-[600px]:flex-[1_1_100%] [&_select]:max-w-80 [&_select]:max-[600px]:w-full [&_select]:max-[600px]:max-w-none [&_select]:max-[600px]:min-w-0 [&_a]:self-end [&_a]:max-[600px]:w-full"
       >
         <label class="grid gap-1.5 text-[0.72rem] text-(--text-secondary)"
-          >{{ 'Vehicle' | translate
-          }}<select
+          >{{
+            'Vehicle' | translate
+          }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+          <select
             class="min-h-10.5 min-w-37.5 max-w-full rounded-[9px] border border-border bg-card px-3 py-2 text-[0.82rem] text-foreground"
             [attr.aria-label]="'Select fuel vehicle' | translate"
             [ngModel]="refuels.selectedVehicleId()"

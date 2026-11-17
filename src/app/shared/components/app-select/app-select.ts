@@ -1,3 +1,4 @@
+import { FieldFeedback } from '@shared/directives/field-feedback';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   Component,
@@ -20,6 +21,7 @@ export interface SelectOption {
 }
 
 @Component({
+  hostDirectives: [FieldFeedback],
   selector: 'app-select',
   imports: [TranslatePipe, IonIcon],
   providers: [

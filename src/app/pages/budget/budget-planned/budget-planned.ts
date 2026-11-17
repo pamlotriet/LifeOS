@@ -1,3 +1,5 @@
+import { FormProtection } from '@core/forms/form-protection.service';
+import { AppForm, AppDiscard } from '@shared/directives/app-form';
 import { BudgetPlanningSummary } from '@pages/budget/components/budget-planning-summary/budget-planning-summary';
 import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -34,6 +36,8 @@ import { BudgetTransactions } from '@pages/budget/components/budget-transactions
   host: { class: 'budget-screen' },
   selector: 'app-budget-planned',
   imports: [
+    AppForm,
+    AppDiscard,
     BudgetPlanningSummary,
     BudgetPage,
     TranslatePipe,
@@ -54,6 +58,7 @@ import { BudgetTransactions } from '@pages/budget/components/budget-transactions
   styleUrls: ['./budget-planned.css'],
 })
 export class BudgetPlanned {
+  private readonly formProtection = inject(FormProtection);
   private readonly i18n = inject(TranslateService);
 
   readonly store = inject(BudgetStore);
@@ -90,6 +95,7 @@ export class BudgetPlanned {
   readonly draftAmount = signal<number | null>(null);
 
   editItem(categoryId: string, item?: BudgetPlan): void {
+    if (!this.formProtection.canLeave()) return;
     if (this.savingPlanItem() || (item && this.movedTransaction(item.id))) return;
     this.editorCategoryId.set(categoryId);
     this.editingId.set(item?.id);
@@ -107,7 +113,7 @@ export class BudgetPlanned {
     this.planItemError.set('');
   }
 
-  async saveDraft(): Promise<void> {
+  async saveDraft(formUi?: AppForm): Promise<void> {
     const categoryId = this.editorCategoryId();
     if (!categoryId || this.savingPlanItem()) return;
     const name = this.draftName().trim();
@@ -127,6 +133,7 @@ export class BudgetPlanned {
     this.planItemError.set('');
     try {
       await this.store.savePlanItem(this.store.month(), categoryId, name, amount, this.editingId());
+      formUi?.markSaved();
       this.editorCategoryId.set(null);
       this.editingId.set(undefined);
       this.draftName.set('');
@@ -225,6 +232,7 @@ export class BudgetPlanned {
     }
   }
   setMonth(value: string): void {
+    if (!this.formProtection.canLeave()) return;
     if (this.savingPlanItem() || this.savingDebtPlan()) return;
     if (/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) {
       if (value !== this.store.month()) this.cancelEdit();

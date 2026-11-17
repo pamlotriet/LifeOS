@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -20,6 +21,7 @@ interface FuelSummaryCard {
 @Component({
   selector: 'app-fuel-dashboard',
   imports: [
+    AppButton,
     TranslatePipe,
     FormsModule,
     RouterLink,

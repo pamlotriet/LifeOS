@@ -14,7 +14,12 @@
     "test": "ng test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "i18n:check": "node scripts/check-translations.mjs"
+    "i18n:check": "node scripts/check-translations.mjs",
+    "start:e2e": "ng serve --configuration e2e --host 127.0.0.1 --port 4300",
+    "test:e2e": "playwright test",
+    "lint": "node scripts/check-conventions.mjs",
+    "quality:test": "node --test scripts/quality-rules.test.mjs scripts/check-budget-styles.test.cjs",
+    "quality:check": "npm run lint && npm run format:check && npm run i18n:check && npm run quality:test"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
@@ -45,6 +50,7 @@
     "@angular/build": "^22.1.8",
     "@angular/cli": "^22.1.8",
     "@angular/compiler-cli": "^22.1.0",
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/node": "^20.17.19",
     "jsdom": "^28.0.0",

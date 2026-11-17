@@ -38,6 +38,7 @@
         <p class="muted">{{ 'A little structure. A stronger you.' | translate }}</p>
       </div>
       <button
+        appButton="primary"
         type="button"
         class="button primary"
         (click)="editEntry(selectedDay())"
@@ -111,6 +112,7 @@
     } @else if (store.error()) {
       <p class="message error" role="alert">
         {{ store.error() | translate }}
+        <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
         <button class="text-button" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </p>
     } @else {
@@ -158,7 +160,14 @@
           </button>
         </nav>
         @if (copySource() !== null) {
-          <form class="gym-panel copy-workout" (ngSubmit)="copyDay()">
+          <form
+            appForm
+            #formUi0="appForm"
+            [formSaving]="store.saving()"
+            [formValue]="copyTarget"
+            class="gym-panel copy-workout"
+            (ngSubmit)="copyDay(formUi0)"
+          >
             <div>
               <h3>
                 {{ 'messages.copy_count_workout_c6a608' | translate: { p0: days[copySource()!] } }}
@@ -171,8 +180,15 @@
               </p>
             </div>
             <label
-              >{{ 'Copy to' | translate
-              }}<select name="copyTarget" [(ngModel)]="copyTarget" [disabled]="store.saving()">
+              >{{
+                'Copy to' | translate
+              }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+              <select
+                appFieldFeedback
+                name="copyTarget"
+                [(ngModel)]="copyTarget"
+                [disabled]="store.saving()"
+              >
                 @for (day of days; track day; let i = $index) {
                   @if (i !== copySource()) {
                     <option [ngValue]="i">{{ '' + day | translate }}</option>
@@ -182,6 +198,8 @@
             >
             <div class="form-actions">
               <button
+                appButton="secondary"
+                appDiscard
                 type="button"
                 class="button"
                 [disabled]="store.saving()"
@@ -223,6 +241,7 @@
         <div class="library-heading">
           <h2>{{ 'Your exercise library' | translate }}</h2>
           <button
+            appButton="primary"
             type="button"
             class="button primary"
             [disabled]="store.saving()"
@@ -241,8 +260,10 @@
               [ngModel]="search()"
               (ngModelChange)="search.set($event)" /></label
           ><label
-            >{{ 'Muscle group' | translate
-            }}<select [ngModel]="muscle()" (ngModelChange)="muscle.set($event)">
+            >{{
+              'Muscle group' | translate
+            }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+            <select appFieldFeedback [ngModel]="muscle()" (ngModelChange)="muscle.set($event)">
               <option>{{ 'All' | translate }}</option>
               @for (group of muscles; track group) {
                 <option>{{ group }}</option>
@@ -260,6 +281,7 @@
             </p>
             <div class="form-actions">
               <button
+                appButton="secondary"
                 type="button"
                 class="button"
                 [disabled]="store.saving()"
@@ -267,6 +289,7 @@
               >
                 {{ 'Keep exercise' | translate }}</button
               ><button
+                appButton="danger"
                 type="button"
                 class="button danger"
                 [disabled]="store.saving()"
@@ -307,7 +330,12 @@
                   ) | translate
                 }}
               </p>
-              <button type="button" class="button primary" (click)="editExercise()">
+              <button
+                appButton="primary"
+                type="button"
+                class="button primary"
+                (click)="editExercise()"
+              >
                 {{ '+ Add exercise' | translate }}
               </button>
             </div>
@@ -322,13 +350,20 @@
     [initialBreakpoint]="mobileSheet() ? 1 : undefined"
     [handle]="mobileSheet()"
     [isOpen]="!!exerciseEditor() || !!entryEditor()"
-    [canDismiss]="!store.saving()"
+    [canDismiss]="canDismissForm"
     (didDismiss)="closeEditors()"
     [attr.aria-label]="'Gym exercise editor' | translate"
     ><ng-template
       ><div class="gym-popup-body">
         @if (exerciseEditor()) {
-          <form class="gym-panel editor popup-form" (ngSubmit)="saveExercise()">
+          <form
+            appForm
+            #formUi1="appForm"
+            [formSaving]="store.saving()"
+            [formValue]="exercise"
+            class="gym-panel editor popup-form"
+            (ngSubmit)="saveExercise(formUi1)"
+          >
             <div class="popup-heading">
               <h2>
                 {{
@@ -341,6 +376,7 @@
                 }}
               </h2>
               <button
+                appDiscard
                 type="button"
                 class="text-button popup-close"
                 [attr.aria-label]="'Close exercise editor' | translate"
@@ -370,8 +406,10 @@
                     [placeholder]="'e.g. Dumbbell bench press' | translate"
                     [(ngModel)]="exercise.name" /></label
                 ><label
-                  >{{ 'Muscle group' | translate
-                  }}<select name="muscle" [(ngModel)]="exercise.muscle">
+                  >{{
+                    'Muscle group' | translate
+                  }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                  <select appFieldFeedback name="muscle" [(ngModel)]="exercise.muscle">
                     @for (group of muscles; track group) {
                       <option>{{ group }}</option>
                     }
@@ -398,7 +436,13 @@
                 ></textarea>
               </label>
               <div class="form-actions">
-                <button type="button" class="button" (click)="cancelExercise()">
+                <button
+                  appButton="secondary"
+                  appDiscard
+                  type="button"
+                  class="button"
+                  (click)="cancelExercise()"
+                >
                   {{ 'Cancel' | translate }}</button
                 ><button appButton="primary" class="button primary" type="submit">
                   {{
@@ -415,7 +459,14 @@
           </form>
         }
         @if (entryEditor()) {
-          <form class="gym-panel editor popup-form" (ngSubmit)="saveEntry()">
+          <form
+            appForm
+            #formUi2="appForm"
+            [formSaving]="store.saving()"
+            [formValue]="entry"
+            class="gym-panel editor popup-form"
+            (ngSubmit)="saveEntry(formUi2)"
+          >
             <div class="popup-heading">
               <h2>
                 {{
@@ -426,6 +477,7 @@
                 }}
               </h2>
               <button
+                appDiscard
                 type="button"
                 class="text-button popup-close"
                 [attr.aria-label]="'Close exercise editor' | translate"
@@ -441,8 +493,10 @@
             <fieldset [disabled]="store.saving()">
               <div class="field-grid">
                 <label
-                  >{{ 'Day' | translate
-                  }}<select name="day" [(ngModel)]="entry.day">
+                  >{{
+                    'Day' | translate
+                  }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                  <select appFieldFeedback name="day" [(ngModel)]="entry.day">
                     @for (day of days; track day; let i = $index) {
                       <option [ngValue]="i">{{ '' + day | translate }}</option>
                     }
@@ -513,7 +567,13 @@
                 ></textarea>
               </label>
               <div class="form-actions">
-                <button type="button" class="button" (click)="closeEditors()">
+                <button
+                  appButton="secondary"
+                  appDiscard
+                  type="button"
+                  class="button"
+                  (click)="closeEditors()"
+                >
                   {{ 'Cancel' | translate }}</button
                 ><button appButton="primary" type="submit" class="button primary">
                   {{

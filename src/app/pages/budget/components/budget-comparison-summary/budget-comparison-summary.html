@@ -8,7 +8,10 @@
   ><strong>{{ money(totals().actual) }}</strong
   ><span>{{ 'Recorded expenses this cycle' | translate }}</span>
 </div>
-<div class="budget-metric panel metric-left" [class.metric-over]="totals().actual > totals().planned">
+<div
+  class="budget-metric panel metric-left"
+  [class.metric-over]="totals().actual > totals().planned"
+>
   <small>{{
     (totals().actual > totals().planned ? 'Over total plan' : 'Left in total plan') | translate
   }}</small

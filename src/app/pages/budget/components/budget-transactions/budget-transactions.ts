@@ -38,6 +38,7 @@ import { AppButton } from '@shared/components/app-button/app-button';
             }}{{ money(item.amount) }}</strong
           >
         </a>
+        <!-- quality-allow shared-button: Compact directional or icon action retains its surrounding control layout. -->
         <button
           type="button"
           class="transaction-delete"

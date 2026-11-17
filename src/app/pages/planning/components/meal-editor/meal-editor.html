@@ -1,0 +1,109 @@
+<h2 class="font-bold">{{ (editingId() ? 'Edit meal' : 'Plan meal') | translate }}</h2>
+<label
+  >{{ 'Date' | translate
+  }}<input
+    appInput="field"
+    type="date"
+    class="control"
+    [ngModel]="date()"
+    (ngModelChange)="date.set($event)" /></label
+><label
+  >{{
+    'Meal' | translate
+  }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+  <select [ngModel]="category()" (ngModelChange)="category.set($event)" class="lifeos-select">
+    @for (m of categories(); track m) {
+      <option>{{ m }}</option>
+    }
+  </select></label
+>
+<label
+  >{{
+    'Recipe' | translate
+  }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+  <select
+    class="lifeos-select"
+    [ngModel]="recipeId()"
+    (ngModelChange)="recipeId.set($event); recipeSelected.emit()"
+  >
+    <option value="">{{ 'Custom meal' | translate }}</option>
+    @for (r of recipes(); track r.id) {
+      <option [value]="r.id">{{ r.title | translate }}</option>
+    }
+  </select></label
+>
+<label
+  >{{
+    'Or ingredient' | translate
+  }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+  <select
+    class="lifeos-select"
+    [ngModel]="ingredientId()"
+    (ngModelChange)="ingredientId.set($event); ingredientSelected.emit()"
+  >
+    <option value="">{{ 'No ingredient' | translate }}</option>
+    @for (f of foods(); track f.id) {
+      @if (!f.archived) {
+        <option [value]="f.id">{{ f.name }} | {{ f.brand }} | {{ f.preparation }}</option>
+      }
+    }
+  </select></label
+>
+@if (ingredientId()) {
+  <label
+    >{{ 'Amount' | translate
+    }}<input
+      appInput="field"
+      class="control"
+      type="number"
+      min="0.01"
+      step="any"
+      [ngModel]="quantity()"
+      (ngModelChange)="quantity.set($event)" /></label
+  ><label
+    >{{ 'Unit' | translate
+    }}<input
+      appInput="field"
+      class="control"
+      [ngModel]="unit()"
+      (ngModelChange)="unit.set($event)"
+      [placeholder]="'g, ml, or defined household portion' | translate"
+  /></label>
+} @else {
+  <label
+    >{{ 'Planned servings' | translate
+    }}<input
+      appInput="field"
+      class="control"
+      type="number"
+      min="0.01"
+      step="any"
+      [ngModel]="servings()"
+      (ngModelChange)="servings.set($event)"
+  /></label>
+}
+<label
+  >{{ 'Meal name' | translate
+  }}<input
+    appInput="field"
+    class="control"
+    [ngModel]="title()"
+    (ngModelChange)="title.set($event)" /></label
+><label
+  >{{ 'Details' | translate
+  }}<input
+    appInput="field"
+    class="control"
+    [ngModel]="detail()"
+    (ngModelChange)="detail.set($event)" /></label
+><button
+  appButton="primary"
+  type="button"
+  (click)="save.emit()"
+  [disabled]="busy() || !title().trim() || unavailable()"
+>
+  {{ 'Save meal' | translate }}
+</button>
+<button appButton="secondary" type="button" [disabled]="busy()" (click)="cancel.emit()">
+  {{ 'Cancel' | translate }}
+</button>

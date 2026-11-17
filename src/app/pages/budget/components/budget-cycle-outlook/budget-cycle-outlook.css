@@ -1,0 +1,92 @@
+.balance-panel {
+  display: block;
+  padding: 24px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 14px;
+}
+.balance-panel .section-heading {
+  margin: 0 0 24px;
+}
+.balance-panel h2 {
+  font-size: 1rem;
+}
+.outlook-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.outlook-total {
+  display: block;
+  margin: 8px 0;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  letter-spacing: -0.04em;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+.outlook-total.deficit {
+  color: var(--destructive);
+}
+.outlook-note {
+  font-size: 0.76rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.outlook-breakdown {
+  margin: 20px 0;
+}
+.outlook-breakdown > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+.outlook-breakdown dt {
+  color: var(--text-secondary);
+}
+.outlook-breakdown dd {
+  margin: 0;
+  white-space: nowrap;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.allocation-bar {
+  height: 7px;
+  display: flex;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--border);
+  margin: 20px 0 12px;
+}
+.allocation-bar span {
+  height: 100%;
+}
+.balance-panel > .text-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+@media (max-width: 600px) {
+  .balance-panel {
+    padding: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .outlook-breakdown > div {
+    font-size: 0.76rem;
+  }
+}
+> .balance-panel {
+  margin: 0 0 32px;
+}
+@media (max-width: 600px) {
+  > .balance-panel {
+    margin-bottom: 28px;
+  }
+}
+:host
+  .budget-overview-page
+  > :is(.balance-panel, .budget-content-card, section[aria-label='Budget statistics']) {
+  margin-bottom: var(--budget-gap);
+}

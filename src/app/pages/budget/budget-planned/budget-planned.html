@@ -1,8 +1,5 @@
 <ion-content
-  ><main
-    appBudgetPage
-    class="budget-page budget-planning-page"
-  >
+  ><main appBudgetPage class="budget-page budget-planning-page">
     <div class="planning-topbar"><app-back-button fallback="/budget" /></div>
     <header class="page-header planning-header">
       <div class="planning-title max-sm:col-span-full">
@@ -51,6 +48,7 @@
         class="planning-cycle-details max-sm:col-start-2 max-sm:row-start-2 max-sm:mt-0! max-sm:text-center [&_p]:max-sm:text-[0.65rem]!"
       >
         <p aria-live="polite">{{ store.cycleLabel() | translate }}</p>
+        <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
         <button
           type="button"
           class="text-link"
@@ -67,6 +65,7 @@
     } @else if (store.error()) {
       <p class="status error" role="alert">
         {{ store.error() | translate }}
+        <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
         <button class="text-link" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </p>
     } @else {
@@ -232,6 +231,7 @@
                           | translate: { p0: money(moved.amount), p1: moved.date }
                       }}</span>
                     }
+                    <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
                     <button
                       type="button"
                       class="text-link"
@@ -249,8 +249,11 @@
               }
               @if (editorCategoryId() === item.id) {
                 <form
+                  appForm
+                  #formUi0="appForm"
+                  [formSaving]="savingPlanItem()"
                   class="my-4 rounded-xl border border-border bg-background p-4"
-                  (ngSubmit)="saveDraft()"
+                  (ngSubmit)="saveDraft(formUi0)"
                 >
                   <h3 class="mb-4 text-sm font-medium">
                     {{ (editingId() ? 'Edit payment' : 'Add payment') | translate }}
@@ -296,6 +299,7 @@
                       {{ (savingPlanItem() ? 'Saving...' : 'Save payment') | translate }}
                     </button>
                     <button
+                      appDiscard
                       appButton="secondary"
                       type="button"
                       [disabled]="savingPlanItem()"
@@ -309,6 +313,7 @@
               <div
                 class="category-actions max-sm:flex-wrap! max-sm:gap-2! [&_button]:max-sm:ml-0! [&_button]:max-sm:min-h-11"
               >
+                <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
                 <button
                   type="button"
                   class="text-link plan-add-item"
@@ -317,6 +322,7 @@
                 >
                   <ion-icon name="add" /> {{ 'Add item' | translate }}
                 </button>
+                <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
                 <button
                   type="button"
                   class="text-link plan-add-item"

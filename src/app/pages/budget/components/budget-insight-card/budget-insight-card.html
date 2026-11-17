@@ -9,7 +9,8 @@
 <h3>{{ item().title | translate }}</h3>
 <strong class="insight-value">{{ item().value }}</strong>
 <p>{{ item().detail | translate }}</p>
-<a appButton="secondary"
+<a
+  appButton="secondary"
   class="secondary-button"
   [routerLink]="item().route"
   [queryParams]="item().id === 'income' ? { type: 'income' } : {}"

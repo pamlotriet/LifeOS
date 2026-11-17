@@ -1,0 +1,59 @@
+<a
+  [routerLink]="['/books', book().id, 'edit']"
+  class="reading-cover"
+  [attr.aria-label]="'View ' + book().title | translate"
+>
+  @if (book().coverUrl) {
+    <img [src]="book().coverUrl" [alt]="book().title + ' cover' | translate" loading="lazy" />
+  } @else {
+    <ion-icon name="book-outline" aria-hidden="true" />
+  }
+</a>
+<div class="reading-details">
+  <p class="reading-eyebrow">{{ 'In progress' | translate }}</p>
+  <a [routerLink]="['/books', book().id, 'edit']" class="reading-book-title">{{
+    book().title | translate
+  }}</a>
+  <p class="reading-author">{{ book().author }}</p>
+  @if (book().progressMode === 'locations') {
+    <p class="text-xs">{{ kindleLabel() }}</p>
+  }
+  <div class="reading-progress-copy">
+    <span>{{
+      (trackingMode() === 'pages' && book().pageCount > 0
+        ? 'Page ' + book().pageProgress + ' of ' + book().pageCount
+        : 'Reading progress'
+      ) | translate
+    }}</span
+    ><strong>{{ percent() }}%</strong>
+  </div>
+  <div
+    class="reading-track"
+    role="progressbar"
+    [attr.aria-label]="'Progress for ' + book().title | translate"
+    [attr.aria-valuenow]="percent()"
+    aria-valuemin="0"
+    aria-valuemax="100"
+  >
+    <span [style.width.%]="percent()"></span>
+  </div>
+  <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+    <p class="reading-remaining">
+      {{
+        (trackingMode() === 'pages' && book().pageCount > 0
+          ? book().pageCount - book().pageProgress + ' pages to go'
+          : 100 - percent() + '% to go'
+        ) | translate
+      }}
+    </p>
+    <button
+      type="button"
+      appButton="secondary"
+      class="shrink-0 text-xs"
+      (click)="progress.emit(book())"
+      [attr.aria-label]="'Update progress for ' + book().title | translate"
+    >
+      {{ 'Update progress' | translate }}
+    </button>
+  </div>
+</div>

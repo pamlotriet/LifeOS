@@ -63,6 +63,7 @@
               }
             </div>
           </div>
+          <!-- quality-allow shared-button: Full-surface card or visual picker is an interactive surface, not a standard action button. -->
           <button
             type="button"
             (click)="spin()"
@@ -86,9 +87,19 @@
           </p>
         }
         <div class="wheel-actions simple">
-          <button type="button" (click)="shuffle()" [disabled]="spinning() || busy()">
+          <button
+            appButton="secondary"
+            type="button"
+            (click)="shuffle()"
+            [disabled]="spinning() || busy()"
+          >
             <ion-icon name="shuffle"></ion-icon>{{ 'Shuffle books' | translate }}</button
-          ><button type="button" (click)="showManage()" [disabled]="spinning() || busy()">
+          ><button
+            appButton="secondary"
+            type="button"
+            (click)="showManage()"
+            [disabled]="spinning() || busy()"
+          >
             <ion-icon name="settings"></ion-icon>{{ 'Manage Wheel' | translate }}
           </button>
         </div>
@@ -96,7 +107,7 @@
           <section class="pick-history">
             <div>
               <h2>{{ 'Last Picks' | translate }}</h2>
-              <button type="button" (click)="recentPickIds.set([])">
+              <button appButton="secondary" type="button" (click)="recentPickIds.set([])">
                 {{ 'Clear' | translate }}
               </button>
             </div>
@@ -141,6 +152,7 @@
             }}</span
           ><span class="wheel-selection-actions"
             ><button
+              appButton="secondary"
               type="button"
               (click)="selectAll()"
               [disabled]="busy() || selected().length === eligible().length"
@@ -148,6 +160,7 @@
             >
               {{ 'Select all' | translate }}</button
             ><button
+              appButton="secondary"
               type="button"
               (click)="deselectAll()"
               [disabled]="busy() || !selected().length"
@@ -166,6 +179,7 @@
             class="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 text-center"
           >
             <p class="font-semibold">{{ 'No want-to-read books yet' | translate }}</p>
+            <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
             <button
               type="button"
               (click)="addBookSheet.open()"
@@ -221,6 +235,7 @@
           </div>
         }
         <button
+          appButton="secondary"
           type="button"
           (click)="showWheel()"
           [disabled]="busy() || spinning()"
@@ -255,6 +270,7 @@
           class="mt-8 block rounded-2xl bg-[var(--primary)] px-4 py-4 text-center font-bold text-[var(--wheel-ink)] no-underline"
           >{{ 'View Book' | translate }}</a
         ><button
+          appButton="secondary"
           type="button"
           (click)="showWheel()"
           [disabled]="busy() || spinning()"

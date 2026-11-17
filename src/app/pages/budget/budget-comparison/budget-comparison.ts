@@ -24,7 +24,8 @@ import { compareBudgetCategories } from '@pages/budget/budget-comparison/budget-
 @Component({
   host: { class: 'budget-screen' },
   selector: 'app-budget-comparison',
-  imports: [AppButton, 
+  imports: [
+    AppButton,
     BudgetComparisonTable,
     BudgetComparisonSummary,
     BudgetPage,

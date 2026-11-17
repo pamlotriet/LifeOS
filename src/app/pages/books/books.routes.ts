@@ -1,7 +1,8 @@
+import { protectFormRoutes } from '@core/forms/form-protection.service';
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 
-export const booksRoutes: Routes = [
+export const booksRoutes: Routes = protectFormRoutes([
   {
     path: '',
     loadComponent: () =>
@@ -46,4 +47,4 @@ export const booksRoutes: Routes = [
     loadComponent: () => import('@pages/books/book-tags/book-tags').then((m) => m.BookTags),
     canActivate: [authGuard],
   },
-];
+]);

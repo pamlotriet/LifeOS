@@ -6,6 +6,7 @@
 @import 'tailwindcss/utilities.css';
 @import '@ionic/angular/css/ionic.bundle.css';
 @import '@ionic/angular/css/palettes/dark.class.css';
+@import './app/shared/forms.css';
 
 /* iOS Safari zooms the viewport when an editable control is smaller than 16px. */
 @media (max-width: 767px) {

@@ -1,53 +1,48 @@
-import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BudgetAccounts } from '@pages/budget/components/budget-accounts/budget-accounts';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { BudgetBalancePanels } from '@pages/budget/components/budget-balance-panels/budget-balance-panels';
+import { BudgetCycleNavigation } from '@pages/budget/components/budget-cycle-navigation/budget-cycle-navigation';
+import { BudgetCycleOutlook } from '@pages/budget/components/budget-cycle-outlook/budget-cycle-outlook';
+import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
+import { AppForm } from '@shared/directives/app-form';
 
-import { AppButton } from '@shared/components/app-button/app-button';
-import { AppInput } from '@shared/components/app-input/app-input';
-import { AppMonthPicker } from '@shared/components/app-month-picker/app-month-picker';
-import { BudgetNumber } from '@shared/directives/budget-number';
-import { BackButton } from '@shared/components/back-button/back-button';
-import { budgetSnapshot } from '@pages/budget/budget-snapshot';
-import { cycleMonth } from '@pages/budget/state/cycle/budget-cycle';
-import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular/ion-content';
-import { IonIcon } from '@ionic/angular/ion-icon';
-import { BudgetStore } from '@pages/budget/state/budget/budget.store';
+import { budgetSnapshot } from '@pages/budget/budget-snapshot';
+import { BudgetNav } from '@pages/budget/components/budget-nav/budget-nav';
+import { BudgetTransactions } from '@pages/budget/components/budget-transactions/budget-transactions';
 import {
+  customAccountNet,
   isTransfer,
   localDate,
+  mainAccountNet,
   money,
   transferAccounts,
-  mainAccountNet,
-  customAccountNet,
 } from '@pages/budget/state/budget/budget.model';
-import { BudgetSummary } from '@pages/budget/components/budget-summary/budget-summary';
-import { BudgetTransactions } from '@pages/budget/components/budget-transactions/budget-transactions';
-import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
+import { BudgetStore } from '@pages/budget/state/budget/budget.store';
+import { cycleMonth } from '@pages/budget/state/cycle/budget-cycle';
+import { AppButton } from '@shared/components/app-button/app-button';
 import { AppSearch } from '@shared/components/app-search/app-search';
 import { AppSelect } from '@shared/components/app-select/app-select';
+import { AppSkeleton } from '@shared/components/app-skeleton/app-skeleton';
+import { BackButton } from '@shared/components/back-button/back-button';
 
 @Component({
   host: { class: 'budget-screen' },
   selector: 'app-budget-overview',
   imports: [
+    BudgetCycleNavigation,
+    BudgetBalancePanels,
+    BudgetCycleOutlook,
     BudgetPage,
     BudgetAccounts,
     TranslatePipe,
-    AppInput,
     AppButton,
-    AppMonthPicker,
-    BudgetNumber,
     BackButton,
     BudgetNav,
     IonContent,
-    IonIcon,
-    FormsModule,
     RouterLink,
-    BudgetSummary,
     BudgetTransactions,
     AppSkeleton,
     AppSearch,
@@ -134,7 +129,7 @@ export class BudgetOverview {
   readonly balanceSaved = signal(false);
   readonly savingBalance = signal(false);
   readonly balanceError = signal('');
-  async saveSpendingBalance(): Promise<void> {
+  async saveSpendingBalance(formUi?: AppForm): Promise<void> {
     if (this.savingBalance()) return;
     this.savingBalance.set(true);
     this.balanceError.set('');
@@ -144,6 +139,7 @@ export class BudgetOverview {
       if (amount === null || !Number.isFinite(amount))
         throw new Error('Enter the balance currently in your Spending account.');
       await this.store.setSpendingBalance(amount);
+      formUi?.markSaved();
       this.balanceInput.set(null);
       this.balanceSaved.set(true);
     } catch (error) {
@@ -155,7 +151,7 @@ export class BudgetOverview {
   readonly savingsInput = signal<number | null>(null);
   readonly savingsBusy = signal(false);
   readonly savingsMessage = signal('');
-  async saveSavingsBalance(): Promise<void> {
+  async saveSavingsBalance(formUi?: AppForm): Promise<void> {
     if (this.savingsBusy()) return;
     this.savingsBusy.set(true);
     this.savingsMessage.set('');
@@ -164,6 +160,7 @@ export class BudgetOverview {
       if (value === null || !Number.isFinite(value) || value < 0)
         throw new Error('Enter your current total savings.');
       await this.store.setSavingsBalance(value);
+      formUi?.markSaved();
       this.savingsInput.set(null);
       this.savingsMessage.set('Savings balance saved.');
     } catch (error) {

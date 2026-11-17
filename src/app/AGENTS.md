@@ -9,3 +9,4 @@
 - Use `AppInput` on native text/number inputs and textareas, and `AppButton` for standard actions. Import these standalone components into the consuming component. Keep layout classes on the page; change common control appearance in the shared component stylesheet.
 - Reuse `AppSelect`, `AppDatePicker`, `AppMonthPicker`, `AppChart`, `AppSkeleton`, `PageHeader` and `BackButton` instead of copying their markup.
 - Preserve existing native form bindings, validation, accessibility labels, route URLs and stored data formats during structural changes.
+- Run `npm run quality:check` before finishing changes. Automated rules and narrowly scoped native-control exceptions are documented in `docs/code-quality.md`.

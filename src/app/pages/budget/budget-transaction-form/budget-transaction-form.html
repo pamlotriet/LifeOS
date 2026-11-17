@@ -25,6 +25,7 @@
     @if (store.error()) {
       <div class="status error" role="alert">
         {{ store.error() | translate }}
+        <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
         <button class="text-link" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </div>
     }
@@ -38,7 +39,14 @@
       </p>
     }
     @if ((!id || loaded()) && !store.loading() && !store.error()) {
-      <form id="transaction-form" (ngSubmit)="save()">
+      <form
+        [formValue]="[model, localReceipt()]"
+        appForm
+        #formUi0="appForm"
+        [formSaving]="busy()"
+        id="transaction-form"
+        (ngSubmit)="save(formUi0)"
+      >
         <fieldset
           [disabled]="busy()"
           class="m-0 min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6"
@@ -117,7 +125,9 @@
           @if (type() !== 'transfer') {
             <label class="field"
               ><span>{{ 'Category' | translate }} <em>*</em></span
-              ><select
+              ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+              <select
+                appFieldFeedback
                 class="lifeos-select"
                 name="category"
                 required
@@ -161,7 +171,9 @@
           @if (type() === 'expense') {
             <label class="field"
               ><span>{{ 'Pay from account' | translate }}</span
-              ><select
+              ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+              <select
+                appFieldFeedback
                 class="lifeos-select"
                 name="account"
                 [ngModel]="model.account || ''"
@@ -210,7 +222,13 @@
             </summary>
             <label class="field"
               ><span>{{ 'Payment Method' | translate }}</span
-              ><select class="lifeos-select" name="payment" [(ngModel)]="model.paymentMethod">
+              ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+              <select
+                appFieldFeedback
+                class="lifeos-select"
+                name="payment"
+                [(ngModel)]="model.paymentMethod"
+              >
                 @for (
                   method of ['Card', 'Cash', 'Bank transfer', 'Debit order', 'Other'];
                   track method
@@ -224,7 +242,13 @@
             ) {
               <label class="field"
                 ><span>{{ 'Debt payment' | translate }}</span
-                ><select class="lifeos-select" name="debtId" [(ngModel)]="model.debtId">
+                ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                <select
+                  appFieldFeedback
+                  class="lifeos-select"
+                  name="debtId"
+                  [(ngModel)]="model.debtId"
+                >
                   <option value="">{{ 'Not a debt payment' | translate }}</option>
                   @for (debt of store.debts(); track debt.id) {
                     <option [value]="debt.id">{{ debt.name }}</option>
@@ -235,7 +259,9 @@
             @if (type() === 'expense' && model.debtId) {
               <label class="field"
                 ><span>{{ 'Payment status' | translate }}</span
-                ><select
+                ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                <select
+                  appFieldFeedback
                   class="lifeos-select"
                   name="paymentStatus"
                   [ngModel]="model.paymentStatus || 'paid'"
@@ -298,6 +324,7 @@
                   (change)="pickFile($event)"
                 />
                 @if (localReceipt() || model.receiptUrl) {
+                  <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
                   <button class="text-link" type="button" (click)="removeReceipt()">
                     {{ 'Remove photo' | translate }}
                   </button>
@@ -306,7 +333,8 @@
             </section>
           </details>
           <div class="form-actions">
-            <a appButton="secondary"
+            <a
+              appButton="secondary"
               class="secondary-button"
               [routerLink]="type() === 'transfer' ? '/budget/transfers' : '/budget'"
               >{{ 'Cancel' | translate }}</a
@@ -315,6 +343,7 @@
             </button>
           </div>
           @if (id) {
+            <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
             <button class="text-link negative" type="button" (click)="confirmDelete.set(true)">
               {{ 'Delete transaction' | translate }}
             </button>

@@ -7,6 +7,7 @@
 <ion-content class="[--background:transparent] [--color:var(--foreground)]">
   @if (embedded) {
     <button
+      appDiscard
       slot="fixed"
       type="button"
       class="book-sheet-close"
@@ -33,6 +34,7 @@
             {{ 'Your library' | translate }}
           </p>
           <div class="flex gap-2">
+            <!-- quality-allow shared-button: Selectable setting or stateful tile retains its specialized visual treatment. -->
             <button
               type="button"
               (click)="toggleFlag('favourite')"
@@ -45,6 +47,7 @@
               {{ current.favourite ? '♥' : '♡' }}
             </button>
             <button
+              appButton="secondary"
               type="button"
               (click)="openEditor()"
               class="rounded-full border border-cyan-400/60 bg-[var(--card)] px-4 text-sm font-semibold text-cyan-200"
@@ -160,6 +163,7 @@
           [attr.aria-label]="'Book preferences' | translate"
           class="mt-3 grid grid-cols-3 gap-2"
         >
+          <!-- quality-allow shared-button: Selectable setting or stateful tile retains its specialized visual treatment. -->
           <button
             type="button"
             (click)="toggleFlag('favourite')"
@@ -169,6 +173,7 @@
             <span class="text-xl text-pink-400">{{ current.favourite ? '♥' : '♡' }}</span
             >{{ 'Favourite' | translate }}
           </button>
+          <!-- quality-allow shared-button: Selectable setting or stateful tile retains its specialized visual treatment. -->
           <button
             type="button"
             (click)="toggleFlag('wouldRecommend')"
@@ -178,6 +183,7 @@
             <span class="text-xl text-cyan-300">{{ current.wouldRecommend ? '👍' : '♧' }}</span
             >{{ 'Recommend' | translate }}
           </button>
+          <!-- quality-allow shared-button: Selectable setting or stateful tile retains its specialized visual treatment. -->
           <button
             type="button"
             (click)="toggleFlag('reread')"
@@ -198,12 +204,14 @@
         }
         <div class="mt-5 grid grid-cols-2 gap-2">
           <button
+            appButton="secondary"
             type="button"
             (click)="openEditor()"
             class="min-h-11 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 font-bold text-[var(--card)]"
           >
             {{ 'Edit Details' | translate }}</button
           ><button
+            appButton="secondary"
             type="button"
             (click)="showDelete.set(true)"
             class="min-h-11 rounded-xl border border-rose-400/60 text-rose-200"
@@ -218,9 +226,14 @@
       }
     } @else {
       <form
+        [formValue]="[copies(), moodTagIds(), genreTagIds(), trackingMode(), isSeries()]"
+        appForm
+        [formValidate]="step() === 2"
+        #formUi0="appForm"
+        [formSaving]="saving()"
         id="book-editor-form"
         [formGroup]="form"
-        (ngSubmit)="step() === 1 ? nextStep() : save()"
+        (ngSubmit)="step() === 1 ? nextStep() : save(formUi0)"
         class="flex flex-col gap-3"
       >
         <div class="book-step text-center">
@@ -242,6 +255,7 @@
         @if (step() === 1) {
           @if (!id) {
             <button
+              appButton="secondary"
               type="button"
               (click)="scanBook()"
               [disabled]="scanning()"
@@ -279,7 +293,8 @@
                 : coverMessage() || 'Cover matched by title and author.'
               ) | translate
             }}</span
-            ><button
+            ><!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
+            <button
               type="button"
               (click)="lookupCover()"
               class="shrink-0 font-semibold text-cyan-300"
@@ -313,6 +328,7 @@
           >
             <div class="mb-1 flex items-center justify-between">
               <h2 class="text-sm font-bold">{{ 'Copies & Formats' | translate }}</h2>
+              <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
               <button
                 type="button"
                 (click)="addCopy()"
@@ -339,7 +355,8 @@
                   (input)="updateCopy(copy.id, 'label', $any($event.target).value)"
                   [placeholder]="'Edition / label' | translate"
                   class="min-w-0 flex-1"
-                /><button
+                /><!-- quality-allow shared-button: Compact directional or icon action retains its surrounding control layout. -->
+                <button
                   type="button"
                   (click)="removeCopy(copy.id)"
                   [attr.aria-label]="'Remove copy ' + (index + 1) | translate"
@@ -653,6 +670,9 @@
         @if (!embedded) {
           <div class="book-form-actions">
             <button
+              appButton="secondary"
+              appDiscard
+              [discardWhen]="step() === 1"
               type="button"
               (click)="step() === 2 ? step.set(1) : cancel()"
               class="min-h-11 rounded-xl border border-[var(--border)] text-sm font-semibold text-[var(--text-secondary)]"
@@ -682,12 +702,14 @@
           </p>
           <div class="mt-5 grid grid-cols-2 gap-2">
             <button
+              appButton="secondary"
               type="button"
               (click)="showDelete.set(false)"
               class="rounded-xl border border-[var(--border)] py-3"
             >
               {{ 'Cancel' | translate }}</button
             ><button
+              appButton="danger"
               type="button"
               (click)="delete()"
               [disabled]="deleting()"
@@ -706,6 +728,9 @@
   <footer class="book-sheet-footer">
     <div class="book-form-actions">
       <button
+        appButton="secondary"
+        appDiscard
+        [discardWhen]="step() === 1"
         type="button"
         [disabled]="saving()"
         (click)="step() === 2 ? step.set(1) : cancel()"

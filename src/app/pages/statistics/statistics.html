@@ -22,7 +22,8 @@
     >
       <label class="stats-filter-field"
         ><span>{{ 'Statistics' | translate }}</span
-        ><select
+        ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+        <select
           class="lifeos-select"
           [value]="selected()"
           (change)="choose($any($event.target).value)"
@@ -35,7 +36,8 @@
       @if (selected() === 'fuel') {
         <label class="vehicle-filter"
           ><span>{{ 'Vehicle' | translate }}</span
-          ><select
+          ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+          <select
             class="lifeos-select"
             [value]="service.selectedVehicleId()"
             (change)="service.selectVehicle($any($event.target).value)"
@@ -64,8 +66,10 @@
       </div>
       @if (range() === '1M') {
         <label
-          >{{ 'Month' | translate
-          }}<select
+          >{{
+            'Month' | translate
+          }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+          <select
             class="lifeos-select"
             [ngModel]="selectedMonth()"
             (ngModelChange)="selectedMonth.set($event)"
@@ -82,7 +86,7 @@
     } @else if (error()) {
       <div role="alert" class="stats-message error">
         {{ error() | translate }}
-        <button type="button" (click)="service.reload(selected())">
+        <button appButton="secondary" type="button" (click)="service.reload(selected())">
           {{ 'Retry' | translate }}
         </button>
       </div>

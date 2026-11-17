@@ -6,7 +6,8 @@
     <header class="page-header">
       <app-back-button fallback="/budget" />
       <h1 class="compact-title">{{ 'Categories' | translate }}</h1>
-      <button appButton="primary"
+      <button
+        appButton="primary"
         class="primary-button"
         [attr.aria-label]="'Add category' | translate"
         [disabled]="busy() || store.loading() || !!store.error()"
@@ -41,6 +42,7 @@
     @if (store.error()) {
       <div class="status error" role="alert">
         {{ store.error() | translate }}
+        <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
         <button class="text-link" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </div>
     }
@@ -53,7 +55,7 @@
           @if (error()) {
             <p class="status error" role="alert">{{ error() | translate }}</p>
           }
-          <form (ngSubmit)="save()">
+          <form appForm #formUi0="appForm" [formSaving]="busy()" (ngSubmit)="save(formUi0)">
             <fieldset
               [disabled]="busy()"
               style="border: 0; padding: 0; margin: 16px 0 0; min-width: 0"
@@ -70,7 +72,8 @@
               /></label>
               <label class="field"
                 ><span>{{ 'Type' | translate }}</span
-                ><select class="lifeos-select" name="type" [(ngModel)]="model.type">
+                ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                <select appFieldFeedback class="lifeos-select" name="type" [(ngModel)]="model.type">
                   @for (type of types; track type) {
                     <option [value]="type">{{ label(type) | translate }}</option>
                   }
@@ -120,6 +123,7 @@
               /></label>
               <div class="form-actions">
                 <button
+                  appDiscard
                   appButton="secondary"
                   type="button"
                   class="secondary-button"
@@ -131,6 +135,7 @@
                 </button>
               </div>
               @if (!isNew()) {
+                <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
                 <button type="button" class="text-link negative" (click)="confirming.set(true)">
                   {{ 'Delete category' | translate }}
                 </button>
@@ -168,7 +173,7 @@
       } @else {
         <div class="panel category-list">
           @for (category of rows(); track category.id) {
-            <button class="category-row" (click)="open(category)">
+            <button appButton="secondary" class="category-row" (click)="open(category)">
               <span class="category-icon" [style.background]="category.colour"
                 ><ion-icon [name]="category.icon" /></span
               ><span class="row-copy"
@@ -201,6 +206,7 @@
                     | translate: { p0: label(tab()).toLowerCase() }
                 }}
               </p>
+              <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
               <button class="text-link" (click)="open()">{{ 'Add category' | translate }}</button>
             </div>
           }

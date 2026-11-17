@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppSearch } from '@shared/components/app-search/app-search';
 import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
@@ -19,7 +20,7 @@ import { BookStore } from '@pages/books/state/book/book-store';
 
 @Component({
   selector: 'app-books-shelf',
-  imports: [TranslatePipe, AppSearch, IonContent, IonIcon, RouterLink],
+  imports: [AppButton, TranslatePipe, AppSearch, IonContent, IonIcon, RouterLink],
   templateUrl: './books-shelf.html',
   styleUrls: ['../books-loading.css', './books-shelf.css'],
 })

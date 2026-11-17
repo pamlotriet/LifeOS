@@ -2631,5 +2631,15 @@
   "Preparing export...": "Preparing export...",
   "Export selected cycle": "Export selected cycle",
   "PDF report and spreadsheet data (ZIP)": "PDF report and spreadsheet data (ZIP)",
-  "Could not export this cycle. Please try again.": "Could not export this cycle. Please try again."
+  "Could not export this cycle. Please try again.": "Could not export this cycle. Please try again.",
+  "Discard unsaved changes?": "Discard unsaved changes?",
+  "Check the highlighted fields before saving.": "Check the highlighted fields before saving.",
+  "This field is required.": "This field is required.",
+  "Enter a valid email address.": "Enter a valid email address.",
+  "Enter a value at or above the minimum.": "Enter a value at or above the minimum.",
+  "Enter a value at or below the maximum.": "Enter a value at or below the maximum.",
+  "This value is too long.": "This value is too long.",
+  "This value is too short.": "This value is too short.",
+  "Enter a valid number.": "Enter a valid number.",
+  "Check this value.": "Check this value."
 }

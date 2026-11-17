@@ -1,3 +1,4 @@
+import { FieldFeedback } from '@shared/directives/field-feedback';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   Component,
@@ -16,6 +17,7 @@ const localIso = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
 @Component({
+  hostDirectives: [FieldFeedback],
   selector: 'app-date-picker',
   imports: [TranslatePipe, IonIcon, IonModal],
   providers: [
@@ -28,6 +30,7 @@ const localIso = (date: Date) =>
       max-width: 100%;
     }
     .date-picker-trigger {
+      min-height: 44px;
       min-width: 0;
       max-width: 100%;
     }

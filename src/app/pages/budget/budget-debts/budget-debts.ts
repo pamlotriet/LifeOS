@@ -1,3 +1,6 @@
+import { FieldFeedback } from '@shared/directives/field-feedback';
+import { FormProtection } from '@core/forms/form-protection.service';
+import { AppForm, AppDiscard } from '@shared/directives/app-form';
 import { DebtOverviewCard } from '@pages/budget/components/debt-overview-card/debt-overview-card';
 import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -25,6 +28,9 @@ import {
   host: { class: 'budget-screen' },
   selector: 'app-budget-debts',
   imports: [
+    FieldFeedback,
+    AppForm,
+    AppDiscard,
     DebtOverviewCard,
     BudgetPage,
     TranslatePipe,
@@ -42,6 +48,7 @@ import {
   styleUrls: ['./budget-debts.css'],
 })
 export class BudgetDebts {
+  private readonly formProtection = inject(FormProtection);
   private readonly i18n = inject(TranslateService);
   @ViewChild(IonContent) private content?: IonContent;
   readonly store = inject(BudgetStore);
@@ -131,6 +138,7 @@ export class BudgetDebts {
     };
   }
   edit(id?: string): void {
+    if (!this.formProtection.canLeave()) return;
     const debt = this.store.debts().find((item) => item.id === id);
     this.model = debt ? { ...debt } : this.blank();
     this.paymentDebt.set(null);
@@ -139,6 +147,7 @@ export class BudgetDebts {
     void this.content?.scrollToTop(250);
   }
   editPayment(debtId: string, status: 'paid' | 'planned', item?: BudgetTransaction): void {
+    if (!this.formProtection.canLeave()) return;
     const debt = this.store.debts().find((d) => d.id === debtId);
     if (!debt) return;
     this.payment = item
@@ -163,7 +172,7 @@ export class BudgetDebts {
     this.error.set('');
     void this.content?.scrollToTop(250);
   }
-  async save(): Promise<void> {
+  async save(formUi?: AppForm): Promise<void> {
     const id = this.editing();
     if (!id || this.busy()) return;
     this.busy.set(true);
@@ -179,6 +188,7 @@ export class BudgetDebts {
         },
         id === 'new' ? undefined : id,
       );
+      formUi?.markSaved();
       this.editing.set(null);
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not save debt.');
@@ -186,7 +196,7 @@ export class BudgetDebts {
       this.busy.set(false);
     }
   }
-  async savePayment(): Promise<void> {
+  async savePayment(formUi?: AppForm): Promise<void> {
     if (!this.paymentDebt() || this.busy()) return;
     this.busy.set(true);
     this.error.set('');
@@ -200,6 +210,7 @@ export class BudgetDebts {
         },
         this.paymentId(),
       );
+      formUi?.markSaved();
       this.paymentDebt.set(null);
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not save payment.');

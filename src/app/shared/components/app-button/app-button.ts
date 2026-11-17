@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 
-/** Shared actions use native buttons so submit, disabled and focus behaviour is preserved. */
+/** Shared actions retain native button semantics and native link navigation. */
 @Component({
   selector: 'button[appButton], a[appButton]',
   template: '<ng-content />',

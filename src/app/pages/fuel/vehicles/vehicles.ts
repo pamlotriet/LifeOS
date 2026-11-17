@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -6,7 +7,7 @@ import { VehicleStore } from '@pages/fuel/vehicles/state/vehicle/vehicle-store';
 import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 
 @Component({
-  imports: [TranslatePipe, IonIcon, RouterLink, FuelLoading],
+  imports: [AppButton, TranslatePipe, IonIcon, RouterLink, FuelLoading],
   selector: 'app-vehicles',
   host: { class: 'block min-w-0' },
   templateUrl: './vehicles.html',

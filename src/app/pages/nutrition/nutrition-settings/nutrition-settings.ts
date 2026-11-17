@@ -1,3 +1,4 @@
+import { AppForm } from '@shared/directives/app-form';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
@@ -14,7 +15,7 @@ import {
 } from '@pages/nutrition/state/nutrition/nutrition.model';
 @Component({
   selector: 'app-nutrition-settings',
-  imports: [TranslatePipe, AppInput, AppButton, FormsModule],
+  imports: [AppForm, TranslatePipe, AppInput, AppButton, FormsModule],
   styleUrl: './nutrition-settings.css',
   template: `<section
     class="nutrition-settings rounded-3xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-3"
@@ -32,12 +33,18 @@ import {
     @if (store.error()) {
       <div class="settings-error" role="alert">
         <p>{{ store.error() | translate }}</p>
-        <button type="button" class="retry-button" (click)="store.reload()">
+        <button appButton="secondary" type="button" class="retry-button" (click)="store.reload()">
           {{ 'Retry' | translate }}
         </button>
       </div>
     }
-    <form (ngSubmit)="save()" class="space-y-3">
+    <form
+      appForm
+      #formUi0="appForm"
+      [formSaving]="saving()"
+      (ngSubmit)="save(formUi0)"
+      class="space-y-3"
+    >
       <label class="block"
         >{{ 'Name' | translate
         }}<input
@@ -94,16 +101,20 @@ import {
             [placeholder]="'Blank = maintain weight' | translate"
         /></label>
         <label
-          >{{ 'Sex used for calorie estimate' | translate
-          }}<select class="lifeos-select" name="sex" [(ngModel)]="model.sex">
+          >{{
+            'Sex used for calorie estimate' | translate
+          }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+          <select class="lifeos-select" name="sex" [(ngModel)]="model.sex">
             <option value="">{{ 'Choose for calculation' | translate }}</option>
             <option value="female">{{ 'Female' | translate }}</option>
             <option value="male">{{ 'Male' | translate }}</option>
           </select></label
         >
         <label
-          >{{ 'Activity level' | translate
-          }}<select class="lifeos-select" name="activity" [(ngModel)]="model.activity">
+          >{{
+            'Activity level' | translate
+          }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+          <select class="lifeos-select" name="activity" [(ngModel)]="model.activity">
             <option value="sedentary">{{ 'Sedentary (little exercise)' | translate }}</option>
             <option value="light">{{ 'Light (1?3 days/week)' | translate }}</option>
             <option value="moderate">{{ 'Moderate (3?5 days/week)' | translate }}</option>
@@ -151,6 +162,7 @@ import {
                 {{ targets[key] }} {{ (key === 'calories' ? 'kcal' : 'g') | translate }}</small
               >
             }
+            <!-- quality-allow shared-button: Selectable setting or stateful tile retains its specialized visual treatment. -->
             <button
               type="button"
               class="target-mode"
@@ -230,12 +242,13 @@ export class NutritionSettings {
       return e instanceof Error ? e.message : 'Check your details.';
     }
   }
-  async save(): Promise<void> {
+  async save(formUi?: AppForm): Promise<void> {
     if (this.saving()) return;
     this.saving.set(true);
     this.message.set('');
     try {
       await this.store.saveProfile({ ...this.model, name: this.auth.displayName() });
+      formUi?.markSaved();
     } catch (e) {
       this.message.set(e instanceof Error ? e.message : 'Could not save settings.');
     } finally {

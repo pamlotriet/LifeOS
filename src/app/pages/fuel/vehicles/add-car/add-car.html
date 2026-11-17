@@ -5,7 +5,7 @@
   [breakpoints]="mobileSheet() ? [0, 1] : undefined"
   [initialBreakpoint]="mobileSheet() ? 1 : undefined"
   [handle]="mobileSheet()"
-  [canDismiss]="!(saving() || deleting())"
+  [canDismiss]="canDismiss"
   (didDismiss)="dismiss()"
   [attr.aria-label]="(editId ? 'Edit vehicle' : 'Add vehicle') | translate"
 >
@@ -14,6 +14,7 @@
       class="relative box-border h-full overflow-y-auto overscroll-contain bg-card p-8 text-foreground max-md:px-5 max-md:pt-4.5 max-md:pb-[calc(24px+env(safe-area-inset-bottom))] [&_input]:min-h-12 [&_input]:text-inherit [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-3 [&_button:focus-visible]:outline-ring [&_input:focus-visible]:outline-2 [&_input:focus-visible]:outline-offset-3 [&_input:focus-visible]:outline-ring [&_button:disabled]:cursor-wait [&_button:disabled]:opacity-60"
     >
       <button
+        appDiscard
         type="button"
         class="absolute top-8 right-8 grid size-9 max-md:top-4.5 max-md:right-5 cursor-pointer place-items-center rounded-full border border-border bg-card text-[26px] text-(--text-secondary)"
         [attr.aria-label]="'Close editor' | translate"
@@ -26,8 +27,11 @@
         <app-fuel-loading kind="vehicle-form" [label]="'Loading vehicle details' | translate" />
       } @else {
         <form
+          appForm
+          #formUi0="appForm"
+          [formSaving]="saving()"
           [formGroup]="vehicleForm"
-          (ngSubmit)="submit()"
+          (ngSubmit)="submit(formUi0)"
           class="mx-auto flex w-full max-w-none flex-col gap-5 text-foreground [--primary-foreground:#fff] [&_app-select_[aria-haspopup=listbox]]:bg-card! [&_app-select_[aria-haspopup=listbox]]:border-border! [&_app-select_[aria-haspopup=listbox]]:h-12 [&_app-select_[aria-haspopup=listbox]]:shadow-none! [&_app-select_[aria-haspopup=listbox]]:bg-none! [&_app-select_[aria-haspopup=listbox]]:text-foreground! [&_app-select_[aria-haspopup=listbox]_span]:text-foreground! [&_app-select_[aria-haspopup=listbox]_ion-icon]:text-(--text-secondary)!"
         >
           <div class="flex min-h-9 items-center pr-12">
@@ -297,6 +301,7 @@
               }}
             </button>
             <button
+              appDiscard
               type="button"
               (click)="cancel()"
               [disabled]="saving() || deleting()"
@@ -309,6 +314,7 @@
           @if (editId) {
             <div class="border-t border-border pt-4">
               <button
+                appButton="danger"
                 type="button"
                 (click)="deleteVehicle()"
                 [disabled]="saving() || deleting() || loadingVehicle()"

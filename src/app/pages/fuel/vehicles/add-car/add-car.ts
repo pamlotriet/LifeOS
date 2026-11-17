@@ -1,3 +1,5 @@
+import { FormProtection } from '@core/forms/form-protection.service';
+import { AppForm, AppDiscard } from '@shared/directives/app-form';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
@@ -15,6 +17,8 @@ import { pickImage } from '@shared/utils/pick-image';
 import { FuelLoading } from '@pages/fuel/components/fuel-loading/fuel-loading';
 @Component({
   imports: [
+    AppForm,
+    AppDiscard,
     TranslatePipe,
     AppInput,
     AppButton,
@@ -31,6 +35,8 @@ export class AddCar {
   readonly mobileSheet = fuelEditorSheet();
 
   readonly modalOpen = signal(true);
+  private readonly formProtection = inject(FormProtection);
+  readonly canDismiss = () => !this.deleting() && this.formProtection.canLeave();
   dismiss(): void {
     if (!this.modalOpen()) return;
     this.modalOpen.set(false);
@@ -112,7 +118,7 @@ export class AddCar {
     }
   }
 
-  async submit(): Promise<void> {
+  async submit(formUi?: AppForm): Promise<void> {
     if (this.saving() || this.deleting() || this.loadingVehicle()) return;
     this.submitAttempted.set(true);
     this.vehicleForm.markAllAsTouched();
@@ -137,6 +143,7 @@ export class AddCar {
 
       if (this.editId) await this.vehicleStore.update(this.editId, changes);
       else await this.vehicleStore.add(changes);
+      formUi?.markSaved();
 
       this.modalOpen.set(false);
 

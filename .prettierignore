@@ -8,3 +8,6 @@ coverage/
 out-tsc/
 package-lock.json
 *.log
+.tmp/
+playwright-report/
+test-results/

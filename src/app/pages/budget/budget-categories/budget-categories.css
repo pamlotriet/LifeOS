@@ -1,0 +1,73 @@
+/* Category and colour pickers belong to this screen. */
+
+.category-list {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow: none;
+}
+.category-row {
+  display: flex;
+  min-height: 68px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  text-decoration: none;
+}
+.category-row:last-child {
+  border-bottom: 0;
+}
+.category-list {
+  padding: 0 14px;
+}
+.category-row {
+  width: 100%;
+  border-inline: 0;
+  border-top: 0;
+  background: transparent;
+  text-align: left;
+}
+.category-row > ion-icon {
+  color: var(--text-muted);
+}
+.icon-options,
+.colour-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 18px;
+}
+.icon-options button,
+.colour-options button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  color: var(--foreground);
+  background: var(--surface-secondary);
+}
+.icon-options button.selected,
+.colour-options button.selected {
+  border-color: var(--lifeos-blue);
+  box-shadow: none;
+}
+.icon-options ion-icon {
+  font-size: 21px;
+}
+:host-context(.dark) .category-list {
+  border-color: var(--border);
+  color: var(--text-secondary);
+  background: var(--card);
+}
+:host-context(.dark) .icon-options button {
+  background: var(--card);
+}
+.category-row {
+  padding: 18px 8px;
+  gap: 14px;
+}

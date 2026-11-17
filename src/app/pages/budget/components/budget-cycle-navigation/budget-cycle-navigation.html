@@ -1,0 +1,38 @@
+<div
+  class="cycle-navigation max-sm:contents! [&>button:first-child]:max-sm:col-start-1 [&>button:first-child]:max-sm:row-start-2 [&>button:last-child]:max-sm:col-start-3 [&>button:last-child]:max-sm:row-start-2 [&>button]:max-sm:size-11!"
+>
+  <button
+    type="button"
+    class="icon-button"
+    [attr.aria-label]="'Previous budget cycle' | translate"
+    (click)="shift.emit(-1)"
+  >
+    <ion-icon name="chevron-back" aria-hidden="true" />
+  </button>
+  <label class="cycle-picker max-sm:col-span-full max-sm:row-start-1 max-sm:text-left!"
+    ><span>{{ 'Budget cycle' | translate }}</span
+    ><app-month-picker
+      [ariaLabel]="'Budget cycle month' | translate"
+      [ngModel]="month()"
+      (ngModelChange)="monthChange.emit($event)"
+  /></label>
+  <button
+    type="button"
+    class="icon-button"
+    [attr.aria-label]="'Next budget cycle' | translate"
+    (click)="shift.emit(1)"
+  >
+    <ion-icon name="chevron-forward" aria-hidden="true" />
+  </button>
+</div>
+<div
+  class="cycle-details max-sm:col-start-2 max-sm:row-start-2 max-sm:mt-0! max-sm:gap-0! max-sm:text-center [&_p]:max-sm:text-[0.65rem]! [&_button]:max-sm:min-h-8"
+>
+  <p [attr.aria-label]="'Budget cycle dates' | translate" aria-live="polite">
+    {{ dates() }}
+  </p>
+  <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
+  <button type="button" class="text-link" (click)="current.emit()">
+    {{ 'Current cycle' | translate }}
+  </button>
+</div>

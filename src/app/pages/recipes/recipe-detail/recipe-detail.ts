@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { AppInput } from '@shared/components/app-input/app-input';
@@ -25,6 +26,7 @@ import { RecipeStore } from '@pages/recipes/state/recipe/recipe-store';
 @Component({
   selector: 'app-recipe-detail',
   imports: [
+    AppButton,
     TranslatePipe,
     AppInput,
     FormsModule,

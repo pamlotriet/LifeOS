@@ -35,7 +35,6 @@
 .week-navigation,
 .week-navigation-dates,
 .day-heading,
-.slot-heading,
 .shopping-toolbar {
   display: flex;
   align-items: center;
@@ -126,69 +125,10 @@
   margin: 16px 0 24px;
   font-size: 12px;
 }
-.meal-slot {
-  padding: 20px;
-  margin-bottom: 12px;
-}
-.slot-heading h3 {
-  font-size: 14px;
-  font-weight: 600;
-}
-.slot-heading {
-  margin-bottom: 16px;
-}
-.slot-empty {
-  font-size: 13px;
-  padding-bottom: 8px;
-}
-.planned-meal {
-  border-top: 1px solid var(--border);
-  padding: 16px 0;
-}
-.planned-meal:last-child {
-  padding-bottom: 0;
-}
-.meal-description strong {
-  font-size: 16px;
-  font-weight: 550;
-}
-.meal-description p {
-  margin-top: 6px;
-  font-size: 13px;
-  line-height: 1.5;
-}
-.meal-description .meal-nutrition {
-  font-size: 11px;
-}
-.meal-row-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
-}
-.logged-badge {
-  display: inline-block;
-  margin-top: 10px;
-  font-size: 11px;
-  color: var(--primary);
-  background: var(--secondary);
-  padding: 4px 8px;
-  border-radius: 8px;
-}
 .meal-editor {
   position: sticky;
   top: 16px;
 }
-.planner-form {
-  display: grid;
-  gap: 16px;
-  padding: 20px;
-}
-.planner-form h2 {
-  font-size: 18px;
-  font-weight: 550;
-}
-.planner-form > label,
 .copy-day label {
   display: grid;
   min-width: 0;
@@ -257,21 +197,6 @@
   width: 18px;
   height: 18px;
   accent-color: var(--primary);
-}
-.shopping-check {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--primary);
-  background: var(--background);
-}
-.shopping-check[aria-pressed='true'] {
-  background: var(--primary);
-  color: var(--primary-foreground);
 }
 .planner-notice {
   display: flex;
@@ -343,10 +268,6 @@ summary:focus-visible {
   .day-heading {
     align-items: start;
     flex-wrap: wrap;
-  }
-  .meal-slot,
-  .planner-form {
-    padding: 16px;
   }
   .grocery-entry {
     grid-template-columns: 1fr;

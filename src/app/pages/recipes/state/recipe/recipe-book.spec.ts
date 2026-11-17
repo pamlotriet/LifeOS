@@ -150,4 +150,3 @@ describe('Recipe book PDF', () => {
     expect(() => createRecipeBook([], { title: 'Empty' })).toThrow('Choose at least one recipe');
   });
 });
-

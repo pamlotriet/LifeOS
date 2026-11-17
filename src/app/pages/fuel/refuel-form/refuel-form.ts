@@ -1,3 +1,5 @@
+import { FormProtection } from '@core/forms/form-protection.service';
+import { AppForm, AppDiscard } from '@shared/directives/app-form';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
@@ -47,6 +49,8 @@ function decimalMin(minimum: number, required = false): ValidatorFn {
 @Component({
   selector: 'app-refuel-form',
   imports: [
+    AppForm,
+    AppDiscard,
     TranslatePipe,
     AppInput,
     AppButton,
@@ -62,6 +66,8 @@ function decimalMin(minimum: number, required = false): ValidatorFn {
 export class RefuelForm {
   readonly mobileSheet = fuelEditorSheet();
   readonly modalOpen = signal(true);
+  private readonly formProtection = inject(FormProtection);
+  readonly canDismiss = () => !this.deleting() && this.formProtection.canLeave();
   dismiss(): void {
     if (!this.modalOpen()) return;
     this.modalOpen.set(false);
@@ -175,7 +181,7 @@ export class RefuelForm {
     return value === null ? '—' : value.toFixed(digits);
   }
 
-  async submit(): Promise<void> {
+  async submit(formUi?: AppForm): Promise<void> {
     if (this.saving() || this.deleting() || this.contentLoading()) return;
     this.attempted.set(true);
     this.form.markAllAsTouched();
@@ -199,6 +205,7 @@ export class RefuelForm {
     this.error.set('');
     try {
       await this.refuels.save(value.vehicleId, input, this.entryId ?? undefined);
+      formUi?.markSaved();
       this.refuels.selectVehicle(value.vehicleId);
       this.saving.set(false);
       this.modalOpen.set(false);

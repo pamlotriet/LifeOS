@@ -38,7 +38,14 @@
         }
       </nav>
       <div class="recipe-editor-layout">
-        <form id="recipe-editor" (ngSubmit)="save()">
+        <form
+          [formValue]="[model, ingredients(), steps(), tags(), nutritionIngredients()]"
+          appForm
+          #formUi0="appForm"
+          [formSaving]="saving()"
+          id="recipe-editor"
+          (ngSubmit)="save(formUi0)"
+        >
           <fieldset class="editor-fields" [disabled]="saving()">
             @if (editorStep() === 'details') {
               <section
@@ -94,8 +101,11 @@
                       autocomplete="off"
                   /></label>
                   <label class="food-choice"
-                    >{{ 'Food' | translate
-                    }}<select
+                    >{{
+                      'Food' | translate
+                    }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                    <select
+                      appFieldFeedback
                       name="nutritionFood"
                       [(ngModel)]="foodId"
                       (ngModelChange)="selectFood()"
@@ -121,8 +131,15 @@
                       [(ngModel)]="foodGrams"
                   /></label>
                   <label
-                    >{{ 'Unit' | translate
-                    }}<select name="foodUnit" [(ngModel)]="foodUnit" class="lifeos-select">
+                    >{{
+                      'Unit' | translate
+                    }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                    <select
+                      appFieldFeedback
+                      name="foodUnit"
+                      [(ngModel)]="foodUnit"
+                      class="lifeos-select"
+                    >
                       @for (unit of units(); track unit) {
                         <option [value]="unit">{{ unit | translate }}</option>
                       }
@@ -186,6 +203,7 @@
                 <section class="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3">
                   <div class="mb-3 flex items-center justify-between">
                     <h2 class="font-bold">{{ 'Unlinked ingredient notes' | translate }}</h2>
+                    <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
                     <button
                       type="button"
                       (click)="addIngredient()"
@@ -240,7 +258,8 @@
                       (keydown.enter)="$event.preventDefault(); addTag()"
                       [placeholder]="'Add a tag' | translate"
                       class="min-w-0 flex-1"
-                    /><button
+                    /><!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
+                    <button
                       type="button"
                       (click)="addTag()"
                       class="rounded-xl border border-cyan-400/60 px-4 text-cyan-200"
@@ -250,6 +269,7 @@
                   </div>
                   <div class="mt-2 flex flex-wrap gap-2">
                     @for (tag of tags(); track tag) {
+                      <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
                       <button
                         type="button"
                         (click)="removeTag(tag)"

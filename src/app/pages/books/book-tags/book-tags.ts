@@ -1,3 +1,6 @@
+import { FieldFeedback } from '@shared/directives/field-feedback';
+import { AppForm, AppDiscard } from '@shared/directives/app-form';
+import { FormProtection } from '@core/forms/form-protection.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
@@ -10,11 +13,23 @@ import { BookStore } from '@pages/books/state/book/book-store';
 
 @Component({
   selector: 'app-book-tags',
-  imports: [TranslatePipe, AppInput, AppButton, IonContent, IonIcon, RouterLink],
+  imports: [
+    FieldFeedback,
+    AppForm,
+    AppDiscard,
+    TranslatePipe,
+    AppInput,
+    AppButton,
+    IonContent,
+    IonIcon,
+    RouterLink,
+  ],
   templateUrl: './book-tags.html',
   styleUrls: ['./book-tags.css', '../books-loading.css'],
 })
 export class BookTags {
+  private readonly formProtection = inject(FormProtection);
+  readonly canDismissForm = () => this.formProtection.canLeave();
   readonly store = inject(BookStore);
   readonly type = signal<BookTagType>('mood');
   readonly editing = signal<BookTag | null>(null);
@@ -70,7 +85,7 @@ export class BookTags {
     this.error.set('');
     this.formOpen.set(true);
   }
-  async save(): Promise<void> {
+  async save(formUi?: AppForm): Promise<void> {
     if (this.busy()) return;
     if (!this.name().trim()) {
       this.error.set('Enter a tag name.');
@@ -96,6 +111,7 @@ export class BookTags {
         { name: this.name(), type: this.type(), color: this.color() },
         this.editing()?.id,
       );
+      formUi?.markSaved();
       this.formOpen.set(false);
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not save tag.');

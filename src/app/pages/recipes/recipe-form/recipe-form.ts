@@ -1,3 +1,5 @@
+import { FieldFeedback } from '@shared/directives/field-feedback';
+import { AppForm } from '@shared/directives/app-form';
 import { RecipeQuickFood } from '@pages/recipes/components/recipe-quick-food/recipe-quick-food';
 import { RecipeScalingControls } from '@pages/recipes/components/recipe-scaling-controls/recipe-scaling-controls';
 import { RecipeMethodEditor } from '@pages/recipes/components/recipe-method-editor/recipe-method-editor';
@@ -44,6 +46,8 @@ import { pickImage } from '@shared/utils/pick-image';
 @Component({
   selector: 'app-recipe-form',
   imports: [
+    FieldFeedback,
+    AppForm,
     RecipeQuickFood,
     RecipeScalingControls,
     RecipeMethodEditor,
@@ -318,7 +322,7 @@ export class RecipeForm {
   removeTag(tag: string): void {
     this.tags.update((items) => items.filter((item) => item !== tag));
   }
-  async save(): Promise<void> {
+  async save(formUi?: AppForm): Promise<void> {
     if (this.saving() || this.loading() || this.loadFailed() || this.creatingFood()) return;
     const ingredients = this.ingredients()
       .map((item) => item.trim())
@@ -358,6 +362,7 @@ export class RecipeForm {
         },
         this.id ?? undefined,
       );
+      formUi?.markSaved();
       await this.router.navigateByUrl(`/recipes/${saved.id}`, { replaceUrl: true });
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not save recipe.');

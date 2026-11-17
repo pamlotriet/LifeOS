@@ -21,9 +21,9 @@
         }}
       </p>
       <div class="actions">
-        <button class="primary" [disabled]="busy()" (click)="exportBooks()">
+        <button appButton="primary" class="primary" [disabled]="busy()" (click)="exportBooks()">
           {{ 'Export full backup (JSON)' | translate }}</button
-        ><button [disabled]="busy()" (click)="exportBooks(true)">
+        ><button appButton="secondary" [disabled]="busy()" (click)="exportBooks(true)">
           {{ 'Export summary (CSV)' | translate }}
         </button>
       </div>
@@ -56,7 +56,9 @@
       @if (store.error()) {
         <p role="alert">
           {{ store.error() | translate }}
-          <button (click)="store.reload()" [disabled]="busy()">{{ 'Retry' | translate }}</button>
+          <button appButton="secondary" (click)="store.reload()" [disabled]="busy()">
+            {{ 'Retry' | translate }}
+          </button>
         </p>
       }
       @if (backup(); as source) {
@@ -95,6 +97,7 @@
           </div>
           <div class="actions">
             <button
+              appButton="primary"
               class="primary"
               [disabled]="
                 busy() ||
@@ -107,7 +110,7 @@
               {{
                 (busy() ? 'Importing...' : 'Import ' + plan.books.length + ' books') | translate
               }}</button
-            ><button [disabled]="busy()" (click)="backup.set(null)">
+            ><button appButton="secondary" [disabled]="busy()" (click)="backup.set(null)">
               {{ 'Cancel' | translate }}
             </button>
           </div>

@@ -43,4 +43,9 @@
   }
 }
 
-@media (max-width:520px) { :host { align-items:flex-start; flex-direction:column; } }
+@media (max-width: 520px) {
+  :host {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -13,7 +13,9 @@
       <p>{{ 'Getting your space ready...' | translate }}</p>
       <span class="lifeos-launch-spinner" aria-hidden="true"></span>
       @if (startup.slow()) {
-        <button type="button" (click)="startup.reload()">{{ 'Reload' | translate }}</button>
+        <button appButton="secondary" type="button" (click)="startup.reload()">
+          {{ 'Reload' | translate }}
+        </button>
       }
     </div>
   }
@@ -35,6 +37,7 @@
           }}</span>
         </div>
         <button
+          appButton="secondary"
           class="min-h-11 rounded-lg border-0 bg-primary px-4 py-2.5 font-semibold text-primary-foreground"
           type="button"
           (click)="updates.refresh()"

@@ -1,0 +1,67 @@
+<summary class="cursor-pointer text-sm font-medium">
+  {{ 'This cycle in detail' | translate }}
+</summary>
+<p class="my-4 text-xs text-(--text-secondary)">
+  {{ 'Figures reflect your entries, not your bank balance.' | translate }}
+</p>
+<app-budget-summary [transactions]="transactions()" [categories]="categories()" />
+<div class="mt-5">
+  <section
+    class="panel balance-panel"
+    [attr.aria-label]="'Balance after remaining plans' | translate"
+  >
+    <div class="section-heading">
+      <h2>{{ 'Your cycle outlook' | translate }}</h2>
+      <a class="text-link" routerLink="/budget/planned">{{ 'Edit plans' | translate }}</a>
+    </div>
+    <span class="outlook-label">{{ 'After remaining plans' | translate }}</span>
+    <strong class="outlook-total" [class.deficit]="snapshot().afterPlans < 0">{{
+      money(snapshot().afterPlans)
+    }}</strong>
+    <p class="outlook-note">
+      {{
+        (snapshot().hasPlans
+          ? 'Based on recorded income and the plans still to be covered.'
+          : 'No plans added yet. Add your expected costs for a fuller picture.'
+        ) | translate
+      }}
+    </p>
+    <dl class="outlook-breakdown">
+      <div>
+        <dt>{{ 'Balance from records' | translate }}</dt>
+        <dd>{{ money(snapshot().remaining) }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'Unspent category plans' | translate }}</dt>
+        <dd>− {{ money(snapshot().categoryCommitments) }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'Unpaid debt plans' | translate }}</dt>
+        <dd>− {{ money(snapshot().debtCommitments) }}</dd>
+      </div>
+    </dl>
+    <div class="allocation-bar" aria-hidden="true">
+      @for (part of snapshot().allocation; track part.label) {
+        <span [style.width.%]="part.percent" [style.background]="part.color"></span>
+      }
+    </div>
+    <p class="outlook-note">
+      @if (snapshot().outflowPercent !== null) {
+        {{
+          'messages.count_of_recorded_income_spent_or_moved_eb0b97'
+            | translate: { p0: snapshot().outflowPercent }
+        }}
+      } @else {
+        {{ 'No income recorded for this cycle.' | translate }}
+      }
+      {{ 'Figures reflect your entries, not your bank balance.' | translate }}
+    </p>
+    <a class="text-link" routerLink="/budget/comparison">{{
+      'Compare plans with actual spending →' | translate
+    }}</a>
+  </section>
+</div>
+<div class="mt-4 flex flex-wrap gap-4">
+  <a class="text-link" routerLink="/budget/planned">{{ 'Planned payments' | translate }}</a>
+  <a class="text-link" routerLink="/budget/insights">{{ 'Spending by Category' | translate }}</a>
+</div>

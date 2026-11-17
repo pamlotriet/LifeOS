@@ -38,6 +38,7 @@
         </p>
       </div>
       <button
+        appButton="primary"
         type="button"
         class="new-tag"
         (click)="openNew()"
@@ -142,7 +143,9 @@
             aria-hidden="true"
           >
             <path d="M7 3v18m-4-4 4 4 4-4M17 21V3m-4 4 4-4 4 4" /></svg
-          ><select
+          ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+          <select
+            appFieldFeedback
             [attr.aria-label]="'Sort tags' | translate"
             [value]="sort()"
             (change)="sort.set($any($event.target).value)"
@@ -173,7 +176,9 @@
     } @else if (store.error()) {
       <p role="alert" class="tags-empty">
         {{ store.error() | translate }}
-        <button type="button" (click)="store.reload()">{{ 'Retry' | translate }}</button>
+        <button appButton="secondary" type="button" (click)="store.reload()">
+          {{ 'Retry' | translate }}
+        </button>
       </p>
     } @else {
       <div class="tags-list-heading">
@@ -195,6 +200,7 @@
       </div>
       <div class="tag-grid">
         @for (tag of visible(); track tag.id) {
+          <!-- quality-allow shared-button: Full-surface card or visual picker is an interactive surface, not a standard action button. -->
           <button
             type="button"
             class="tag-card"
@@ -254,7 +260,11 @@
                   | translate
               }}
             </p>
-            <button type="button" (click)="search() ? search.set('') : openNew()">
+            <button
+              appButton="secondary"
+              type="button"
+              (click)="search() ? search.set('') : openNew()"
+            >
               {{ (search() ? 'Clear search' : 'Create your first tag') | translate }}
             </button>
           </div>
@@ -264,7 +274,11 @@
     @if (formOpen()) {
       <div class="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4">
         <form
-          (submit)="$event.preventDefault(); save()"
+          appForm
+          #formUi0="appForm"
+          [formSaving]="busy()"
+          [formValue]="[name(), type(), color()]"
+          (submit)="$event.preventDefault(); save(formUi0)"
           role="dialog"
           aria-modal="true"
           [attr.aria-label]="'Tag editor' | translate"
@@ -301,6 +315,7 @@
           }
           @if (editing(); as tag) {
             <button
+              appButton="secondary"
               type="button"
               class="tag-delete"
               [disabled]="busy()"
@@ -313,6 +328,8 @@
           }
           <div class="mt-5 grid grid-cols-2 gap-2">
             <button
+              appButton="secondary"
+              appDiscard
               type="button"
               (click)="formOpen.set(false)"
               [disabled]="busy()"
@@ -345,6 +362,7 @@
           }
           <div class="mt-5 grid grid-cols-2 gap-2">
             <button
+              appButton="secondary"
               type="button"
               (click)="deleting.set(null)"
               [disabled]="busy()"
@@ -352,6 +370,7 @@
             >
               {{ 'Cancel' | translate }}</button
             ><button
+              appButton="danger"
               type="button"
               (click)="remove()"
               [disabled]="busy()"

@@ -5,11 +5,19 @@
   <p class="workout-notes">{{ item().notes }}</p>
 }
 <div class="library-actions">
-  <button type="button" class="button primary" [disabled]="saving()" (click)="add.emit()">
+  <button
+    appButton="primary"
+    type="button"
+    class="button primary"
+    [disabled]="saving()"
+    (click)="add.emit()"
+  >
     {{ 'messages.add_to_count_5a227d' | translate: { p0: dayLabel() } }}</button
-  ><button type="button" class="text-button" [disabled]="saving()" (click)="edit.emit()">
+  ><!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
+  <button type="button" class="text-button" [disabled]="saving()" (click)="edit.emit()">
     {{ 'Edit' | translate }}</button
-  ><button
+  ><!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
+  <button
     type="button"
     class="text-button remove"
     [disabled]="saving()"

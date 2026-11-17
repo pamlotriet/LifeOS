@@ -351,7 +351,8 @@ ion-app.lifeos-app ion-content::part(background) {
     ),
     var(--background) !important;
 }
-ion-app.lifeos-app :is(.home-header, .today-header, .planning-header), ion-app.lifeos-app .budget-page > .page-header {
+ion-app.lifeos-app :is(.home-header, .today-header, .planning-header),
+ion-app.lifeos-app .budget-page > .page-header {
   padding: 22px;
   border: 1px solid var(--border);
   border-radius: 22px;
@@ -511,7 +512,8 @@ ion-app.lifeos-app .lifeos-back-button {
 }
 
 @media (max-width: 480px) {
-  ion-app.lifeos-app :is(.home-header, .today-header, .planning-header), ion-app.lifeos-app .budget-page > .page-header {
+  ion-app.lifeos-app :is(.home-header, .today-header, .planning-header),
+  ion-app.lifeos-app .budget-page > .page-header {
     padding: 16px;
     border-radius: 18px;
   }
@@ -547,7 +549,9 @@ ion-app.lifeos-app .lifeos-back-button {
 ion-app.lifeos-app ion-content::part(background) {
   background: var(--background) !important;
 }
-ion-app.lifeos-app :is(.home-header, .today-header, .planning-header), ion-app.lifeos-app .budget-page > .page-header, ion-app.lifeos-app .gym-page .gym-header {
+ion-app.lifeos-app :is(.home-header, .today-header, .planning-header),
+ion-app.lifeos-app .budget-page > .page-header,
+ion-app.lifeos-app .gym-page .gym-header {
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -805,7 +809,7 @@ ion-app.lifeos-app
     .stats-primary,
     .app-update-banner button
   ),
-    ion-app.lifeos-app :is(button, a)[class*='bg-gradient-'] {
+ion-app.lifeos-app :is(button, a)[class*='bg-gradient-'] {
   background: var(--action-background) !important;
   color: var(--action-foreground) !important;
   border-color: transparent;

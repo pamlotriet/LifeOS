@@ -1,0 +1,27 @@
+.app-field-error {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--destructive, #b42332);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.app-form-summary {
+  border-left: 3px solid var(--destructive, #b42332);
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 1rem;
+  color: var(--destructive, #b42332);
+}
+.app-form-status {
+  padding-top: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.app-field-error[hidden],
+.app-form-summary[hidden],
+.app-form-status[hidden] {
+  display: none;
+}
+[aria-invalid='true'] {
+  outline: 2px solid var(--destructive, #b42332);
+  outline-offset: 2px;
+}

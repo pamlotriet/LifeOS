@@ -57,6 +57,7 @@
     <app-data-backup class="mt-5" />
     @if (updates.enabled) {
       <button
+        appButton="secondary"
         type="button"
         class="mt-5 flex min-h-12 w-full items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--primary)]"
         [disabled]="updates.checking()"
@@ -78,6 +79,7 @@
       }
     }
     <button
+      appButton="secondary"
       type="button"
       (click)="logout()"
       [disabled]="signingOut()"

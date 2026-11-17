@@ -11,7 +11,7 @@
           {{ 'Save the meals you love.' | translate }}
         </p>
       </div>
-      <button type="button" routerLink="/recipes/add" class="recipe-add">
+      <button appButton="primary" type="button" routerLink="/recipes/add" class="recipe-add">
         <ion-icon name="add" aria-hidden="true" /> {{ 'Add recipe' | translate }}
       </button>
     </header>
@@ -62,6 +62,7 @@
       [attr.aria-label]="'Recipe filters' | translate"
       class="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-none"
     >
+      <!-- quality-allow shared-button: Selectable setting or stateful tile retains its specialized visual treatment. -->
       <button
         type="button"
         (click)="category.set('All'); favouritesOnly.set(false)"
@@ -73,7 +74,8 @@
         "
       >
         {{ 'All' | translate }}</button
-      ><button
+      ><!-- quality-allow shared-button: Selectable setting or stateful tile retains its specialized visual treatment. -->
+      <button
         type="button"
         (click)="favouritesOnly.set(!favouritesOnly())"
         class="shrink-0 rounded-full border px-3 py-2 text-xs"
@@ -86,6 +88,7 @@
         <span aria-hidden="true">&#9829;</span> {{ 'Favourites' | translate }}
       </button>
       @for (item of categories; track item) {
+        <!-- quality-allow shared-button: Selectable setting or stateful tile retains its specialized visual treatment. -->
         <button
           type="button"
           (click)="category.set(item); favouritesOnly.set(false)"
@@ -116,6 +119,7 @@
     } @else if (store.error()) {
       <p role="alert" class="rounded-2xl border border-rose-400/50 bg-[var(--card)] p-4 text-sm">
         {{ store.error() | translate }}
+        <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
         <button (click)="store.reload()" class="text-cyan-300 underline">
           {{ 'Retry' | translate }}
         </button>

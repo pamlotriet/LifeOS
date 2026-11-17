@@ -1,3 +1,4 @@
+import { AppForm } from '@shared/directives/app-form';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
@@ -17,7 +18,16 @@ import { PasswordStore } from '@pages/passwords/state/vault/password-store';
 
 @Component({
   selector: 'app-password-form',
-  imports: [TranslatePipe, AppInput, AppButton, IonContent, FormsModule, AppSelect, PageHeader],
+  imports: [
+    AppForm,
+    TranslatePipe,
+    AppInput,
+    AppButton,
+    IonContent,
+    FormsModule,
+    AppSelect,
+    PageHeader,
+  ],
   templateUrl: './password-form.html',
 })
 export class PasswordForm {
@@ -106,12 +116,13 @@ export class PasswordForm {
       30_000,
     );
   }
-  async save(): Promise<void> {
+  async save(formUi?: AppForm): Promise<void> {
     if (this.saving()) return;
     this.saving.set(true);
     this.error.set('');
     try {
       await this.store.save(this.model, this.id ?? undefined);
+      formUi?.markSaved();
       await this.router.navigateByUrl('/passwords', { replaceUrl: true });
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not save password.');

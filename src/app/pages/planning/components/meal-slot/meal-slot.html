@@ -1,0 +1,47 @@
+<div class="slot-heading">
+  <h3>{{ category() | translate }}</h3>
+  <button appButton="secondary" type="button" (click)="add.emit()">
+    {{ 'Add meal' | translate }}
+  </button>
+</div>
+@for (item of items(); track item.id) {
+  <article class="planned-meal">
+    <div class="meal-description">
+      <strong>{{ item.title }}</strong>
+      @if (item.detail) {
+        <p>{{ item.detail }}</p>
+      }
+      @if (item.recipeId || item.ingredientId) {
+        <p class="meal-nutrition">{{ summaries().get(item.id) }}</p>
+      }
+      @if (loggedIds().has(item.id)) {
+        <span class="logged-badge">{{ 'Logged' | translate }}</span>
+      }
+    </div>
+    <div class="meal-row-actions">
+      <button appButton="secondary" type="button" [disabled]="busy()" (click)="edit.emit(item)">
+        {{ 'Edit' | translate }}
+      </button>
+      <button
+        appButton="secondary"
+        type="button"
+        [disabled]="busy()"
+        (click)="remove.emit(item.id)"
+      >
+        {{ 'Remove' | translate }}
+      </button>
+      @if (item.recipeId || item.ingredientId) {
+        <button
+          appButton="secondary"
+          type="button"
+          [disabled]="busy()"
+          (click)="consume.emit(item)"
+        >
+          {{ (loggedIds().has(item.id) ? 'Log again' : 'Log as eaten') | translate }}
+        </button>
+      }
+    </div>
+  </article>
+} @empty {
+  <p class="slot-empty">{{ 'Nothing planned yet.' | translate }}</p>
+}

@@ -14,7 +14,8 @@
           [disabled]="busy() || store.loading() || !!store.error() || !rows().length"
         >
           {{ 'Export PDF' | translate }}</button
-        ><button appButton="primary"
+        ><button
+          appButton="primary"
           class="primary-button"
           type="button"
           (click)="edit()"
@@ -47,6 +48,7 @@
     @if (store.error()) {
       <p class="status error" role="alert">
         {{ store.error() | translate }}
+        <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
         <button class="text-link" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </p>
     }
@@ -68,7 +70,13 @@
       </p>
 
       @if (editing()) {
-        <form class="panel editor" (ngSubmit)="save()">
+        <form
+          appForm
+          #formUi0="appForm"
+          [formSaving]="busy()"
+          class="panel editor"
+          (ngSubmit)="save(formUi0)"
+        >
           <h2>
             {{ (editing() === 'new' ? 'Add debt account' : 'Edit debt account') | translate }}
           </h2>
@@ -85,7 +93,8 @@
             /></label>
             <label class="field"
               ><span>{{ 'Type' | translate }}</span
-              ><select class="lifeos-select" name="type" [(ngModel)]="model.type">
+              ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+              <select appFieldFeedback class="lifeos-select" name="type" [(ngModel)]="model.type">
                 <option value="credit-card">{{ 'Credit card' | translate }}</option>
                 <option value="loan">{{ 'Loan' | translate }}</option>
                 <option value="other">{{ 'Other' | translate }}</option>
@@ -138,6 +147,7 @@
             /></label>
             <div class="form-actions">
               <button
+                appDiscard
                 appButton="secondary"
                 type="button"
                 class="secondary-button"
@@ -152,7 +162,13 @@
         </form>
       }
       @if (paymentDebt()) {
-        <form class="panel editor payment-editor" (ngSubmit)="savePayment()">
+        <form
+          appForm
+          #formUi1="appForm"
+          [formSaving]="busy()"
+          class="panel editor payment-editor"
+          (ngSubmit)="savePayment(formUi1)"
+        >
           <h2>{{ (paymentId() ? 'Edit payment' : 'Add payment') | translate }}</h2>
           <fieldset [disabled]="busy()" class="form-fields">
             <div class="segments" [attr.aria-label]="'Payment status' | translate">
@@ -211,7 +227,9 @@
             <div class="field-grid">
               <label class="field"
                 ><span>{{ 'Budget category' | translate }}</span
-                ><select
+                ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                <select
+                  appFieldFeedback
                   class="lifeos-select"
                   name="category"
                   required
@@ -224,7 +242,13 @@
               >
               <label class="field"
                 ><span>{{ 'Payment method' | translate }}</span
-                ><select class="lifeos-select" name="method" [(ngModel)]="payment.paymentMethod">
+                ><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                <select
+                  appFieldFeedback
+                  class="lifeos-select"
+                  name="method"
+                  [(ngModel)]="payment.paymentMethod"
+                >
                   @for (
                     method of ['Card', 'Cash', 'Bank transfer', 'Debit order', 'Other'];
                     track method
@@ -253,6 +277,7 @@
             </p>
             <div class="form-actions">
               <button
+                appDiscard
                 appButton="secondary"
                 type="button"
                 class="secondary-button"

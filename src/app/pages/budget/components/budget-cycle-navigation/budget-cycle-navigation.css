@@ -1,0 +1,43 @@
+.cycle-navigation .icon-button {
+  flex-shrink: 0;
+}
+.cycle-picker {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 3px;
+  text-align: center;
+}
+.cycle-picker > span {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+.cycle-picker input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--foreground);
+  background: var(--surface-secondary);
+  font-weight: 650;
+  cursor: pointer;
+  color-scheme: light dark;
+}
+.cycle-details p {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+}
+.cycle-details button {
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+}
+@media (max-width: 380px) {
+  .cycle-navigation .icon-button {
+    width: 38px;
+  }
+}

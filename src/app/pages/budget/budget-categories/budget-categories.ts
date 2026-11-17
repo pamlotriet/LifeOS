@@ -1,3 +1,6 @@
+import { FieldFeedback } from '@shared/directives/field-feedback';
+import { FormProtection } from '@core/forms/form-protection.service';
+import { AppForm, AppDiscard } from '@shared/directives/app-form';
 import { BudgetPage } from '@pages/budget/components/budget-page/budget-page';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppButton } from '@shared/components/app-button/app-button';
@@ -26,6 +29,9 @@ import {
   host: { class: 'budget-screen' },
   selector: 'app-budget-categories',
   imports: [
+    FieldFeedback,
+    AppForm,
+    AppDiscard,
     BudgetPage,
     TranslatePipe,
     AppInput,
@@ -38,9 +44,10 @@ import {
     IonIcon,
   ],
   templateUrl: './budget-categories.html',
-  
+  styleUrl: './budget-categories.css',
 })
 export class BudgetCategories {
+  private readonly formProtection = inject(FormProtection);
   readonly store = inject(BudgetStore);
   readonly tab = signal<CategoryType>('expense');
   readonly types = CATEGORY_TYPES;
@@ -77,6 +84,7 @@ export class BudgetCategories {
     return { expense: 'Expense', income: 'Income', bills: 'Bills', savings: 'Savings' }[type];
   }
   open(category?: BudgetCategory): void {
+    if (!this.formProtection.canLeave()) return;
     this.isNew.set(!category);
     this.error.set('');
     this.confirming.set(false);
@@ -94,15 +102,17 @@ export class BudgetCategories {
     );
   }
   setMonth(value: string): void {
+    if (!this.formProtection.canLeave()) return;
     if (/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) this.store.month.set(value);
   }
-  async save(): Promise<void> {
+  async save(formUi?: AppForm): Promise<void> {
     const category = this.editor();
     if (!category || this.busy()) return;
     this.busy.set(true);
     this.error.set('');
     try {
       await this.store.saveCategory(category);
+      formUi?.markSaved();
       this.tab.set(category.type);
       this.editor.set(null);
     } catch (error) {

@@ -1,3 +1,7 @@
+import { AppButton } from '@shared/components/app-button/app-button';
+import { FieldFeedback } from '@shared/directives/field-feedback';
+import { AppForm, AppDiscard } from '@shared/directives/app-form';
+import { FormProtection } from '@core/forms/form-protection.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '@shared/components/app-input/app-input';
 import { Component, computed, inject, signal } from '@angular/core';
@@ -13,11 +17,24 @@ import {
 } from '@pages/nutrition/state/calculations/nutrition.calculations';
 @Component({
   selector: 'app-ingredients',
-  imports: [TranslatePipe, AppInput, FormsModule, IonContent, IonModal, PlanningHeader],
+  imports: [
+    AppButton,
+    FieldFeedback,
+    AppForm,
+    AppDiscard,
+    TranslatePipe,
+    AppInput,
+    FormsModule,
+    IonContent,
+    IonModal,
+    PlanningHeader,
+  ],
   templateUrl: './ingredients.html',
   styleUrls: ['../../nutrition/nutrition.css', './ingredients.css'],
 })
 export class Ingredients {
+  private readonly formProtection = inject(FormProtection);
+  readonly canDismissForm = () => this.formProtection.canLeave();
   readonly store = inject(NutritionService);
   readonly query = signal('');
   readonly category = signal('');
@@ -85,7 +102,7 @@ export class Ingredients {
     ];
     this.portionName = '';
   }
-  saveFood(): void {
+  saveFood(formUi?: AppForm): void {
     void this.run(async () => {
       const normalized = normalizeNutrition(this.food, this.labelAmount);
       await this.store.saveFood({
@@ -95,6 +112,7 @@ export class Ingredients {
         defaultUnit: this.labelUnit,
         id: this.food.id || crypto.randomUUID(),
       });
+      formUi?.markSaved();
       this.food = { id: '', name: '', ...zeroMacros() };
       this.labelAmount = 100;
       this.editorOpen.set(false);

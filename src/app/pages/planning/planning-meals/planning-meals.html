@@ -149,60 +149,19 @@
             }
 
             @for (meal of categories; track meal) {
-              <section class="meal-slot planner-card">
-                <div class="slot-heading">
-                  <h3>{{ meal | translate }}</h3>
-                  <button appButton="secondary" type="button" (click)="openMeal(meal)">
-                    {{ 'Add meal' | translate }}
-                  </button>
-                </div>
-                @for (item of mealsForSlot(meal); track item.id) {
-                  <article class="planned-meal">
-                    <div class="meal-description">
-                      <strong>{{ item.title }}</strong>
-                      @if (item.detail) {
-                        <p>{{ item.detail }}</p>
-                      }
-                      @if (item.recipeId || item.ingredientId) {
-                        <p class="meal-nutrition">{{ summary(item) }}</p>
-                      }
-                      @if (logged(item)) {
-                        <span class="logged-badge">{{ 'Logged' | translate }}</span>
-                      }
-                    </div>
-                    <div class="meal-row-actions">
-                      <button
-                        appButton="secondary"
-                        type="button"
-                        [disabled]="logging()"
-                        (click)="edit(item)"
-                      >
-                        {{ 'Edit' | translate }}
-                      </button>
-                      <button
-                        appButton="secondary"
-                        type="button"
-                        [disabled]="logging()"
-                        (click)="removeMeal(item.id)"
-                      >
-                        {{ 'Remove' | translate }}
-                      </button>
-                      @if (item.recipeId || item.ingredientId) {
-                        <button
-                          appButton="secondary"
-                          type="button"
-                          [disabled]="logging()"
-                          (click)="confirmMeal(item, logged(item))"
-                        >
-                          {{ (logged(item) ? 'Log again' : 'Log as eaten') | translate }}
-                        </button>
-                      }
-                    </div>
-                  </article>
-                } @empty {
-                  <p class="slot-empty">{{ 'Nothing planned yet.' | translate }}</p>
-                }
-              </section>
+              <section
+                appMealSlot
+                [category]="meal"
+                [items]="mealsForSlot(meal)"
+                [busy]="logging()"
+                [summaries]="mealSummaries()"
+                [loggedIds]="loggedMealIds()"
+                (add)="openMeal(meal)"
+                (edit)="edit($event)"
+                (remove)="removeMeal($event)"
+                (consume)="confirmMeal($event, logged($event))"
+                class="meal-slot planner-card"
+              ></section>
             }
             @if (meals(selectedDate()).length) {
               <details class="nutrition-details">
@@ -214,117 +173,29 @@
           </section>
           @if (editorOpen()) {
             <aside class="meal-editor" [attr.aria-label]="'Meal editor' | translate">
-              <section class="planner-card planner-form">
-                <h2 class="font-bold">{{ (editingId ? 'Edit meal' : 'Plan meal') | translate }}</h2>
-                <label
-                  >{{ 'Date' | translate
-                  }}<input
-                    appInput="field"
-                    type="date"
-                    class="control"
-                    [ngModel]="selectedDate()"
-                    (ngModelChange)="selectedDate.set($event)" /></label
-                ><label
-                  >{{ 'Meal' | translate
-                  }}<select [(ngModel)]="mealCategory" class="lifeos-select">
-                    @for (m of categories; track m) {
-                      <option>{{ m }}</option>
-                    }
-                  </select></label
-                >
-                <label
-                  >{{ 'Recipe' | translate
-                  }}<select
-                    class="lifeos-select"
-                    [(ngModel)]="recipeId"
-                    (ngModelChange)="selectRecipe()"
-                  >
-                    <option value="">{{ 'Custom meal' | translate }}</option>
-                    @for (r of recipes.sorted(); track r.id) {
-                      <option [value]="r.id">{{ r.title | translate }}</option>
-                    }
-                  </select></label
-                >
-                <label
-                  >{{ 'Or ingredient' | translate
-                  }}<select
-                    class="lifeos-select"
-                    [(ngModel)]="ingredientId"
-                    (ngModelChange)="selectIngredient()"
-                  >
-                    <option value="">{{ 'No ingredient' | translate }}</option>
-                    @for (f of nutrition.foods(); track f.id) {
-                      @if (!f.archived) {
-                        <option [value]="f.id">
-                          {{ f.name }} | {{ f.brand }} | {{ f.preparation }}
-                        </option>
-                      }
-                    }
-                  </select></label
-                >
-                @if (ingredientId) {
-                  <label
-                    >{{ 'Amount' | translate
-                    }}<input
-                      appInput="field"
-                      class="control"
-                      type="number"
-                      min="0.01"
-                      step="any"
-                      [(ngModel)]="quantity" /></label
-                  ><label
-                    >{{ 'Unit' | translate
-                    }}<input
-                      appInput="field"
-                      class="control"
-                      [(ngModel)]="unit"
-                      [placeholder]="'g, ml, or defined household portion' | translate"
-                  /></label>
-                } @else {
-                  <label
-                    >{{ 'Planned servings' | translate
-                    }}<input
-                      appInput="field"
-                      class="control"
-                      type="number"
-                      min="0.01"
-                      step="any"
-                      [(ngModel)]="servings"
-                  /></label>
-                }
-                <label
-                  >{{ 'Meal name' | translate
-                  }}<input
-                    appInput="field"
-                    class="control"
-                    [ngModel]="mealTitle()"
-                    (ngModelChange)="mealTitle.set($event)" /></label
-                ><label
-                  >{{ 'Details' | translate
-                  }}<input
-                    appInput="field"
-                    class="control"
-                    [ngModel]="mealDetail()"
-                    (ngModelChange)="mealDetail.set($event)" /></label
-                ><button
-                  appButton="primary"
-                  type="button"
-                  (click)="addMeal()"
-                  [disabled]="
-                    logging() || !mealTitle().trim() || store.loading() || !!store.error()
-                  "
-                >
-                  {{ 'Save meal' | translate }}
-                </button>
-                <button
-                  appButton="secondary"
-                  type="button"
-                  [disabled]="logging()"
-                  (click)="closeEditor()"
-                >
-                  {{ 'Cancel' | translate }}
-                </button>
-              </section>
+              <section
+                appMealEditor
+                [editingId]="editingId"
+                [(date)]="selectedDate"
+                [(category)]="mealCategory"
+                [(recipeId)]="recipeId"
+                [(ingredientId)]="ingredientId"
+                [(quantity)]="quantity"
+                [(unit)]="unit"
+                [(servings)]="servings"
+                [(title)]="mealTitle"
+                [(detail)]="mealDetail"
+                [categories]="categories"
+                [recipes]="recipes.sorted()"
+                [foods]="nutrition.foods()"
+                [busy]="logging()"
+                [unavailable]="store.loading() || !!store.error()"
+                (recipeSelected)="selectRecipe()"
+                (ingredientSelected)="selectIngredient()"
+                (save)="addMeal()"
+                (cancel)="closeEditor()"
+                class="planner-card planner-form"
+              ></section>
             </aside>
           }
         </div>
@@ -365,7 +236,8 @@
               [placeholder]="'e.g. Tomatoes' | translate"
               [ngModel]="groceryName()"
               (ngModelChange)="groceryName.set($event)"
-            /><select
+            /><!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+            <select
               [attr.aria-label]="'Shopping aisle' | translate"
               class="lifeos-select !w-28"
               [ngModel]="grocerySection()"
@@ -402,36 +274,15 @@
           />{{ 'Hide checked items' | translate }}</label
         >
         @for (group of groceriesBySection(); track group[0]) {
-          <section class="planner-card mb-3 p-3">
-            <h2 class="mb-2 font-bold text-emerald-400">{{ group[0] | translate }}</h2>
-            @for (item of group[1]; track item.id) {
-              <div class="flex items-center gap-3 border-t border-[var(--border)] py-2">
-                <button
-                  (click)="changeGrocery(item)"
-                  [disabled]="logging()"
-                  [attr.aria-label]="
-                    (item.checked ? 'Uncheck ' : 'Check off ') + item.name | translate
-                  "
-                  [attr.aria-pressed]="item.checked"
-                  class="shopping-check"
-                >
-                  <ion-icon [icon]="item.checked ? icons.checkmark : undefined"></ion-icon></button
-                ><span
-                  class="flex-1"
-                  [class.line-through]="item.checked"
-                  [class.planner-muted]="item.checked"
-                  >{{ item.name }}</span
-                ><button
-                  (click)="changeGrocery(item, true)"
-                  [disabled]="logging()"
-                  [attr.aria-label]="'Remove ' + item.name | translate"
-                  class="text-rose-400"
-                >
-                  <ion-icon [icon]="icons.trashOutline"></ion-icon>
-                </button>
-              </div>
-            }
-          </section>
+          <section
+            appGroceryGroup
+            [section]="group[0]"
+            [items]="group[1]"
+            [busy]="logging()"
+            (toggle)="changeGrocery($event)"
+            (remove)="changeGrocery($event, true)"
+            class="planner-card mb-3 p-3"
+          ></section>
         }
       }
     }

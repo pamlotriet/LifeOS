@@ -7,7 +7,9 @@
       <strong>{{ entry.name }}</strong
       ><small>{{ entry.date }} / {{ entry.amount }}</small>
     </div>
-    <button (click)="logAgain.emit(entry)" [disabled]="busy()">{{ '+ Add' | translate }}</button>
+    <button appButton="secondary" (click)="logAgain.emit(entry)" [disabled]="busy()">
+      {{ '+ Add' | translate }}
+    </button>
   </div>
 } @empty {
   <p>{{ 'Your recently logged foods will appear here.' | translate }}</p>

@@ -82,6 +82,7 @@
     } @else if (store.error()) {
       <div role="alert" class="rounded-2xl border border-rose-400/50 bg-[var(--card)] p-4 text-sm">
         {{ store.error() | translate }}
+        <!-- quality-allow shared-button: Compact inline action belongs to the surrounding text or chip layout. -->
         <button type="button" (click)="store.reload()" class="ml-2 text-cyan-300 underline">
           {{ 'Retry' | translate }}
         </button>

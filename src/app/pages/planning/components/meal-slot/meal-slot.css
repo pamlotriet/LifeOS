@@ -1,0 +1,69 @@
+.slot-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+:host {
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.slot-heading h3 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.slot-heading {
+  margin-bottom: 16px;
+}
+.slot-empty {
+  font-size: 13px;
+  padding-bottom: 8px;
+}
+.planned-meal {
+  border-top: 1px solid var(--border);
+  padding: 16px 0;
+}
+.planned-meal:last-child {
+  padding-bottom: 0;
+}
+.meal-description strong {
+  font-size: 16px;
+  font-weight: 550;
+}
+.meal-description p {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.meal-description .meal-nutrition {
+  font-size: 11px;
+}
+.meal-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.logged-badge {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--primary);
+  background: var(--secondary);
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+@media (max-width: 600px) {
+  :host {
+    padding: 16px;
+  }
+}
+
+h3,
+p {
+  margin: 0;
+}
+p,
+small {
+  color: var(--text-secondary);
+}

@@ -1,123 +1,5 @@
-.budget-overview-page .balance-panel {
-  display: block;
-  padding: 24px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  border-radius: 14px;
-}
-.balance-panel .section-heading {
-  margin: 0 0 24px;
-}
-.balance-panel h2,
 .budget-content-card h2 {
   font-size: 1rem;
-}
-.outlook-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-.outlook-total {
-  display: block;
-  margin: 8px 0;
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
-  letter-spacing: -0.04em;
-  color: var(--primary);
-  font-variant-numeric: tabular-nums;
-}
-.outlook-total.deficit {
-  color: var(--destructive);
-}
-.outlook-note {
-  font-size: 0.76rem;
-  line-height: 1.6;
-  color: var(--text-secondary);
-}
-.outlook-breakdown {
-  margin: 20px 0;
-}
-.outlook-breakdown > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.8rem;
-}
-.outlook-breakdown dt {
-  color: var(--text-secondary);
-}
-.outlook-breakdown dd {
-  margin: 0;
-  white-space: nowrap;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.allocation-bar {
-  height: 7px;
-  display: flex;
-  overflow: hidden;
-  border-radius: 10px;
-  background: var(--border);
-  margin: 20px 0 12px;
-}
-.allocation-bar span {
-  height: 100%;
-}
-.balance-panel > .text-link {
-  display: inline-block;
-  margin-top: 10px;
-  font-size: 0.8rem;
-}
-@media (max-width: 600px) {
-  .budget-overview-page .balance-panel {
-    padding: 20px;
-  }
-  .outlook-breakdown > div {
-    font-size: 0.76rem;
-  }
-}
-.cycle-navigation .icon-button {
-  flex-shrink: 0;
-}
-.cycle-picker {
-  display: grid;
-  flex: 1;
-  min-width: 0;
-  gap: 3px;
-  text-align: center;
-}
-.cycle-picker > span {
-  font-size: 0.7rem;
-  color: var(--text-secondary);
-}
-.cycle-picker input {
-  width: 100%;
-  min-width: 0;
-  min-height: 44px;
-  padding: 6px 10px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--foreground);
-  background: var(--surface-secondary);
-  font-weight: 650;
-  cursor: pointer;
-  color-scheme: light dark;
-}
-.cycle-details p {
-  margin: 0;
-  font-size: 0.76rem;
-  color: var(--text-secondary);
-}
-.cycle-details button {
-  min-height: 32px;
-  padding: 4px 8px;
-  border: 0;
-  background: transparent;
-}
-@media (max-width: 380px) {
-  .cycle-navigation .icon-button {
-    width: 38px;
-  }
 }
 .transaction-heading {
   margin-top: 28px;
@@ -136,7 +18,6 @@
 .budget-overview-page > section[aria-label='Budget statistics'] {
   margin-bottom: 32px;
 }
-.budget-overview-page > .balance-panel,
 .budget-overview-page > .budget-content-card {
   margin: 0 0 32px;
 }
@@ -148,7 +29,6 @@
     margin: 24px 0;
   }
   .budget-overview-page > section[aria-label='Budget statistics'],
-  .budget-overview-page > .balance-panel,
   .budget-overview-page > .budget-content-card {
     margin-bottom: 28px;
   }
@@ -158,64 +38,9 @@
   }
 }
 
-.spending-balance-editor {
-  margin-top: 12px;
-  font-size: 0.85rem;
-}
-.spending-balance-editor summary {
-  cursor: pointer;
-  color: var(--primary);
-}
-.spending-balance-editor p {
-  margin: 12px 0;
-}
-.spending-balance-editor form,
-.spending-balance-editor label {
-  display: grid;
-  gap: 8px;
-}
-.spending-balance-editor input {
-  min-width: 0;
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--card);
-  color: var(--foreground);
-}
-
 /* Keep balance, outlook and transaction sections on the same spacing scale. */
-:host
-  .budget-overview-page
-  > :is(
-    .balance-panel,
-    .budget-content-card,
-    section[aria-label='Budget statistics']
-  ) {
-  margin-bottom: var(--budget-gap);
-}
 :host .budget-overview-page > app-budget-nav {
   margin-block: var(--budget-gap);
-}
-:host .budget-overview-page .spending-transfer-link {
-  min-height: 44px;
-  margin-top: 8px;
-}
-:host .budget-overview-page .spending-balance-editor {
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-:host .budget-overview-page .spending-balance-editor summary {
-  line-height: 1.5;
-  padding-block: 4px;
-}
-:host .budget-overview-page .spending-balance-editor form {
-  gap: 12px;
-  margin-top: 16px;
-}
-:host .budget-overview-page .spending-balance-editor input {
-  min-height: 44px;
-  margin-top: 6px;
 }
 @media (max-width: 600px) {
   :host .budget-overview-page .transaction-heading {

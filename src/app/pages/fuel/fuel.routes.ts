@@ -1,7 +1,8 @@
+import { protectFormRoutes } from '@core/forms/form-protection.service';
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 
-export const fuelRoutes: Routes = [
+export const fuelRoutes: Routes = protectFormRoutes([
   {
     path: '',
     loadComponent: () => import('@pages/fuel/fuel').then((m) => m.Fuel),
@@ -46,4 +47,4 @@ export const fuelRoutes: Routes = [
       },
     ],
   },
-];
+]);

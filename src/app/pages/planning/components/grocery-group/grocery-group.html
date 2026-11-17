@@ -1,0 +1,26 @@
+<h2 class="mb-2 font-bold text-emerald-400">{{ section() | translate }}</h2>
+@for (item of items(); track item.id) {
+  <div class="flex items-center gap-3 border-t border-[var(--border)] py-2">
+    <button
+      (click)="toggle.emit(item)"
+      [disabled]="busy()"
+      [attr.aria-label]="(item.checked ? 'Uncheck ' : 'Check off ') + item.name | translate"
+      [attr.aria-pressed]="item.checked"
+      class="shopping-check"
+    >
+      <ion-icon [icon]="item.checked ? icons.checkmark : undefined"></ion-icon></button
+    ><span
+      class="flex-1"
+      [class.line-through]="item.checked"
+      [class.planner-muted]="item.checked"
+      >{{ item.name }}</span
+    ><button
+      (click)="remove.emit(item)"
+      [disabled]="busy()"
+      [attr.aria-label]="'Remove ' + item.name | translate"
+      class="text-rose-400"
+    >
+      <ion-icon [icon]="icons.trashOutline"></ion-icon>
+    </button>
+  </div>
+}

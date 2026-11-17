@@ -1,7 +1,8 @@
+import { protectFormRoutes } from '@core/forms/form-protection.service';
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 
-export const tabsRoutes: Routes = [
+export const tabsRoutes: Routes = protectFormRoutes([
   {
     path: '',
     loadComponent: () => import('@core/layout/tabs-shell/tabs-shell').then((m) => m.TabsShell),
@@ -40,4 +41,4 @@ export const tabsRoutes: Routes = [
       },
     ],
   },
-];
+]);

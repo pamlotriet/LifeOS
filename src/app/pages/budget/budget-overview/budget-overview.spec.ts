@@ -9,7 +9,11 @@ import { BudgetTransaction } from '@pages/budget/state/budget/budget.model';
 
 describe('Budget cycle navigation', () => {
   const create = (data = {}) => {
-    const store = { month: signal('2026-01'), cycleStartDay: signal(25), accountName: (id: string) => id };
+    const store = {
+      month: signal('2026-01'),
+      cycleStartDay: signal(25),
+      accountName: (id: string) => id,
+    };
     const page = runInInjectionContext(
       Injector.create({
         providers: [

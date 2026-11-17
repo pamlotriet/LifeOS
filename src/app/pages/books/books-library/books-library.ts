@@ -1,46 +1,66 @@
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { FormProtection } from '@core/forms/form-protection.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { LibraryTotals } from '@pages/books/components/library-totals/library-totals';
+import { ReadingBookCard } from '@pages/books/components/reading-book-card/reading-book-card';
+import { ReadingGoalPanel } from '@pages/books/components/reading-goal-panel/reading-goal-panel';
+import { AppDiscard, AppForm } from '@shared/directives/app-form';
 
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
+import { IonContent } from '@ionic/angular/ion-content';
+import { IonIcon } from '@ionic/angular/ion-icon';
+import { IonModal } from '@ionic/angular/ion-modal';
+import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
+import { BookStore } from '@pages/books/state/book/book-store';
+import {
+  BOOK_CATEGORIES,
+  BOOK_FORMATS,
+  bookProgressMode,
+  BookRecord,
+  kindleSummary,
+  locationProgress,
+  locationSessionPages,
+} from '@pages/books/state/book/book.model';
+import { ReadingGoalService } from '@pages/books/state/reading-goal/reading-goal.service';
 import { AppButton } from '@shared/components/app-button/app-button';
 import { AppInput } from '@shared/components/app-input/app-input';
-import { AddBookSheet } from '@pages/books/book-form/add-book-sheet.service';
 import { addIcons } from 'ionicons';
 import {
   add,
   arrowBackOutline,
   arrowUpOutline,
-  bookOutline,
   bookmarkOutline,
+  bookOutline,
   checkmarkDoneOutline,
   libraryOutline,
   pencilOutline,
   pricetagsOutline,
   radioButtonOnOutline,
 } from 'ionicons/icons';
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { IonContent } from '@ionic/angular/ion-content';
-import { IonIcon } from '@ionic/angular/ion-icon';
-import { IonModal } from '@ionic/angular/ion-modal';
-import {
-  bookProgressMode,
-  kindleSummary,
-  locationProgress,
-  locationSessionPages,
-  BookRecord,
-  BOOK_CATEGORIES,
-  BOOK_FORMATS,
-} from '@pages/books/state/book/book.model';
-import { BookStore } from '@pages/books/state/book/book-store';
-import { ReadingGoalService } from '@pages/books/state/reading-goal/reading-goal.service';
-import { RefreshCoordinator } from '@core/refresh/refresh-coordinator.service';
 
 @Component({
   selector: 'app-books-library',
-  imports: [TranslatePipe, AppInput, AppButton, IonContent, IonIcon, IonModal, RouterLink],
+  imports: [
+    ReadingBookCard,
+    ReadingGoalPanel,
+    LibraryTotals,
+    AppForm,
+    AppDiscard,
+    TranslatePipe,
+    AppInput,
+    AppButton,
+    IonContent,
+    IonIcon,
+    IonModal,
+    RouterLink,
+  ],
   templateUrl: './books-library.html',
   styleUrls: ['./books-library.css', '../books-layout.css'],
 })
 export class BooksLibrary {
+  private readonly formProtection = inject(FormProtection);
+  readonly canDismissProgress = () => this.formProtection.canLeave();
   private readonly i18n = inject(TranslateService);
 
   readonly addBookSheet = inject(AddBookSheet);
@@ -189,7 +209,7 @@ export class BooksLibrary {
   closeProgress(): void {
     if (!this.progressSaving()) this.progressBook.set(null);
   }
-  async saveProgress(finished = false): Promise<void> {
+  async saveProgress(finished = false, formUi?: AppForm): Promise<void> {
     const selected = this.progressBook();
     if (!selected || this.progressSaving()) return;
     const book = this.store.books().find((item) => item.id === selected.id);
@@ -245,6 +265,7 @@ export class BooksLibrary {
       } else {
         await this.store.setReadingProgress(book.id, value);
       }
+      formUi?.markSaved();
       this.progressNotice.set(
         finished
           ? this.i18n.instant('Finished {{p0}}. Your reading goal has been updated.', {

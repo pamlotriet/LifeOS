@@ -9,6 +9,7 @@
     <div role="alert" class="rounded-2xl border border-border bg-card px-4 py-6 text-center">
       <p class="text-sm text-(--text-secondary)">{{ error() | translate }}</p>
       <button
+        appButton="secondary"
         type="button"
         (click)="reload()"
         class="mt-3 rounded-full border border-[#1ce0f2] px-5 py-2 text-sm font-semibold text-foreground"

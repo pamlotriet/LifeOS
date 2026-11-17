@@ -1,7 +1,8 @@
+import { protectFormRoutes } from '@core/forms/form-protection.service';
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 
-export const recipesRoutes: Routes = [
+export const recipesRoutes: Routes = protectFormRoutes([
   {
     path: '',
     loadComponent: () => import('@pages/recipes/recipes').then((m) => m.Recipes),
@@ -23,4 +24,4 @@ export const recipesRoutes: Routes = [
       import('@pages/recipes/recipe-detail/recipe-detail').then((m) => m.RecipeDetail),
     canActivate: [authGuard],
   },
-];
+]);

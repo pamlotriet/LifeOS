@@ -6,7 +6,7 @@
         <h2>{{ 'Ingredient library' | translate }}</h2>
         <p>{{ 'Label values you can reuse in recipes and your diary.' | translate }}</p>
       </div>
-      <button class="action" (click)="create()" [disabled]="busy()">
+      <button appButton="secondary" class="action" (click)="create()" [disabled]="busy()">
         {{ '+ Add ingredient' | translate }}
       </button>
     </header>
@@ -16,7 +16,7 @@
     @if (store.error()) {
       <p role="alert">
         {{ store.error() | translate }}
-        <button (click)="store.reload()">{{ 'Retry' | translate }}</button>
+        <button appButton="secondary" (click)="store.reload()">{{ 'Retry' | translate }}</button>
       </p>
     }
     @if (error()) {
@@ -28,7 +28,7 @@
     <ion-modal
       class="food-editor-modal"
       [isOpen]="editorOpen()"
-      [canDismiss]="!busy()"
+      [canDismiss]="canDismissForm"
       (didDismiss)="editorOpen.set(false)"
       [attr.aria-label]="'Ingredient editor' | translate"
     >
@@ -39,6 +39,7 @@
               <div class="section-heading">
                 <h2>{{ (food.id ? 'Edit ingredient' : 'New ingredient') | translate }}</h2>
                 <button
+                  appDiscard
                   type="button"
                   class="ingredient-editor-close"
                   [attr.aria-label]="'Close ingredient editor' | translate"
@@ -57,7 +58,14 @@
               @if (error()) {
                 <p role="alert" class="notice">{{ error() | translate }}</p>
               }
-              <form (ngSubmit)="saveFood()" class="space-y-3">
+              <form
+                appForm
+                #formUi0="appForm"
+                [formSaving]="busy()"
+                [formValue]="[food, labelAmount, labelUnit]"
+                (ngSubmit)="saveFood(formUi0)"
+                class="space-y-3"
+              >
                 <label
                   >{{ 'Name' | translate
                   }}<input
@@ -119,8 +127,15 @@
                       step="any"
                       [(ngModel)]="labelAmount" /></label
                   ><label
-                    >{{ 'Label unit' | translate
-                    }}<select name="labelUnit" class="lifeos-select" [(ngModel)]="labelUnit">
+                    >{{
+                      'Label unit' | translate
+                    }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                    <select
+                      appFieldFeedback
+                      name="labelUnit"
+                      class="lifeos-select"
+                      [(ngModel)]="labelUnit"
+                    >
                       <option>{{ 'g' | translate }}</option>
                       <option>{{ 'ml' | translate }}</option>
                     </select></label
@@ -196,18 +211,29 @@
                       class="lifeos-select"
                       [(ngModel)]="portionAmount" /></label
                   ><label
-                    >{{ 'Unit' | translate
-                    }}<select name="portionBase" class="lifeos-select" [(ngModel)]="portionBase">
+                    >{{
+                      'Unit' | translate
+                    }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+                    <select
+                      appFieldFeedback
+                      name="portionBase"
+                      class="lifeos-select"
+                      [(ngModel)]="portionBase"
+                    >
                       <option>{{ 'g' | translate }}</option>
                       <option>{{ 'ml' | translate }}</option>
                     </select></label
-                  ><button type="button" (click)="addPortion()">
+                  ><button appButton="secondary" type="button" (click)="addPortion()">
                     {{ 'Add portion' | translate }}
                   </button>
                   @for (p of food.portions; track $index) {
                     <p>
                       1 {{ p.unit | translate }} = {{ p.amount }} {{ p.baseUnit }}
-                      <button type="button" (click)="food.portions?.splice($index, 1)">
+                      <button
+                        appButton="secondary"
+                        type="button"
+                        (click)="food.portions?.splice($index, 1)"
+                      >
                         {{ 'Remove' | translate }}
                       </button>
                     </p>
@@ -219,7 +245,7 @@
                       | translate: { p0: label(food), p1: labelAmount, p2: labelUnit }
                   }}
                 </p>
-                <button [disabled]="busy() || store.loading()">
+                <button appButton="secondary" [disabled]="busy() || store.loading()">
                   {{ (food.id ? 'Update ingredient' : 'Create ingredient') | translate }}
                 </button>
               </form>
@@ -238,8 +264,11 @@
           [ngModel]="query()"
           (ngModelChange)="query.set($event)" /></label
       ><label
-        >{{ 'Category' | translate
-        }}<select
+        >{{
+          'Category' | translate
+        }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+        <select
+          appFieldFeedback
           class="lifeos-select"
           [ngModel]="category()"
           (ngModelChange)="category.set($event)"
@@ -264,8 +293,14 @@
             }}
           </p>
           <p>{{ item.description | translate }}</p>
-          <button (click)="editFood(item)">{{ 'Edit ingredient' | translate }}</button
-          ><button class="ml-4" [disabled]="busy()" (click)="archiveFood(item)">
+          <button appButton="secondary" (click)="editFood(item)">
+            {{ 'Edit ingredient' | translate }}</button
+          ><button
+            appButton="secondary"
+            class="ml-4"
+            [disabled]="busy()"
+            (click)="archiveFood(item)"
+          >
             {{ (item.archived ? 'Restore' : 'Archive') | translate }}
           </button>
         </article>

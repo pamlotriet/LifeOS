@@ -27,6 +27,7 @@ src/app/
     firebase/                  Firebase configuration and persistence infrastructure
     layout/                    App navigation shell
     navigation/
+    forms/                     Unsaved-change registry and route protection
     refresh/
     theme/
     updates/
@@ -38,6 +39,10 @@ src/app/
       finished-books/
       book-tags/
       book-transfer/
+      components/
+        reading-book-card/     Reading progress, cover and selected-book action
+        reading-goal-panel/    Goal progress and edit action
+        library-totals/        Linked library counts
       reading-wheel/
       state/                   Book state grouped by responsibility
         book/                  Records, store, persistence and tracking tests
@@ -57,10 +62,14 @@ src/app/
       budget-comparison/
       budget-insights/
       components/              Budget navigation, summary and transactions
-        budget-page/           Shared Tailwind page frame and mobile layout rules
+        budget-page/           Scoped theme, page frame and responsive layout, loaded once
         budget-accounts/       Account names, balances and deletion controls
+        budget-balance-panels/ Spending and Savings forms with parent save coordination
+        budget-cycle-navigation/ Selected cycle, date range and navigation actions
+        budget-cycle-outlook/  Recorded totals, remaining plans and allocation breakdown
       state/
-        budget/
+        budget/                Store facade, shared lifecycle and focused account, transaction,
+                               planning, debt and category operations; Firebase persistence
         cycle/
     fuel/
       vehicles/
@@ -103,6 +112,9 @@ src/app/
       ingredients/
       planning-meals/
       components/
+        meal-editor/           Linked recipe/ingredient fields with explicit model bindings
+        meal-slot/             Meal rows, nutrition labels and edit/log/remove actions
+        grocery-group/         Shopping aisle rows and check/remove actions
       state/
         plan/
     recipes/
@@ -114,7 +126,7 @@ src/app/
     statistics/
       components/
       state/
-        overview/
+        overview/              Statistics facade, feature report generators, models and chart helpers
         books/
         debts/
         vehicles/
@@ -199,6 +211,30 @@ stateless UI used across features into `shared/components/<component>/`; do not
 move whole page screens into `shared`. Keep business logic in feature state rather
 than shared controls.
 
+Budget styling is owned by `components/budget-page/`. Its native
+`main[appBudgetPage]` component projects the page's existing content and installs
+the feature theme once. Every shared selector starts with `.budget-page` or
+`.budget-screen` (optionally qualified by `main` or the dark theme), so it can style
+Budget child components without affecting other features. Screens do not each
+include copies of these stylesheets.
+
+Use `--budget-gap`, `--budget-padding` and `--budget-radius` for shared spacing and
+surfaces, and `--budget-error-*` for light/dark error colours. Use `budget-metric`
+for the common metric-card surface. Keep only feature-specific layout and data
+presentation in page and card styles. Standard native buttons and navigation links
+use `appButton`; links retain their `href` or `routerLink` bindings. Common field
+appearance stays in `AppInput`.
+
+Category lists and the icon/colour chooser belong to `budget-categories.css`; they
+are loaded with that screen rather than included in every Budget page's theme.
+
+Run `node --test scripts/check-budget-styles.test.cjs` to check style ownership and
+feature scoping. After a production build, `node scripts/preview-budget-styles.cjs`
+checks static, fictional-data fixtures at mobile and desktop widths in both themes
+using headless Edge. Set `EDGE_BINARY` to override its executable path. Screenshots
+and measurements stay in ignored `.angular/cache/budget-style-preview/`; the
+preview does not boot the app or connect to Firebase.
+
 Presentational components take signal inputs and emit user actions to their page.
 Use `model()` when a form field must remain bound to page state. The page keeps
 loading, persistence, filtering, export workflows and error handling. For example,
@@ -265,3 +301,29 @@ decorative, so keep an accessible loading message on the surrounding region.
 ```
 
 Existing `list`, `cards`, `grid`, `form` and `chart` variants remain available.
+
+## Form behavior
+
+Import `AppForm` from `@shared/directives/app-form` on editable forms. Bind the
+existing saving signal with `[formSaving]`, expose `#formUi="appForm"`, and pass
+that directive to the save handler. Call `formUi.markSaved()` only after persistence
+succeeds, before closing the editor or navigating. Keep feature validation and
+method-level duplicate-submit guards.
+
+`AppInput`, `AppSelect` and `AppDatePicker` provide accessible field feedback.
+Use `FieldFeedback` (`appFieldFeedback`) on native selects. Invalid submissions
+touch the controls, announce a summary and focus the first invalid field. Saving
+is announced with a live status and `aria-busy`; repeated submit events are blocked.
+Multi-step forms can bind `[formValidate]` to defer whole-form validation while
+their step-specific validators run.
+
+For changes outside Angular form controls (copies, tags, photos, ingredient lists),
+bind `[formValue]` to the relevant model values as well. Draft comparisons stay
+in memory and are never written to storage. Reverted edits do not prompt.
+
+Wrap feature route arrays with `protectFormRoutes`. Put `appDiscard` on buttons
+that discard an editor; use `[discardWhen]` when a Back button only sometimes
+cancels. Ionic modal `canDismiss` callbacks must consult `FormProtection.canLeave`
+as well. Failed saves leave drafts protected; pending saves prevent navigation;
+successful saves clear protection. Browser reload/close uses the browser's native
+unsaved-change prompt. Sign-in/unlock forms do not represent persisted drafts.

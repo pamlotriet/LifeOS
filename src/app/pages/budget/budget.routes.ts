@@ -1,7 +1,8 @@
+import { protectFormRoutes } from '@core/forms/form-protection.service';
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 
-export const budgetRoutes: Routes = [
+export const budgetRoutes: Routes = protectFormRoutes([
   {
     path: '',
     loadComponent: () =>
@@ -84,4 +85,4 @@ export const budgetRoutes: Routes = [
       import('@pages/budget/budget-insights/budget-insights').then((m) => m.BudgetInsights),
     canActivate: [authGuard],
   },
-];
+]);

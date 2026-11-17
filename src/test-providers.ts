@@ -3,8 +3,10 @@ import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import english from '@public/i18n/en.json';
 import { Injector, runInInjectionContext } from '@angular/core';
+import { FormProtection } from '@core/forms/form-protection.service';
 
 const translationTestProviders = [
+  FormProtection,
   provideTranslateService({
     lang: 'en',
     fallbackLang: 'en',

@@ -62,6 +62,15 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "e2e": {
+              "browser": "e2e/app/main.ts",
+              "index": "e2e/app/index.html",
+              "tsConfig": "e2e/tsconfig.json",
+              "outputPath": "dist/browser-tests",
+              "optimization": false,
+              "sourceMap": true,
+              "serviceWorker": false
             }
           },
           "defaultConfiguration": "production"
@@ -77,6 +86,9 @@
             },
             "development": {
               "buildTarget": "lifeos:build:development"
+            },
+            "e2e": {
+              "buildTarget": "lifeos:build:e2e"
             }
           },
           "defaultConfiguration": "development"

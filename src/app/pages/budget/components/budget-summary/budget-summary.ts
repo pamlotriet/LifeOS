@@ -28,7 +28,7 @@ import {
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
     }
-    
+
     .budget-kpis span {
       font-size: 0.78rem;
       color: var(--text-secondary);
@@ -63,7 +63,6 @@ import {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
       }
-      
     }
   `,
 })

@@ -19,10 +19,10 @@
   }}
 </p>
 <div class="entry-actions">
-  <button (click)="edit.emit()">{{ 'Edit' | translate }}</button
-  ><button (click)="logAgain.emit()" [disabled]="busy()">
+  <button appButton="secondary" (click)="edit.emit()">{{ 'Edit' | translate }}</button
+  ><button appButton="secondary" (click)="logAgain.emit()" [disabled]="busy()">
     {{ 'Log again' | translate }}</button
-  ><button (click)="remove.emit()" [disabled]="busy()">
+  ><button appButton="secondary" (click)="remove.emit()" [disabled]="busy()">
     {{ 'Remove' | translate }}
   </button>
 </div>

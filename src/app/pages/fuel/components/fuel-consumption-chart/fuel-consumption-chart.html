@@ -21,8 +21,10 @@
         </p>
       </div>
       <label class="grid gap-1.5 text-[0.72rem] text-(--text-secondary) [&_select]:min-w-22.5"
-        >{{ 'Show' | translate
-        }}<select
+        >{{
+          'Show' | translate
+        }}<!-- quality-allow shared-select: Native selection preserves this existing form binding and platform keyboard interaction. -->
+        <select
           class="min-h-10.5 min-w-37.5 max-w-full rounded-[9px] border border-border bg-card px-3 py-2 text-[0.82rem] text-foreground"
           [attr.aria-label]="'Number of recent fill-ups' | translate"
           [ngModel]="limit()"

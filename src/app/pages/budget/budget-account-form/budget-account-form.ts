@@ -1,3 +1,4 @@
+import { AppForm } from '@shared/directives/app-form';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -14,6 +15,7 @@ import { BudgetNumber } from '@shared/directives/budget-number';
   host: { class: 'budget-screen' },
   selector: 'app-budget-account-form',
   imports: [
+    AppForm,
     FormsModule,
     RouterLink,
     IonContent,
@@ -25,7 +27,6 @@ import { BudgetNumber } from '@shared/directives/budget-number';
     BudgetNumber,
   ],
   templateUrl: './budget-account-form.html',
-  
 })
 export class BudgetAccountForm {
   readonly store = inject(BudgetStore);
@@ -54,12 +55,13 @@ export class BudgetAccountForm {
     });
   }
 
-  async save(): Promise<void> {
+  async save(formUi?: AppForm): Promise<void> {
     if (this.busy() || !this.ready()) return;
     this.busy.set(true);
     this.error.set('');
     try {
       await this.store.saveAccount(this.name(), this.draftId, this.balanceInput());
+      formUi?.markSaved();
       await this.router.navigateByUrl('/budget');
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'Could not save the account.');

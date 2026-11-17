@@ -198,86 +198,12 @@ ion-icon {
   padding-top: 20px;
   border-top: 1px solid var(--books-line);
 }
-.reading-cover {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 2/3;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-  color: var(--books-purple);
-  background: var(--secondary);
-}
-.reading-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.reading-cover ion-icon {
-  font-size: 26px;
-}
-.reading-details {
-  min-width: 0;
-}
-.reading-eyebrow {
-  margin: 0 0 6px;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  font-weight: 600;
-  color: var(--books-cyan);
-  text-transform: uppercase;
-}
-.reading-book-title {
-  display: block;
-  font-size: 18px;
-  font-weight: 400;
-  color: var(--books-text);
-  overflow-wrap: anywhere;
-  line-height: 1.4;
-}
-.reading-author {
-  margin: 4px 0 16px;
-  font-size: 12px;
-  color: var(--books-muted);
-}
-.reading-progress-copy {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--books-muted);
-  font-size: 12px;
-}
-.reading-progress-copy strong {
-  font-weight: 500;
-  color: var(--books-text);
-}
-.reading-track,
-.books-goal-track {
-  height: 6px;
-  border-radius: 20px;
-  background: var(--books-track);
-  overflow: hidden;
-  margin-top: 10px;
-}
-.reading-track span,
-.books-goal-track span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--books-purple);
-}
 .reading-footer {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   align-items: center;
   margin-top: 18px;
-}
-.reading-remaining {
-  margin: 0;
-  color: var(--books-muted);
-  font-size: 12px;
-  line-height: 1.5;
 }
 .reading-update {
   display: inline-flex;
@@ -298,84 +224,11 @@ ion-icon {
   border-left: 1px solid var(--books-line);
   padding-left: 32px;
 }
-.books-goal-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-.books-goal-heading .books-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--palette-purple);
-  margin: 0;
-}
-.books-text-button {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  color: var(--books-text);
-  cursor: pointer;
-}
-.books-text-button ion-icon {
-  font-size: 18px;
-}
-.books-goal h2,
 .books-note h2 {
   margin: 0;
   font-size: 20px;
   font-weight: 400;
   line-height: 1.5;
-}
-.books-goal-number {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-top: 26px;
-}
-.books-goal-number strong {
-  font-size: 48px;
-  line-height: 1.1;
-  font-weight: 400;
-}
-.books-goal-number span {
-  font-size: 18px;
-  color: var(--books-muted);
-}
-.books-goal-caption {
-  font-size: 12px;
-  color: var(--books-muted);
-  margin: 8px 0 20px;
-}
-.books-goal-track {
-  height: 8px;
-}
-.books-goal-status {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 18px 0 24px;
-  font-size: 12px;
-  color: var(--books-muted);
-}
-.books-goal-status span:last-child {
-  color: var(--palette-purple);
-}
-.books-finished {
-  width: 100%;
-}
-.books-goal-empty {
-  margin: 24px 0;
-  font-size: 14px;
-  color: var(--books-muted);
-  line-height: 1.7;
-}
-.books-goal-empty + .books-secondary {
-  margin-bottom: 20px;
 }
 a:hover,
 button:hover {
@@ -437,12 +290,6 @@ button:focus-visible {
   .reading-heading h2 {
     font-size: 20px;
   }
-  .reading-cover {
-    border-radius: 9px;
-  }
-  .books-goal-heading {
-    margin-bottom: 20px;
-  }
   .books-note {
     margin-top: 28px;
   }
@@ -466,9 +313,6 @@ button:focus-visible {
   }
   .reading-footer {
     flex-wrap: wrap;
-  }
-  .reading-book-title {
-    font-size: 16px;
   }
 }
 
@@ -498,7 +342,6 @@ button:focus-visible {
   }
 }
 
-.reading-heading > a ion-icon,
-.books-finished ion-icon:last-child {
+.reading-heading > a ion-icon {
   transform: rotate(45deg);
 }

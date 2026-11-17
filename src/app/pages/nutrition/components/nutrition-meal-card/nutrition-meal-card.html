@@ -4,6 +4,7 @@
     <span>{{ 'messages.count_kcal_46a76a' | translate: { p0: calories().toFixed(0) } }}</span>
   </div>
   <button
+    appButton="secondary"
     class="add-meal"
     [attr.aria-label]="'Add food to ' + meal() | translate"
     (click)="add.emit()"
@@ -22,6 +23,7 @@
     class="food-row"
   ></article>
 } @empty {
+  <!-- quality-allow shared-button: Full-surface card or visual picker is an interactive surface, not a standard action button. -->
   <button class="empty-meal" (click)="add.emit()">
     {{ 'Nothing logged yet.' | translate }}
     <span>{{ 'messages.add_count_044e7c' | translate: { p0: meal().toLowerCase() } }}</span>

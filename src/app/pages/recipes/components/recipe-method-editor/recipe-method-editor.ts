@@ -1,3 +1,4 @@
+import { AppButton } from '@shared/components/app-button/app-button';
 import { ChangeDetectionStrategy, Component, input, output, model } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppInput } from '@shared/components/app-input/app-input';
@@ -5,7 +6,7 @@ import { IonIcon } from '@ionic/angular/ion-icon';
 import { RecipeStep } from '@pages/recipes/state/recipe/recipe.model';
 @Component({
   selector: 'section[appRecipeMethodEditor]',
-  imports: [TranslatePipe, AppInput, IonIcon],
+  imports: [AppButton, TranslatePipe, AppInput, IonIcon],
 
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './recipe-method-editor.html',
